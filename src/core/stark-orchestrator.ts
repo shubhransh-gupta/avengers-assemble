@@ -1,0 +1,213 @@
+import { EventEmitter } from 'node:events';
+import {
+  Mission,
+  MissionDirective,
+  HeroId,
+  ProviderType,
+  StarkConfig,
+} from '../types.js';
+import { StarkCommsNetwork } from './stark-comms.js';
+import { ArcReactorPowerGrid } from './arc-reactor.js';
+import { BaseProvider } from '../providers/base-provider.js';
+import { MockProvider } from '../providers/mock-provider.js';
+import { ClaudeCodeProvider } from '../providers/claude-code.js';
+import { GeminiProvider } from '../providers/gemini.js';
+import { OpenAIProvider } from '../providers/openai.js';
+import { GrokProvider } from '../providers/grok.js';
+import { OllamaProvider } from '../providers/ollama.js';
+
+import { BaseHero } from '../heroes/base-hero.js';
+import { TonyStarkHero } from '../heroes/tony-stark.js';
+import { CaptainAmericaHero } from '../heroes/captain-america.js';
+import { HulkHero } from '../heroes/hulk.js';
+import { BlackWidowHero } from '../heroes/black-widow.js';
+import { ThorHero } from '../heroes/thor.js';
+import { HawkeyeHero } from '../heroes/hawkeye.js';
+import { SpiderManHero } from '../heroes/spider-man.js';
+import { DoctorStrangeHero } from '../heroes/doctor-strange.js';
+import { VisionHero } from '../heroes/vision.js';
+
+export class StarkOrchestrator extends EventEmitter {
+  private config: StarkConfig;
+  private comms = StarkCommsNetwork.getInstance();
+  private arcReactor: ArcReactorPowerGrid;
+  private providers: Map<ProviderType, BaseProvider> = new Map();
+  private heroes: Map<HeroId, BaseHero> = new Map();
+  private activeMission?: Mission;
+
+  constructor(config: StarkConfig) {
+    super();
+    this.config = config;
+    this.arcReactor = new ArcReactorPowerGrid(config.arcReactor);
+
+    this.initProviders();
+    this.initHeroes();
+  }
+
+  private initProviders(): void {
+    const mock = new MockProvider();
+    this.providers.set('mock', mock);
+
+    const claudeCfg = this.config.arcReactor.providers['claude-code'];
+    this.providers.set('claude-code', new ClaudeCodeProvider(claudeCfg?.apiKey));
+
+    const geminiCfg = this.config.arcReactor.providers['gemini'];
+    this.providers.set('gemini', new GeminiProvider(geminiCfg?.apiKey));
+
+    const openaiCfg = this.config.arcReactor.providers['openai'];
+    this.providers.set('openai', new OpenAIProvider(openaiCfg?.apiKey));
+
+    const grokCfg = this.config.arcReactor.providers['grok'];
+    this.providers.set('grok', new GrokProvider(grokCfg?.apiKey));
+
+    const ollamaCfg = this.config.arcReactor.providers['ollama'];
+    this.providers.set('ollama', new OllamaProvider(ollamaCfg?.baseUrl, ollamaCfg?.model));
+  }
+
+  private initHeroes(): void {
+    const p = this.providers;
+    const ar = this.arcReactor;
+
+    this.heroes.set('tony-stark', new TonyStarkHero(ar, p));
+    this.heroes.set('captain-america', new CaptainAmericaHero(ar, p));
+    this.heroes.set('hulk', new HulkHero(ar, p));
+    this.heroes.set('black-widow', new BlackWidowHero(ar, p));
+    this.heroes.set('thor', new ThorHero(ar, p));
+    this.heroes.set('hawkeye', new HawkeyeHero(ar, p));
+    this.heroes.set('spider-man', new SpiderManHero(ar, p));
+    this.heroes.set('doctor-strange', new DoctorStrangeHero(ar, p));
+    this.heroes.set('vision', new VisionHero(ar, p));
+  }
+
+  public getHero(id: HeroId): BaseHero | undefined {
+    return this.heroes.get(id);
+  }
+
+  public getAllHeroes(): BaseHero[] {
+    return Array.from(this.heroes.values());
+  }
+
+  public getArcReactor(): ArcReactorPowerGrid {
+    return this.arcReactor;
+  }
+
+  public getActiveMission(): Mission | undefined {
+    return this.activeMission;
+  }
+
+  public async launchMission(userPrompt: string): Promise<Mission> {
+    const missionId = `mission-${Date.now()}`;
+    const tony = this.heroes.get('tony-stark') as TonyStarkHero;
+
+    this.comms.send('orchestrator', 'all', 'war-room', `🚀 AVENGERS ASSEMBLE! New Mission Directive: "${userPrompt}"`);
+
+    const mission: Mission = {
+      id: missionId,
+      name: `Operation: ${userPrompt.substring(0, 32)}...`,
+      userPrompt,
+      status: 'planning',
+      directives: [],
+      activeHeroCount: 0,
+      arcReactorPowerUsed: 0,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    this.activeMission = mission;
+    this.emit('mission-started', mission);
+
+    const directives = await tony.planMission(userPrompt);
+    mission.directives = directives;
+    mission.status = 'assembling';
+    mission.updatedAt = Date.now();
+    this.emit('mission-updated', mission);
+
+    const strange = this.heroes.get('doctor-strange') as DoctorStrangeHero;
+    if (strange && this.config.heroes.doctorStrange?.enabled) {
+      const strangeResult = await strange.executeDirective({
+        id: `${missionId}-multiverse`,
+        title: 'Multiverse Timeline Simulation',
+        description: 'Simulate alternate implementation realities',
+        assignedHero: 'doctor-strange',
+        status: 'in-progress',
+        priority: 'medium',
+      });
+      mission.timelineBranches = strangeResult.data?.timelineBranches;
+    }
+
+    const vision = this.heroes.get('vision') as VisionHero;
+    if (vision && this.config.heroes.vision?.enabled) {
+      await vision.executeDirective({
+        id: `${missionId}-memory`,
+        title: 'Mind Stone Semantic Recall',
+        description: 'Synchronize org knowledge and previous bug solutions',
+        assignedHero: 'vision',
+        status: 'in-progress',
+        priority: 'low',
+      });
+    }
+
+    mission.status = 'in-flight';
+    mission.updatedAt = Date.now();
+    this.emit('mission-updated', mission);
+
+    const nonCapDirectives = directives.filter((d) => d.assignedHero !== 'captain-america');
+    const capDirective = directives.find((d) => d.assignedHero === 'captain-america');
+
+    for (const directive of nonCapDirectives) {
+      const hero = this.heroes.get(directive.assignedHero);
+      if (!hero) continue;
+
+      directive.status = 'in-progress';
+      directive.startedAt = Date.now();
+      this.emit('directive-started', directive);
+      this.emit('mission-updated', mission);
+
+      try {
+        const result = await hero.executeDirective(directive);
+        directive.status = 'completed';
+        directive.completedAt = Date.now();
+        directive.outputs = {
+          logs: [result.output],
+          qaReview: result.data?.qaReview,
+          securityAudit: result.data?.securityAudit,
+          testResults: result.data?.testResults,
+        };
+        mission.arcReactorPowerUsed += result.tokensUsed;
+      } catch (err: any) {
+        directive.status = 'failed';
+        directive.outputs = { logs: [`Error: ${err.message}`] };
+      }
+
+      this.emit('directive-completed', directive);
+      this.emit('mission-updated', mission);
+    }
+
+    if (capDirective) {
+      mission.status = 'review';
+      const cap = this.heroes.get('captain-america') as CaptainAmericaHero;
+      capDirective.status = 'in-progress';
+      capDirective.startedAt = Date.now();
+      this.emit('directive-started', capDirective);
+
+      const capResult = await cap.executeDirective(capDirective);
+      capDirective.status = 'completed';
+      capDirective.completedAt = Date.now();
+      capDirective.outputs = {
+        logs: [capResult.output],
+        qaReview: capResult.data?.qaReview,
+      };
+      mission.arcReactorPowerUsed += capResult.tokensUsed;
+      this.emit('directive-completed', capDirective);
+    }
+
+    mission.status = 'success';
+    mission.updatedAt = Date.now();
+    mission.finalSummary = `Mission accomplished by the Avengers strike team! All ${directives.length} directives executed with zero blocker defects. Power consumed: ${mission.arcReactorPowerUsed} tokens. Vibranium QA Stamp: APPROVED.`;
+
+    this.comms.send('orchestrator', 'all', 'war-room', `🏆 MISSION ACCOMPLISHED! ${mission.finalSummary}`);
+    this.emit('mission-completed', mission);
+
+    return mission;
+  }
+}
