@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avengers Assemble — Earth's Mightiest Multi-Agent Coding Harness</title>
+  <meta name="description" content="Free, open-source multi-agent coding harness coordinated by Tony Stark. Turn your AI subscriptions (Claude Code, Gemini, OpenAI, Grok, Ollama) into an elite superhero strike team." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="hud.css" />
+</head>
+<body>
+  <div class="hud-scanlines"></div>
+  <div class="hud-vignette"></div>
+
+  <!-- Header Navigation -->
+  <header class="hud-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <div class="brand-reactor">
+          <div class="reactor-core"></div>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">STARK<span class="brand-accent">NET</span> // AVENGERS</span>
+          <span class="brand-sub">TACTICAL MULTI-AGENT HARNESS v1.0</span>
+        </div>
+      </div>
+
+      <div class="header-telemetry">
+        <div class="telemetry-pill">
+          <span class="pulse-dot"></span>
+          <span id="systemStatusText">ORCHESTRATOR: ONLINE</span>
+        </div>
+        <button id="soundToggleBtn" class="hud-btn sm ghost" title="Toggle Stark HUD SFX">
+          <span class="ic">🔊</span> SFX: <span id="soundStatus">ON</span>
+        </button>
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="hud-btn sm primary github-star-btn">
+          <span class="ic">⭐</span> Star on GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner & Mission Input -->
+  <main class="wrap">
+    <section class="hero-section">
+      <div class="hero-kicker">STARK INDUSTRIES PROTOCOL // CODE LEVEL: OMEGA</div>
+      <h1 class="hero-headline">Earth's Mightiest <span class="glow-text">Multi-Agent</span> Coding Harness</h1>
+      <p class="hero-desc">
+        Turn your existing AI subscriptions into an elite superhero strike team.
+        Coordinated by <strong>Tony Stark</strong>, audited by <strong>Captain America</strong>, debugged by <strong>The Hulk</strong>, and powered by the <strong>Arc Reactor Power Grid</strong>.
+      </p>
+
+      <!-- Mission Control Dispatcher Bar -->
+      <div class="mission-input-card">
+        <div class="input-header">
+          <span class="input-label"><span class="ic">🦾</span> TONY STARK MISSION DIRECTIVE DISPATCHER</span>
+          <span class="input-tag">BYOK & SUBSCRIPTION HARVESTER</span>
+        </div>
+        <div class="input-row">
+          <input 
+            type="text" 
+            id="missionPromptInput" 
+            placeholder="Type any mission... e.g., 'Build JWT auth middleware, unit test suite, and Docker container'" 
+            value="Build a high-performance JWT auth middleware, unit test suite, and Docker container"
+          />
+          <button id="assembleBtn" class="hud-btn lg assemble-btn">
+            <span class="reactor-mini"></span>
+            <span>ASSEMBLE!</span>
+          </button>
+        </div>
+
+        <div class="quick-presets">
+          <span class="preset-label">QUICK MISSIONS:</span>
+          <button class="preset-btn" data-prompt="Build a full-stack real-time analytics dashboard with React, Tailwind and WebSockets">Full-Stack Analytics</button>
+          <button class="preset-btn" data-prompt="Refactor monolithic payment gateway into microservices with zero downtime">Refactor Payment Gateway</button>
+          <button class="preset-btn" data-prompt="Perform zero-day security audit on API endpoints and sanitize environment secrets">Security Recon & CVE Audit</button>
+          <button class="preset-btn" data-prompt="Generate 100% test coverage suite for GraphQL server with Hawkeye precision">100% Test Coverage</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Telemetry Grid: Arc Reactor + Live Mission State -->
+    <div class="hud-grid-2col">
+      <!-- Arc Reactor Power Grid -->
+      <div class="hud-card arc-reactor-card">
+        <div class="card-header">
+          <h3><span class="ic">⚡</span> ARC REACTOR POWER GRID</h3>
+          <span class="badge green" id="powerStatusBadge">OPTIMAL (100%)</span>
+        </div>
+        <div class="reactor-display">
+          <div class="reactor-graphic">
+            <div class="arc-ring outer"></div>
+            <div class="arc-ring middle"></div>
+            <div class="arc-ring inner"></div>
+            <div class="arc-power-pct" id="arcPowerPct">100%</div>
+          </div>
+          <div class="reactor-stats">
+            <div class="stat-row">
+              <span class="stat-name">Hourly Token Capacity:</span>
+              <span class="stat-val" id="totalCapVal">200,000</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-name">Tokens Consumed (5h window):</span>
+              <span class="stat-val yellow" id="consumedVal">0</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-name">Auto-Failover Balance:</span>
+              <span class="stat-val green">ACTIVE</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-name">Throttling Protection:</span>
+              <span class="stat-val cyan">ENGAGED</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="provider-bars" id="providerBars">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Active Mission Directives HUD -->
+      <div class="hud-card mission-status-card">
+        <div class="card-header">
+          <h3><span class="ic">🎯</span> MISSION DIRECTIVES & QA STATUS</h3>
+          <span class="badge blue" id="missionStatusBadge">STANDBY</span>
+        </div>
+        <div class="directives-list" id="directivesList">
+          <div class="directive-placeholder">
+            <p>⚡ No active mission in flight. Type a prompt above and click <strong>ASSEMBLE!</strong> to dispatch Earth's Mightiest Heroes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avengers Hero Strike Team Roster -->
+    <section class="roster-section">
+      <div class="section-header">
+        <div>
+          <span class="kicker">STARK INDUSTRIES // TACTICAL ROSTER</span>
+          <h2>The Avengers Strike Team</h2>
+        </div>
+        <span class="badge red">9 HERO AGENTS ACTIVE</span>
+      </div>
+
+      <div class="hero-grid" id="heroCardsGrid">
+        <!-- Dynamically rendered hero cards -->
+      </div>
+    </section>
+
+    <!-- War Room Live Comms & Doctor Strange Multiverse -->
+    <div class="hud-grid-2col" style="margin-top: 32px;">
+      <!-- Live War Room Comms -->
+      <div class="hud-card comms-card">
+        <div class="card-header">
+          <h3><span class="ic">📡</span> AVENGERS WAR-ROOM COMMS MESH</h3>
+          <span class="badge yellow">ENCRYPTED FEED</span>
+        </div>
+        <div class="comms-feed" id="commsFeed">
+          <!-- Live messages streamed here -->
+          <div class="comms-item system">
+            <span class="comms-time">[00:00:01]</span>
+            <span class="comms-author">[JARVIS]</span>
+            <span class="comms-msg">Stark Tower Mission Control initialized. All hero comm channels connected.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Strange Multiverse Simulator & Vision Memory -->
+      <div class="hud-card timeline-card">
+        <div class="card-header">
+          <h3><span class="ic">🔮</span> MULTIVERSE TIMELINE SIMULATOR</h3>
+          <span class="badge cyan">TIME STONE ACTIVE</span>
+        </div>
+        <div class="timeline-container" id="timelineList">
+          <div class="timeline-box active">
+            <div class="timeline-title">Reality-616: Canonical High-Performance Architecture</div>
+            <div class="timeline-meta">Probability of Success: <strong class="green">98.4%</strong> | Evaluated by Doctor Strange</div>
+            <div class="timeline-desc">Zero-overhead async streaming with memory pooling and Vibranium Shield QA compliance.</div>
+          </div>
+          <div class="timeline-box">
+            <div class="timeline-title">Reality-838: Extreme Redundancy Multi-Cluster</div>
+            <div class="timeline-meta">Probability of Success: <strong class="yellow">88.2%</strong> | Evaluated by Captain America</div>
+            <div class="timeline-desc">Fault-tolerant distributed failover with multi-region rollback checkpoints.</div>
+          </div>
+          <div class="timeline-box">
+            <div class="timeline-title">Reality-199999: Hyper-Parallel Gamma Execution</div>
+            <div class="timeline-meta">Probability of Success: <strong class="cyan">92.1%</strong> | Evaluated by The Hulk</div>
+            <div class="timeline-desc">Multi-threaded worker pool with aggressive AST refactoring and SIMD optimizations.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quickstart & CLI Terminal Box -->
+    <section class="quickstart-section">
+      <div class="hud-card terminal-card">
+        <div class="card-header">
+          <h3><span class="ic">⚡</span> 30-SECOND QUICKSTART</h3>
+          <button class="copy-btn" onclick="navigator.clipboard.writeText('npx avengers-harness assemble')">COPY COMMAND</button>
+        </div>
+        <div class="terminal-body">
+          <div class="term-line"><span class="term-prompt">$</span> <span class="term-cmd">npx avengers-harness assemble</span> <span class="term-arg">"Build JWT auth and test suite"</span></div>
+          <div class="term-output">
+            <span class="red">🦾 [TONY-STARK]</span> Master mission deconstructed into 6 directives.<br/>
+            <span class="magenta">🕷️ [BLACK-WIDOW]</span> Security perimeter scanned. 0 vulnerabilities found.<br/>
+            <span class="green">🟢 [HULK]</span> Hot-paths optimized. O(N^2) bottlenecks smashed!<br/>
+            <span class="purple">🏹 [HAWKEYE]</span> 16 unit tests generated. 95.5% coverage achieved.<br/>
+            <span class="blue">🛡️ [CAPTAIN-AMERICA]</span> Vibranium Shield QA Stamp: <span class="green">APPROVED</span>.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="hud-footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <strong>STARK INDUSTRIES // AVENGERS HARNESS</strong> — Open Source under MIT License.
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank">GitHub Repository</a>
+        <a href="#top">Return to Top</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="hud.js"></script>
+</body>
+</html>
