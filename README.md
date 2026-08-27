@@ -210,8 +210,8 @@ avengers-assemble/
 │   ├── providers/        # Claude, Gemini, OpenAI, Grok, Ollama, Mock
 │   ├── cli/              # Terminal commands
 │   └── server/           # WebSocket + REST HUD server
-├── public/
-│   ├── index.html        # Marketing landing page
+├── docs/
+│   ├── index.html        # Marketing landing page (GitHub Pages)
 │   ├── hud.html          # Live Mission Control HUD
 │   ├── hud.css           # Cyberpunk Stark Tech styles
 │   └── hud.js            # WebSocket client + SFX synthesizer

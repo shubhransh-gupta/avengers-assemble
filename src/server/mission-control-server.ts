@@ -26,10 +26,12 @@ export function createMissionControlServer(
 
   app.use(express.json());
 
-  const candidate1 = path.resolve(__dirname, '../../../public');
-  const candidate2 = path.resolve(__dirname, '../../public');
-  const publicDir = fs.existsSync(candidate1) ? candidate1 : candidate2;
-  app.use(express.static(publicDir));
+  const candidate1 = path.resolve(__dirname, '../../../docs');
+  const candidate2 = path.resolve(__dirname, '../../docs');
+  const candidate3 = path.resolve(__dirname, '../../../public');
+  const candidate4 = path.resolve(__dirname, '../../public');
+  const staticDir = [candidate1, candidate2, candidate3, candidate4].find((p) => fs.existsSync(p)) || candidate2;
+  app.use(express.static(staticDir));
 
   app.get('/api/status', (req, res) => {
     const arcReactor = orchestrator.getArcReactor().getState();
