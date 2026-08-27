@@ -1,235 +1,1650 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Avengers Assemble — Earth's Mightiest Multi-Agent Coding Harness</title>
-  <meta name="description" content="Free, open-source multi-agent coding harness coordinated by Tony Stark. Turn your AI subscriptions (Claude Code, Gemini, OpenAI, Grok, Ollama) into an elite superhero strike team." />
+  <meta name="description" content="Free, open-source multi-agent AI coding harness coordinated by Tony Stark. Turn your Claude Code, Gemini, GPT-4, Grok, and Ollama subscriptions into Earth's Mightiest developer team." />
+  <meta name="keywords" content="multi-agent AI, coding harness, claude code, gemini, openai, grok, ollama, munder-difflin, avengers, tony stark, open source, developer tools" />
+  <meta property="og:title" content="⚡ Avengers Assemble — Earth's Mightiest Multi-Agent Coding Harness" />
+  <meta property="og:description" content="Tony Stark orchestrates your AI subscriptions as an elite Avengers strike team. Free, open-source, works with Claude, Gemini, GPT-4, Grok, and Ollama." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://repository-images.githubusercontent.com/shubhransh-gupta/avengers-assemble" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Avengers Assemble — Multi-Agent AI Coding Harness" />
+  <meta name="twitter:description" content="Tony Stark orchestrates Claude, Gemini, GPT-4, Grok, Ollama as Earth's Mightiest dev team. Free & open source." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
-  
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="hud.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       AVENGERS ASSEMBLE — MARKETING SITE
+       ========================================================= */
+    :root {
+      --arc-blue: #00d4ff;
+      --arc-glow: #00a8e8;
+      --iron-red: #e8192c;
+      --gold: #ffd700;
+      --gold-dim: #c9a227;
+      --dark: #050a0f;
+      --dark-card: #080e16;
+      --dark-border: rgba(0,212,255,0.15);
+      --dark-border-strong: rgba(0,212,255,0.35);
+      --text-primary: #e8f4fc;
+      --text-dim: #7a9fb5;
+      --green: #00ff87;
+      --purple: #bf5af2;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ——— NOISE + GRID TEXTURE ——— */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ——— NAVBAR ——— */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(5,10,15,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-reactor {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00d4ff, #004488);
+      box-shadow: 0 0 12px #00d4ff, 0 0 24px rgba(0,212,255,0.4);
+      animation: reactorPulse 2s ease-in-out infinite;
+    }
+
+    .logo em { color: var(--iron-red); font-style: normal; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); background: rgba(0,212,255,0.08); }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      font-family: 'Rajdhani', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .btn-ghost {
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid var(--dark-border-strong);
+    }
+    .btn-ghost:hover { background: rgba(0,212,255,0.1); border-color: var(--arc-blue); color: var(--arc-blue); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--iron-red), #b30018);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(232,25,44,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(232,25,44,0.6); }
+
+    .btn-arc {
+      background: linear-gradient(135deg, #004488, #006eb3);
+      color: var(--arc-blue);
+      border: 1px solid var(--arc-blue);
+      box-shadow: 0 0 16px rgba(0,212,255,0.3);
+    }
+    .btn-arc:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,212,255,0.5); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #b8860b, var(--gold));
+      color: #000;
+      box-shadow: 0 0 20px rgba(255,215,0,0.4);
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 4px 24px rgba(255,215,0,0.6); }
+
+    /* ——— HERO SECTION ——— */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 24px 80px;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,25,44,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(0,212,255,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,215,0,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Floating particles */
+    .particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--arc-blue);
+      opacity: 0.4;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.4; }
+      90% { opacity: 0.2; }
+      100% { transform: translateY(-20px) scale(1); opacity: 0; }
+    }
+
+    .hero-kicker {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--iron-red);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(38px, 7vw, 80px);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .hero-title span.arc { color: var(--arc-blue); text-shadow: 0 0 30px rgba(0,212,255,0.6); }
+    .hero-title span.iron { color: var(--iron-red); text-shadow: 0 0 30px rgba(232,25,44,0.6); }
+    .hero-title span.gold { color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.4); }
+
+    .hero-subtitle {
+      font-size: clamp(17px, 2.5vw, 22px);
+      color: var(--text-dim);
+      max-width: 680px;
+      margin: 0 auto 12px;
+      line-height: 1.7;
+      font-weight: 400;
+    }
+
+    .hero-subtitle strong { color: var(--text-primary); font-weight: 600; }
+
+    .hero-badges {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 28px 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'Rajdhani', sans-serif;
+    }
+    .badge-red { background: rgba(232,25,44,0.15); color: #ff4d5e; border: 1px solid rgba(232,25,44,0.4); }
+    .badge-blue { background: rgba(0,212,255,0.1); color: var(--arc-blue); border: 1px solid rgba(0,212,255,0.3); }
+    .badge-gold { background: rgba(255,215,0,0.1); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+    .badge-green { background: rgba(0,255,135,0.1); color: var(--green); border: 1px solid rgba(0,255,135,0.3); }
+    .badge-purple { background: rgba(191,90,242,0.1); color: var(--purple); border: 1px solid rgba(191,90,242,0.3); }
+
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .hero-cta-row .btn { padding: 14px 28px; font-size: 15px; letter-spacing: 1px; }
+
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--dark-border);
+      flex-wrap: wrap;
+    }
+
+    .stat-item { text-align: center; }
+
+    .stat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--arc-blue);
+      text-shadow: 0 0 20px rgba(0,212,255,0.5);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-family: 'Rajdhani', sans-serif;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--dark-border-strong);
+    }
+
+    /* ——— SECTION HEADER ——— */
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-kicker {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--iron-red);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .section-title .arc { color: var(--arc-blue); }
+    .section-title .iron { color: var(--iron-red); }
+    .section-title .gold { color: var(--gold); }
+
+    .section-desc {
+      color: var(--text-dim);
+      font-size: 17px;
+      max-width: 600px;
+      margin: 14px auto 0;
+      line-height: 1.7;
+    }
+
+    /* ——— SECTION LAYOUT ——— */
+    section { padding: 100px 0; }
+
+    /* ——— DIVIDER ——— */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--dark-border);
+      margin: 0;
+    }
+
+    /* ——— HERO ROSTER ——— */
+    #heroes { background: linear-gradient(180deg, var(--dark) 0%, #060d15 50%, var(--dark) 100%); }
+
+    .heroes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .hero-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      cursor: default;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-color, var(--arc-blue)), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .hero-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px var(--card-glow, rgba(0,212,255,0.1));
+      border-color: var(--card-color, var(--arc-blue));
+    }
+    .hero-card:hover::before { opacity: 1; }
+
+    .card-avatar {
+      font-size: 44px;
+      margin-bottom: 12px;
+      display: block;
+      filter: drop-shadow(0 0 10px var(--card-color, var(--arc-blue)));
+    }
+
+    .card-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+      letter-spacing: 1px;
+    }
+
+    .card-alias {
+      font-size: 12px;
+      color: var(--card-color, var(--arc-blue));
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .card-tag {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-dim);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .card-provider-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.4);
+      color: var(--card-color, var(--arc-blue));
+      border: 1px solid var(--dark-border);
+      letter-spacing: 1px;
+    }
+
+    /* ——— FEATURES ——— */
+    #features {
+      background: var(--dark);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--dark-border-strong);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.3);
+    }
+
+    .feature-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    /* ——— TERMINAL DEMO ——— */
+    #demo { background: linear-gradient(180deg, var(--dark) 0%, #040910 100%); }
+
+    .demo-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .demo-layout { grid-template-columns: 1fr; }
+    }
+
+    .demo-text h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .demo-text h3 span { color: var(--arc-blue); }
+
+    .demo-text p {
+      font-size: 16px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .demo-text ul {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+
+    .demo-text ul li {
+      font-size: 15px;
+      color: var(--text-dim);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--dark-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .demo-text ul li::before {
+      content: '▸';
+      color: var(--arc-blue);
+      flex-shrink: 0;
+    }
+
+    .demo-text ul li strong { color: var(--text-primary); }
+
+    .terminal {
+      background: #010810;
+      border: 1px solid var(--dark-border-strong);
+      border-radius: 12px;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      box-shadow: 0 0 40px rgba(0,212,255,0.1), 0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    .terminal-top {
+      background: #0a1525;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .term-dot.red { background: #ff5f56; }
+    .term-dot.yellow { background: #ffbd2e; }
+    .term-dot.green { background: #27c93f; }
+
+    .term-title {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-left: auto;
+      letter-spacing: 1px;
+    }
+
+    .terminal-body { padding: 20px; line-height: 1.8; }
+
+    .t-prompt { color: #7a9fb5; }
+    .t-cmd { color: var(--arc-blue); }
+    .t-arg { color: var(--gold); }
+    .t-out-red { color: #ff4d5e; }
+    .t-out-blue { color: var(--arc-blue); }
+    .t-out-green { color: var(--green); }
+    .t-out-yellow { color: var(--gold); }
+    .t-out-purple { color: var(--purple); }
+    .t-out-cyan { color: #00e5ff; }
+    .t-out-dim { color: var(--text-dim); }
+    .t-success { color: var(--green); font-weight: 700; }
+
+    .term-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 14px;
+      background: var(--arc-blue);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ——— COMPARISON TABLE ——— */
+    #compare { background: var(--dark); }
+
+    .compare-table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--dark-border-strong);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--dark-card);
+      min-width: 600px;
+    }
+
+    th {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 18px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--dark-border-strong);
+      color: var(--text-dim);
+    }
+
+    th:first-child { color: var(--arc-blue); }
+
+    td {
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    td:first-child { color: var(--text-primary); font-weight: 600; }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr.highlight-row td { background: rgba(0,212,255,0.04); }
+    tr.highlight-row td:first-child { color: var(--arc-blue); }
+
+    .check { color: var(--green); font-size: 16px; }
+    .cross { color: var(--iron-red); font-size: 16px; opacity: 0.6; }
+    .partial { color: var(--gold); font-size: 14px; }
+
+    /* ——— QUICKSTART ——— */
+    #quickstart { background: linear-gradient(135deg, #040a12 0%, #08121e 100%); }
+
+    .quickstart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) { .quickstart-grid { grid-template-columns: 1fr; } }
+
+    .qs-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .qs-card h4 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .qs-card h4 span { color: var(--arc-blue); }
+
+    .code-block {
+      background: #010810;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-x: auto;
+      border: 1px solid var(--dark-border);
+      position: relative;
+    }
+
+    .code-block .c-cmd { color: var(--arc-blue); }
+    .code-block .c-arg { color: var(--gold); }
+    .code-block .c-comment { color: #445566; }
+    .code-block .c-string { color: var(--green); }
+    .code-block .c-key { color: var(--purple); }
+    .code-block .c-prompt { color: #445566; user-select: none; }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: rgba(0,212,255,0.1);
+      color: var(--arc-blue);
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover { background: rgba(0,212,255,0.2); }
+
+    /* ——— CTA BANNER ——— */
+    #cta {
+      position: relative;
+      overflow: hidden;
+      padding: 100px 24px;
+      text-align: center;
+    }
+
+    #cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 50%, rgba(232,25,44,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 50%, rgba(0,212,255,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 50%, rgba(255,215,0,0.06) 0%, transparent 60%);
+    }
+
+    #cta .section-title { font-size: clamp(32px, 5vw, 60px); margin-bottom: 16px; }
+
+    #cta .section-desc { margin-bottom: 36px; }
+
+    .cta-btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .cta-btns .btn { padding: 16px 32px; font-size: 16px; }
+
+    /* ——— PROVIDER LOGOS ——— */
+    .providers-bar {
+      background: #060d15;
+      padding: 28px 0;
+      border-top: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .providers-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .provider-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      transition: all 0.2s;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .provider-chip:hover { color: var(--text-primary); border-color: var(--dark-border-strong); background: rgba(255,255,255,0.07); }
+
+    /* ——— FOOTER ——— */
+    footer {
+      background: #040a10;
+      border-top: 1px solid var(--dark-border);
+      padding: 40px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-brand {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .footer-brand span { color: var(--arc-blue); }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--arc-blue); }
+
+    /* ——— ANIMATIONS ——— */
+    @keyframes reactorPulse {
+      0%, 100% { box-shadow: 0 0 12px #00d4ff, 0 0 24px rgba(0,212,255,0.4); }
+      50% { box-shadow: 0 0 20px #00d4ff, 0 0 40px rgba(0,212,255,0.6), 0 0 60px rgba(0,212,255,0.2); }
+    }
+
+    @keyframes arcRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ——— ARC REACTOR HERO GRAPHIC ——— */
+    .reactor-hero {
+      width: 220px; height: 220px;
+      position: relative;
+      margin: 48px auto 0;
+    }
+
+    .reactor-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid var(--arc-blue);
+      opacity: 0.4;
+    }
+
+    .reactor-ring:nth-child(1) {
+      inset: 0;
+      border-color: rgba(0,212,255,0.3);
+      animation: arcRotate 12s linear infinite;
+    }
+    .reactor-ring:nth-child(2) {
+      inset: 20px;
+      border-color: rgba(232,25,44,0.4);
+      animation: arcRotate 8s linear infinite reverse;
+    }
+    .reactor-ring:nth-child(3) {
+      inset: 40px;
+      border-color: rgba(255,215,0,0.4);
+      animation: arcRotate 5s linear infinite;
+    }
+    .reactor-core-big {
+      position: absolute;
+      inset: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00d4ff 0%, #006eb3 50%, #003366 100%);
+      box-shadow:
+        0 0 30px #00d4ff,
+        0 0 60px rgba(0,212,255,0.5),
+        0 0 100px rgba(0,212,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      animation: reactorPulse 2s ease-in-out infinite;
+    }
+
+    /* ——— SCROLL REVEAL ——— */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ——— MOBILE ——— */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero-stats { gap: 24px; }
+      .stat-divider { display: none; }
+      .footer-inner { justify-content: center; text-align: center; }
+    }
+
+    /* ——— PROVIDER SUPPORT ——— */
+    .provider-section { background: var(--dark); padding: 60px 0; }
+
+    .provider-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .provider-card {
+      background: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.25s;
+    }
+
+    .provider-card:hover {
+      border-color: var(--dark-border-strong);
+      transform: translateY(-3px);
+    }
+
+    .provider-card .prov-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+    .provider-card .prov-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .provider-card .prov-sub { font-size: 12px; color: var(--text-dim); }
+  </style>
 </head>
 <body>
-  <div class="hud-scanlines"></div>
-  <div class="hud-vignette"></div>
 
-  <!-- Header Navigation -->
-  <header class="hud-header">
-    <div class="wrap header-inner">
-      <div class="brand">
-        <div class="brand-reactor">
-          <div class="reactor-core"></div>
-        </div>
-        <div class="brand-text">
-          <span class="brand-title">STARK<span class="brand-accent">NET</span> // AVENGERS</span>
-          <span class="brand-sub">TACTICAL MULTI-AGENT HARNESS v1.0</span>
-        </div>
-      </div>
-
-      <div class="header-telemetry">
-        <div class="telemetry-pill">
-          <span class="pulse-dot"></span>
-          <span id="systemStatusText">ORCHESTRATOR: ONLINE</span>
-        </div>
-        <button id="soundToggleBtn" class="hud-btn sm ghost" title="Toggle Stark HUD SFX">
-          <span class="ic">🔊</span> SFX: <span id="soundStatus">ON</span>
-        </button>
-        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="hud-btn sm primary github-star-btn">
-          <span class="ic">⭐</span> Star on GitHub
+  <!-- ===== NAV ===== -->
+  <nav>
+    <div class="wrap nav-inner">
+      <a href="#" class="logo">
+        <div class="logo-reactor"></div>
+        AVENGERS <em>ASSEMBLE</em>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#heroes">Heroes</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#demo">Demo</a></li>
+        <li><a href="#compare">Compare</a></li>
+        <li><a href="hud.html">🚀 Live HUD</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="btn btn-ghost">
+          ⭐ Star on GitHub
+        </a>
+        <a href="hud.html" class="btn btn-primary">
+          🦾 Launch HUD
         </a>
       </div>
     </div>
-  </header>
+  </nav>
 
-  <!-- Hero Banner & Mission Input -->
-  <main class="wrap">
-    <section class="hero-section">
-      <div class="hero-kicker">STARK INDUSTRIES PROTOCOL // CODE LEVEL: OMEGA</div>
-      <h1 class="hero-headline">Earth's Mightiest <span class="glow-text">Multi-Agent</span> Coding Harness</h1>
-      <p class="hero-desc">
-        Turn your existing AI subscriptions into an elite superhero strike team.
-        Coordinated by <strong>Tony Stark</strong>, audited by <strong>Captain America</strong>, debugged by <strong>The Hulk</strong>, and powered by the <strong>Arc Reactor Power Grid</strong>.
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero" id="top">
+    <div class="hero-bg"></div>
+    <div class="particles" id="particles"></div>
+    <div style="position:relative;z-index:1;width:100%;">
+      <div class="hero-kicker">⚡ STARK INDUSTRIES PROTOCOL // CODE LEVEL: OMEGA</div>
+      <h1 class="hero-title">
+        Earth's <span class="arc">Mightiest</span><br/>
+        <span class="iron">Multi-Agent</span> Coding<br/>
+        <span class="gold">Harness</span>
+      </h1>
+      <p class="hero-subtitle">
+        Turn your existing AI subscriptions into an elite superhero strike team.<br/>
+        Coordinated by <strong>Tony Stark</strong>, audited by <strong>Captain America</strong>,<br/>
+        debugged by <strong>The Hulk</strong>, and powered by the <strong>Arc Reactor Power Grid</strong>.
       </p>
 
-      <!-- Mission Control Dispatcher Bar -->
-      <div class="mission-input-card">
-        <div class="input-header">
-          <span class="input-label"><span class="ic">🦾</span> TONY STARK MISSION DIRECTIVE DISPATCHER</span>
-          <span class="input-tag">BYOK & SUBSCRIPTION HARVESTER</span>
-        </div>
-        <div class="input-row">
-          <input 
-            type="text" 
-            id="missionPromptInput" 
-            placeholder="Type any mission... e.g., 'Build JWT auth middleware, unit test suite, and Docker container'" 
-            value="Build a high-performance JWT auth middleware, unit test suite, and Docker container"
-          />
-          <button id="assembleBtn" class="hud-btn lg assemble-btn">
-            <span class="reactor-mini"></span>
-            <span>ASSEMBLE!</span>
-          </button>
-        </div>
-
-        <div class="quick-presets">
-          <span class="preset-label">QUICK MISSIONS:</span>
-          <button class="preset-btn" data-prompt="Build a full-stack real-time analytics dashboard with React, Tailwind and WebSockets">Full-Stack Analytics</button>
-          <button class="preset-btn" data-prompt="Refactor monolithic payment gateway into microservices with zero downtime">Refactor Payment Gateway</button>
-          <button class="preset-btn" data-prompt="Perform zero-day security audit on API endpoints and sanitize environment secrets">Security Recon & CVE Audit</button>
-          <button class="preset-btn" data-prompt="Generate 100% test coverage suite for GraphQL server with Hawkeye precision">100% Test Coverage</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Telemetry Grid: Arc Reactor + Live Mission State -->
-    <div class="hud-grid-2col">
-      <!-- Arc Reactor Power Grid -->
-      <div class="hud-card arc-reactor-card">
-        <div class="card-header">
-          <h3><span class="ic">⚡</span> ARC REACTOR POWER GRID</h3>
-          <span class="badge green" id="powerStatusBadge">OPTIMAL (100%)</span>
-        </div>
-        <div class="reactor-display">
-          <div class="reactor-graphic">
-            <div class="arc-ring outer"></div>
-            <div class="arc-ring middle"></div>
-            <div class="arc-ring inner"></div>
-            <div class="arc-power-pct" id="arcPowerPct">100%</div>
-          </div>
-          <div class="reactor-stats">
-            <div class="stat-row">
-              <span class="stat-name">Hourly Token Capacity:</span>
-              <span class="stat-val" id="totalCapVal">200,000</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-name">Tokens Consumed (5h window):</span>
-              <span class="stat-val yellow" id="consumedVal">0</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-name">Auto-Failover Balance:</span>
-              <span class="stat-val green">ACTIVE</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-name">Throttling Protection:</span>
-              <span class="stat-val cyan">ENGAGED</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="provider-bars" id="providerBars">
-          <!-- Dynamically populated -->
-        </div>
+      <div class="hero-badges">
+        <span class="badge badge-red">🦾 Free & Open Source</span>
+        <span class="badge badge-blue">⚡ Zero Extra Cost</span>
+        <span class="badge badge-gold">🛡️ Works With Your Subscriptions</span>
+        <span class="badge badge-green">🟢 9 Hero Agents</span>
+        <span class="badge badge-purple">🔮 Multiverse Simulator</span>
       </div>
 
-      <!-- Active Mission Directives HUD -->
-      <div class="hud-card mission-status-card">
-        <div class="card-header">
-          <h3><span class="ic">🎯</span> MISSION DIRECTIVES & QA STATUS</h3>
-          <span class="badge blue" id="missionStatusBadge">STANDBY</span>
+      <div class="hero-cta-row">
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="btn btn-primary">
+          🚀 Deploy the Avengers
+        </a>
+        <a href="hud.html" class="btn btn-arc">
+          🦾 Open Mission Control HUD
+        </a>
+        <a href="#demo" class="btn btn-ghost">
+          ⚡ See It In Action
+        </a>
+      </div>
+
+      <div class="reactor-hero">
+        <div class="reactor-ring"></div>
+        <div class="reactor-ring"></div>
+        <div class="reactor-ring"></div>
+        <div class="reactor-core-big">🦾</div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">9</span>
+          <span class="stat-label">Hero Agents</span>
         </div>
-        <div class="directives-list" id="directivesList">
-          <div class="directive-placeholder">
-            <p>⚡ No active mission in flight. Type a prompt above and click <strong>ASSEMBLE!</strong> to dispatch Earth's Mightiest Heroes.</p>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">6</span>
+          <span class="stat-label">AI Providers</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">0</span>
+          <span class="stat-label">Extra \$\$\$</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Open Source</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">14M+</span>
+          <span class="stat-label">Possible Timelines</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROVIDER BAR ===== -->
+  <div class="providers-bar">
+    <div class="wrap">
+      <div class="providers-inner">
+        <span style="font-size:12px;letter-spacing:2px;color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-weight:700;text-transform:uppercase;margin-right:8px;">Works With:</span>
+        <span class="provider-chip">🤖 Claude Code</span>
+        <span class="provider-chip">✨ Gemini 2.5</span>
+        <span class="provider-chip">🔷 GPT-4o / Codex</span>
+        <span class="provider-chip">⚡ Grok (xAI)</span>
+        <span class="provider-chip">🦙 Ollama / Local LLM</span>
+        <span class="provider-chip">🎭 Antigravity</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HERO ROSTER ===== -->
+  <section id="heroes">
+    <div class="wrap">
+      <div class="section-header reveal">
+        <span class="section-kicker">🦸 STARK INDUSTRIES // TACTICAL ROSTER</span>
+        <h2 class="section-title">The <span class="arc">Avengers</span> Strike Team</h2>
+        <p class="section-desc">9 specialized hero agents, each wielding a distinct superpower. Orchestrated by Tony Stark in perfect formation.</p>
+      </div>
+
+      <div class="heroes-grid">
+
+        <div class="hero-card reveal" style="--card-color:#e8192c; --card-glow:rgba(232,25,44,0.15);">
+          <span class="card-avatar">🦾</span>
+          <div class="card-provider-badge">ORCHESTRATOR</div>
+          <div class="card-name">Tony Stark</div>
+          <div class="card-alias">Iron Man / JARVIS — Lead GOD Orchestrator</div>
+          <div class="card-desc">
+            Deconstructs your prompt into parallel Mission Directives. Routes tasks across the team, balances Arc Reactor load, and synthesizes the final deliverable with JARVIS precision.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Planning</span>
+            <span class="card-tag">Orchestration</span>
+            <span class="card-tag">Load Balancing</span>
+            <span class="card-tag">claude-code</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#4a90e2; --card-glow:rgba(74,144,226,0.15);">
+          <span class="card-avatar">🛡️</span>
+          <div class="card-provider-badge">QA COMMANDER</div>
+          <div class="card-name">Captain America</div>
+          <div class="card-alias">Steve Rogers — Standards Enforcer</div>
+          <div class="card-desc">
+            Conducts rigorous code review with TypeScript strict mode compliance. Issues the Vibranium Shield QA Stamp of approval on every pull request.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Code Review</span>
+            <span class="card-tag">TypeScript</span>
+            <span class="card-tag">Standards</span>
+            <span class="card-tag">gemini</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#22c55e; --card-glow:rgba(34,197,94,0.15);">
+          <span class="card-avatar">🟢</span>
+          <div class="card-provider-badge">GAMMA ENGINE</div>
+          <div class="card-name">Bruce Banner / The Hulk</div>
+          <div class="card-alias">Dr. Banner — Deep Debugger & Refactorer</div>
+          <div class="card-desc">
+            Banner mode: calm AST analysis and memory profiling. Hulk mode: aggressive legacy refactoring and O(N²) → O(log N) smashing.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Debugging</span>
+            <span class="card-tag">Refactoring</span>
+            <span class="card-tag">Performance</span>
+            <span class="card-tag">ollama</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#bf5af2; --card-glow:rgba(191,90,242,0.15);">
+          <span class="card-avatar">🕷️</span>
+          <div class="card-provider-badge">SECURITY RECON</div>
+          <div class="card-name">Black Widow</div>
+          <div class="card-alias">Natasha Romanoff — Stealth Auditor</div>
+          <div class="card-desc">
+            Scans for CVE vulnerabilities, sanitizes .env secrets and credentials, audits API perimeters and injection vectors.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Security</span>
+            <span class="card-tag">CVE Scanning</span>
+            <span class="card-tag">Secrets</span>
+            <span class="card-tag">openai</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#60a5fa; --card-glow:rgba(96,165,250,0.15);">
+          <span class="card-avatar">⚡</span>
+          <div class="card-provider-badge">GOD OF THUNDER</div>
+          <div class="card-name">Thor</div>
+          <div class="card-alias">Thor Odinson — DevOps & Lightning Builds</div>
+          <div class="card-desc">
+            Generates multi-stage Dockerfiles, Kubernetes manifests, and CI/CD Bifrost pipelines with the speed of Mjolnir.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Docker</span>
+            <span class="card-tag">Kubernetes</span>
+            <span class="card-tag">CI/CD</span>
+            <span class="card-tag">grok</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#f59e0b; --card-glow:rgba(245,158,11,0.15);">
+          <span class="card-avatar">🏹</span>
+          <div class="card-provider-badge">PRECISION SNIPER</div>
+          <div class="card-name">Hawkeye</div>
+          <div class="card-alias">Clint Barton — 100% Test Coverage</div>
+          <div class="card-desc">
+            Crafts exhaustive unit test suites covering 100% boundary conditions, edge cases, mocks, and property-based tests. Never misses a bug.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Unit Tests</span>
+            <span class="card-tag">Edge Cases</span>
+            <span class="card-tag">Coverage</span>
+            <span class="card-tag">gemini</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#f43f5e; --card-glow:rgba(244,63,94,0.15);">
+          <span class="card-avatar">🕸️</span>
+          <div class="card-provider-badge">FRONTEND HERO</div>
+          <div class="card-name">Spider-Man</div>
+          <div class="card-alias">Peter Parker — UI/UX Specialist</div>
+          <div class="card-desc">
+            Builds reactive React, Tailwind CSS, and Next.js components with fluid micro-interactions and mobile-first responsive design.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">React</span>
+            <span class="card-tag">Tailwind CSS</span>
+            <span class="card-tag">Next.js</span>
+            <span class="card-tag">openai</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#a78bfa; --card-glow:rgba(167,139,250,0.15);">
+          <span class="card-avatar">🔮</span>
+          <div class="card-provider-badge">SORCERER SUPREME</div>
+          <div class="card-name">Doctor Strange</div>
+          <div class="card-alias">Master of Mystic Arts — Multiverse Simulator</div>
+          <div class="card-desc">
+            Simulates 14,000,605 parallel architectural realities and selects the optimal timeline. Performs instant Time Stone rollbacks.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Multiverse</span>
+            <span class="card-tag">Rollback</span>
+            <span class="card-tag">Simulation</span>
+            <span class="card-tag">claude-code</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" style="--card-color:#ffd700; --card-glow:rgba(255,215,0,0.15);">
+          <span class="card-avatar">💎</span>
+          <div class="card-provider-badge">MIND STONE</div>
+          <div class="card-name">Vision</div>
+          <div class="card-alias">Synthezoid — Persistent Knowledge Base</div>
+          <div class="card-desc">
+            Maintains a persistent semantic memory store across all sessions. Provides org-wide knowledge recall and cross-agent information synchronization.
+          </div>
+          <div class="card-tags">
+            <span class="card-tag">Memory</span>
+            <span class="card-tag">Semantic Search</span>
+            <span class="card-tag">Knowledge Base</span>
+            <span class="card-tag">gemini</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== FEATURES ===== -->
+  <section id="features">
+    <div class="wrap">
+      <div class="section-header reveal">
+        <span class="section-kicker">🛠️ CORE SYSTEMS // STARK TECH</span>
+        <h2 class="section-title">Powered by <span class="arc">Stark Technology</span></h2>
+        <p class="section-desc">A full multi-agent orchestration system — not just a wrapper. Built from the Arc Reactor up.</p>
+      </div>
+
+      <div class="features-grid">
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">⚡</span>
+          <div class="feature-title">Arc Reactor Power Grid</div>
+          <div class="feature-desc">
+            Tracks rolling 5-hour token windows across Claude, Gemini, GPT-4, Grok, and Ollama. Auto-rotates providers before hitting rate limits. Your subscriptions never hit a 429 error again.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">📡</span>
+          <div class="feature-title">Encrypted War-Room Comms</div>
+          <div class="feature-desc">
+            Real-time pub/sub EventEmitter comms mesh with dedicated channels (#war-room, #directives, #qa-audit, #security-recon, #telemetry). Heroes coordinate and respond to each other in real time.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">🔮</span>
+          <div class="feature-title">Time Stone Engine</div>
+          <div class="feature-desc">
+            Doctor Strange spawns parallel multiverse branches for each architectural approach. Evaluates probability of success across 14M+ timelines and performs instant rollbacks.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">💎</span>
+          <div class="feature-title">Mind Stone Persistent Memory</div>
+          <div class="feature-desc">
+            Vision maintains a file-based semantic memory store (.stark/memory.json) that persists across sessions. Every convention, decision, and bug fix is indexed and searchable.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">🌐</span>
+          <div class="feature-title">Holographic Web HUD</div>
+          <div class="feature-desc">
+            Stark Tower Mission Control — a full cyberpunk WebSocket dashboard with live Arc Reactor gauge, hero telemetry cards, War-Room comms feed, and Web Audio API SFX synthesizer.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">🎮</span>
+          <div class="feature-title">BYOK + Zero Extra Cost</div>
+          <div class="feature-desc">
+            Works with your existing Claude Pro, ChatGPT Plus, Google One AI, Grok, or local Ollama subscriptions. No extra API spend. Uses your subscription's existing hourly limits intelligently.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">🤖</span>
+          <div class="feature-title">Zero-Setup Simulator</div>
+          <div class="feature-desc">
+            No API keys? No problem. A built-in MockProvider simulates all 9 hero agents with rich, realistic responses. Experience the full Avengers harness without any credentials.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">🧪</span>
+          <div class="feature-title">Battle-Tested & Typed</div>
+          <div class="feature-desc">
+            100% TypeScript strict mode. 6 automated test suites with full Arc Reactor, comms, memory, timeline, and end-to-end orchestration coverage. Production-ready from day one.
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <span class="feature-icon">🔌</span>
+          <div class="feature-title">Pluggable Provider System</div>
+          <div class="feature-desc">
+            Extend with your own LLM providers by implementing BaseProvider. Swap hero assignments, configure rate limits, and customize workflows via stark.config.json.
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Avengers Hero Strike Team Roster -->
-    <section class="roster-section">
-      <div class="section-header">
-        <div>
-          <span class="kicker">STARK INDUSTRIES // TACTICAL ROSTER</span>
-          <h2>The Avengers Strike Team</h2>
-        </div>
-        <span class="badge red">9 HERO AGENTS ACTIVE</span>
+  <hr class="divider" />
+
+  <!-- ===== TERMINAL DEMO ===== -->
+  <section id="demo">
+    <div class="wrap">
+      <div class="section-header reveal">
+        <span class="section-kicker">💻 LIVE DEMO // JARVIS TERMINAL</span>
+        <h2 class="section-title"><span class="arc">See It</span> In Action</h2>
+        <p class="section-desc">One command to assemble the entire Avengers strike team on your machine.</p>
       </div>
 
-      <div class="hero-grid" id="heroCardsGrid">
-        <!-- Dynamically rendered hero cards -->
-      </div>
-    </section>
+      <div class="demo-layout">
+        <div class="demo-text reveal">
+          <h3>From prompt to <span>production</span><br/>in one command</h3>
+          <p>Tony Stark deconstructs your request, dispatches it across the team, and delivers a fully reviewed, tested, and deployed solution.</p>
+          <ul>
+            <li><strong>Spider-Man</strong> architects the UI components</li>
+            <li><strong>Hulk</strong> smashes the backend algorithms</li>
+            <li><strong>Black Widow</strong> sanitizes all secrets</li>
+            <li><strong>Hawkeye</strong> fires precision unit tests</li>
+            <li><strong>Thor</strong> forges the Docker + CI/CD pipeline</li>
+            <li><strong>Cap</strong> stamps the Vibranium Shield QA approval</li>
+          </ul>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="btn btn-primary">
+              🚀 Get Started Free
+            </a>
+            <a href="hud.html" class="btn btn-arc">
+              🌐 Open Live HUD
+            </a>
+          </div>
+        </div>
 
-    <!-- War Room Live Comms & Doctor Strange Multiverse -->
-    <div class="hud-grid-2col" style="margin-top: 32px;">
-      <!-- Live War Room Comms -->
-      <div class="hud-card comms-card">
-        <div class="card-header">
-          <h3><span class="ic">📡</span> AVENGERS WAR-ROOM COMMS MESH</h3>
-          <span class="badge yellow">ENCRYPTED FEED</span>
-        </div>
-        <div class="comms-feed" id="commsFeed">
-          <!-- Live messages streamed here -->
-          <div class="comms-item system">
-            <span class="comms-time">[00:00:01]</span>
-            <span class="comms-author">[JARVIS]</span>
-            <span class="comms-msg">Stark Tower Mission Control initialized. All hero comm channels connected.</span>
+        <div class="terminal reveal">
+          <div class="terminal-top">
+            <span class="term-dot red"></span>
+            <span class="term-dot yellow"></span>
+            <span class="term-dot green"></span>
+            <span class="term-title">JARVIS TERMINAL — STARK INDUSTRIES</span>
           </div>
-        </div>
-      </div>
-
-      <!-- Doctor Strange Multiverse Simulator & Vision Memory -->
-      <div class="hud-card timeline-card">
-        <div class="card-header">
-          <h3><span class="ic">🔮</span> MULTIVERSE TIMELINE SIMULATOR</h3>
-          <span class="badge cyan">TIME STONE ACTIVE</span>
-        </div>
-        <div class="timeline-container" id="timelineList">
-          <div class="timeline-box active">
-            <div class="timeline-title">Reality-616: Canonical High-Performance Architecture</div>
-            <div class="timeline-meta">Probability of Success: <strong class="green">98.4%</strong> | Evaluated by Doctor Strange</div>
-            <div class="timeline-desc">Zero-overhead async streaming with memory pooling and Vibranium Shield QA compliance.</div>
-          </div>
-          <div class="timeline-box">
-            <div class="timeline-title">Reality-838: Extreme Redundancy Multi-Cluster</div>
-            <div class="timeline-meta">Probability of Success: <strong class="yellow">88.2%</strong> | Evaluated by Captain America</div>
-            <div class="timeline-desc">Fault-tolerant distributed failover with multi-region rollback checkpoints.</div>
-          </div>
-          <div class="timeline-box">
-            <div class="timeline-title">Reality-199999: Hyper-Parallel Gamma Execution</div>
-            <div class="timeline-meta">Probability of Success: <strong class="cyan">92.1%</strong> | Evaluated by The Hulk</div>
-            <div class="timeline-desc">Multi-threaded worker pool with aggressive AST refactoring and SIMD optimizations.</div>
+          <div class="terminal-body">
+            <div><span class="t-prompt">$ </span><span class="t-cmd">npx avengers-assemble</span> <span class="t-arg">assemble</span></div>
+            <div><span class="t-arg">"Build JWT auth middleware &amp; test suite"</span></div>
+            <br/>
+            <div><span class="t-out-red">🦾 [TONY-STARK]</span> <span class="t-out-dim">JARVIS, initialize Mark 85. Deconstructing mission into 6 directives...</span></div>
+            <div><span class="t-out-blue">🔮 [DR-STRANGE]</span> <span class="t-out-dim">Simulating 14,000,605 timelines. Reality-616 selected (98.4%).</span></div>
+            <div><span class="t-out-purple">🕷️ [BLACK-WIDOW]</span> <span class="t-out-dim">Perimeter scanned. 0 vulnerabilities. Ledger clean.</span></div>
+            <div><span class="t-out-green">🟢 [HULK]</span> <span class="t-out-dim">AST analyzed. O(N²) bottleneck smashed. HULK SMASH!</span></div>
+            <div><span class="t-out-cyan">🕸️ [SPIDER-MAN]</span> <span class="t-out-dim">Auth middleware architected. Responsive. Accessible.</span></div>
+            <div><span class="t-out-yellow">🏹 [HAWKEYE]</span> <span class="t-out-dim">16/16 unit tests passing. 95.5% coverage. Target locked.</span></div>
+            <div><span class="t-out-blue">⚡ [THOR]</span> <span class="t-out-dim">Dockerfile forged. CI/CD pipeline: LIGHTNING FAST.</span></div>
+            <div><span class="t-out-blue">🛡️ [CAP]</span> <span class="t-out-dim">Vibranium Shield QA Stamp: </span><span class="t-success">APPROVED ✔</span></div>
+            <br/>
+            <div><span class="t-success">✔ Mission Complete</span> <span class="t-out-dim">| 6 directives | 4,820 tokens | 100% QA Score</span></div>
+            <div><span class="t-prompt">$ </span><span class="term-cursor"></span></div>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Quickstart & CLI Terminal Box -->
-    <section class="quickstart-section">
-      <div class="hud-card terminal-card">
-        <div class="card-header">
-          <h3><span class="ic">⚡</span> 30-SECOND QUICKSTART</h3>
-          <button class="copy-btn" onclick="navigator.clipboard.writeText('npx avengers-harness assemble')">COPY COMMAND</button>
+  <hr class="divider" />
+
+  <!-- ===== COMPARISON ===== -->
+  <section id="compare">
+    <div class="wrap">
+      <div class="section-header reveal">
+        <span class="section-kicker">📊 VS THE COMPETITION</span>
+        <h2 class="section-title">Why <span class="iron">Avengers</span><span class="arc"> Assemble</span>?</h2>
+        <p class="section-desc">Compared to other multi-agent harnesses — we're in a different league.</p>
+      </div>
+
+      <div class="compare-table-wrap reveal">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Avengers Assemble ⚡</th>
+              <th>Munder-Difflin</th>
+              <th>AutoGen</th>
+              <th>CrewAI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row">
+              <td>🆓 100% Free (BYOK)</td>
+              <td><span class="check">✔ Yes</span></td>
+              <td><span class="check">✔ Yes</span></td>
+              <td><span class="partial">⚠ Partial</span></td>
+              <td><span class="partial">⚠ Paid Tier</span></td>
+            </tr>
+            <tr>
+              <td>⚡ Arc Reactor Rate Limit Manager</td>
+              <td><span class="check">✔ Built-in</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+            </tr>
+            <tr class="highlight-row">
+              <td>🌐 Holographic Web Dashboard</td>
+              <td><span class="check">✔ Stark Tower HUD</span></td>
+              <td><span class="partial">⚠ Office Floor UI</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+            </tr>
+            <tr>
+              <td>🔮 Multiverse Parallel Simulation</td>
+              <td><span class="check">✔ Doctor Strange</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+            </tr>
+            <tr class="highlight-row">
+              <td>💎 Persistent Cross-Session Memory</td>
+              <td><span class="check">✔ Mind Stone</span></td>
+              <td><span class="partial">⚠ Basic</span></td>
+              <td><span class="partial">⚠ In-Memory</span></td>
+              <td><span class="partial">⚠ Limited</span></td>
+            </tr>
+            <tr>
+              <td>🛡️ Specialized QA Code Review Agent</td>
+              <td><span class="check">✔ Captain America</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="partial">⚠ Generic</span></td>
+              <td><span class="partial">⚠ Generic</span></td>
+            </tr>
+            <tr class="highlight-row">
+              <td>🕷️ Security Recon Dedicated Agent</td>
+              <td><span class="check">✔ Black Widow</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+            </tr>
+            <tr>
+              <td>🦙 Local LLM Support (Ollama)</td>
+              <td><span class="check">✔ Full Support</span></td>
+              <td><span class="check">✔ Yes</span></td>
+              <td><span class="partial">⚠ Partial</span></td>
+              <td><span class="partial">⚠ Partial</span></td>
+            </tr>
+            <tr class="highlight-row">
+              <td>🎭 Zero-Setup Offline Simulator</td>
+              <td><span class="check">✔ Yes (MockProvider)</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+              <td><span class="cross">✘ No</span></td>
+            </tr>
+            <tr>
+              <td>🧪 TypeScript + Test Coverage</td>
+              <td><span class="check">✔ 100% Strict TS</span></td>
+              <td><span class="partial">⚠ JavaScript</span></td>
+              <td><span class="partial">⚠ Python</span></td>
+              <td><span class="partial">⚠ Python</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== QUICKSTART ===== -->
+  <section id="quickstart">
+    <div class="wrap">
+      <div class="section-header reveal">
+        <span class="section-kicker">🚀 30-SECOND QUICKSTART</span>
+        <h2 class="section-title"><span class="arc">Assemble</span> in Under 30 Seconds</h2>
+        <p class="section-desc">Zero config required. Just npx and go.</p>
+      </div>
+
+      <div class="quickstart-grid">
+        <div class="qs-card reveal">
+          <h4><span>01</span> // RUN A MISSION</h4>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this, 'npx avengers-assemble assemble')">COPY</button>
+            <div><span class="c-prompt"># Zero install — just run with npx</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">npx avengers-assemble</span> <span class="c-arg">assemble</span> \</div>
+            <div>&nbsp;&nbsp;<span class="c-string">"Build JWT auth + unit tests + Docker"</span></div>
+            <br/>
+            <div><span class="c-prompt"># Or install globally</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">npm install -g avengers-assemble</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">avengers</span> <span class="c-arg">assemble</span> <span class="c-string">"Your mission"</span></div>
+          </div>
         </div>
-        <div class="terminal-body">
-          <div class="term-line"><span class="term-prompt">$</span> <span class="term-cmd">npx avengers-harness assemble</span> <span class="term-arg">"Build JWT auth and test suite"</span></div>
-          <div class="term-output">
-            <span class="red">🦾 [TONY-STARK]</span> Master mission deconstructed into 6 directives.<br/>
-            <span class="magenta">🕷️ [BLACK-WIDOW]</span> Security perimeter scanned. 0 vulnerabilities found.<br/>
-            <span class="green">🟢 [HULK]</span> Hot-paths optimized. O(N^2) bottlenecks smashed!<br/>
-            <span class="purple">🏹 [HAWKEYE]</span> 16 unit tests generated. 95.5% coverage achieved.<br/>
-            <span class="blue">🛡️ [CAPTAIN-AMERICA]</span> Vibranium Shield QA Stamp: <span class="green">APPROVED</span>.
+
+        <div class="qs-card reveal">
+          <h4><span>02</span> // OPEN THE HUD</h4>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this, 'avengers hud')">COPY</button>
+            <div><span class="c-prompt"># Launch Stark Tower Mission Control</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">avengers</span> <span class="c-arg">hud</span></div>
+            <br/>
+            <div><span class="c-prompt"># Opens http://localhost:3000</span></div>
+            <div><span class="c-prompt"># Live telemetry, hero cards, comms</span></div>
+            <br/>
+            <div><span class="c-prompt"># Or check team readiness</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">avengers</span> <span class="c-arg">status</span></div>
+          </div>
+        </div>
+
+        <div class="qs-card reveal">
+          <h4><span>03</span> // CONFIGURE PROVIDERS</h4>
+          <div class="code-block">
+            <div><span class="c-prompt"># Copy the config template</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">cp</span> stark.config.example.json stark.config.json</div>
+            <br/>
+            <div><span class="c-key">"providers"</span><span>: {</span></div>
+            <div>&nbsp;&nbsp;<span class="c-key">"claude-code"</span><span>: { </span><span class="c-key">"apiKey"</span><span>: </span><span class="c-string">"sk-ant-..."</span><span> },</span></div>
+            <div>&nbsp;&nbsp;<span class="c-key">"gemini"</span><span>: { </span><span class="c-key">"apiKey"</span><span>: </span><span class="c-string">"AIza..."</span><span> },</span></div>
+            <div>&nbsp;&nbsp;<span class="c-key">"grok"</span><span>: { </span><span class="c-key">"apiKey"</span><span>: </span><span class="c-string">"xai-..."</span><span> }</span></div>
+            <div><span>}</span></div>
+          </div>
+        </div>
+
+        <div class="qs-card reveal">
+          <h4><span>04</span> // LOCAL DEV SETUP</h4>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this, 'git clone https://github.com/shubhransh-gupta/avengers-assemble.git')">COPY</button>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">git clone</span> <span class="c-arg">gh:shubhransh-gupta/avengers-assemble</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">cd</span> avengers-assemble</div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">npm install</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">npm test</span> <span class="c-prompt"># 6/6 ✔</span></div>
+            <div><span class="c-prompt">$ </span><span class="c-cmd">npm start</span> <span class="c-prompt"># Opens HUD</span></div>
           </div>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="hud-footer">
+  <!-- ===== CTA BANNER ===== -->
+  <section id="cta">
+    <div style="position:relative;z-index:1;">
+      <div class="hero-kicker">⚡ EARTH'S MIGHTIEST MULTI-AGENT HARNESS</div>
+      <h2 class="section-title" style="font-size:clamp(36px,6vw,70px);margin-bottom:20px;">
+        Ready to <span class="iron">Assemble</span>?
+      </h2>
+      <p class="section-desc" style="max-width:560px;margin:0 auto 36px;">
+        Free. Open source. No extra cost. Just your existing subscriptions and <strong>Earth's Mightiest AI team</strong> at your command.
+      </p>
+      <div class="cta-btns">
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="btn btn-primary">
+          🚀 Deploy the Avengers — It's Free
+        </a>
+        <a href="hud.html" class="btn btn-arc">
+          🦾 Open Mission Control HUD
+        </a>
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="btn btn-ghost">
+          ⭐ Star on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
     <div class="wrap footer-inner">
       <div class="footer-brand">
-        <strong>STARK INDUSTRIES // AVENGERS HARNESS</strong> — Open Source under MIT License.
+        <span>STARK INDUSTRIES</span> // AVENGERS ASSEMBLE — Open Source MIT
       </div>
       <div class="footer-links">
-        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank">GitHub Repository</a>
-        <a href="#top">Return to Top</a>
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank">GitHub</a>
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble#readme" target="_blank">Docs</a>
+        <a href="hud.html">Mission HUD</a>
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble/issues" target="_blank">Issues</a>
       </div>
     </div>
   </footer>
 
-  <script src="hud.js"></script>
+  <script>
+    // ——— Floating particles ———
+    (function() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = 2 + Math.random() * 4;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 20;
+        const duration = 15 + Math.random() * 25;
+        const colors = ['#00d4ff', '#e8192c', '#ffd700', '#bf5af2', '#00ff87'];
+        p.style.cssText = `
+          width:${size}px;height:${size}px;
+          left:${left}%;bottom:-10px;
+          background:${colors[Math.floor(Math.random()*colors.length)]};
+          animation-duration:${duration}s;
+          animation-delay:-${delay}s;
+        `;
+        container.appendChild(p);
+      }
+    })();
+
+    // ——— Scroll reveal ———
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ——— Copy code buttons ———
+    function copyCode(btn, text) {
+      const content = text || btn.closest('.code-block')?.innerText?.replace('COPY\n','') || '';
+      navigator.clipboard.writeText(content).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'COPIED!';
+        btn.style.color = '#00ff87';
+        setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 2000);
+      });
+    }
+    window.copyCode = copyCode;
+
+    // ——— Active nav link ———
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 80) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--arc-blue)' : '';
+      });
+    }, { passive: true });
+  </script>
 </body>
 </html>
