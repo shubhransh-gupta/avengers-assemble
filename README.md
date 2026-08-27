@@ -1,11 +1,27 @@
-# 🦾 AVENGERS ASSEMBLE (STARK Multi-Agent Harness)
+# 🦾 AVENGERS ASSEMBLE — Earth's Mightiest Multi-Agent Coding Harness
 
 <p align="center">
-  <img src="https://img.shields.io/badge/ORCHESTRATOR-TONY_STARK_MARK_85-FF2A4D?style=for-the-badge&logo=shield" alt="Tony Stark Mark 85" />
-  <img src="https://img.shields.io/badge/POWER_GRID-ARC_REACTOR_ACTIVE-00F0FF?style=for-the-badge&logo=electron" alt="Arc Reactor" />
-  <img src="https://img.shields.io/badge/QA_STAMP-VIBRANIUM_SHIELD_APPROVED-007BFF?style=for-the-badge" alt="Vibranium Shield" />
-  <img src="https://img.shields.io/badge/LICENSE-MIT-28C840?style=for-the-badge" alt="MIT License" />
-  <img src="https://img.shields.io/badge/NODE->=18.0.0-FFC107?style=for-the-badge&logo=node.js" alt="Node" />
+  <a href="https://github.com/shubhransh-gupta/avengers-assemble/stargazers">
+    <img src="https://img.shields.io/github/stars/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=FFD700&labelColor=0d1117" alt="Stars" />
+  </a>
+  <a href="https://github.com/shubhransh-gupta/avengers-assemble/network/members">
+    <img src="https://img.shields.io/github/forks/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=00D4FF&labelColor=0d1117" alt="Forks" />
+  </a>
+  <a href="https://github.com/shubhransh-gupta/avengers-assemble/issues">
+    <img src="https://img.shields.io/github/issues/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=E8192C&labelColor=0d1117" alt="Issues" />
+  </a>
+  <a href="https://github.com/shubhransh-gupta/avengers-assemble/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/LICENSE-MIT-00FF87?style=for-the-badge&labelColor=0d1117" alt="MIT License" />
+  </a>
+  <img src="https://img.shields.io/badge/NODE->= 18.0.0-FFC107?style=for-the-badge&logo=node.js&labelColor=0d1117" alt="Node" />
+  <img src="https://img.shields.io/badge/TYPESCRIPT-Strict_Mode-3178C6?style=for-the-badge&logo=typescript&labelColor=0d1117" alt="TypeScript" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/ORCHESTRATOR-TONY_STARK_MARK_85-FF2A4D?style=for-the-badge" alt="Tony Stark" />
+  <img src="https://img.shields.io/badge/POWER_GRID-ARC_REACTOR_ACTIVE-00F0FF?style=for-the-badge" alt="Arc Reactor" />
+  <img src="https://img.shields.io/badge/QA_STAMP-VIBRANIUM_SHIELD_APPROVED-007BFF?style=for-the-badge" alt="QA" />
+  <img src="https://img.shields.io/badge/HEROES-9_ACTIVE-28C840?style=for-the-badge" alt="9 Heroes" />
 </p>
 
 ```
@@ -18,175 +34,220 @@
            ⚡ T A C T I C A L   A G E N T   H A R N E S S ⚡
 ```
 
+<p align="center">
+  <strong>⭐ If this saved your codebase, star this repo. Tony Stark would. ⭐</strong>
+</p>
+
+---
+
 > *"And if we can't protect your codebase, you can be damn well sure we'll avenge it."*  
 > — **Tony Stark**
 
-**Avengers Assemble** is a free, open-source, ultra-performant multi-agent coding harness that turns your AI subscriptions (Claude Code, Gemini CLI, Antigravity, OpenAI Codex, xAI Grok, Ollama, DeepSeek-R1, Cursor, Copilot) into an **elite superhero strike team** operating from the **Stark Tower Mission Control HUD**.
+**Avengers Assemble** is a **free, open-source, ultra-performant multi-agent AI coding harness** that turns your existing AI subscriptions into an **elite superhero strike team** — coordinated by Tony Stark, secured by Black Widow, tested by Hawkeye, and reviewed by Captain America himself.
+
+Works with **Claude Code**, **Gemini 2.5**, **GPT-4o**, **Grok**, **Ollama/DeepSeek-R1** — using the **subscriptions you already pay for**, harvesting their hourly limits so you never hit a 429 again.
+
+---
+
+## 🚀 30-Second Quickstart
+
+```bash
+# No install needed — run instantly with npx
+npx avengers-assemble assemble "Build JWT auth middleware, unit test suite, and Docker container"
+
+# Or launch the Stark Tower holographic Mission Control HUD
+npx avengers-assemble hud
+# → Opens http://localhost:3000 (spinning Arc Reactor, hero telemetry, live comms)
+```
+
+### Full Local Setup
+
+```bash
+git clone https://github.com/shubhransh-gupta/avengers-assemble.git
+cd avengers-assemble
+npm install
+
+npm test      # ✔ 6/6 suites pass
+npm start     # → http://localhost:3000 Stark Tower HUD
+```
+
+> **Zero API keys required.** A built-in `MockProvider` simulates all 9 heroes out-of-the-box.
 
 ---
 
 ## 🌟 Why Avengers Assemble?
 
-Most multi-agent frameworks are heavy, burn through your API budgets in minutes, or lack visual command telemetry. **Avengers Assemble** is built for real developer workflows:
-
-1. 🦾 **Tony Stark Master Orchestrator**: High-level problem deconstruction, tactical task delegation, and DAG execution.
-2. ⚡ **Arc Reactor Power Grid**: Tracks rolling hourly subscription limits (Claude Pro 5-hour window, OpenAI TPM, Gemini quotas) and auto-balances workloads across heroes so you never hit 429 rate limit walls.
-3. 🛡️ **Captain America QA Gatekeeper**: Strict code review, standards enforcement, TypeScript safety audits, and pull request sign-offs. *"I can do this all day."*
-4. 🟢 **Bruce Banner & The Hulk**: Deep AST memory analysis when calm (Banner); brute-force legacy refactoring & bug smashing when enraged (Hulk).
-5. 🕷️ **Black Widow Stealth Recon**: Zero-day CVE dependency auditing, secret leak prevention (.env sanitization), and penetration testing.
-6. ⚡ **Thor DevOps & Lightning Builds**: Multi-stage Dockerfiles, Kubernetes manifests, CI/CD Bifrost pipelines, and high-voltage stress tests.
-7. 🏹 **Hawkeye Precision Sniper**: 100% boundary testing, edge-case generation, mutation assertions. Never misses a bug.
-8. 🕸️ **Spider-Man Frontend Hero**: Next.js, React, Tailwind CSS, fluid animations, and responsive micro-interactions.
-9. 🔮 **Doctor Strange Multiverse Simulator**: Simulates 14,000,605 future architectural branches in parallel isolated workspaces, with instantaneous **Time-Stone Rollbacks**.
-10. 💎 **Vision Mind-Stone Memory**: Persistent org knowledge base & semantic memory synced across all hero agents.
+| Pain Point | Avengers Solution |
+|:---|:---|
+| 🔴 Hit 429 rate limits constantly | **⚡ Arc Reactor Power Grid** — tracks rolling hourly windows, auto-rotates before throttling |
+| 🔴 No team coordination | **📡 War-Room Comms Mesh** — pub/sub channels so heroes coordinate in real time |
+| 🔴 No visual feedback | **🌐 Stark Tower HUD** — holographic WebSocket dashboard with live hero telemetry |
+| 🔴 No rollback safety | **🔮 Time Stone Engine** — Doctor Strange snapshots and rolls back timelines instantly |
+| 🔴 Knowledge lost between sessions | **💎 Mind Stone Memory** — Vision persists semantic org knowledge across all runs |
+| 🔴 Need to pay for more API usage | **🆓 BYOK + Subscription Harvester** — uses what you already pay for |
+| 🔴 Complex setup | **🤖 Zero-Setup Simulator** — works with zero keys, zero config |
 
 ---
 
-## ⚡ 30-Second Quickstart
+## 🦸 The Avengers Strike Team
 
-You don't even need to install anything globally. Run directly with `npx`:
+| Hero | Character | Role | Power |
+|:---|:---|:---|:---|
+| 🦾 **Iron Man** | Tony Stark | **Lead GOD Orchestrator** | Deconstructs prompts → parallel directives, balances Arc Reactor load |
+| 🛡️ **Captain America** | Steve Rogers | **QA Commander** | TypeScript compliance, code review, Vibranium Shield sign-off |
+| 🟢 **The Hulk** | Bruce Banner | **Debugger & Refactorer** | AST analysis (Banner) + O(N²)→O(log N) smashing (Hulk) |
+| 🕷️ **Black Widow** | Natasha Romanoff | **Security Recon** | CVE scanning, .env secret sanitization, perimeter defense |
+| ⚡ **Thor** | Thor Odinson | **DevOps & Builds** | Dockerfile, Kubernetes, CI/CD Bifrost pipelines |
+| 🏹 **Hawkeye** | Clint Barton | **Precision Testing** | 100% edge-case unit test coverage, boundary assertions |
+| 🕸️ **Spider-Man** | Peter Parker | **Frontend Hero** | React, Tailwind CSS, Next.js, responsive micro-animations |
+| 🔮 **Doctor Strange** | Stephen Strange | **Multiverse Simulator** | 14,000,605 timeline branches, instant Time Stone rollback |
+| 💎 **Vision** | Vision | **Mind Stone Memory** | Persistent semantic knowledge base across all sessions |
+
+---
+
+## ⚡ Core Systems
+
+### Arc Reactor Power Grid
+Tracks rolling 5-hour token windows across Claude, Gemini, GPT-4, Grok, and Ollama. Auto-rotates providers before throttling. Never hit a 429 again.
+
+### Stark Tower Mission Control HUD
+- **Spinning Arc Reactor Core** — live token gauge
+- **Hero Status Cards** — `IDLE | ANALYZING | EXECUTING | SMASHED | VICTORIOUS`
+- **Encrypted War-Room Comms** — real-time pub/sub feed
+- **Multiverse Branch Viewer** — Doctor Strange timeline explorer
+- **Web Audio API SFX** — repulsor blasts, JARVIS chime, Vibranium shield clang
+
+### Time Stone Engine
+Doctor Strange spawns parallel architectural branches across isolated workspaces, evaluates probability of success across 14M+ realities, and performs instant snapshot rollbacks.
+
+### Mind Stone Persistent Memory
+Vision maintains a semantic memory store (`.stark/memory.json`). Every convention, decision, and resolved bug is indexed and searchable across sessions.
+
+---
+
+## 🖥️ CLI Commands
 
 ```bash
-# 🚀 Launch an instant mission in your terminal
-npx avengers-assemble assemble "Build JWT auth middleware, unit test suite, and Docker container"
+avengers assemble "Implement GraphQL API with subscriptions, auth, and test suite"
+avengers hud --port 3000
+avengers status
 
-# 🌐 Or launch the Stark Tower Holographic Mission Control HUD
-npx avengers-assemble hud
-```
-
-### Local Installation & Development
-
-```bash
-# Clone the repository
-git clone https://github.com/shubhransh-gupta/avengers-assemble.git
-cd avengers-assemble
-
-# Install dependencies
-npm install
-
-# Run the test suite
-npm test
-
-# Launch Stark Tower HUD at http://localhost:3000
-npm start
+# Aliases
+stark assemble "Refactor legacy payment gateway into microservices"
+stark roster
 ```
 
 ---
 
-## 🖥️ Stark Tower Mission Control (Web HUD)
-
-Launch the interactive holographic command center by running `npm run hud` or `npx avengers-assemble hud`:
-
-- **Spinning Arc Reactor Core**: Live gauge of hourly token limits and battery percentage.
-- **Hero Strike Team Cards**: Real-time status indicators (Idle, Analyzing, Smashed, Victorious), power consumption, and active directives.
-- **War-Room Comms Feed**: Encrypted inter-hero chat protocol streaming real-time coordination.
-- **Multiverse Branch Visualizer**: Explore speculative realities simulated by Doctor Strange.
-- **Web Audio Synthesizer**: Authentic retro-futuristic Sci-Fi SFX (Repulsor blasts, JARVIS chime, Thor thunder, Vibranium shield clangs).
-
----
-
-## 🦸 The Avengers Strike Team Roster
-
-| Hero | Character | Role & Specialization | Preferred Provider |
-| :--- | :--- | :--- | :--- |
-| 🦾 **Iron Man** | Tony Stark | **Lead Architect & GOD Orchestrator**<br/>Decomposes user prompts into parallel directives, load balances the Arc Reactor power grid, and routes inter-hero comms. | Anthropic Claude 3.7 / Claude Code |
-| 🛡️ **Captain America** | Steve Rogers | **QA Commander & Standards Enforcer**<br/>Rigorous code reviews, TypeScript strict compliance, PR approval stamp. *"I can do this all day."* | Google Gemini 2.5 / Antigravity |
-| 🟢 **The Hulk** | Bruce Banner | **Deep Debugger & Gamma Refactorer**<br/>Banner mode: AST & memory leak analysis. Hulk mode: HULK SMASH complex bugs & messy legacy code. | OpenAI GPT-4.5 / Codex |
-| 🕷️ **Black Widow** | Natasha Romanoff | **Security Recon & Vulnerability Auditor**<br/>Scans for secret leaks (.env), audits CVE dependencies, penetration test perimeter. | Claude Code / Anthropic |
-| ⚡ **Thor** | Thor Odinson | **DevOps & Lightning Builds**<br/>Multi-stage Docker, Kubernetes, CI/CD Bifrost workflows, high-voltage benchmarking. | xAI Grok 3 |
-| 🏹 **Hawkeye** | Clint Barton | **Precision Sniper Unit Testing**<br/>Edge cases, boundary condition hunter, regression test suites with 100% precision. | Gemini Pro / Flash |
-| 🕸️ **Spider-Man** | Peter Parker | **Frontend & Rapid UI/UX Specialist**<br/>React, Tailwind CSS, micro-interactions, responsive design, generative UI widgets. | Claude 3.7 Sonnet |
-| 🔮 **Doctor Strange** | Stephen Strange | **Multiverse Simulation & Time Stone**<br/>Simulates alternate realities, diff comparison, and instant Time-Stone branch rollback. | OpenAI o3-mini |
-| 💎 **Vision** | Vision | **Mind Stone Knowledge Base**<br/>Persistent semantic indexing, architecture pattern recall, and org-wide memory sync. | Local Ollama / DeepSeek-R1 |
-
----
-
-## 📊 Comparison Matrix
-
-| Feature | 🦾 Avengers Assemble | Munder Difflin | AutoGen | CrewAI |
-| :--- | :---: | :---: | :---: | :---: |
-| **Theme & Personality** | **Avengers / Stark Tech** | The Office (Dunder Mifflin) | Generic | Generic |
-| **Lead Orchestrator** | **Tony Stark (Iron Man)** | Michael Scott | UserProxy | Custom |
-| **Rate Limit / Hourly Harvester** | **⚡ Arc Reactor Power Grid** | Basic limits | ❌ None | ❌ None |
-| **Holographic Web HUD** | **✅ Built-in (Cyberpunk/SFX)** | ✅ 2D Office floor | ❌ None | ❌ Basic |
-| **Multiverse / Rollback Engine** | **🔮 Doctor Strange Time Stone** | ❌ None | ❌ None | ❌ None |
-| **Persistent Semantic Memory** | **💎 Vision Mind Stone** | ✅ Semantic layer | ⚠️ Memory plugin | ⚠️ Vector DB |
-| **Zero-Setup Offline Simulator** | **✅ Instant out-of-box demo** | ⚠️ Partial | ❌ No | ❌ No |
-| **Local LLMs (Ollama / DeepSeek)**| **✅ Full support** | ✅ Supported | ✅ Supported | ✅ Supported |
-
----
-
-## ⚙️ Configuration (`stark.config.json`)
-
-Customize your strike team or hook up your existing API keys:
+## ⚙️ Configuration
 
 ```json
 {
-  "orchestrator": {
-    "name": "Tony Stark",
-    "callsign": "IRON_MAN",
-    "aiProvider": "claude-code",
-    "model": "claude-3-7-sonnet"
-  },
+  "orchestrator": { "name": "Tony Stark", "aiProvider": "claude-code" },
   "arcReactor": {
     "maxHourlyTokens": 200000,
-    "rollingWindowHours": 5,
-    "throttleThresholdPct": 85,
     "autoFailover": true,
     "providers": {
-      "claude-code": { "enabled": true, "hourlyTokenLimit": 80000 },
-      "gemini": { "enabled": true, "hourlyTokenLimit": 120000 },
-      "openai": { "enabled": true, "hourlyTokenLimit": 60000 },
-      "ollama": { "enabled": true, "baseUrl": "http://localhost:11434" }
+      "claude-code": { "enabled": true, "hourlyTokenLimit": 80000, "priority": 1 },
+      "gemini":      { "enabled": true, "hourlyTokenLimit": 120000, "priority": 2 },
+      "openai":      { "enabled": true, "hourlyTokenLimit": 60000,  "priority": 3 },
+      "grok":        { "enabled": true, "hourlyTokenLimit": 40000,  "priority": 4 },
+      "ollama":      { "enabled": true, "baseUrl": "http://localhost:11434" }
     }
-  },
-  "missionControl": {
-    "port": 3000,
-    "soundEffects": true
   }
 }
 ```
 
-### Environment Variables (`.env`)
-
 ```env
-ANTHROPIC_API_KEY=your_anthropic_key
-GEMINI_API_KEY=your_gemini_key
-OPENAI_API_KEY=your_openai_key
-XAI_API_KEY=your_grok_key
+ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=AIza...
+OPENAI_API_KEY=sk-proj-...
+XAI_API_KEY=xai-...
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
-*(Note: Avengers Assemble includes a high-fidelity built-in simulator, so you can test and explore immediately without any API keys!)*
+> All keys optional — simulator activates automatically if provider is unavailable.
 
 ---
 
-## 💻 CLI Commands Reference
+## 📊 vs The Competition
 
-```bash
-# Assemble the Avengers for a mission
-avengers assemble "Implement OAuth2 login with GitHub and Google"
+| Feature | 🦾 Avengers Assemble | Munder-Difflin | AutoGen | CrewAI |
+|:---|:---:|:---:|:---:|:---:|
+| Free, BYOK, no extra cost | ✅ | ✅ | ⚠️ | ⚠️ |
+| Arc Reactor rate-limit manager | ✅ | ❌ | ❌ | ❌ |
+| Holographic Web Dashboard | ✅ | ✅ | ❌ | ❌ |
+| Multiverse parallel simulation | ✅ | ❌ | ❌ | ❌ |
+| Persistent cross-session memory | ✅ | ⚠️ | ⚠️ | ⚠️ |
+| Dedicated security recon agent | ✅ | ❌ | ❌ | ❌ |
+| Zero-setup offline simulator | ✅ | ❌ | ❌ | ❌ |
+| TypeScript strict mode | ✅ | ❌ | ❌ | ❌ |
 
-# Launch the Stark Tower Web HUD
-avengers hud --port 3000
+---
 
-# Inspect Arc Reactor power levels and Hero readiness
-avengers status
+## 🧪 Tests
 
-# Alias commands
-stark assemble "Refactor database query layer"
-stark status
 ```
+✔ ArcReactorPowerGrid — initial capacity and optimal provider    (0.49ms)
+✔ ArcReactorPowerGrid — power consumption and failover routing   (0.16ms)
+✔ StarkCommsNetwork — message routing and channel subscription   (0.79ms)
+✔ TimeStoneEngine — multiverse branching and timeline selection  (0.19ms)
+✔ MindStoneMemory — persistent indexing and semantic search      (0.51ms)
+✔ StarkOrchestrator — full Avengers mission execution           (22.7ms)
+
+ℹ tests 6 | pass 6 | fail 0
+```
+
+---
+
+## 📁 Project Structure
+
+```
+avengers-assemble/
+├── src/
+│   ├── heroes/           # 9 Avenger agent implementations
+│   ├── core/             # Arc Reactor, Comms, Time Stone, Mind Stone
+│   ├── providers/        # Claude, Gemini, OpenAI, Grok, Ollama, Mock
+│   ├── cli/              # Terminal commands
+│   └── server/           # WebSocket + REST HUD server
+├── public/
+│   ├── index.html        # Marketing landing page
+│   ├── hud.html          # Live Mission Control HUD
+│   ├── hud.css           # Cyberpunk Stark Tech styles
+│   └── hud.js            # WebSocket client + SFX synthesizer
+├── test/                 # Automated test suites
+├── bin/stark.js          # CLI entrypoint
+└── stark.config.example.json
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome all contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+- 🦸 Add a new hero agent (Ant-Man, Wanda, Falcon?)
+- 🔌 Add a new LLM provider
+- 🎨 Improve the Stark Tower HUD
+- 📝 Improve documentation
+- 🐛 [Report bugs](https://github.com/shubhransh-gupta/avengers-assemble/issues)
 
 ---
 
 ## 🛡️ License
 
-Built with ❤️ by the open-source community under the **MIT License**.  
-All Avengers character names and references are homage inspirations under Fair Use.
+MIT License — Built with ❤️ by the open-source community.  
+Avengers character names are homage inspirations under Fair Use.
 
 ---
 
 <p align="center">
-  <strong>⭐ Star this repo if you're ready to assemble Earth's Mightiest Coding Agents! ⭐</strong>
+  <strong>⭐ Star this repo if you're ready to assemble Earth's Mightiest Coding Agents! ⭐</strong><br/><br/>
+  <a href="https://github.com/shubhransh-gupta/avengers-assemble/stargazers">
+    <img src="https://img.shields.io/github/stars/shubhransh-gupta/avengers-assemble?style=social&label=Star" />
+  </a>
+  &nbsp;
+  <a href="https://github.com/shubhransh-gupta/avengers-assemble/network/members">
+    <img src="https://img.shields.io/github/forks/shubhransh-gupta/avengers-assemble?style=social&label=Fork" />
+  </a>
 </p>

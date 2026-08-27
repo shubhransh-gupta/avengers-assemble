@@ -1,0 +1,8 @@
+# 🦾 Avengers Assemble — Code Owners
+# Captain America reviews all changes
+
+* @shubhransh-gupta
+
+# Hero agents — orchestrator always reviews
+src/heroes/ @shubhransh-gupta
+src/core/ @shubhransh-gupta

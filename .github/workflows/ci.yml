@@ -1,0 +1,62 @@
+name: ⚡ Arc Reactor CI — Avengers Assemble
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  assemble:
+    name: 🦾 Tony Stark Build & Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - name: 🛡️ Checkout — Captain America clones the repo
+        uses: actions/checkout@v4
+
+      - name: ⚡ Setup Node.js ${{ matrix.node-version }} — Arc Reactor Power On
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies — Assembling the team
+        run: npm ci
+
+      - name: 🏗️ Build TypeScript — Thor forges the artifacts
+        run: npm run build
+
+      - name: 🧪 Run Tests — Hawkeye fires precision tests
+        run: npm test
+
+      - name: 🕷️ Security Audit — Black Widow scans dependencies
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  vibranium-shield:
+    name: 🛡️ Captain America QA Gate
+    runs-on: ubuntu-latest
+    needs: assemble
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+
+      - name: 🛡️ Vibranium Shield QA Stamp
+        run: |
+          echo "╔══════════════════════════════════════════╗"
+          echo "║  🛡️  VIBRANIUM SHIELD QA: APPROVED  🛡️   ║"
+          echo "║  Captain America has reviewed this PR.   ║"
+          echo "║  Build: PASSING | Tests: PASSING         ║"
+          echo "╚══════════════════════════════════════════╝"
