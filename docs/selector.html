@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avengers Character Selector — Earth's Mightiest Multi-Agent Coding Harness</title>
+  <meta name="description" content="Interactive futuristic 3D Avengers Character Selector. Select hero agents, review combat telemetry, and deploy directives across the multi-agent mesh." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
+
+  <!-- Google Fonts: Orbitron, Rajdhani, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="selector.css" />
+</head>
+<body class="selector-body">
+  <canvas id="ambientCanvas"></canvas>
+  <div class="selector-grid-bg"></div>
+  <div class="selector-vignette"></div>
+  <div class="selector-scanlines"></div>
+
+  <div class="selector-app">
+    <!-- Top Navigation Bar -->
+    <header class="selector-nav">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-reactor-mini"></div>
+        <div>
+          <div class="nav-brand-title">STARK<span>NET</span> // HERO SELECTOR</div>
+          <span class="nav-brand-sub">TACTICAL MULTI-AGENT HARNESS v1.0</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <div class="hud-pill">
+          <span class="dot"></span>
+          <span>ORCHESTRATOR: ONLINE</span>
+        </div>
+        <button id="soundToggleBtn" class="hud-icon-btn">
+          🔊 SFX: ON
+        </button>
+        <a href="hud.html" class="hud-icon-btn">
+          🚀 Mission Control HUD
+        </a>
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="hud-icon-btn" style="border-color:#ff2a4d;color:#ff4d6d;">
+          ⭐ Star on GitHub
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Character Selector Arena -->
+    <main class="selector-arena">
+      
+      <!-- LEFT WING: Combat & Radar Specs -->
+      <section class="tactical-wing">
+        <div class="panel-header">
+          <span class="panel-title">⚡ COMBAT TELEMETRY</span>
+          <span class="panel-code">SYS://RADAR.09</span>
+        </div>
+
+        <!-- Hexagon Radar Chart -->
+        <div class="radar-container">
+          <canvas id="radarCanvas" width="220" height="220"></canvas>
+        </div>
+
+        <!-- Stat Bars -->
+        <div class="stat-bars-list">
+          <div class="stat-bar-item">
+            <div class="stat-bar-labels">
+              <span>CODE VELOCITY</span>
+              <span class="val" id="statVelocity">98%</span>
+            </div>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="statVelocityFill" style="width: 98%;"></div>
+            </div>
+          </div>
+
+          <div class="stat-bar-item">
+            <div class="stat-bar-labels">
+              <span>SECURITY RECON</span>
+              <span class="val" id="statSecurity">92%</span>
+            </div>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="statSecurityFill" style="width: 92%;"></div>
+            </div>
+          </div>
+
+          <div class="stat-bar-item">
+            <div class="stat-bar-labels">
+              <span>TEST PRECISION</span>
+              <span class="val" id="statPrecision">94%</span>
+            </div>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="statPrecisionFill" style="width: 94%;"></div>
+            </div>
+          </div>
+
+          <div class="stat-bar-item">
+            <div class="stat-bar-labels">
+              <span>REFACTOR POWER</span>
+              <span class="val" id="statRefactor">96%</span>
+            </div>
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" id="statRefactorFill" style="width: 96%;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CENTER STAGE: 3D Holographic Character Podium -->
+      <section class="hero-stage">
+        <div class="holo-projection">
+          <div class="holo-ring r1"></div>
+          <div class="holo-ring r2"></div>
+          <div class="holo-ring r3"></div>
+          <div class="hero-avatar-crest" id="heroAvatarCrest">🦾</div>
+        </div>
+
+        <div class="hero-rank-tag" id="heroRankTag">OMEGA-CLASS // MASTER ORCHESTRATOR</div>
+        <h1 class="hero-main-title" id="heroMainTitle">Tony Stark</h1>
+        <div class="hero-callsign" id="heroCallsign">Iron Man / JARVIS</div>
+
+        <div class="hero-quote-box">
+          <p id="heroQuoteText">"I told you. I don't want to join your super-secret boy band. I'm running the whole damn show."</p>
+        </div>
+
+        <button class="voice-line-btn" id="voiceLineBtn">
+          <span>🔊</span> Play Audio SFX
+        </button>
+      </section>
+
+      <!-- RIGHT WING: Live Directive Deployment & Model Tech -->
+      <section class="directive-wing">
+        <div class="panel-header">
+          <span class="panel-title">🎯 DIRECTIVE CONSOLE</span>
+          <span class="panel-code">SEC://EXE.STARK</span>
+        </div>
+
+        <!-- Tech Matrix -->
+        <div class="spec-matrix">
+          <div class="spec-cell">
+            <span class="spec-key">PREFERRED MODEL</span>
+            <span class="spec-val highlight" id="heroPreferredModel">Claude 3.7 Sonnet</span>
+          </div>
+          <div class="spec-cell">
+            <span class="spec-key">TOKEN CAP</span>
+            <span class="spec-val" id="heroTokenCap">80,000 / hr</span>
+          </div>
+          <div class="spec-cell" style="grid-column: span 2;">
+            <span class="spec-key">PRIMARY WEAPON / TOOLING</span>
+            <span class="spec-val" id="heroWeapon">Mark 85 Nanotech Armor & Arc Reactor Core v9</span>
+          </div>
+          <div class="spec-cell" style="grid-column: span 2;">
+            <span class="spec-key">SPECIALIZATION</span>
+            <span class="spec-val highlight" id="heroSpecialty">Task Decomposition & DAG Directive Scheduling</span>
+          </div>
+        </div>
+
+        <!-- Interactive Directive Deployer -->
+        <div class="directive-test-box">
+          <div class="directive-input-wrap">
+            <input 
+              type="text" 
+              class="directive-input" 
+              id="directivePromptInput" 
+              value="Decompose full-stack authentication microservice into DAG tasks"
+              placeholder="Assign tactical directive to this hero..."
+            />
+          </div>
+          <button class="deploy-action-btn" id="deployActionBtn">
+            <span>⚡</span>
+            <span>DEPLOY DIRECTIVE</span>
+          </button>
+        </div>
+
+        <!-- Live Terminal Stream Output -->
+        <div class="hero-live-terminal" id="heroLiveTerminal">
+          <!-- Dynamically populated with character logs -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom 3D Character Selector Dock (Carousel) -->
+    <footer class="selector-dock">
+      <button class="dock-arrow-btn" id="dockPrevBtn" title="Previous Hero (Arrow Left)">❮</button>
+
+      <div class="dock-carousel" id="dockCarousel">
+        <!-- Dynamically rendered hero thumbnails -->
+      </div>
+
+      <button class="dock-arrow-btn" id="dockNextBtn" title="Next Hero (Arrow Right)">❯</button>
+
+      <div class="keyboard-hint">
+        <span>NAVIGATE:</span>
+        <kbd>←</kbd> <kbd>→</kbd>
+        <span>OR</span>
+        <kbd>1</kbd>–<kbd>9</kbd>
+      </div>
+    </footer>
+  </div>
+
+  <script src="selector.js"></script>
+</body>
+</html>
