@@ -1,0 +1,57 @@
+{
+  "$schema": "https://starkindustries.ai/schemas/stark-config.json",
+  "version": "1.0.0",
+  "orchestrator": {
+    "name": "Tony Stark",
+    "callsign": "IRON_MAN",
+    "aiProvider": "claude-code",
+    "model": "claude-3-7-sonnet",
+    "jarvisTelemetry": true
+  },
+  "arcReactor": {
+    "maxHourlyTokens": 150000,
+    "rollingWindowHours": 5,
+    "throttleThresholdPct": 85,
+    "autoFailover": true,
+    "providers": {
+      "claude-code": {
+        "enabled": true,
+        "hourlyTokenLimit": 80000,
+        "priority": 1
+      },
+      "gemini": {
+        "enabled": true,
+        "hourlyTokenLimit": 120000,
+        "priority": 2
+      },
+      "openai": {
+        "enabled": true,
+        "hourlyTokenLimit": 60000,
+        "priority": 3
+      },
+      "ollama": {
+        "enabled": true,
+        "baseUrl": "http://localhost:11434",
+        "model": "deepseek-r1:latest",
+        "hourlyTokenLimit": 9999999,
+        "priority": 4
+      }
+    }
+  },
+  "heroes": {
+    "captainAmerica": { "enabled": true, "strictQA": true },
+    "hulk": { "enabled": true, "autoSmashThreshold": 3 },
+    "blackWidow": { "enabled": true, "scanSecrets": true, "checkCVE": true },
+    "thor": { "enabled": true, "dockerEnabled": true },
+    "hawkeye": { "enabled": true, "targetCoveragePct": 90 },
+    "spiderMan": { "enabled": true, "framework": "react" },
+    "doctorStrange": { "enabled": true, "simulatedTimelines": 3 },
+    "vision": { "enabled": true, "persistentMemoryPath": ".stark/memory.json" }
+  },
+  "missionControl": {
+    "port": 3000,
+    "host": "localhost",
+    "soundEffects": true,
+    "theme": "stark-hologram"
+  }
+}
