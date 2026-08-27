@@ -1,0 +1,159 @@
+import { BaseHero, HeroExecutionResult } from './base-hero.js';
+import { MissionDirective, HeroId } from '../types.js';
+
+export class TonyStarkHero extends BaseHero {
+  constructor(arcReactor: any, providers: any) {
+    super('tony-stark', arcReactor, providers);
+  }
+
+  async executeDirective(directive: MissionDirective): Promise<HeroExecutionResult> {
+    this.setStatus('analyzing');
+    this.speak(`JARVIS, initialize Mark 85 architecture matrix. Deconstructing: "${directive.title}"`);
+
+    const systemPrompt = `You are Tony Stark (Iron Man), Lead Architect & GOD Orchestrator of Avengers Assemble.
+Break down complex architectural requirements into crystal-clear specifications, delegate tasks to other heroes, and synthesize the final deliverable.`;
+
+    const result = await this.queryLLM(
+      `Directive: ${directive.title}\nDescription: ${directive.description}\nInputs: ${JSON.stringify(directive.inputs || {})}`,
+      systemPrompt
+    );
+
+    this.setStatus('victorious');
+    this.metrics.tasksCompleted += 1;
+    this.speak(`Directives formulated and synced to Avengers mesh. Ready for execution.`);
+
+    return {
+      success: true,
+      output: result.text,
+      tokensUsed: result.tokens,
+      data: {
+        architectureNotes: result.text,
+        synthesizedBy: 'Tony Stark',
+      },
+    };
+  }
+
+  async planMission(userPrompt: string): Promise<MissionDirective[]> {
+    this.setStatus('analyzing');
+    this.speak(`JARVIS, run global tactical scan. Master user objective: "${userPrompt}"`);
+
+    const planningPrompt = `Analyze this user development request: "${userPrompt}".
+Break it down into 4-6 distinct, parallelizable Mission Directives assigned to the most suitable Avengers:
+- 'spider-man' for Frontend, UI/UX, responsive components, styling
+- 'hulk' for Deep logic, algorithms, heavy refactoring, backend services
+- 'thor' for Docker, CI/CD, deployment manifests, build optimization
+- 'hawkeye' for Unit tests, boundary conditions, edge case suites
+- 'black-widow' for Security auditing, secret sanitization, CVE analysis
+- 'captain-america' for Final QA review, code standards audit, architecture approval
+
+Return a structured JSON list of directives with format:
+[
+  {
+    "title": "Short directive title",
+    "description": "Clear technical instructions",
+    "assignedHero": "hero-id",
+    "priority": "high" | "medium" | "omega-level"
+  }
+]`;
+
+    try {
+      const { text } = await this.queryLLM(
+        planningPrompt,
+        'You are Tony Stark. Return JSON only.',
+        'claude-code'
+      );
+
+      let directivesData: Array<any> = [];
+      const jsonMatch = text.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        directivesData = JSON.parse(jsonMatch[0]);
+      } else {
+        directivesData = [
+          {
+            title: 'Frontend UI & Component Architecture',
+            description: `Design and implement reactive UI for: ${userPrompt}`,
+            assignedHero: 'spider-man' as HeroId,
+            priority: 'high',
+          },
+          {
+            title: 'Core Engine & Logic Processing',
+            description: `Implement high-performance core logic and algorithms for: ${userPrompt}`,
+            assignedHero: 'hulk' as HeroId,
+            priority: 'omega-level',
+          },
+          {
+            title: 'Precision Unit Tests & Coverage Suite',
+            description: `Generate exhaustive unit tests and boundary assertions for: ${userPrompt}`,
+            assignedHero: 'hawkeye' as HeroId,
+            priority: 'high',
+          },
+          {
+            title: 'Security Recon & Secret Sanitization',
+            description: `Audit dependencies and sanitize environment credentials for: ${userPrompt}`,
+            assignedHero: 'black-widow' as HeroId,
+            priority: 'medium',
+          },
+          {
+            title: 'DevOps, Docker & CI/CD Pipeline',
+            description: `Generate container configuration and deployment manifests for: ${userPrompt}`,
+            assignedHero: 'thor' as HeroId,
+            priority: 'medium',
+          },
+          {
+            title: 'Vibranium Shield QA & Architecture Sign-Off',
+            description: `Perform rigorous code audit and final quality approval for: ${userPrompt}`,
+            assignedHero: 'captain-america' as HeroId,
+            priority: 'omega-level',
+          },
+        ];
+      }
+
+      const directives: MissionDirective[] = directivesData.map((d, index) => ({
+        id: `dir-${Date.now()}-${index + 1}`,
+        title: d.title,
+        description: d.description,
+        assignedHero: d.assignedHero,
+        status: 'pending',
+        priority: d.priority || 'medium',
+      }));
+
+      this.setStatus('idle');
+      return directives;
+    } catch {
+      return [
+        {
+          id: `dir-${Date.now()}-1`,
+          title: 'Frontend Component Architecture',
+          description: `Build reactive interfaces for: ${userPrompt}`,
+          assignedHero: 'spider-man',
+          status: 'pending',
+          priority: 'high',
+        },
+        {
+          id: `dir-${Date.now()}-2`,
+          title: 'Core Engine & Logic Optimization',
+          description: `Build performant service logic for: ${userPrompt}`,
+          assignedHero: 'hulk',
+          status: 'pending',
+          priority: 'omega-level',
+        },
+        {
+          id: `dir-${Date.now()}-3`,
+          title: 'Precision Unit Testing Suite',
+          description: `Generate boundary unit tests for: ${userPrompt}`,
+          assignedHero: 'hawkeye',
+          status: 'pending',
+          priority: 'high',
+        },
+        {
+          id: `dir-${Date.now()}-4`,
+          title: 'Vibranium Shield QA Review',
+          description: `Review code quality and verify standards for: ${userPrompt}`,
+          assignedHero: 'captain-america',
+          status: 'pending',
+          priority: 'omega-level',
+        },
+      ];
+    }
+  }
+}
