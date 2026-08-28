@@ -24,13 +24,13 @@ export const DEFAULT_CONFIG: StarkConfig = {
         enabled: Boolean(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_CODE),
         apiKey: process.env.ANTHROPIC_API_KEY,
         hourlyTokenLimit: 80000,
-        priority: 1,
+        priority: 2,
       },
       gemini: {
         enabled: Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY),
         apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY,
         hourlyTokenLimit: 120000,
-        priority: 2,
+        priority: 1,
       },
       openai: {
         enabled: Boolean(process.env.OPENAI_API_KEY),
@@ -51,7 +51,7 @@ export const DEFAULT_CONFIG: StarkConfig = {
         priority: 5,
       },
       ollama: {
-        enabled: true,
+        enabled: Boolean(process.env.OLLAMA_ENABLED),
         baseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
         model: 'deepseek-r1:latest',
         hourlyTokenLimit: 99999999,
