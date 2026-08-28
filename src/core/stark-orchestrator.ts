@@ -8,6 +8,7 @@ import {
 } from '../types.js';
 import { StarkCommsNetwork } from './stark-comms.js';
 import { ArcReactorPowerGrid } from './arc-reactor.js';
+import { WorkspaceGenerator } from './workspace-generator.js';
 import { BaseProvider } from '../providers/base-provider.js';
 import { MockProvider } from '../providers/mock-provider.js';
 import { ClaudeCodeProvider } from '../providers/claude-code.js';
@@ -31,6 +32,7 @@ export class StarkOrchestrator extends EventEmitter {
   private config: StarkConfig;
   private comms = StarkCommsNetwork.getInstance();
   private arcReactor: ArcReactorPowerGrid;
+  private workspaceGen: WorkspaceGenerator;
   private providers: Map<ProviderType, BaseProvider> = new Map();
   private heroes: Map<HeroId, BaseHero> = new Map();
   private activeMission?: Mission;
@@ -39,6 +41,7 @@ export class StarkOrchestrator extends EventEmitter {
     super();
     this.config = config;
     this.arcReactor = new ArcReactorPowerGrid(config.arcReactor);
+    this.workspaceGen = new WorkspaceGenerator();
 
     this.initProviders();
     this.initHeroes();
@@ -210,11 +213,38 @@ export class StarkOrchestrator extends EventEmitter {
 
     const synthesizedResult = await tony.synthesizeResponse(userPrompt, directives);
 
+    let fullResult = synthesizedResult;
+    try {
+      const workspaceProject = await this.workspaceGen.createWorkspaceProject(
+        userPrompt,
+        directives.map((d) => ({
+          title: d.title,
+          assignedHero: d.assignedHero,
+          output: d.outputs?.logs?.[0] || d.description,
+        }))
+      );
+
+      if (workspaceProject.files.length > 0) {
+        const fileList = workspaceProject.files
+          .map((f) => `- 📄 **\`${f.relativePath}\`** (${Math.round((f.sizeBytes / 1024) * 10) / 10} KB) — *Crafted by ${f.hero}*`)
+          .join('\n');
+
+        fullResult += `\n\n---\n\n### 📁 Generated Project Files Written to Disk\n` +
+          `**Workspace Location**: \`${workspaceProject.relativeWorkspacePath}\`\n\n` +
+          `${fileList}\n\n` +
+          `### 🚀 How to Run Your App\n\`\`\`bash\n${workspaceProject.runInstructions.join('\n')}\n\`\`\``;
+
+        (mission as any).workspace = workspaceProject;
+      }
+    } catch (err: any) {
+      console.warn('[Orchestrator] Warning: could not write workspace files:', err.message);
+    }
+
     mission.status = 'success';
     mission.updatedAt = Date.now();
-    mission.finalSummary = synthesizedResult;
-    (mission as any).result = synthesizedResult;
-    (mission as any).summary = synthesizedResult;
+    mission.finalSummary = fullResult;
+    (mission as any).result = fullResult;
+    (mission as any).summary = fullResult;
 
     this.comms.send('orchestrator', 'all', 'war-room', `🏆 MISSION ACCOMPLISHED! All ${directives.length} directives executed.`);
     this.emit('mission-completed', mission);

@@ -37,21 +37,24 @@ Break down complex architectural requirements into crystal-clear specifications,
     this.setStatus('analyzing');
     this.speak(`JARVIS, run global tactical scan. Master user objective: "${userPrompt}"`);
 
-    const planningPrompt = `Analyze this user development request: "${userPrompt}".
-Break it down into 4-6 distinct, parallelizable Mission Directives assigned to the most suitable Avengers:
-- 'spider-man' for Frontend, UI/UX, responsive components, styling
-- 'hulk' for Deep logic, algorithms, heavy refactoring, backend services
-- 'thor' for Docker, CI/CD, deployment manifests, build optimization
-- 'hawkeye' for Unit tests, boundary conditions, edge case suites
+    const planningPrompt = `Analyze this user software development request: "${userPrompt}".
+Detect the exact technology framework requested (e.g. SwiftUI / iOS, React / Next.js, Python / FastAPI, Express / TypeScript, Flutter, Go, Rust, etc.).
+Break down the project into 4-6 concrete, complete source files to generate across the Avengers:
+- 'spider-man' for Frontend / Views / UI Components (e.g. ContentView.swift for SwiftUI, React components for web)
+- 'hulk' for Core logic / ViewModels / Controllers / State (e.g. AppState.swift, Router.ts, Service.py)
+- 'thor' for Build configuration / Package manifests / Docker / CI (e.g. Package.swift, package.json, Dockerfile)
+- 'hawkeye' for Unit test suites / Boundary assertions (e.g. AppTests.swift, test.ts)
 - 'black-widow' for Security auditing, secret sanitization, CVE analysis
-- 'captain-america' for Final QA review, code standards audit, architecture approval
+- 'captain-america' for Final QA review and standards compliance
+
+IMPORTANT: In each directive description, instruct the assigned hero to write complete, production-ready code starting with "// File: <filename.ext>" at the top of the code block.
 
 Return a structured JSON list of directives with format:
 [
   {
     "title": "Short directive title",
-    "description": "Clear technical instructions",
-    "assignedHero": "hero-id",
+    "description": "Clear technical instructions specifying the exact file to generate (e.g. Create // File: ContentView.swift with...)",
+    "assignedHero": "spider-man" | "hulk" | "thor" | "hawkeye" | "black-widow" | "captain-america",
     "priority": "high" | "medium" | "omega-level"
   }
 ]`;
