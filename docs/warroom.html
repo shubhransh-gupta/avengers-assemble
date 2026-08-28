@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stark Tower War Room — Autonomous Multi-Agent Office Floor</title>
+  <meta name="description" content="Watch Scavengers Assemble hero agents roam, talk, spawn, refactor, and collaborate in real-time on a 2.5D simulated Stark Tower headquarters floor." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
+
+  <!-- Clean, Highly Readable Modern Fonts: Space Grotesk, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="warroom.css" />
+</head>
+<body class="warroom-body">
+
+  <div class="warroom-app">
+    <!-- Top Command Navigation Bar -->
+    <header class="warroom-nav">
+      <a href="index.html" class="brand-wrap">
+        <div class="brand-reactor"></div>
+        <div>
+          <div class="brand-title">Stark Tower // <span>War Room Headquarters</span></div>
+          <span class="brand-sub">Autonomous Multi-Agent Office Floor Simulation &bull; Powered by Shubhransh Gupta</span>
+        </div>
+      </a>
+
+      <div class="nav-controls">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span>Simulation: Live 60 FPS</span>
+        </div>
+
+        <button id="speedToggleBtn" class="ctrl-btn">
+          ⚡ Speed: 1x
+        </button>
+
+        <button id="soundToggleBtn" class="ctrl-btn">
+          🔊 SFX: ON
+        </button>
+
+        <button id="spawnBugBtn" class="ctrl-btn warning">
+          👾 Spawn Bug Alert
+        </button>
+
+        <button id="assembleAlarmBtn" class="ctrl-btn primary">
+          ⚡ Assemble Strike Team
+        </button>
+
+        <a href="hud.html" class="ctrl-btn">
+          🚀 Mission Control HUD
+        </a>
+
+        <a href="selector.html" class="ctrl-btn gold">
+          🦸 3D Character Selector
+        </a>
+
+        <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="ctrl-btn" style="border-color:#a855f7;color:#c084fc;">
+          ⭐ GitHub
+        </a>
+      </div>
+    </header>
+
+    <!-- Main 60 FPS Canvas Simulation Arena -->
+    <main class="simulation-container">
+      <canvas id="warroomCanvas"></canvas>
+
+      <!-- Speech Bubble Overlay Layer -->
+      <div id="speechBubbleLayer" style="position:absolute;inset:0;pointer-events:none;z-index:30;"></div>
+
+      <!-- Bottom-Left Live Activity Feed -->
+      <div class="activity-feed-panel">
+        <div class="panel-title-bar">
+          <span>📡 STARK-NET WAR-ROOM FEED</span>
+          <span style="font-size:10px;color:#64748b;">AUTONOMOUS</span>
+        </div>
+        <div class="feed-items" id="feedItems">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Top-Right Hero Inspector Card (Appears when clicking an agent) -->
+      <div class="hero-inspector-card" id="heroInspectorCard" style="display:none;">
+        <div class="inspector-header">
+          <div class="inspector-avatar" id="inspAvatar">🦾</div>
+          <div>
+            <div class="inspector-name" id="inspName">Tony Stark</div>
+            <div class="inspector-role" id="inspRole">Lead GOD Orchestrator</div>
+          </div>
+        </div>
+
+        <div class="inspector-stats">
+          <div class="inspector-stat-box">
+            <span class="stat-key">PREFERRED MODEL</span>
+            <span class="stat-val" id="inspModel">Claude 3.7 Sonnet</span>
+          </div>
+          <div class="inspector-stat-box">
+            <span class="stat-key">TOKEN CAP</span>
+            <span class="stat-val" id="inspCap">80,000 / hr</span>
+          </div>
+          <div class="inspector-stat-box">
+            <span class="stat-key">CURRENT ZONE</span>
+            <span class="stat-val" id="inspZone">Tony's Nanotech Lab</span>
+          </div>
+          <div class="inspector-stat-box">
+            <span class="stat-key">STATUS</span>
+            <span class="stat-val" id="inspStatus" style="color:#00ff87;">Active</span>
+          </div>
+        </div>
+
+        <div class="task-dispatch-input">
+          <input type="text" id="inspTaskInput" placeholder="Assign quick tactical prompt..." />
+          <button id="inspSendTaskBtn">DISPATCH</button>
+        </div>
+      </div>
+
+      <!-- Bottom Hero Spawning Dock -->
+      <div class="bottom-dock-bar">
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--arc-cyan);font-weight:700;white-space:nowrap;margin-right:4px;">
+          SPAWN AGENTS:
+        </div>
+        <div class="dock-hero-list" id="dockHeroList">
+          <!-- Dynamically populated with spawn buttons -->
+        </div>
+        <div class="dock-tools">
+          <span style="font-size:11px;color:#94a3b8;font-family:var(--font-mono);">Click hero to inspect &bull; Click floor to direct</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="warroom.js"></script>
+</body>
+</html>

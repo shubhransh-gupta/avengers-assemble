@@ -932,14 +932,19 @@
         Scavengers <em>Assemble</em>
       </a>
       <ul class="nav-links">
+        <li><a href="warroom.html" style="color:var(--arc-blue);font-weight:700;">🏢 Live War Room</a></li>
         <li><a href="selector.html" style="color:var(--gold);font-weight:600;">🦸 3D Character Selector</a></li>
         <li><a href="#heroes">Heroes</a></li>
+        <li><a href="#warroom-preview">🏢 Living Floor</a></li>
         <li><a href="#features">Features</a></li>
         <li><a href="#demo">Demo</a></li>
         <li><a href="#compare">Compare</a></li>
         <li><a href="hud.html">🚀 Live HUD</a></li>
       </ul>
       <div class="nav-cta">
+        <a href="warroom.html" class="btn btn-arc">
+          🏢 Live War Room
+        </a>
         <a href="selector.html" class="btn btn-gold">
           🦸 Character Selector
         </a>
@@ -973,20 +978,21 @@
         <span class="badge badge-gold">🛡️ Works With Your Subscriptions</span>
         <span class="badge badge-green">🟢 9 Hero Agents</span>
         <span class="badge badge-mint">🔮 Multiverse Simulator</span>
+        <span class="badge badge-blue">🏢 2.5D Living Office Floor</span>
       </div>
 
       <div class="hero-cta-row">
-        <a href="selector.html" class="btn btn-gold">
+        <a href="warroom.html" class="btn btn-arc" style="padding:13px 26px;font-size:16px;">
+          🏢 Watch Live Autonomous Floor
+        </a>
+        <a href="selector.html" class="btn btn-gold" style="padding:13px 26px;font-size:16px;">
           🦸 3D Character Selector
         </a>
-        <a href="hud.html" class="btn btn-arc">
-          🦾 Open Mission Control HUD
+        <a href="hud.html" class="btn btn-primary">
+          🦾 Mission Control HUD
         </a>
-        <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="btn btn-primary">
-          🚀 Deploy the Scavengers
-        </a>
-        <a href="#demo" class="btn btn-ghost">
-          ⚡ See It In Action
+        <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="btn btn-ghost">
+          ⭐ Star on GitHub
         </a>
       </div>
 
@@ -1196,6 +1202,39 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== LIVE WAR ROOM SECTION ===== -->
+  <section id="warroom-preview" style="background: radial-gradient(circle at 50% 30%, rgba(168, 85, 247, 0.12) 0%, #020612 80%); padding: 80px 0;">
+    <div class="wrap">
+      <div class="section-header reveal">
+        <span class="section-kicker">🏢 Autonomous Office Simulation // Live 60 FPS</span>
+        <h2 class="section-title">The Living <span class="arc">Stark Tower</span> <span class="quantum">War Room</span></h2>
+        <p class="section-desc">
+          Zero user interaction required. When you open the floor, hero agents are already roaming, collaborating, triggering speech bubbles, and smashing bottlenecks in real time.
+        </p>
+        <div style="margin-top: 16px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <a href="warroom.html" class="btn btn-arc" style="padding: 10px 22px;">
+            🏢 Open Fullscreen War Room
+          </a>
+          <a href="warroom.html" class="btn btn-gold" style="padding: 10px 22px;">
+            ⚡ Trigger Hero Spawns &amp; Bug Alerts
+          </a>
+        </div>
+      </div>
+
+      <!-- Live Interactive Embedded Simulation Frame -->
+      <div class="reveal" style="border: 1px solid var(--dark-border-strong); border-radius: 16px; overflow: hidden; height: 580px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 35px rgba(168, 85, 247, 0.25);">
+        <iframe 
+          src="warroom.html" 
+          title="Stark Tower War Room Simulation"
+          style="width: 100%; height: 100%; border: none; display: block;"
+          loading="lazy">
+        </iframe>
       </div>
     </div>
   </section>

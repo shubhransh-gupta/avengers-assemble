@@ -46,8 +46,9 @@
 
 | App | Link | Description |
 |:---|:---|:---|
+| 🏢 **Live 2.5D War Room** | [**Open Living Floor**](https://shubhransh-gupta.github.io/scavengers-assemble/warroom.html) | **Munder-Difflin Style Autonomous Office Floor** — 60 FPS real-time simulation where characters roam, talk with pop-up speech bubbles, spawn dynamically, and smash bugs with zero user interaction needed! |
 | 🦸 **3D Character Selector** | [**Launch Selector**](https://shubhransh-gupta.github.io/scavengers-assemble/selector.html) | Interactive 3D Dribbble-style Character Selector with radar combat telemetry, Web Audio SFX, and live directive deployer. |
-| 🚀 **Marketing Website** | [**View Landing Page**](https://shubhransh-gupta.github.io/scavengers-assemble/) | Futuristic Quantum Violet & Arc Cyan homepage with cursive typography and full feature breakdown. |
+| 🚀 **Marketing Website** | [**View Landing Page**](https://shubhransh-gupta.github.io/scavengers-assemble/) | Futuristic Quantum Violet & Arc Cyan homepage with clean modern typography and full feature breakdown. |
 | 🖥️ **Stark Tower HUD** | [**Open Mission Control**](https://shubhransh-gupta.github.io/scavengers-assemble/hud.html) | Live WebSocket command dashboard with real-time Arc Reactor power monitoring and encrypted comms feed. |
 
 ---
