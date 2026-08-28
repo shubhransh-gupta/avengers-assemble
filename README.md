@@ -36,7 +36,7 @@
 <p align="center">
   <strong>Earth's Mightiest Agentic AI Coding War Room</strong><br/>
   <em>Turning Your Existing AI Models into an Autonomous Superhero Strike Team</em><br/>
-  <strong>Powered by <a href="https://shubhransh.com">Shubhransh Gupta</a></strong>
+  <strong>Powered by <a href="https://shubhransh-gupta.github.io/cv/">Shubhransh Gupta</a></strong>
 </p>
 
 <p align="center">
@@ -248,8 +248,8 @@ node bin/stark.js hud --port 3000
 
 ## 👤 Author & Credits
 
-* **Architect & Developer**: **[Shubhransh Gupta](https://shubhransh.com)**
-* **Portfolio / CV**: **[https://shubhransh.com](https://shubhransh.com)**
+* **Architect & Developer**: **[Shubhransh Gupta](https://shubhransh-gupta.github.io/cv/)**
+* **Portfolio / CV**: **[https://shubhransh-gupta.github.io/cv/](https://shubhransh-gupta.github.io/cv/)**
 * **GitHub**: **[@shubhransh-gupta](https://github.com/shubhransh-gupta)**
 
 ---
