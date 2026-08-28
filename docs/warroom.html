@@ -3,349 +3,134 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SCAVENGERS // Agentic AI War Room &bull; Powered by Shubhransh Gupta</title>
-  <meta name="description" content="SCAVENGERS — High-performance multi-agent AI coding war room with live Antigravity, Cursor, Codex, and Claude Code integrations. Powered by Shubhransh Gupta." />
+  <title>SCAVENGERS // Living Multi-Agent Floor · Coordinated by Tony Stark</title>
   
-  <!-- Glowing Arc Reactor SVG Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23040814' stroke='%2300F0FF' stroke-width='4'/><circle cx='50' cy='50' r='34' fill='none' stroke='%23A855F7' stroke-width='3' stroke-dasharray='8 6'/><circle cx='50' cy='50' r='22' fill='none' stroke='%2300F0FF' stroke-width='3' stroke-dasharray='4 4'/><circle cx='50' cy='50' r='10' fill='%2300F0FF'/><text x='50' y='57' font-size='18' font-weight='900' fill='%23040814' text-anchor='middle'>A</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23181320' stroke='%2300D5E8' stroke-width='4'/><circle cx='50' cy='50' r='34' fill='none' stroke='%239333EA' stroke-width='3' stroke-dasharray='8 6'/><circle cx='50' cy='50' r='22' fill='none' stroke='%2300D5E8' stroke-width='3' stroke-dasharray='4 4'/><circle cx='50' cy='50' r='10' fill='%2300D5E8'/><text x='50' y='57' font-size='18' font-weight='900' fill='%23FFFFFF' text-anchor='middle'>A</text></svg>" />
 
-  <!-- High-Precision Fonts -->
+  <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="warroom.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./warroom.css" />
 </head>
-<body>
-
-  <!-- ══════════════════════════════════════════════════════════════════════
-       MAIN WAR ROOM PLATFORM (Direct Landing — Zero Gateway Modals)
-       ══════════════════════════════════════════════════════════════════════ -->
-  <div class="app-container">
+<body class="office-body">
+  <div class="app-layout">
     
-    <!-- Top Bar -->
-    <header class="warroom-top-bar">
-      <div class="top-brand-hud">
-        <svg class="top-reactor-dial" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="46" fill="#040814" stroke="#00F0FF" stroke-width="4"/>
-          <circle cx="50" cy="50" r="34" fill="none" stroke="#A855F7" stroke-width="3" stroke-dasharray="8 6"/>
-          <circle cx="50" cy="50" r="22" fill="none" stroke="#00F0FF" stroke-width="3" stroke-dasharray="4 4"/>
-          <circle cx="50" cy="50" r="11" fill="#00F0FF"/>
-          <text x="50" y="57" font-size="18" font-weight="900" fill="#040814" text-anchor="middle">A</text>
-        </svg>
-
-        <div class="top-brand-titles">
-          <div class="top-main-title">SCAVENGERS // <span>WAR ROOM</span></div>
-          <div class="top-sub-credit">
-            Powered by <a href="https://shubhransh-gupta.github.io/cv/" target="_blank" class="cv-link" title="Open Shubhransh Gupta CV">Shubhransh Gupta</a>
-          </div>
-        </div>
-
-        <div class="top-power-badge">
-          <span>⚡ SCAVENGERS CORE: 100% ONLINE</span>
-        </div>
-
-        <!-- Live Avatar Stack -->
-        <div class="top-avatar-stack" id="topAvatarStack">
-          <div class="stack-avatar" title="Tony Stark">🦾</div>
-        </div>
-      </div>
-
-      <div class="top-action-icons">
-        <button class="top-icon-btn gold" id="openCustomHeroModalBtn">
-          <span>🎨</span>
-          <span>FORGE HERO</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- ⚡ Live AI Provider Status Strip -->
-    <div class="provider-status-strip" id="providerStatusStrip">
-      <span class="provider-strip-label">🔌 AI MODELS:</span>
-      <div class="provider-pill loading" id="pill-gemini">
-        <span class="pill-dot"></span>
-        <span class="pill-name">Gemini</span>
-        <span class="pill-model">checking...</span>
-      </div>
-      <div class="provider-pill loading" id="pill-claude-code">
-        <span class="pill-dot"></span>
-        <span class="pill-name">Claude Code</span>
-        <span class="pill-model">checking...</span>
-      </div>
-      <div class="provider-pill loading" id="pill-openai">
-        <span class="pill-dot"></span>
-        <span class="pill-name">OpenAI Codex</span>
-        <span class="pill-model">checking...</span>
-      </div>
-      <div class="provider-pill loading" id="pill-grok">
-        <span class="pill-dot"></span>
-        <span class="pill-name">xAI Grok</span>
-        <span class="pill-model">checking...</span>
-      </div>
-      <div class="provider-pill loading" id="pill-kimi">
-        <span class="pill-dot"></span>
-        <span class="pill-name">Kimi</span>
-        <span class="pill-model">checking...</span>
-      </div>
-      <div class="provider-pill loading" id="pill-ollama">
-        <span class="pill-dot"></span>
-        <span class="pill-name">Ollama</span>
-        <span class="pill-model">checking...</span>
-      </div>
-    </div>
-
-    <!-- Visual Spawner Strip -->
-    <div class="visual-spawner-strip">
-      <span style="font-family:var(--font-mono);font-size:10px;color:var(--arc-cyan);font-weight:700;margin-right:4px;">
-        ⚡ SPAWN:
-      </span>
-      <div class="v-spawn-pill" data-hero="tony-stark" style="--pill-color:#00F0FF;">
-        <span class="v-avatar">🦾</span>
-        <span class="v-label">Tony (GOD)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="captain-america" style="--pill-color:#38BDF8;">
-        <span class="v-avatar">🛡️</span>
-        <span class="v-label">Cap (QA)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="hulk" style="--pill-color:#00FF87;">
-        <span class="v-avatar">🟢</span>
-        <span class="v-label">Hulk (AST)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="black-widow" style="--pill-color:#A855F7;">
-        <span class="v-avatar">🕷️</span>
-        <span class="v-label">Widow (Security)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="thor" style="--pill-color:#00E5FF;">
-        <span class="v-avatar">⚡</span>
-        <span class="v-label">Thor (DevOps)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="hawkeye" style="--pill-color:#FFD700;">
-        <span class="v-avatar">🏹</span>
-        <span class="v-label">Hawkeye (Tests)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="spider-man" style="--pill-color:#38BDF8;">
-        <span class="v-avatar">🕸️</span>
-        <span class="v-label">Spidey (UI)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="doctor-strange" style="--pill-color:#FF9900;">
-        <span class="v-avatar">🔮</span>
-        <span class="v-label">Strange (Multiverse)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="vision" style="--pill-color:#FFD700;">
-        <span class="v-avatar">💎</span>
-        <span class="v-label">Vision (Memory)</span>
-      </div>
-      <div class="v-spawn-pill" data-hero="all" style="--pill-color:#FFD700;border-color:var(--gold);">
-        <span class="v-avatar">⚡</span>
-        <span class="v-label" style="color:var(--gold);">ASSEMBLE ALL</span>
-      </div>
-    </div>
-
-    <!-- Master Split Workspace -->
-    <main class="main-workspace">
+    <!-- TOP / MAIN SPLIT WORKSPACE -->
+    <div class="split-workspace">
       
-      <!-- LEFT: High-Tech Chamber Floor Canvas -->
-      <section class="office-canvas-wrapper">
+      <!-- LEFT: LIVING PIXEL OFFICE CANVAS -->
+      <div class="canvas-container">
+        <!-- Floating Canvas Status Pills -->
+        <div class="canvas-top-pills">
+          <div class="c-pill">
+            <span class="pill-dot green"></span>
+            <span class="pill-txt" id="canvasAgentCountPill">$ using Bash &bull; 9 Agents Active</span>
+          </div>
+          <div class="c-pill">
+            <span class="pill-bolt">⚡</span>
+            <span class="pill-txt" id="arcReactorCapacityLabel">Arc Reactor: 99.8% Online</span>
+          </div>
+        </div>
+
         <canvas id="pixelOfficeCanvas"></canvas>
-        <div id="speechBubbleLayer" style="position:absolute;inset:0;pointer-events:none;z-index:30;"></div>
-      </section>
-
-      <!-- RIGHT: Visual Task HUD & Live DAG Pipeline -->
-      <section class="command-center-panel">
-        
-        <div class="hud-panel-header">
-          <div class="hud-title">
-            <span>📡</span>
-            <span id="activeHeroHudLabel">TONY STARK // LEAD ORCHESTRATOR</span>
-          </div>
-          <span style="font-family:var(--font-mono);font-size:10px;color:var(--gamma-green);font-weight:700;">
-            ● 100% READY
-          </span>
-        </div>
-
-        <!-- Visual Action Tiles Grid -->
-        <div class="hud-action-tiles">
-          <div class="action-tile" data-task="JWT_AUTH" style="--tile-color:#00F0FF;">
-            <span class="tile-icon">⚡</span>
-            <div class="tile-text">
-              <span class="tile-name">JWT AUTH</span>
-              <span class="tile-sub">Token Guard &bull; Rate Limit</span>
-            </div>
-          </div>
-          <div class="action-tile" data-task="QA_TESTS" style="--tile-color:#38BDF8;">
-            <span class="tile-icon">🛡️</span>
-            <div class="tile-text">
-              <span class="tile-name">QA SHIELD</span>
-              <span class="tile-sub">Strict Types &bull; 100% Tests</span>
-            </div>
-          </div>
-          <div class="action-tile" data-task="SEC_AUDIT" style="--tile-color:#A855F7;">
-            <span class="tile-icon">🔒</span>
-            <div class="tile-text">
-              <span class="tile-name">CVE AUDIT</span>
-              <span class="tile-sub">Zero-Day &bull; Sanitizer</span>
-            </div>
-          </div>
-          <div class="action-tile" data-task="DOCKER_CI" style="--tile-color:#00E5FF;">
-            <span class="tile-icon">🚀</span>
-            <div class="tile-text">
-              <span class="tile-name">DEVOPS PR</span>
-              <span class="tile-sub">Multi-Stage &bull; Actions</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Visual Live DAG Pipeline Flow -->
-        <div class="hud-dag-pipeline" id="hudDagPipeline">
-          <div class="dag-pipeline-title">
-            <span>🕸️</span>
-            <span>ACTIVE TASK DAG PIPELINE</span>
-          </div>
-
-          <!-- Dynamic Node 1 -->
-          <div class="dag-node-card" style="--node-color:#00F0FF;">
-            <div class="dag-node-left">
-              <div class="dag-node-avatar">🦾</div>
-              <div>
-                <div class="dag-node-title">Tony Stark</div>
-                <div class="dag-node-task">DAG Deconstruction &bull; Load Balancer</div>
-              </div>
-            </div>
-            <div class="dag-progress-ring">● ACTIVE</div>
-          </div>
-
-          <!-- Dynamic Node 2 -->
-          <div class="dag-node-card" style="--node-color:#38BDF8;">
-            <div class="dag-node-left">
-              <div class="dag-node-avatar">🛡️</div>
-              <div>
-                <div class="dag-node-title">Captain America</div>
-                <div class="dag-node-task">Vibranium Type Enforcement</div>
-              </div>
-            </div>
-            <div class="dag-progress-ring" style="color:var(--gamma-green);">✔ VERIFIED</div>
-          </div>
-        </div>
-
-        <!-- Prompt Dispatch Bar -->
-        <div class="hud-dispatch-bar">
-          <input 
-            type="text" 
-            class="hud-prompt-input" 
-            id="hudPromptInput" 
-            placeholder="Assign directive to Scavengers strike team..." 
-            value="Build secure JWT auth microservice with unit tests"
-          />
-          <button class="hud-dispatch-btn" id="hudDispatchBtn">
-            <span>⚡ DISPATCH</span>
-          </button>
-        </div>
-
-      </section>
-
-    </main>
-
-    <!-- Bottom Active Hero Dock -->
-    <footer class="bottom-dock-bar" id="bottomDockBar">
-      <!-- Populated dynamically -->
-    </footer>
-
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════════════════════
-       VISUAL CUSTOM HERO FORGE MODAL
-       ══════════════════════════════════════════════════════════════════════ -->
-  <div class="custom-modal-backdrop" id="customHeroModalBackdrop">
-    <div class="custom-modal">
-      <div class="modal-header-bar">
-        <span class="modal-title">
-          <span>🎨</span>
-          <span>FORGE CUSTOM SUPERHERO</span>
-        </span>
-        <button class="modal-close-btn" id="closeCustomHeroModalBtn">&times;</button>
+        <div id="speechBubbleLayer"></div>
       </div>
 
-      <form id="customHeroForm" class="modal-visual-body">
+      <!-- RIGHT: COMMAND CENTER / TERMINAL PANEL -->
+      <div class="right-terminal-panel">
         
-        <!-- Archetype Icon Tiles -->
-        <div>
-          <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
-            SELECT SUPERHERO ARCHETYPE:
-          </label>
-          <div class="archetype-tiles-row">
-            <div class="arch-tile selected" data-archetype="iron">
-              <span class="a-icon">🦾</span>
-              <span class="a-name">Iron Armor</span>
+        <!-- Header: Tony Stark Avatar & Action Buttons -->
+        <div class="panel-header">
+          <div class="hero-id-pill">
+            <div class="hero-id-avatar">🦾</div>
+            <div class="hero-id-info">
+              <div class="hero-id-name">TONY STARK <span class="god-tag">[GOD]</span></div>
+              <div class="hero-id-status"><span class="status-dot green"></span> working &bull; Tony runs the floor</div>
             </div>
-            <div class="arch-tile" data-archetype="spidey">
-              <span class="a-icon">🕸️</span>
-              <span class="a-name">Web Suit</span>
-            </div>
-            <div class="arch-tile" data-archetype="cap">
-              <span class="a-icon">🛡️</span>
-              <span class="a-name">Vibranium</span>
-            </div>
-            <div class="arch-tile" data-archetype="hulk">
-              <span class="a-icon">🟢</span>
-              <span class="a-name">Gamma Titan</span>
-            </div>
-            <div class="arch-tile" data-archetype="widow">
-              <span class="a-icon">🕷️</span>
-              <span class="a-name">Stealth</span>
-            </div>
-            <div class="arch-tile" data-archetype="thor">
-              <span class="a-icon">⚡</span>
-              <span class="a-name">Asgardian</span>
-            </div>
-            <div class="arch-tile" data-archetype="strange">
-              <span class="a-icon">🔮</span>
-              <span class="a-name">Sorcerer</span>
-            </div>
-            <div class="arch-tile" data-archetype="vision">
-              <span class="a-icon">💎</span>
-              <span class="a-name">Mind Stone</span>
+          </div>
+          <div class="panel-header-actions">
+            <button class="hdr-btn black" id="autoModeBtn">▶ auto</button>
+            <button class="hdr-btn" id="ideBtn" onclick="window.open('./','_self')">👁️ IDE</button>
+            <button class="hdr-btn" id="hudBtn">🚀 HUD</button>
+            <button class="hdr-btn" id="homeBtn" onclick="window.location.reload()">🏠 Home</button>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="panel-tabs">
+          <button class="tab-btn active" data-tab="terminal">⌨️ terminal</button>
+          <button class="tab-btn" data-tab="monitor">📊 monitor</button>
+          <button class="tab-btn" data-tab="tasks">✓ tasks</button>
+          <button class="tab-btn" data-tab="ask-me">❓ ask me</button>
+          <button class="tab-btn" data-tab="triggers">⚡ triggers</button>
+        </div>
+
+        <!-- Tab 1: Terminal View (Live Thought Stream & Code Deliverable) -->
+        <div class="tab-content active" id="terminalTab">
+          <div class="terminal-sub-bar">
+            <div class="term-status"><span class="status-dot green"></span> live &bull; pty pty-god</div>
+            <div class="term-font-size">12px +</div>
+          </div>
+
+          <!-- Live Log Feed / Terminal Stream -->
+          <div class="terminal-feed" id="terminalFeed">
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[SPIDEY]</span> With great frontend power comes great responsive design responsibility!</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[VISION]</span> Synchronizing context across all 9 agent mental nodes.</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[WIDOW]</span> Sanitized API bearer keys in .env. Ledger clean.</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[TONY]</span> JARVIS, deconstruct the master prompt into DAG directives.</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[STRANGE]</span> Reality-616 selected: Canonical high-performance architecture (98.4% success).</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[SPIDEY]</span> Spun up accessible React components with buttery 60 FPS Tailwind animations!</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[THOR]</span> CI/CD pipeline humming with thunderous high voltage.</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[TONY]</span> Hulk, smash that memory bottleneck now.</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[CAP]</span> All assertions green across 16 test suites.</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[HAWKEYE]</span> I played 18 test suites, I shot 18 passing assertions. Can't seem to miss.</div>
+            <div class="feed-line"><span class="bullet blue">●</span> <span class="feed-tag">[VISION]</span> Refueling at the coffee machine.</div>
+          </div>
+
+          <!-- Context & Bypass Permissions Info Bar -->
+          <div class="terminal-meta-bar">
+            <span class="ctx-info" id="ctxMetaLabel">ctx 144k/1000k (14%) &bull; StarkCommsMesh</span>
+            <span class="bypass-info">bypass permissions on (shift+tab to cycle) &rarr; for agents</span>
+          </div>
+
+          <!-- Queue / Master Prompt Input Area -->
+          <div class="queue-input-wrapper">
+            <div class="queue-label">QUEUE / MASTER PROMPT</div>
+            <textarea id="masterPromptInput" class="master-prompt-textarea" rows="2" placeholder="Tony is ready — type a task or question for the agents... (Enter to Send)"></textarea>
+            
+            <div class="queue-actions-row">
+              <div class="queue-left-btns">
+                <button class="pill-btn">+ files</button>
+                <button class="pill-btn" id="micBtn">🎙️ voice</button>
+              </div>
+              <button class="send-btn" id="sendPromptBtn">send &rarr;</button>
             </div>
           </div>
         </div>
 
-        <!-- Color Swatch Circles -->
-        <div>
-          <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
-            THEME &amp; GLOW ENERGY:
-          </label>
-          <div class="color-swatch-row">
-            <div class="color-circle selected" data-color="#00F0FF" style="background:#00F0FF;"></div>
-            <div class="color-circle" data-color="#A855F7" style="background:#A855F7;"></div>
-            <div class="color-circle" data-color="#FFD700" style="background:#FFD700;"></div>
-            <div class="color-circle" data-color="#00FF87" style="background:#00FF87;"></div>
-            <div class="color-circle" data-color="#FF3366" style="background:#FF3366;"></div>
-            <div class="color-circle" data-color="#38BDF8" style="background:#38BDF8;"></div>
-          </div>
+        <!-- Tab 2: Monitor View -->
+        <div class="tab-content" id="monitorTab" style="display:none; padding:14px; overflow-y:auto;">
+          <h3 style="font-family:var(--font-display); margin-bottom:8px;">⚡ Arc Reactor Telemetry</h3>
+          <div id="monitorStats" style="font-family:var(--font-mono); font-size:11px; line-height:1.6;"></div>
         </div>
 
-        <!-- Quick Inputs -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div>
-            <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">
-              HERO NAME:
-            </label>
-            <input type="text" class="form-input" id="customHeroName" value="Symbiote Spider-Man" required />
-          </div>
-          <div>
-            <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">
-              SPECIALTY / ROLE:
-            </label>
-            <input type="text" class="form-input" id="customHeroRole" value="Next.js Frontend Lead" required />
-          </div>
+        <!-- Tab 3: Tasks View -->
+        <div class="tab-content" id="tasksTab" style="display:none; padding:14px; overflow-y:auto;">
+          <h3 style="font-family:var(--font-display); margin-bottom:8px;">✓ Directive Execution DAG</h3>
+          <div id="tasksList" style="font-family:var(--font-mono); font-size:11px; line-height:1.6;"></div>
         </div>
 
-        <button type="submit" class="ob-glow-connect-btn" style="justify-content:center;margin-top:6px;">
-          <span>⚡ FORGE &amp; DEPLOY TO CHAMBER</span>
-        </button>
-      </form>
+      </div>
     </div>
+
+    <!-- BOTTOM: AGENT CARDS DOCK -->
+    <div class="bottom-agent-dock" id="bottomAgentDock">
+      <!-- Rendered dynamically -->
+    </div>
+
   </div>
 
-  <script src="warroom.js"></script>
+  <script src="./warroom.js"></script>
 </body>
 </html>
