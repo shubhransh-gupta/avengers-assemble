@@ -219,20 +219,24 @@ OLLAMA_BASE_URL=http://localhost:11434   # Local LLM (DeepSeek-R1, Qwen)
 
 ---
 
-## 📊 Comparison Matrix
+## 📊 Feature Comparison Matrix
 
-| Feature | 🦾 Scavengers Assemble | Munder-Difflin | AutoGen | CrewAI |
-|:---|:---:|:---:|:---:|:---:|
-| **Theme & Aesthetic** | **Quantum / Stark Tech** | The Office (2D) | Generic | Generic |
-| **Free, BYOK Subscriptions** | ✅ 100% Free | ✅ 100% Free | ⚠️ Partial | ⚠️ Paid Tier |
-| **Arc Reactor Rate Limiter** | ✅ Rolling Window Failover | ❌ Basic | ❌ None | ❌ None |
-| **3D Character Selector** | ✅ Dribbble-Style + Radar | ❌ None | ❌ None | ❌ None |
-| **Holographic Web HUD** | ✅ Cyberpunk + Web Audio | ⚠️ Office floor | ❌ None | ❌ Basic |
-| **Multiverse Rollback Engine** | ✅ Doctor Strange | ❌ None | ❌ None | ❌ None |
-| **Persistent Semantic Memory** | ✅ Mind Stone | ⚠️ Basic | ⚠️ Plugin | ⚠️ Vector DB |
-| **Dedicated Security Recon** | ✅ Black Widow | ❌ None | ❌ None | ❌ None |
-| **Zero-Setup Simulator** | ✅ MockProvider | ❌ No | ❌ No | ❌ No |
-| **TypeScript Strict Mode** | ✅ 100% Typed | ❌ JavaScript | ❌ Python | ❌ Python |
+<p align="center">
+  <img src="docs/assets/comparison.png" alt="Scavengers Assemble vs Munder-Difflin vs AutoGen vs CrewAI Feature Comparison" width="100%" />
+</p>
+
+| Feature | Scavengers Assemble ⚡ | Munder-Difflin | AutoGen | CrewAI |
+|:---|:---|:---|:---|:---|
+| 🆓 **100% Free (BYOK)** | **✔ Yes** | ✔ Yes | ⚠ Partial | ⚠ Paid Tier |
+| ⚡ **Arc Reactor Rate Limit Manager** | **✔ Built-in** | ✘ No | ✘ No | ✘ No |
+| 🌐 **Holographic Web Dashboard** | **✔ Stark Tower HUD** | ⚠ Office Floor UI | ✘ No | ✘ No |
+| 🔮 **Multiverse Parallel Simulation** | **✔ Doctor Strange** | ✘ No | ✘ No | ✘ No |
+| 💎 **Persistent Cross-Session Memory** | **✔ Mind Stone** | ⚠ Basic | ⚠ In-Memory | ⚠ Limited |
+| 🛡️ **Specialized QA Code Review Agent** | **✔ Captain America** | ✘ No | ⚠ Generic | ⚠ Generic |
+| 🕷️ **Security Recon Dedicated Agent** | **✔ Black Widow** | ✘ No | ✘ No | ✘ No |
+| 🦙 **Local LLM Support (Ollama)** | **✔ Full Support** | ✔ Yes | ⚠ Partial | ⚠ Partial |
+| 🎭 **Zero-Setup Offline Simulator** | **✔ Yes (MockProvider)** | ✘ No | ✘ No | ✘ No |
+| 🧪 **TypeScript + Test Coverage** | **✔ 100% Strict TS** | ⚠ JavaScript | ⚠ Python | ⚠ Python |
 
 ---
 
