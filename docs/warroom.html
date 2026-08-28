@@ -140,80 +140,100 @@
         <button class="ide-tab-btn active" data-target="guideAntigravity">Google Antigravity</button>
         <button class="ide-tab-btn" data-target="guideCursor">Cursor IDE</button>
         <button class="ide-tab-btn" data-target="guideClaude">Claude Code</button>
+        <button class="ide-tab-btn" data-target="guideCodex">Codex / OpenAI</button>
+        <button class="ide-tab-btn" data-target="guideKimi">Kimi (Moonshot AI)</button>
         <button class="ide-tab-btn" data-target="guideGemini">Gemini 2.5</button>
-        <button class="ide-tab-btn" data-target="guideOpenAI">GPT-4o &amp; Codex</button>
-        <button class="ide-tab-btn" data-target="guideOllama">Ollama (Local LLM)</button>
+        <button class="ide-tab-btn" data-target="guideOllama">Ollama (Local)</button>
       </div>
 
       <div class="ide-modal-content">
         
         <!-- Google Antigravity -->
         <div class="ide-guide-section" id="guideAntigravity">
-          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting with Google Antigravity / AGY CLI</h4>
-          <p>Scavengers Assemble can be invoked directly as a subagent or sidecar daemon in your Antigravity environment:</p>
+          <h4 style="color:var(--arc-cyan);margin-bottom:8px;">🚀 Google Antigravity / AGY CLI Integration</h4>
+          <p>Scavengers Assemble can be invoked directly as an autonomous subagent or running sidecar server inside Antigravity:</p>
           <div class="ide-code-block">
-# Run the Stark HUD sidecar server inside Antigravity:
+# 1. Run the Stark HUD sidecar daemon inside your Antigravity workspace:
 npx scavengers-assemble hud --port 3000
 
-# Or execute an autonomous 9-agent assemble mission:
+# 2. Or invoke a full 9-hero assembly mission:
 npx scavengers-assemble assemble "Refactor auth middleware and generate unit tests"
           </div>
-          <p>Add to your project's <code>stark.config.json</code> to enable rolling-window token failover across Claude, Gemini, and GPT-4o.</p>
+          <p>Enable token failover in your project's <code>stark.config.json</code> to prevent 429 limits across Claude, Gemini, and GPT-4o.</p>
         </div>
 
         <!-- Cursor IDE -->
         <div class="ide-guide-section" id="guideCursor" style="display:none;">
-          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting with Cursor IDE</h4>
-          <p>Add Scavengers Assemble rules to your <code>.cursorrules</code> file to enable multi-agent task deconstruction from inside Cursor Composer:</p>
+          <h4 style="color:var(--arc-cyan);margin-bottom:8px;">⚡ Cursor IDE &amp; Composer Integration</h4>
+          <p>Add Scavengers Assemble rules directly to your workspace's <code>.cursorrules</code> or configure as an MCP server in <code>~/.cursor/mcp.json</code>:</p>
           <div class="ide-code-block">
 # .cursorrules
-When executing large multi-file refactors or QA review:
-1. Use Tony Stark as the GOD orchestrator to build the task DAG.
-2. Direct Captain America to enforce 100% strict TypeScript types.
-3. Call Hawkeye to generate boundary unit tests with 100% pass rate.
-4. Run: `npx scavengers-assemble assemble "$PROMPT"`
+When executing complex multi-agent coding tasks or refactors:
+1. Tony Stark acts as the GOD orchestrator to deconstruct requirements.
+2. Captain America validates 100% strict TypeScript types and clean architecture.
+3. Hawkeye generates exhaustive boundary unit test suites.
+4. Execute via: `npx scavengers-assemble assemble "$PROMPT"`
           </div>
         </div>
 
         <!-- Claude Code -->
         <div class="ide-guide-section" id="guideClaude" style="display:none;">
-          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting Claude Code CLI</h4>
-          <p>Link your existing Anthropic API key or Claude Code CLI subscription without paying extra:</p>
+          <h4 style="color:var(--arc-cyan);margin-bottom:8px;">🤖 Claude Code CLI &amp; Anthropic API</h4>
+          <p>Connect your existing Claude subscription or Anthropic API key with zero extra cost:</p>
           <div class="ide-code-block">
+# In your terminal or .env:
 export ANTHROPIC_API_KEY="sk-ant-api03-..."
+
+# Run with Claude 3.7 Sonnet as the primary orchestrator:
 npx scavengers-assemble assemble --provider="claude-code"
+          </div>
+        </div>
+
+        <!-- Codex / OpenAI -->
+        <div class="ide-guide-section" id="guideCodex" style="display:none;">
+          <h4 style="color:var(--arc-cyan);margin-bottom:8px;">🔷 Codex, GPT-4o &amp; GitHub Copilot CLI</h4>
+          <p>Power Black Widow's Security Recon and zero-day auditing with OpenAI or Codex:</p>
+          <div class="ide-code-block">
+# In your terminal or .env:
+export OPENAI_API_KEY="sk-proj-..."
+
+# Run with OpenAI provider:
+npx scavengers-assemble assemble --provider="openai"
+          </div>
+        </div>
+
+        <!-- Kimi (Moonshot AI) -->
+        <div class="ide-guide-section" id="guideKimi" style="display:none;">
+          <h4 style="color:var(--arc-cyan);margin-bottom:8px;">🌙 Kimi / Moonshot AI Integration</h4>
+          <p>Connect Moonshot AI / Kimi CLI for 128k+ long-context Chinese &amp; multilingual reasoning:</p>
+          <div class="ide-code-block">
+# In your terminal or .env:
+export KIMI_API_KEY="sk-..."       # Or MOONSHOT_API_KEY="sk-..."
+
+# Run with Kimi Moonshot provider:
+npx scavengers-assemble assemble --provider="kimi"
           </div>
         </div>
 
         <!-- Gemini 2.5 -->
         <div class="ide-guide-section" id="guideGemini" style="display:none;">
-          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting Gemini 2.5 Flash / Pro</h4>
-          <p>Leverage Google's 1M+ token context window with Steve Rogers (Captain America) and Clint Barton (Hawkeye):</p>
+          <h4 style="color:var(--arc-cyan);margin-bottom:8px;">✨ Gemini 2.5 Flash &amp; Pro</h4>
+          <p>Leverage Google's 1M+ token context window with Steve Rogers (Captain America) and Hawkeye:</p>
           <div class="ide-code-block">
 export GEMINI_API_KEY="AIzaSy..."
 npx scavengers-assemble assemble --provider="gemini"
           </div>
         </div>
 
-        <!-- OpenAI GPT-4o -->
-        <div class="ide-guide-section" id="guideOpenAI" style="display:none;">
-          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting OpenAI GPT-4o &amp; Codex</h4>
-          <p>Power Black Widow's Security Recon and zero-day dependency auditing:</p>
-          <div class="ide-code-block">
-export OPENAI_API_KEY="sk-proj-..."
-npx scavengers-assemble assemble --provider="openai"
-          </div>
-        </div>
-
         <!-- Ollama Local LLM -->
         <div class="ide-guide-section" id="guideOllama" style="display:none;">
-          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting Ollama (100% Free &amp; Local Offline)</h4>
+          <h4 style="color:var(--arc-cyan);margin-bottom:8px;">🦙 Ollama (100% Free &amp; Local Offline)</h4>
           <p>Run Bruce Banner &amp; Hulk with zero API costs using DeepSeek-R1 or Qwen locally:</p>
           <div class="ide-code-block">
 # 1. Start Ollama with DeepSeek-R1
 ollama run deepseek-r1:7b
 
-# 2. Scavengers automatically detects localhost:11434 with zero setup!
+# 2. Scavengers automatically routes to localhost:11434 with zero setup!
 npx scavengers-assemble assemble --provider="ollama"
           </div>
         </div>

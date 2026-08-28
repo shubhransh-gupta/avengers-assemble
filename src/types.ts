@@ -30,6 +30,7 @@ export type ProviderType =
   | 'openai'
   | 'grok'
   | 'ollama'
+  | 'kimi'
   | 'mock';
 
 export interface HeroMetrics {

@@ -44,12 +44,18 @@ export const DEFAULT_CONFIG: StarkConfig = {
         hourlyTokenLimit: 50000,
         priority: 4,
       },
+      kimi: {
+        enabled: Boolean(process.env.KIMI_API_KEY || process.env.MOONSHOT_API_KEY),
+        apiKey: process.env.KIMI_API_KEY || process.env.MOONSHOT_API_KEY,
+        hourlyTokenLimit: 100000,
+        priority: 5,
+      },
       ollama: {
         enabled: true,
         baseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
         model: 'deepseek-r1:latest',
         hourlyTokenLimit: 99999999,
-        priority: 5,
+        priority: 6,
       },
       mock: {
         enabled: true,
