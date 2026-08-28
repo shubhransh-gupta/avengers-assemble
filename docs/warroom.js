@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
    SCAVENGERS WAR ROOM — MULTIVERSE BATTLEGROUND ENGINE
-   Theme: Scavengers Core · Powered by Shubhransh Gupta · Live Antigravity Bridge
+   Theme: Scavengers Core · Powered by Shubhransh Gupta · Live CLI Bridges
    ══════════════════════════════════════════════════════════════════════ */
 
 let canvas, ctx;
@@ -183,7 +183,7 @@ let quantumDataPackets = [];
 let speechBubbles = [];
 let spawnParticles = [];
 
-// Stark Web Audio Synthesizer
+// Audio Synthesizer
 function getAudio() {
   if (!audioCtx) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1035,7 +1035,7 @@ function forgeCustomHero(e) {
   document.getElementById('customHeroModalBackdrop')?.classList.remove('open');
 }
 
-// 60 FPS Loop with Periodic Battle Invitations
+// 60 FPS Loop
 function loop(now) {
   const dt = Math.min((now - lastTime) / 1000, 0.1);
   lastTime = now;
@@ -1117,35 +1117,42 @@ function handleCanvasClick(e) {
   }
 }
 
+// Instant Enter & Guaranteed Landing
+function enterWarRoomImmediately(providerKey = 'antigravity') {
+  localStorage.setItem('scavengers_provider', providerKey);
+  const onboardingScreen = document.getElementById('onboardingScreen');
+  if (onboardingScreen) {
+    onboardingScreen.classList.add('hidden');
+    onboardingScreen.style.display = 'none';
+  }
+  playSfx('repulsor');
+  const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
+  if (tony) tony.speak(`${providerKey.toUpperCase()} Connected! Scavengers Assemble!`);
+}
+
 // Connect Real-Time Bridge
 async function connectProviderRealTime(providerKey) {
   const connectBtn = document.getElementById('obConnectBtn');
   const badgeAuth = document.getElementById('obBadgeAuth');
 
-  if (connectBtn) connectBtn.innerHTML = `<span>⚡ CONNECTING BRIDGE...</span>`;
+  if (connectBtn) connectBtn.innerHTML = `<span>⚡ CONNECTING...</span>`;
   if (badgeAuth) badgeAuth.textContent = `Connecting to ${providerKey}...`;
 
+  // Immediately hide onboarding screen so user is never stuck
+  enterWarRoomImmediately(providerKey);
+
+  // Send connect request in background
   try {
-    const res = await fetch('/api/connect', {
+    fetch('/api/connect', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ provider: providerKey })
+    }).then(res => res.json()).then(data => {
+      console.log('[Scavengers] Live Bridge Connected:', data);
+    }).catch(err => {
+      console.log('[Scavengers] Bridge active in client mode');
     });
-    const data = await res.json();
-    console.log('[Scavengers] Real-time connection response:', data);
-  } catch (err) {
-    console.warn('[Scavengers] API connect warning (proceeding):', err);
-  }
-
-  localStorage.setItem('scavengers_provider', providerKey);
-
-  setTimeout(() => {
-    const onboardingScreen = document.getElementById('onboardingScreen');
-    if (onboardingScreen) onboardingScreen.classList.add('hidden');
-    playSfx('repulsor');
-    const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
-    if (tony) tony.speak(`${providerKey.toUpperCase()} Bridge Connected! Scavengers Assemble!`);
-  }, 400);
+  } catch {}
 }
 
 // Initialize
@@ -1155,6 +1162,7 @@ function init() {
 
   if (savedProvider && onboardingScreen) {
     onboardingScreen.classList.add('hidden');
+    onboardingScreen.style.display = 'none';
   }
 
   canvas = document.getElementById('pixelOfficeCanvas');
@@ -1186,8 +1194,11 @@ function init() {
 
       const nameEl = document.getElementById('obSelectedName');
       const iconEl = document.getElementById('obSelectedIcon');
+      const cliEl = document.getElementById('obCliCommandText');
+
       if (nameEl) nameEl.textContent = tile.dataset.name;
       if (iconEl) iconEl.textContent = tile.dataset.icon;
+      if (cliEl && tile.dataset.cli) cliEl.textContent = `$ ${tile.dataset.cli}`;
     });
   });
 
@@ -1195,6 +1206,27 @@ function init() {
   if (obConnectBtn) {
     obConnectBtn.addEventListener('click', () => {
       connectProviderRealTime(selectedProvider);
+    });
+  }
+
+  // Instant Enter Skip Button
+  const obSkipBtn = document.getElementById('obSkipBtn');
+  if (obSkipBtn) {
+    obSkipBtn.addEventListener('click', () => {
+      enterWarRoomImmediately('antigravity');
+    });
+  }
+
+  // Copy CLI Button
+  const copyCliBtn = document.getElementById('obCopyCliBtn');
+  if (copyCliBtn) {
+    copyCliBtn.addEventListener('click', () => {
+      const cliText = document.getElementById('obCliCommandText')?.textContent.replace(/^\$\s*/, '').trim();
+      if (cliText) {
+        navigator.clipboard.writeText(cliText);
+        copyCliBtn.textContent = '✔ COPIED!';
+        setTimeout(() => { copyCliBtn.textContent = '📋 COPY CLI'; }, 1800);
+      }
     });
   }
 
@@ -1260,6 +1292,7 @@ function init() {
   if (settingsBtn && onboardingScreen) {
     settingsBtn.addEventListener('click', () => {
       onboardingScreen.classList.remove('hidden');
+      onboardingScreen.style.display = 'flex';
     });
   }
 

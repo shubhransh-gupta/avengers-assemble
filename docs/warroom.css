@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
    SCAVENGERS WAR ROOM — MARVEL MULTIVERSE BATTLEGROUND HUD
-   Theme: Scavengers Core · Powered by Shubhransh Gupta · Live Antigravity Bridge
+   Theme: Scavengers Core · Powered by Shubhransh Gupta · Live CLI Bridges
    ══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -56,33 +56,34 @@ html, body {
 .onboarding-screen {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 9999;
   background: radial-gradient(circle at 50% 20%, #0A1430 0%, #02040A 85%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .onboarding-screen.hidden {
-  opacity: 0;
-  pointer-events: none;
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
   transform: scale(0.96);
 }
 
 .onboarding-card {
-  width: 740px;
+  width: 760px;
   max-width: 100%;
-  background: rgba(6, 10, 24, 0.96);
-  backdrop-filter: blur(20px);
+  background: rgba(6, 10, 24, 0.98);
+  backdrop-filter: blur(24px);
   border: 1px solid var(--border-light);
   border-radius: 20px;
-  padding: 32px;
-  box-shadow: 0 30px 100px rgba(0,0,0,0.9), 0 0 50px rgba(0, 240, 255, 0.2);
+  padding: 28px;
+  box-shadow: 0 30px 100px rgba(0,0,0,0.9), 0 0 50px rgba(0, 240, 255, 0.25);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   position: relative;
   overflow: hidden;
 }
@@ -97,13 +98,18 @@ html, body {
 .ob-visual-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: space-between;
+}
+
+.ob-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .ob-arc-reactor-logo {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   filter: drop-shadow(0 0 12px var(--arc-cyan));
   animation: reactorPulse 2.5s infinite;
 }
@@ -116,7 +122,7 @@ html, body {
 
 .ob-title-wrap h1 {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: #FFFFFF;
   letter-spacing: -0.02em;
@@ -147,42 +153,60 @@ html, body {
   text-shadow: 0 0 8px var(--gold);
 }
 
+.ob-skip-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.ob-skip-btn:hover {
+  border-color: var(--arc-cyan);
+  color: var(--arc-cyan);
+}
+
 /* Provider Visual Grid */
 .provider-visual-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 
 .prov-tile {
   background: var(--bg-card);
   border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 12px;
+  border-radius: 10px;
+  padding: 14px 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 160ms ease;
 }
 
 .prov-tile:hover {
   border-color: var(--arc-cyan);
   background: var(--bg-card-hover);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .prov-tile.selected {
   border-color: var(--arc-cyan);
-  background: rgba(0, 240, 255, 0.12);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+  background: rgba(0, 240, 255, 0.14);
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
 }
 
-.prov-tile .p-icon { font-size: 28px; }
+.prov-tile .p-icon { font-size: 26px; }
 .prov-tile .p-name {
   font-family: var(--font-display);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 800;
   color: #FFFFFF;
 }
@@ -194,13 +218,53 @@ html, body {
   box-shadow: 0 0 8px var(--gamma-green);
 }
 
+/* CLI Command Box */
+.ob-cli-box {
+  background: #030611;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ob-cli-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--arc-cyan);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ob-cli-copy-btn {
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: var(--arc-cyan);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.ob-cli-copy-btn:hover {
+  background: var(--arc-cyan);
+  color: #03060F;
+}
+
+/* Action Bar */
 .ob-connect-bar {
   display: flex;
   gap: 12px;
   background: #040712;
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   align-items: center;
   justify-content: space-between;
 }
@@ -208,23 +272,23 @@ html, body {
 .ob-selected-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
-.ob-selected-icon { font-size: 24px; }
+.ob-selected-icon { font-size: 22px; }
 .ob-selected-name {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   color: #FFFFFF;
 }
 
 .ob-badge-auth {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--gamma-green);
   background: rgba(0, 255, 135, 0.12);
   border: 1px solid rgba(0, 255, 135, 0.3);
-  padding: 3px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
 }
 
@@ -233,10 +297,10 @@ html, body {
   border: none;
   color: #03060F;
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 800;
-  padding: 12px 28px;
-  border-radius: 10px;
+  padding: 10px 24px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -261,7 +325,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Top App Header */
 .warroom-top-bar {
   height: 54px;
   background: #050813;
@@ -382,7 +445,6 @@ html, body {
   border-color: var(--gold);
 }
 
-/* Visual Hero Spawner Palette */
 .visual-spawner-strip {
   display: flex;
   gap: 8px;
@@ -420,7 +482,6 @@ html, body {
   color: #FFFFFF;
 }
 
-/* Canvas Area */
 .main-workspace {
   display: flex;
   flex: 1;
@@ -443,7 +504,6 @@ html, body {
   cursor: pointer;
 }
 
-/* Speech Bubbles */
 .speech-bubble {
   position: absolute;
   background: rgba(8, 14, 30, 0.96);
@@ -474,7 +534,6 @@ html, body {
   text-transform: uppercase;
 }
 
-/* Right Visual Task HUD */
 .command-center-panel {
   flex: 1;
   min-width: 380px;
@@ -547,7 +606,6 @@ html, body {
   color: var(--text-muted);
 }
 
-/* Visual DAG Pipeline */
 .hud-dag-pipeline {
   flex: 1;
   background: #02040A;
@@ -622,7 +680,6 @@ html, body {
   gap: 4px;
 }
 
-/* Prompt Dispatch Bar */
 .hud-dispatch-bar {
   padding: 12px 14px;
   background: #040710;
@@ -672,7 +729,6 @@ html, body {
   transform: translateY(-1px);
 }
 
-/* Bottom Active Hero Dock */
 .bottom-dock-bar {
   height: 76px;
   background: #03050F;
