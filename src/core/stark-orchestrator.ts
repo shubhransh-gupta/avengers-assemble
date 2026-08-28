@@ -190,6 +190,13 @@ export class StarkOrchestrator extends EventEmitter {
       capDirective.startedAt = Date.now();
       this.emit('directive-started', capDirective);
 
+      capDirective.inputs = {
+        directiveOutputs: nonCapDirectives.map((d) => ({
+          hero: d.assignedHero,
+          title: d.title,
+          codeSummary: d.outputs?.logs?.[0] ? d.outputs.logs[0].slice(0, 1500) : 'Completed',
+        })),
+      };
       const capResult = await cap.executeDirective(capDirective);
       capDirective.status = 'completed';
       capDirective.completedAt = Date.now();
@@ -201,11 +208,15 @@ export class StarkOrchestrator extends EventEmitter {
       this.emit('directive-completed', capDirective);
     }
 
+    const synthesizedResult = await tony.synthesizeResponse(userPrompt, directives);
+
     mission.status = 'success';
     mission.updatedAt = Date.now();
-    mission.finalSummary = `Mission accomplished by the Avengers strike team! All ${directives.length} directives executed with zero blocker defects. Power consumed: ${mission.arcReactorPowerUsed} tokens. Vibranium QA Stamp: APPROVED.`;
+    mission.finalSummary = synthesizedResult;
+    (mission as any).result = synthesizedResult;
+    (mission as any).summary = synthesizedResult;
 
-    this.comms.send('orchestrator', 'all', 'war-room', `🏆 MISSION ACCOMPLISHED! ${mission.finalSummary}`);
+    this.comms.send('orchestrator', 'all', 'war-room', `🏆 MISSION ACCOMPLISHED! All ${directives.length} directives executed.`);
     this.emit('mission-completed', mission);
 
     return mission;
