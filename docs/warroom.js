@@ -24,7 +24,7 @@ const PRESET_HEROES = {
     model: 'Antigravity / Claude',
     color: '#00F0FF',
     archetype: 'iron',
-    officeX: 139, officeY: 480,
+    officeX: 130, officeY: 420,
     dialogs: [
       "JARVIS, deconstruct the master prompt into DAG directives.",
       "Scavengers Core load balancing: 100% optimal. Directives streaming.",
@@ -43,7 +43,7 @@ const PRESET_HEROES = {
     model: 'Gemini',
     color: '#38BDF8',
     archetype: 'cap',
-    officeX: 139, officeY: 350,
+    officeX: 80, officeY: 360,
     dialogs: [
       "I can do this all day. No unhandled promise rejections on my watch.",
       "Vibranium Shield QA stamp applied: 100% strict TypeScript types verified.",
@@ -62,7 +62,7 @@ const PRESET_HEROES = {
     model: 'Ollama (Local)',
     color: '#00FF87',
     archetype: 'hulk',
-    officeX: 139, officeY: 610,
+    officeX: 185, officeY: 510,
     dialogs: [
       "HULK SMASH O(N^2) BOTTLENECK! REFACTOR WITH GAMMA SPEED!!",
       "Banner mode: Profiling heap memory snapshot...",
@@ -80,7 +80,7 @@ const PRESET_HEROES = {
     model: 'OpenAI Codex',
     color: '#A855F7',
     archetype: 'widow',
-    officeX: 360, officeY: 110,
+    officeX: 400, officeY: 115,
     dialogs: [
       "Infiltrating Doom's Latverian network. Isolating zero-days.",
       "Sanitized API bearer keys in .env. Ledger clean.",
@@ -98,7 +98,7 @@ const PRESET_HEROES = {
     model: 'xAI Grok',
     color: '#00E5FF',
     archetype: 'thor',
-    officeX: 190, officeY: 160,
+    officeX: 160, officeY: 135,
     dialogs: [
       "BY THE POWER OF MJOLNIR, SUMMONING THE DOCKER BIFROST!",
       "Kubernetes ingress struck by lightning! Multi-stage build forged in 4.2s.",
@@ -116,7 +116,7 @@ const PRESET_HEROES = {
     model: 'Gemini',
     color: '#FFD700',
     archetype: 'hawkeye',
-    officeX: 85, officeY: 160,
+    officeX: 60, officeY: 155,
     dialogs: [
       "I played 18 test suites, I shot 18 passing assertions. Can't seem to miss.",
       "Locking on boundary conditions: null, undefined, NaN, Infinity. Bullseye!"
@@ -133,7 +133,7 @@ const PRESET_HEROES = {
     model: 'Antigravity / UI',
     color: '#38BDF8',
     archetype: 'spidey',
-    officeX: 80, officeY: 480,
+    officeX: 55, officeY: 490,
     dialogs: [
       "Your friendly neighborhood frontend hero swinging in!",
       "Spun up accessible React components with buttery 60 FPS Tailwind animations!",
@@ -151,7 +151,7 @@ const PRESET_HEROES = {
     model: 'Antigravity / Reasoning',
     color: '#FF9900',
     archetype: 'strange',
-    officeX: 845, officeY: 480,
+    officeX: 820, officeY: 450,
     dialogs: [
       "Opening the Eye of Agamotto. Simulating 14,000,605 timelines...",
       "Reality-616 selected: Incursions averted with 98.4% success.",
@@ -169,7 +169,7 @@ const PRESET_HEROES = {
     model: 'Gemini',
     color: '#FFD700',
     archetype: 'vision',
-    officeX: 845, officeY: 150,
+    officeX: 820, officeY: 130,
     dialogs: [
       "Accessing Mind Stone semantic knowledge matrix...",
       "Indexed 42 architecture conventions into persistent org memory.",
@@ -962,8 +962,8 @@ function updateDagPipeline() {
   });
 }
 
-// Dispatch Mission Prompt
-function dispatchPrompt(customText = null) {
+// Dispatch Mission Prompt — real call to Gemini via backend
+async function dispatchPrompt(customText = null) {
   const input = document.getElementById('hudPromptInput');
   const prompt = customText || input?.value.trim() || "Build JWT auth middleware with unit tests";
 
@@ -971,9 +971,10 @@ function dispatchPrompt(customText = null) {
   if (!tony) return;
 
   playSfx('repulsor');
-  tony.speak(`Directives dispatched! Neutralizing multiverse threats.`);
+  tony.speak(`Dispatching to Gemini: "${prompt.slice(0, 40)}..."`);
   updateDagPipeline();
 
+  // Animate data packets to all spawned agents
   activeHeroes.forEach((hero, index) => {
     if (hero !== tony) {
       setTimeout(() => {
@@ -984,6 +985,57 @@ function dispatchPrompt(customText = null) {
       }, index * 130);
     }
   });
+
+  // Show loading state in response panel
+  showResponsePanel('⚡ Dispatching to Gemini...', true);
+
+  // Call the real backend — POST /api/mission/launch
+  try {
+    const res = await fetch('/api/mission/launch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      tony.speak('Mission launched. Awaiting Gemini response...');
+      showResponsePanel(`✅ Mission launched!\n\nPrompt: "${prompt}"\n\nScavengers Assemble — agents executing directive via Gemini. Results will stream in shortly.`);
+    } else {
+      showResponsePanel(`❌ Error: ${data.error || 'Mission failed to launch'}`);
+    }
+  } catch (err) {
+    showResponsePanel(`❌ Cannot reach server at localhost:3000.\n\nMake sure the server is running:\nnpm run build && node bin/stark.js hud --port 3000`);
+  }
+}
+
+// Response Panel — shows Gemini output below dispatch bar
+function showResponsePanel(text, isLoading = false) {
+  let panel = document.getElementById('hudResponsePanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'hudResponsePanel';
+    panel.style.cssText = `
+      margin-top: 10px;
+      background: #040B1A;
+      border: 1px solid var(--border-light, #22355F);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-family: var(--font-mono, monospace);
+      font-size: 11.5px;
+      color: #94A3B8;
+      white-space: pre-wrap;
+      line-height: 1.65;
+      max-height: 140px;
+      overflow-y: auto;
+      user-select: text;
+      -webkit-user-select: text;
+    `;
+    const bar = document.querySelector('.hud-dispatch-bar');
+    if (bar) bar.insertAdjacentElement('afterend', panel);
+  }
+  panel.style.borderColor = isLoading ? '#FFD700' : '#00F0FF';
+  panel.style.color = isLoading ? '#FFD700' : '#94A3B8';
+  panel.textContent = text;
 }
 
 // Forge Custom Superhero
@@ -1198,7 +1250,89 @@ function init() {
     });
   });
 
+  // WebSocket — stream live mission updates from Gemini backend
+  try {
+    const wsUrl = `ws://${location.host}`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        const { type, data } = msg;
+
+        if (type === 'mission_started') {
+          showResponsePanel(`🚀 MISSION STARTED\n\n"${data.prompt || data.description || 'Mission active'}"\n\nScavengers assembling — directives streaming to agents...`);
+          activeHeroes.forEach(h => h.speak('Mission incoming!'));
+        }
+        else if (type === 'directive_completed') {
+          const hero = activeHeroes.find(h => h.id === data.heroId);
+          if (hero) hero.speak(`Directive complete: ${String(data.result || 'Done').slice(0, 60)}`);
+          showResponsePanel(`✅ DIRECTIVE COMPLETE\n\nHero: ${data.heroId || 'Agent'}\nResult: ${String(data.result || 'Completed').slice(0, 200)}`);
+        }
+        else if (type === 'mission_completed') {
+          showResponsePanel(`🎉 MISSION COMPLETE\n\n${String(data.result || data.summary || 'All directives executed successfully').slice(0, 400)}`);
+          const tony = activeHeroes.find(h => h.id === 'tony-stark');
+          if (tony) tony.speak('Mission complete. Scavengers victorious!');
+          playSfx('snap');
+        }
+        else if (type === 'comms_message') {
+          const hero = activeHeroes.find(h => h.id === data.from);
+          if (hero && data.content) hero.speak(String(data.content).slice(0, 80));
+        }
+      } catch {}
+    };
+
+    ws.onerror = () => {};
+  } catch {}
+
   requestAnimationFrame(loop);
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ── Live AI Provider Status Polling ─────────────────────────
+const PROVIDER_META = {
+  gemini:       { label: 'Gemini',      model: 'gemini-2.5-pro'      },
+  'claude-code':{ label: 'Claude Code', model: 'claude-sonnet'       },
+  openai:       { label: 'OpenAI Codex',model: 'gpt-4o'              },
+  grok:         { label: 'xAI Grok',    model: 'grok-2'              },
+  kimi:         { label: 'Kimi',        model: 'moonshot-v1'         },
+  ollama:       { label: 'Ollama',      model: 'deepseek-r1 (local)' },
+};
+
+async function fetchProviderStatus() {
+  try {
+    const res = await fetch('/api/status');
+    if (!res.ok) return;
+    const data = await res.json();
+    const providerStatus = data?.arcReactor?.providerStatus || {};
+
+    Object.entries(providerStatus).forEach(([key, info]) => {
+      if (key === 'mock') return;
+      const pill = document.getElementById(`pill-${key}`);
+      if (!pill) return;
+
+      const dot   = pill.querySelector('.pill-dot');
+      const model = pill.querySelector('.pill-model');
+      const meta  = PROVIDER_META[key] || {};
+
+      pill.classList.remove('loading', 'active', 'inactive');
+
+      if (info.enabled) {
+        pill.classList.add('active');
+        pill.title = `✅ Connected — ${meta.model || 'model active'} | ${info.powerRemainingPct ?? 100}% power remaining`;
+        if (model) model.textContent = meta.model || 'connected';
+      } else {
+        pill.classList.add('inactive');
+        pill.title = `❌ Not connected — add key to .env`;
+        if (model) model.textContent = 'no key';
+      }
+    });
+  } catch {
+    // server not reachable — leave pills as-is
+  }
+}
+
+// Run immediately + refresh every 30s
+fetchProviderStatus();
+setInterval(fetchProviderStatus, 30000);

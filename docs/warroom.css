@@ -445,6 +445,100 @@ html, body {
   border-color: var(--gold);
 }
 
+/* ── Live AI Provider Status Strip ───────────────────────── */
+.provider-status-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: #030710;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.provider-strip-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.provider-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #070D1D;
+  cursor: default;
+  transition: all 160ms ease;
+}
+
+.provider-pill.active {
+  border-color: var(--gamma-green);
+  background: rgba(0, 255, 135, 0.06);
+  box-shadow: 0 0 10px rgba(0, 255, 135, 0.2);
+}
+
+.provider-pill.inactive {
+  border-color: #1A2540;
+  opacity: 0.45;
+}
+
+.provider-pill.loading {
+  border-color: var(--border);
+  opacity: 0.6;
+}
+
+.pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #3A4A66;
+}
+
+.provider-pill.active .pill-dot {
+  background: var(--gamma-green);
+  box-shadow: 0 0 6px var(--gamma-green);
+  animation: pillPulse 2s infinite;
+}
+
+.provider-pill.loading .pill-dot {
+  background: var(--gold);
+  animation: pillPulse 0.8s infinite;
+}
+
+@keyframes pillPulse {
+  50% { opacity: 0.4; }
+}
+
+.pill-name {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  white-space: nowrap;
+}
+
+.provider-pill.inactive .pill-name { color: var(--text-muted); }
+
+.pill-model {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--gamma-green);
+  white-space: nowrap;
+}
+
+.provider-pill.inactive .pill-model { color: #3A4A66; }
+.provider-pill.loading .pill-model { color: var(--gold); }
+
+/* ── Visual Spawner Strip ─────────────────────────────────── */
 .visual-spawner-strip {
   display: flex;
   gap: 8px;
@@ -699,6 +793,9 @@ html, body {
   font-size: 12px;
   color: #FFFFFF;
   outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
 }
 
 .hud-prompt-input:focus {
