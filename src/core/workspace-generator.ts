@@ -139,21 +139,41 @@ export class WorkspaceGenerator extends EventEmitter {
       const parsedFiles = this.parseFilesFromDirective(dir.title, dir.assignedHero, dir.output, techStack);
 
       for (const pf of parsedFiles) {
-        const fullPath = path.resolve(projectDir, pf.filename);
+        let relativeFilename = pf.filename;
+        let content = pf.content;
+
+        // Auto-structure Swift projects for immediate Xcode & SPM compilation
+        if (techStack === 'swiftui') {
+          if (relativeFilename === 'Package.swift') {
+            if (!content.trim().startsWith('// swift-tools-version:')) {
+              content = `// swift-tools-version:5.9\n` + content.replace(/^import\s+swift-tools-version[^\n]*\n?/i, '');
+            }
+          } else if (relativeFilename.endsWith('.swift')) {
+            if (!relativeFilename.startsWith('Sources/') && !relativeFilename.startsWith('Tests/')) {
+              if (content.includes('XCTestCase') || relativeFilename.toLowerCase().includes('test')) {
+                relativeFilename = `Tests/AppTests/${relativeFilename}`;
+              } else {
+                relativeFilename = `Sources/App/${relativeFilename}`;
+              }
+            }
+          }
+        }
+
+        const fullPath = path.resolve(projectDir, relativeFilename);
         const parentDir = path.dirname(fullPath);
 
         if (!fs.existsSync(parentDir)) {
           fs.mkdirSync(parentDir, { recursive: true });
         }
 
-        fs.writeFileSync(fullPath, pf.content, 'utf8');
+        fs.writeFileSync(fullPath, content, 'utf8');
 
         const genFile: GeneratedFile = {
           relativePath: path.relative(projectDir, fullPath),
           absolutePath: fullPath,
           language: pf.language,
-          sizeBytes: Buffer.byteLength(pf.content, 'utf8'),
-          content: pf.content,
+          sizeBytes: Buffer.byteLength(content, 'utf8'),
+          content,
           hero: dir.assignedHero,
         };
 
