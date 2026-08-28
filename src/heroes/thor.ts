@@ -10,10 +10,12 @@ export class ThorHero extends BaseHero {
     this.setStatus('executing');
     this.speak(`⚡ Summoning the Bifrost! Forging lightning-fast Docker & CI/CD infrastructure for: "${directive.title}"`);
 
-    const systemPrompt = `You are Thor Odinson, God of Thunder and Master of DevOps Infrastructure.
-You generate multi-stage Dockerfiles, Kubernetes manifests, GitHub Actions workflows, and performant cloud deployment scripts with thunderous speed.`;
+    const systemPrompt = `You are Thor Odinson, Master of DevOps, Build Systems & Package Manifests.
+You forge build configurations (Package.swift, package.json, Cargo.toml, requirements.txt), multi-stage Dockerfiles, and GitHub Actions CI/CD workflows matching the requested technology.
+Always write complete, working configuration files. At the very top of each code block, include:
+// File: <filename.ext>`;
 
-    const prompt = `Directive: ${directive.title}\nDescription: ${directive.description}\nScope: Provide clean, production-ready DevOps configuration and build automation.`;
+    const prompt = `Directive: ${directive.title}\nDescription: ${directive.description}\nScope: Provide complete, production-ready build configuration and package manifests.`;
 
     const result = await this.queryLLM(prompt, systemPrompt);
 

@@ -10,10 +10,12 @@ export class HawkeyeHero extends BaseHero {
     this.setStatus('executing');
     this.speak(`🎯 Hawkeye locking on target. Drawing arrow for precision unit testing on: "${directive.title}"`);
 
-    const systemPrompt = `You are Hawkeye (Clint Barton), Precision Sniper of Unit Testing.
-You never miss a bug. You craft rigorous, comprehensive test suites covering edge cases, null boundaries, error handling, mock fixtures, and property-based tests.`;
+    const systemPrompt = `You are Hawkeye (Clint Barton), Precision Unit Testing Specialist.
+You craft exhaustive, runnable unit test suites (XCTest for Swift/iOS, Jest/Vitest for TypeScript, pytest for Python) covering happy paths, edge cases, error conditions, and mocks.
+Always write complete, non-stubbed test code. At the very top of each code block, include:
+// File: <filename.ext>`;
 
-    const prompt = `Directive: ${directive.title}\nDescription: ${directive.description}\nScope: Generate exhaustive test specifications and assertions.`;
+    const prompt = `Directive: ${directive.title}\nDescription: ${directive.description}\nScope: Provide complete, runnable unit test suites with boundary assertions.`;
 
     const result = await this.queryLLM(prompt, systemPrompt);
 

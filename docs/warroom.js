@@ -1072,9 +1072,12 @@ async function dispatchPrompt(customText = null) {
   // Show live loading state in response panel
   showResponsePanel(`⚡ DISPATCHING TO GEMINI // DIRECTIVES IN PROGRESS...\n\nAnalyzing request: "${prompt}"\nTony Stark and the Scavengers strike team are generating architecture & code...`, true);
 
-  // Call the real backend — POST /api/mission/launch
+  // Call backend — POST /api/mission/launch
   try {
-    const res = await fetch('/api/mission/launch', {
+    const isStaticGitHubPages = location.hostname.includes('github.io');
+    const apiUrl = isStaticGitHubPages ? 'http://localhost:3000/api/mission/launch' : '/api/mission/launch';
+
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt })
@@ -1083,13 +1086,33 @@ async function dispatchPrompt(customText = null) {
     if (res.ok) {
       const deliverable = data.result || data.summary || data.message || "Mission completed.";
       showResponsePanel(deliverable, false);
-      tony.speak('Mission deliverable compiled! Ready in HUD.');
+      tony.speak('Mission deliverable compiled & saved to workspace!');
       playSfx('snap');
     } else {
       showResponsePanel(`❌ Error: ${data.error || 'Mission failed to launch'}`);
     }
   } catch (err) {
-    showResponsePanel(`❌ Server connection error.\n\nMake sure the backend is active at http://localhost:3000`);
+    // If static GitHub Pages demo or server down, provide clear instructions + instant fallback preview
+    const isGitHubPages = location.hostname.includes('github.io');
+    const fallbackText = isGitHubPages
+      ? `### 🌐 SCAVENGERS WAR ROOM // ONLINE PREVIEW\n\n` +
+        `> **NOTICE**: You are currently testing the online static preview on GitHub Pages.\n` +
+        `> To enable **live Gemini file writing directly to your computer's filesystem**:\n\n` +
+        `\`\`\`bash\n# 1. Start your local Scavengers Harness\ncd agentharness\nnode bin/stark.js hud --port 3000\n\n# 2. Open in browser:\nhttp://localhost:3000/warroom.html\n\`\`\`\n\n` +
+        `---\n\n` +
+        `### 🦾 Tony Stark // Tactical Directive Preview for: "${prompt}"\n\n` +
+        `- 🕸️ **[SPIDER-MAN]**: Dispatched to create UI Views & Components\n` +
+        `- 🟢 **[HULK]**: Dispatched to implement Core Logic & ViewModels\n` +
+        `- ⚡ **[THOR]**: Dispatched to generate Package Manifest & Build config\n` +
+        `- 🏹 **[HAWKEYE]**: Dispatched to generate Unit Test Suites\n` +
+        `- 🛡️ **[CAPTAIN AMERICA]**: QA Review & Vibranium Seal Applied\n\n` +
+        `*Run locally on http://localhost:3000 to write full source files to ./workspace/*`
+      : `### ❌ Local Backend Not Connected\n\n` +
+        `Make sure your local Scavengers server is active on port 3000:\n\n` +
+        `\`\`\`bash\nnode bin/stark.js hud --port 3000\n\`\`\``;
+
+    showResponsePanel(fallbackText, false);
+    tony.speak('Run locally on localhost:3000 for disk workspace generation!');
   }
 }
 

@@ -11,9 +11,11 @@ export class SpiderManHero extends BaseHero {
     this.speak(`🕸️ Your friendly neighborhood frontend hero is swinging in! Building responsive UI for: "${directive.title}"`);
 
     const systemPrompt = `You are Spider-Man (Peter Parker), Frontend Hero & UI/UX Specialist.
-You craft beautiful, accessible, responsive components in modern React, Tailwind CSS, TypeScript, and interactive micro-animations.`;
+You craft beautiful, production-ready UI components in the requested framework (SwiftUI for iOS/macOS, React/Tailwind, Vue, Flutter, HTML/CSS).
+Always write complete, non-stubbed source code. At the very top of each code block, include:
+// File: <filename.ext>`;
 
-    const prompt = `Directive: ${directive.title}\nDescription: ${directive.description}\nScope: Provide clean, interactive frontend code with modern UI design principles.`;
+    const prompt = `Directive: ${directive.title}\nDescription: ${directive.description}\nScope: Provide complete, production-ready frontend source code with modern UI design principles.`;
 
     const result = await this.queryLLM(prompt, systemPrompt);
 
