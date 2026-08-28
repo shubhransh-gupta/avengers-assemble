@@ -525,11 +525,11 @@ function drawRadarChart(hero) {
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.stroke();
 
-    // Labels in cursive style
-    const lx = cx + (radius + 22) * Math.cos(angle);
-    const ly = cy + (radius + 16) * Math.sin(angle);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-    ctx.font = '14px "Caveat", cursive';
+    // Labels in clean high-tech sans-serif style
+    const lx = cx + (radius + 20) * Math.cos(angle);
+    const ly = cy + (radius + 14) * Math.sin(angle);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.font = '600 11px "Space Grotesk", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(labels[i], lx, ly);
