@@ -1,16 +1,16 @@
-# 🦾 AVENGERS ASSEMBLE — Earth's Mightiest Multi-Agent Coding Harness
+# 🦾 SCAVENGERS ASSEMBLE — Earth's Mightiest Multi-Agent Coding Harness
 
 <p align="center">
-  <a href="https://github.com/shubhransh-gupta/avengers-assemble/stargazers">
-    <img src="https://img.shields.io/github/stars/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=FFD700&labelColor=030712" alt="Stars" />
+  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/stargazers">
+    <img src="https://img.shields.io/github/stars/shubhransh-gupta/scavengers-assemble?style=for-the-badge&logo=github&color=FFD700&labelColor=030712" alt="Stars" />
   </a>
-  <a href="https://github.com/shubhransh-gupta/avengers-assemble/network/members">
-    <img src="https://img.shields.io/github/forks/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=00D4FF&labelColor=030712" alt="Forks" />
+  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/network/members">
+    <img src="https://img.shields.io/github/forks/shubhransh-gupta/scavengers-assemble?style=for-the-badge&logo=github&color=00D4FF&labelColor=030712" alt="Forks" />
   </a>
-  <a href="https://github.com/shubhransh-gupta/avengers-assemble/issues">
-    <img src="https://img.shields.io/github/issues/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=A855F7&labelColor=030712" alt="Issues" />
+  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/issues">
+    <img src="https://img.shields.io/github/issues/shubhransh-gupta/scavengers-assemble?style=for-the-badge&logo=github&color=A855F7&labelColor=030712" alt="Issues" />
   </a>
-  <a href="https://github.com/shubhransh-gupta/avengers-assemble/blob/main/LICENSE">
+  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/LICENSE-MIT-00FF87?style=for-the-badge&labelColor=030712" alt="MIT License" />
   </a>
   <img src="https://img.shields.io/badge/NODE->= 18.0.0-FFC107?style=for-the-badge&logo=node.js&labelColor=030712" alt="Node" />
@@ -45,16 +45,16 @@
 
 | App | Link | Description |
 |:---|:---|:---|
-| 🦸 **3D Character Selector** | [**Launch Selector**](https://shubhransh-gupta.github.io/avengers-assemble/selector.html) | Interactive 3D Dribbble-style Character Selector with radar combat telemetry, Web Audio SFX, and live directive deployer. |
-| 🚀 **Marketing Website** | [**View Landing Page**](https://shubhransh-gupta.github.io/avengers-assemble/) | Futuristic Quantum Violet & Arc Cyan homepage with cursive typography and full feature breakdown. |
-| 🖥️ **Stark Tower HUD** | [**Open Mission Control**](https://shubhransh-gupta.github.io/avengers-assemble/hud.html) | Live WebSocket command dashboard with real-time Arc Reactor power monitoring and encrypted comms feed. |
+| 🦸 **3D Character Selector** | [**Launch Selector**](https://shubhransh-gupta.github.io/scavengers-assemble/selector.html) | Interactive 3D Dribbble-style Character Selector with radar combat telemetry, Web Audio SFX, and live directive deployer. |
+| 🚀 **Marketing Website** | [**View Landing Page**](https://shubhransh-gupta.github.io/scavengers-assemble/) | Futuristic Quantum Violet & Arc Cyan homepage with cursive typography and full feature breakdown. |
+| 🖥️ **Stark Tower HUD** | [**Open Mission Control**](https://shubhransh-gupta.github.io/scavengers-assemble/hud.html) | Live WebSocket command dashboard with real-time Arc Reactor power monitoring and encrypted comms feed. |
 
 ---
 
 > *"And if we can't protect your codebase, you can be damn well sure we'll avenge it."*  
 > — **Tony Stark**
 
-**Avengers Assemble** is a **free, open-source, ultra-performant multi-agent AI coding harness** that turns your existing AI subscriptions into an **elite superhero strike team** — coordinated by Tony Stark, secured by Black Widow, tested by Hawkeye, and reviewed by Captain America himself.
+**Scavengers Assemble** is a **free, open-source, ultra-performant multi-agent AI coding harness** that turns your existing AI subscriptions into an **elite superhero strike team** — coordinated by Tony Stark, secured by Black Widow, tested by Hawkeye, and reviewed by Captain America himself.
 
 Works with **Claude Code**, **Gemini 2.5**, **GPT-4o**, **Grok**, **Ollama/DeepSeek-R1** — using the **subscriptions you already pay for**, harvesting their hourly limits so you never hit a 429 again.
 
@@ -64,18 +64,18 @@ Works with **Claude Code**, **Gemini 2.5**, **GPT-4o**, **Grok**, **Ollama/DeepS
 
 ```bash
 # No install needed — run instantly with npx
-npx avengers-assemble assemble "Build JWT auth middleware, unit test suite, and Docker container"
+npx scavengers-assemble assemble "Build JWT auth middleware, unit test suite, and Docker container"
 
 # Or launch the Stark Tower holographic Mission Control HUD
-npx avengers-assemble hud
+npx scavengers-assemble hud
 # → Opens http://localhost:3000 (spinning Arc Reactor, hero telemetry, live comms)
 ```
 
 ### Full Local Setup
 
 ```bash
-git clone https://github.com/shubhransh-gupta/avengers-assemble.git
-cd avengers-assemble
+git clone https://github.com/shubhransh-gupta/scavengers-assemble.git
+cd scavengers-assemble
 npm install
 
 npm test      # ✔ 6/6 suites pass
@@ -86,7 +86,7 @@ npm start     # → http://localhost:3000 Stark Tower HUD
 
 ---
 
-## 🌟 Why Avengers Assemble?
+## 🌟 Why Scavengers Assemble?
 
 | Pain Point | Avengers Solution |
 |:---|:---|
@@ -184,7 +184,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 
 ## 📊 vs The Competition
 
-| Feature | 🦾 Avengers Assemble | Munder-Difflin | AutoGen | CrewAI |
+| Feature | 🦾 Scavengers Assemble | Munder-Difflin | AutoGen | CrewAI |
 |:---|:---:|:---:|:---:|:---:|
 | Free, BYOK, no extra cost | ✅ | ✅ | ⚠️ | ⚠️ |
 | Arc Reactor rate-limit manager | ✅ | ❌ | ❌ | ❌ |
@@ -216,7 +216,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 ## 📁 Project Structure
 
 ```
-avengers-assemble/
+scavengers-assemble/
 ├── src/
 │   ├── heroes/           # 9 Avenger agent implementations
 │   ├── core/             # Arc Reactor, Comms, Time Stone, Mind Stone
@@ -246,7 +246,7 @@ We welcome all contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guideli
 - 🔌 Add a new LLM provider
 - 🎨 Improve the Stark Tower HUD / 3D Selector
 - 📝 Improve documentation
-- 🐛 [Report bugs](https://github.com/shubhransh-gupta/avengers-assemble/issues)
+- 🐛 [Report bugs](https://github.com/shubhransh-gupta/scavengers-assemble/issues)
 
 ---
 
@@ -259,11 +259,11 @@ Avengers character names are homage inspirations under Fair Use.
 
 <p align="center">
   <strong>⭐ Star this repo if you're ready to assemble Earth's Mightiest Coding Agents! ⭐</strong><br/><br/>
-  <a href="https://github.com/shubhransh-gupta/avengers-assemble/stargazers">
-    <img src="https://img.shields.io/github/stars/shubhransh-gupta/avengers-assemble?style=social&label=Star" />
+  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/stargazers">
+    <img src="https://img.shields.io/github/stars/shubhransh-gupta/scavengers-assemble?style=social&label=Star" />
   </a>
   &nbsp;
-  <a href="https://github.com/shubhransh-gupta/avengers-assemble/network/members">
-    <img src="https://img.shields.io/github/forks/shubhransh-gupta/avengers-assemble?style=social&label=Fork" />
+  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/network/members">
+    <img src="https://img.shields.io/github/forks/shubhransh-gupta/scavengers-assemble?style=social&label=Fork" />
   </a>
 </p>

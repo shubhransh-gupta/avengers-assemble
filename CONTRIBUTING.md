@@ -7,8 +7,8 @@ First off — **welcome, hero.** Every contribution, no matter how small, helps 
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/shubhransh-gupta/avengers-assemble.git
-cd avengers-assemble
+git clone https://github.com/shubhransh-gupta/scavengers-assemble.git
+cd scavengers-assemble
 npm install
 npm test       # Make sure all 6 tests pass before you start
 ```
@@ -60,4 +60,4 @@ npm test       # Make sure all 6 tests pass before you start
 
 Be excellent to each other. This is a place for all heroes, regardless of background.
 
-Questions? Open a [Discussion](https://github.com/shubhransh-gupta/avengers-assemble/discussions).
+Questions? Open a [Discussion](https://github.com/shubhransh-gupta/scavengers-assemble/discussions).

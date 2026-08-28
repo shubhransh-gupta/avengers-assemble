@@ -1,11 +1,12 @@
 {
-  "name": "avengers-assemble",
+  "name": "scavengers-assemble",
   "version": "1.0.0",
   "description": "Earth's Mightiest Multi-Agent Coding Harness — Coordinated by Tony Stark. Turn your AI subscriptions into an elite superhero strike team.",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "bin": {
+    "scavengers": "./bin/stark.js",
     "avengers": "./bin/stark.js",
     "stark": "./bin/stark.js"
   },
