@@ -3,128 +3,222 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stark Tower Office Floor — Scavengers Assemble</title>
-  <meta name="description" content="Munder-Difflin style autonomous AI coding office floor. 9 hero agents typing at desks, collaborating, flying message envelopes, and executing directives." />
+  <title>Stark Tower // Munder-Difflin Office Floor — Scavengers Assemble</title>
+  <meta name="description" content="Authentic 2D pixel-art office floor and live multi-agent command center. Powered by Shubhransh Gupta." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
 
-  <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
+  <!-- Fonts: Space Grotesk, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="warroom.css" />
 </head>
-<body class="warroom-body">
+<body>
 
-  <div class="warroom-app">
-    <!-- Top Nav / Status Bar -->
-    <header class="warroom-nav">
-      <a href="index.html" class="brand-wrap">
-        <div class="brand-reactor"></div>
-        <div>
-          <div class="brand-title">Stark Tower // <span>Office Floor</span></div>
-          <span class="brand-sub">Powered by Shubhransh Gupta &bull; Autonomous Agent Hive</span>
-        </div>
-      </a>
-
-      <div class="nav-controls">
-        <div class="status-pill">
-          <span class="dot"></span>
-          <span>9 Agents Active &bull; 60 FPS</span>
-        </div>
-
-        <button id="speedToggleBtn" class="ctrl-btn">
-          ⚡ Speed: 1x
-        </button>
-
-        <button id="soundToggleBtn" class="ctrl-btn">
-          🔊 SFX: ON
-        </button>
-
-        <button id="assembleAllBtn" class="ctrl-btn gold">
-          ⚡ Assemble All
-        </button>
-
-        <a href="hud.html" class="ctrl-btn">
-          🚀 Mission Control HUD
-        </a>
-
-        <a href="selector.html" class="ctrl-btn">
-          🦸 3D Character Selector
-        </a>
-
-        <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="ctrl-btn primary">
-          ⭐ Star on GitHub
-        </a>
-      </div>
-    </header>
-
-    <!-- Main Office Floor Canvas Arena -->
-    <main class="simulation-container">
-      <canvas id="warroomCanvas"></canvas>
-
-      <!-- Speech Bubble Overlay Layer -->
-      <div id="speechBubbleLayer" style="position:absolute;inset:0;pointer-events:none;z-index:25;"></div>
-
-      <!-- Top-Left Hero Inspector Card (Appears on click) -->
-      <div class="hero-inspector-card" id="heroInspectorCard">
-        <div class="insp-header">
-          <div class="insp-avatar" id="inspAvatar">🦾</div>
-          <div>
-            <div class="insp-name" id="inspName">Tony Stark</div>
-            <div class="insp-role" id="inspRole">Lead GOD Orchestrator</div>
+  <div class="app-container">
+    
+    <!-- Top Main Split Workspace (Canvas + Command Center) -->
+    <main class="main-workspace">
+      
+      <!-- LEFT: Pixel Office Floor Canvas Area -->
+      <section class="office-canvas-wrapper">
+        <div class="canvas-top-bar">
+          <div class="canvas-pill">
+            <span class="dot"></span>
+            <span>$ using Bash &bull; 9 Agents Active</span>
+          </div>
+          <div class="canvas-pill">
+            <span>⚡ Arc Reactor: 99.8% Online</span>
           </div>
         </div>
 
-        <div class="insp-grid">
-          <div class="insp-box">
-            <span class="k">MODEL</span>
-            <span class="v" id="inspModel">Claude 3.7 Sonnet</span>
-          </div>
-          <div class="insp-box">
-            <span class="k">TOKEN CAP</span>
-            <span class="v" id="inspCap">80,000 / hr</span>
-          </div>
-          <div class="insp-box">
-            <span class="k">ACCESSORY</span>
-            <span class="v" id="inspAccessory">Mark 85 Helmet</span>
-          </div>
-          <div class="insp-box">
-            <span class="k">STATUS</span>
-            <span class="v" id="inspStatus" style="color:#4ADE80;">CODING</span>
-          </div>
-        </div>
-      </div>
+        <canvas id="pixelOfficeCanvas"></canvas>
 
-      <!-- Top-Right Live Terminal Drawer -->
-      <div class="side-terminal-drawer">
-        <div class="drawer-header">
-          <span class="drawer-title">📡 STARK-NET WAR ROOM FEED</span>
-          <span style="font-family:var(--font-mono);font-size:10px;color:var(--green);">● LIVE</span>
-        </div>
-        <div class="drawer-feed" id="drawerFeed">
-          <!-- Dynamically streaming agent logs -->
-        </div>
-      </div>
+        <!-- Floating Speech Bubble Overlay Layer -->
+        <div id="speechBubbleLayer" style="position:absolute;inset:0;pointer-events:none;z-index:30;"></div>
+      </section>
 
-      <!-- Bottom Command Input Bar -->
-      <div class="bottom-command-bar">
-        <div class="command-input-wrap">
-          <span class="command-prompt-symbol">$</span>
-          <input 
-            type="text" 
-            class="command-input" 
-            id="commandInput"
-            placeholder="Assign directive to Tony Stark... e.g. 'Build JWT auth middleware, unit test suite, and Docker container'"
-            value="Build a secure JWT authentication middleware, unit test suite, and Docker container"
-          />
+      <!-- RIGHT: Command Center & PTY Terminal -->
+      <section class="command-center-panel">
+        
+        <!-- Header with Boss Info & Mode Switches -->
+        <header class="cc-header">
+          <div class="cc-boss-info">
+            <div class="cc-boss-avatar" id="ccBossAvatar">🦾</div>
+            <div>
+              <div class="cc-boss-name" id="ccBossName">Tony Stark <span style="font-size:10px;color:#00D4FF;">[GOD]</span></div>
+              <div class="cc-status-pill">
+                <span class="dot"></span>
+                <span>working &bull; Tony runs the floor</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cc-header-actions">
+            <button class="cc-btn active" title="Autonomous orchestration">▶ auto</button>
+            <button class="cc-btn" id="openIdeModalBtn" title="Setup with Antigravity, Cursor, Claude Code, Gemini">&lt;&gt; IDE</button>
+            <a href="hud.html" class="cc-btn" title="Open Holographic HUD">🚀 HUD</a>
+            <a href="index.html" class="cc-btn" title="Back to Landing Page">🏠 Home</a>
+          </div>
+        </header>
+
+        <!-- Tab Navigation Bar -->
+        <nav class="cc-tabs-bar">
+          <button class="cc-tab active" data-tab="terminal">⌨️ terminal</button>
+          <button class="cc-tab" data-tab="monitor">📊 monitor</button>
+          <button class="cc-tab" data-tab="tasks">✔ tasks</button>
+          <button class="cc-tab" data-tab="askme">❓ ask me</button>
+          <button class="cc-tab" data-tab="triggers">⚡ triggers</button>
+          <button class="cc-tab" data-tab="memory">🧠 memory</button>
+          <button class="cc-tab" data-tab="graph">🕸️ graph</button>
+          <button class="cc-tab" data-tab="activity">📡 activity</button>
+          <button class="cc-tab" data-tab="workers">👥 workers</button>
+        </nav>
+
+        <!-- Terminal Sub-Header -->
+        <div style="padding:4px 14px;background:#F5EFE0;border-bottom:1px solid #D8CEB9;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:#6B7280;">
+          <span>● live &bull; pty pty-god</span>
+          <span>12px +</span>
         </div>
-        <button class="dispatch-btn" id="dispatchMissionBtn">
-          <span>🚀</span>
-          <span>Assemble &amp; Dispatch</span>
-        </button>
-      </div>
+
+        <!-- Terminal Body Stream -->
+        <div class="cc-terminal-body" id="terminalBody">
+          <!-- Dynamically populated terminal lines -->
+        </div>
+
+        <!-- Context Token Meter -->
+        <div class="cc-meta-status">
+          <span>ctx 144k/1000k (14%) &bull; StarkCommsMesh</span>
+          <span style="color:#B45309;">bypass permissions on (shift+tab to cycle) &rarr; for agents</span>
+        </div>
+
+        <!-- Queue / Prompt Input Area -->
+        <div class="cc-queue-area">
+          <div class="queue-label">Queue / Master Prompt</div>
+          <textarea 
+            class="queue-textarea" 
+            id="queuePromptInput"
+            placeholder="Tony is ready — type a task or question for the agents... (Enter to Send)"
+          >Let's ask each of the 9 agents what they are up to. In short,</textarea>
+
+          <div class="queue-actions">
+            <div class="queue-left-btns">
+              <button class="cc-btn" style="font-size:11px;">+ files</button>
+              <button class="cc-btn" style="font-size:11px;">🎙️ voice</button>
+            </div>
+            <button class="send-btn" id="sendPromptBtn">
+              <span>send</span>
+              <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
     </main>
+
+    <!-- Bottom Horizontal Character Dock -->
+    <footer class="bottom-dock-bar" id="bottomDockBar">
+      <!-- Dynamically populated cards for all 9 heroes -->
+    </footer>
+
+  </div>
+
+  <!-- IDE Setup & Agent Integrations Modal -->
+  <div class="ide-modal-backdrop" id="ideModalBackdrop">
+    <div class="ide-modal">
+      <div class="ide-modal-header">
+        <div class="ide-modal-title">
+          <span>⚙️</span>
+          <span>Connect Your Existing AI Agents &amp; IDEs</span>
+        </div>
+        <button class="ide-modal-close" id="closeIdeModalBtn">&times;</button>
+      </div>
+
+      <div class="ide-modal-tabs">
+        <button class="ide-tab-btn active" data-target="guideAntigravity">Google Antigravity</button>
+        <button class="ide-tab-btn" data-target="guideCursor">Cursor IDE</button>
+        <button class="ide-tab-btn" data-target="guideClaude">Claude Code</button>
+        <button class="ide-tab-btn" data-target="guideGemini">Gemini 2.5</button>
+        <button class="ide-tab-btn" data-target="guideOpenAI">GPT-4o &amp; Codex</button>
+        <button class="ide-tab-btn" data-target="guideOllama">Ollama (Local LLM)</button>
+      </div>
+
+      <div class="ide-modal-content">
+        
+        <!-- Google Antigravity -->
+        <div class="ide-guide-section" id="guideAntigravity">
+          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting with Google Antigravity / AGY CLI</h4>
+          <p>Scavengers Assemble can be invoked directly as a subagent or sidecar daemon in your Antigravity environment:</p>
+          <div class="ide-code-block">
+# Run the Stark HUD sidecar server inside Antigravity:
+npx scavengers-assemble hud --port 3000
+
+# Or execute an autonomous 9-agent assemble mission:
+npx scavengers-assemble assemble "Refactor auth middleware and generate unit tests"
+          </div>
+          <p>Add to your project's <code>stark.config.json</code> to enable rolling-window token failover across Claude, Gemini, and GPT-4o.</p>
+        </div>
+
+        <!-- Cursor IDE -->
+        <div class="ide-guide-section" id="guideCursor" style="display:none;">
+          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting with Cursor IDE</h4>
+          <p>Add Scavengers Assemble rules to your <code>.cursorrules</code> file to enable multi-agent task deconstruction from inside Cursor Composer:</p>
+          <div class="ide-code-block">
+# .cursorrules
+When executing large multi-file refactors or QA review:
+1. Use Tony Stark as the GOD orchestrator to build the task DAG.
+2. Direct Captain America to enforce 100% strict TypeScript types.
+3. Call Hawkeye to generate boundary unit tests with 100% pass rate.
+4. Run: `npx scavengers-assemble assemble "$PROMPT"`
+          </div>
+        </div>
+
+        <!-- Claude Code -->
+        <div class="ide-guide-section" id="guideClaude" style="display:none;">
+          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting Claude Code CLI</h4>
+          <p>Link your existing Anthropic API key or Claude Code CLI subscription without paying extra:</p>
+          <div class="ide-code-block">
+export ANTHROPIC_API_KEY="sk-ant-api03-..."
+npx scavengers-assemble assemble --provider="claude-code"
+          </div>
+        </div>
+
+        <!-- Gemini 2.5 -->
+        <div class="ide-guide-section" id="guideGemini" style="display:none;">
+          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting Gemini 2.5 Flash / Pro</h4>
+          <p>Leverage Google's 1M+ token context window with Steve Rogers (Captain America) and Clint Barton (Hawkeye):</p>
+          <div class="ide-code-block">
+export GEMINI_API_KEY="AIzaSy..."
+npx scavengers-assemble assemble --provider="gemini"
+          </div>
+        </div>
+
+        <!-- OpenAI GPT-4o -->
+        <div class="ide-guide-section" id="guideOpenAI" style="display:none;">
+          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting OpenAI GPT-4o &amp; Codex</h4>
+          <p>Power Black Widow's Security Recon and zero-day dependency auditing:</p>
+          <div class="ide-code-block">
+export OPENAI_API_KEY="sk-proj-..."
+npx scavengers-assemble assemble --provider="openai"
+          </div>
+        </div>
+
+        <!-- Ollama Local LLM -->
+        <div class="ide-guide-section" id="guideOllama" style="display:none;">
+          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting Ollama (100% Free &amp; Local Offline)</h4>
+          <p>Run Bruce Banner &amp; Hulk with zero API costs using DeepSeek-R1 or Qwen locally:</p>
+          <div class="ide-code-block">
+# 1. Start Ollama with DeepSeek-R1
+ollama run deepseek-r1:7b
+
+# 2. Scavengers automatically detects localhost:11434 with zero setup!
+npx scavengers-assemble assemble --provider="ollama"
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <script src="warroom.js"></script>

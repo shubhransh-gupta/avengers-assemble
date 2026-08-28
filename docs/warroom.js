@@ -1,17 +1,18 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — Munder-Difflin Style Office Floor Engine
-   Features: Dedicated Desks, Glowing Monitors, Flying Envelopes,
-   Roaming Avatars, Coffee Breaks, Typewriter Speech Bubbles & VFX
+   STARK TOWER WAR ROOM — Munder-Difflin Pixel Engine & Command Center
+   Authentic 16-bit Pixel Sprites, Office Architecture, PTY Terminal,
+   Flying Envelopes, Interactive Prompt Dispatcher & IDE Setup Guide
    ══════════════════════════════════════════════════════════════════════ */
 
 let canvas, ctx;
-let audioCtx = null;
+let lastTime = performance.now();
 let soundEnabled = true;
 let simSpeed = 1;
-let lastTime = performance.now();
-let selectedHero = null;
+let selectedHeroId = 'tony-stark';
+let activeTab = 'terminal';
+let audioCtx = null;
 
-// Audio Synthesizer (Web Audio API)
+// Sound Synthesizer
 function getAudio() {
   if (!audioCtx) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -26,35 +27,31 @@ function playSfx(type) {
   try {
     const ctx = getAudio();
     const now = ctx.currentTime;
-
     if (type === 'envelope') {
-      // Whoosh envelope flying
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(300, now);
-      osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.14);
       gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.16);
+      osc.start(now); osc.stop(now + 0.15);
     } else if (type === 'pop') {
-      // Speech bubble pop
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(480, now);
-      osc.frequency.exponentialRampToValueAtTime(720, now + 0.08);
-      gain.gain.setValueAtTime(0.14, now);
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(840, now + 0.08);
+      gain.gain.setValueAtTime(0.15, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
       osc.connect(gain); gain.connect(ctx.destination);
       osc.start(now); osc.stop(now + 0.09);
     } else if (type === 'typing') {
-      // Subtle mechanical keyboard clack
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(180 + Math.random()*120, now);
+      osc.frequency.setValueAtTime(220 + Math.random()*150, now);
       gain.gain.setValueAtTime(0.04, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       osc.connect(gain); gain.connect(ctx.destination);
@@ -63,75 +60,66 @@ function playSfx(type) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(180, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.18);
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(860, now + 0.16);
       gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.26);
-    } else if (type === 'smash') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(90, now);
-      osc.frequency.exponentialRampToValueAtTime(25, now + 0.35);
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.36);
+      osc.start(now); osc.stop(now + 0.23);
     }
   } catch {}
 }
 
-// 9 Hero Workstations & Metadata
-const HERO_ROSTER = [
+// 9 Hero Definitions & Workstation Placement (Relative Office Map Coordinates 0-1000)
+const HEROES = [
   {
     id: 'tony-stark',
     name: 'Tony Stark',
-    alias: 'Iron Man (Boss / Orchestrator)',
-    avatar: '🦾',
-    color: '#00D4FF',
-    deskX: 0.18, deskY: 0.24,
+    shortName: 'TONY',
+    tag: 'GOD',
     role: 'Lead GOD Orchestrator',
+    harness: 'claudeTerminalHarness',
     model: 'Claude 3.7 Sonnet / Claude Code',
     tokenCap: '80,000 / hr',
-    accessory: 'Mark 85 Helmet',
+    color: '#00D4FF',
+    officeX: 110, officeY: 180, // In boss office top-left
+    isBoss: true,
     dialogs: [
-      "JARVIS, dispatch master task graph to all workstations.",
-      "Arc Reactor power grid balance: 99.8% optimal. No 429s allowed.",
-      "Hulk, refactor the sorting algorithm. Cap, audit the types.",
-      "Just deployed 6 parallel directives in 420ms."
+      "JARVIS, deconstruct the master prompt into DAG directives.",
+      "Arc Reactor load balancing: 99.8% optimal. No 429s allowed.",
+      "Cap, your strict types look solid. Approved.",
+      "Hulk, smash that memory bottleneck now."
     ]
   },
   {
     id: 'captain-america',
     name: 'Steve Rogers',
-    alias: 'Captain America',
-    avatar: '🛡️',
-    color: '#38BDF8',
-    deskX: 0.82, deskY: 0.24,
+    shortName: 'CAP',
+    tag: 'QA',
     role: 'QA Commander & Standards',
+    harness: 'geminiProHarness',
     model: 'Gemini 2.5 Pro',
     tokenCap: '120,000 / hr',
-    accessory: 'Vibranium Shield',
+    color: '#38BDF8',
+    officeX: 175, officeY: 420,
     dialogs: [
-      "I can do this all day. No unhandled promise rejections on my watch.",
-      "Vibranium Shield QA Stamp applied: 100% strict type safety verified.",
+      "I can do this all day. No unhandled promise rejections.",
+      "Vibranium Shield QA stamp applied: 100% strict TypeScript.",
       "Language, team! Clean commits only on main branch.",
-      "Pull request audited. Zero memory leaks detected."
+      "All assertions green across 16 test suites."
     ]
   },
   {
     id: 'hulk',
     name: 'Bruce Banner & Hulk',
-    alias: 'The Hulk',
-    avatar: '🟢',
-    color: '#4ADE80',
-    deskX: 0.15, deskY: 0.58,
+    shortName: 'HULK',
+    tag: 'AST',
     role: 'Deep AST Refactorer',
+    harness: 'ollamaDeepSeekHarness',
     model: 'Ollama / DeepSeek-R1 (Local)',
     tokenCap: 'Unlimited (Local)',
-    accessory: 'Gamma Test Tube',
+    color: '#4ADE80',
+    officeX: 285, officeY: 420,
     dialogs: [
       "HULK SMASH O(N^2) BOTTLENECK! REFACTOR WITH GAMMA SPEED!!",
       "Banner mode: Profiling heap memory snapshot...",
@@ -142,14 +130,14 @@ const HERO_ROSTER = [
   {
     id: 'black-widow',
     name: 'Natasha Romanoff',
-    alias: 'Black Widow',
-    avatar: '🕷️',
-    color: '#A855F7',
-    deskX: 0.85, deskY: 0.58,
+    shortName: 'WIDOW',
+    tag: 'SEC',
     role: 'Security Recon & CVE Audit',
+    harness: 'openaiGpt4oHarness',
     model: 'OpenAI GPT-4o',
     tokenCap: '60,000 / hr',
-    accessory: 'Encrypted Flash Drive',
+    color: '#A855F7',
+    officeX: 395, officeY: 420,
     dialogs: [
       "Infiltrating codebase perimeter. Scanning dependencies for zero-days.",
       "Sanitized API bearer keys in .env. Ledger clean.",
@@ -160,14 +148,14 @@ const HERO_ROSTER = [
   {
     id: 'thor',
     name: 'Thor Odinson',
-    alias: 'God of Thunder',
-    avatar: '⚡',
-    color: '#00E5FF',
-    deskX: 0.32, deskY: 0.20,
+    shortName: 'THOR',
+    tag: 'OPS',
     role: 'DevOps & Lightning Builds',
+    harness: 'xaiGrokHarness',
     model: 'xAI Grok 3',
     tokenCap: '60,000 / hr',
-    accessory: 'Mjolnir Paperweight',
+    color: '#00E5FF',
+    officeX: 520, officeY: 220,
     dialogs: [
       "BY THE POWER OF MJOLNIR, SUMMONING THE DOCKER BIFROST!",
       "Kubernetes ingress struck by lightning! Multi-stage build forged in 4.2s.",
@@ -178,14 +166,14 @@ const HERO_ROSTER = [
   {
     id: 'hawkeye',
     name: 'Clint Barton',
-    alias: 'Hawkeye',
-    avatar: '🏹',
-    color: '#FFCA54',
-    deskX: 0.68, deskY: 0.20,
+    shortName: 'HAWKEYE',
+    tag: 'TEST',
     role: 'Precision Unit Testing',
+    harness: 'geminiFlashHarness',
     model: 'Gemini Flash 2.5',
     tokenCap: '150,000 / hr',
-    accessory: 'Recurve Bow Stand',
+    color: '#FFCA54',
+    officeX: 630, officeY: 220,
     dialogs: [
       "I played 18 test suites, I shot 18 passing assertions. Can't seem to miss.",
       "Locking on boundary conditions: null, undefined, NaN, Infinity. Bullseye!",
@@ -196,14 +184,14 @@ const HERO_ROSTER = [
   {
     id: 'spider-man',
     name: 'Peter Parker',
-    alias: 'Spider-Man',
-    avatar: '🕸️',
-    color: '#38BDF8',
-    deskX: 0.25, deskY: 0.78,
+    shortName: 'SPIDEY',
+    tag: 'UI',
     role: 'Frontend Hero & UI/UX',
+    harness: 'claudeFrontendHarness',
     model: 'Claude 3.7 / o3-mini',
     tokenCap: '80,000 / hr',
-    accessory: 'Web Fluid Canister',
+    color: '#38BDF8',
+    officeX: 175, officeY: 580,
     dialogs: [
       "Your friendly neighborhood frontend hero swinging in!",
       "Spun up accessible React components with buttery 60 FPS Tailwind animations!",
@@ -214,14 +202,14 @@ const HERO_ROSTER = [
   {
     id: 'doctor-strange',
     name: 'Stephen Strange',
-    alias: 'Doctor Strange',
-    avatar: '🔮',
-    color: '#F59E0B',
-    deskX: 0.75, deskY: 0.78,
+    shortName: 'STRANGE',
+    tag: 'SIM',
     role: 'Multiverse Simulator',
+    harness: 'timeStoneEngine',
     model: 'Claude 3.7 Thinking',
     tokenCap: '50,000 / hr',
-    accessory: 'Eye of Agamotto',
+    color: '#F59E0B',
+    officeX: 395, officeY: 580,
     dialogs: [
       "Opening the Eye of Agamotto. Simulating 14,000,605 timelines...",
       "Reality-616 selected: Canonical high-performance architecture (98.4% success).",
@@ -232,14 +220,14 @@ const HERO_ROSTER = [
   {
     id: 'vision',
     name: 'Vision',
-    alias: 'Synthezoid',
-    avatar: '💎',
-    color: '#FFD700',
-    deskX: 0.50, deskY: 0.80,
+    shortName: 'VISION',
+    tag: 'MEM',
     role: 'Mind Stone Memory',
+    harness: 'mindStoneMemory',
     model: 'Gemini Pro Embedding',
     tokenCap: '100,000 / hr',
-    accessory: 'Solar Mind Crystal',
+    color: '#FFD700',
+    officeX: 520, officeY: 580,
     dialogs: [
       "Accessing Mind Stone semantic knowledge matrix...",
       "Indexed 42 architecture conventions into persistent org memory.",
@@ -249,24 +237,249 @@ const HERO_ROSTER = [
   }
 ];
 
-// Special Office Landmarks
-const OFFICE_LANDMARKS = {
-  'CONFERENCE_TABLE': { name: 'Arc Reactor Conference Table', nx: 0.50, ny: 0.46 },
-  'WATER_COOLER':     { name: 'Office Water Cooler & Coffee Bar', nx: 0.50, ny: 0.16 },
-  'SERVER_RACK':       { name: 'High-Density Server Ingress', nx: 0.08, ny: 0.20 },
-  'SECURITY_VAULT':    { name: 'Encrypted Security Terminal', nx: 0.92, ny: 0.20 }
-};
+// Flying Mail Envelopes
+let flyingEnvelopes = [];
+let speechBubbles = [];
+let characterEntities = [];
 
-// Simulation Entity Classes
+class PixelCharacter {
+  constructor(hero) {
+    this.hero = hero;
+    this.id = hero.id;
+    this.homeX = hero.officeX;
+    this.homeY = hero.officeY;
+    this.x = hero.officeX;
+    this.y = hero.officeY;
+    this.targetX = hero.officeX;
+    this.targetY = hero.officeY;
+    this.state = 'WORKING'; // WORKING, WALKING, COFFEE, BREAK
+    this.facing = 1; // 1 = down, 2 = up, 3 = left, 4 = right
+    this.animFrame = 0;
+    this.animTimer = 0;
+    this.statusTag = 'working';
+    this.actionTimer = 3000 + Math.random() * 4000;
+  }
+
+  speak(text = null) {
+    const dialog = text || this.hero.dialogs[Math.floor(Math.random() * this.hero.dialogs.length)];
+    createSpeechBubble(this, dialog);
+    appendTerminalLine('action', `● [${this.hero.shortName}] ${dialog}`);
+    playSfx('pop');
+  }
+
+  update(dt) {
+    this.animTimer += dt * 5 * simSpeed;
+    if (this.animTimer >= 1) {
+      this.animTimer = 0;
+      this.animFrame = (this.animFrame + 1) % 4;
+    }
+
+    // Pathfinding
+    const dx = this.targetX - this.x;
+    const dy = this.targetY - this.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist > 4) {
+      this.state = 'WALKING';
+      this.statusTag = 'walking';
+      const speed = 45 * simSpeed * dt;
+      this.x += (dx / dist) * speed;
+      this.y += (dy / dist) * speed;
+    } else {
+      if (this.state === 'WALKING') {
+        if (Math.hypot(this.x - this.homeX, this.y - this.homeY) < 10) {
+          this.state = 'WORKING';
+          this.statusTag = 'working';
+        } else {
+          this.state = 'BREAK';
+          this.statusTag = 'coffee break';
+          if (Math.random() < 0.6) this.speak("Refueling at the coffee machine.");
+        }
+      }
+    }
+
+    // Autonomous schedule
+    this.actionTimer -= dt * 1000 * simSpeed;
+    if (this.actionTimer <= 0) {
+      if (this.state === 'WORKING') {
+        if (Math.random() < 0.3) {
+          // Walk to kitchen / break room (coords around 780, 580)
+          this.targetX = 760 + (Math.random() - 0.5) * 40;
+          this.targetY = 560 + (Math.random() - 0.5) * 30;
+          this.actionTimer = 4000 + Math.random() * 4000;
+        } else {
+          this.actionTimer = 6000 + Math.random() * 6000;
+          if (Math.random() < 0.4) this.speak();
+        }
+      } else {
+        // Return to desk
+        this.targetX = this.homeX;
+        this.targetY = this.homeY;
+        this.actionTimer = 7000 + Math.random() * 8000;
+      }
+    }
+  }
+
+  // Draw 16-Bit Pixel Character Sprite directly on Canvas
+  draw(ctx, scaleX, scaleY) {
+    const px = this.x * scaleX;
+    const py = this.y * scaleY;
+    const s = 1.8; // sprite scale
+
+    ctx.save();
+    ctx.translate(px, py);
+
+    // Selected indicator
+    if (selectedHeroId === this.id) {
+      ctx.fillStyle = 'rgba(255, 202, 84, 0.35)';
+      ctx.beginPath();
+      ctx.ellipse(0, 4, 18, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Ground shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.beginPath();
+    ctx.ellipse(0, 6, 12, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── CHARACTER SPRITE PIXELS ──
+    const isTyping = this.state === 'WORKING';
+    const handBob = isTyping ? (this.animFrame % 2 === 0 ? -1 : 1) : 0;
+    const walkBob = this.state === 'WALKING' ? Math.sin(this.animFrame * Math.PI) * 2 : 0;
+
+    ctx.translate(0, walkBob);
+
+    // 1. Legs / Shoes
+    ctx.fillStyle = '#2B3A42';
+    ctx.fillRect(-6, 2, 4, 6);
+    ctx.fillRect(2, 2, 4, 6);
+    ctx.fillStyle = '#17150E';
+    ctx.fillRect(-7, 7, 5, 3);
+    ctx.fillRect(2, 7, 5, 3);
+
+    // 2. Torso / Clothes (Specific to hero)
+    if (this.id === 'tony-stark') {
+      // Tony: Black business suit with glowing cyan Arc Reactor
+      ctx.fillStyle = '#1E293B';
+      ctx.fillRect(-8, -10, 16, 13);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(-3, -10, 6, 6);
+      ctx.fillStyle = '#00D4FF';
+      ctx.fillRect(-1.5, -6, 3, 3); // Arc Reactor
+    } else if (this.id === 'captain-america') {
+      // Cap: Blue tactical suit with star
+      ctx.fillStyle = '#1D4ED8';
+      ctx.fillRect(-8, -10, 16, 13);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(-2, -8, 4, 3);
+      ctx.fillStyle = '#B91C1C';
+      ctx.fillRect(-6, 0, 12, 3);
+    } else if (this.id === 'hulk') {
+      // Hulk: Green skin & purple torn shirt
+      ctx.fillStyle = '#15803D';
+      ctx.fillRect(-10, -12, 20, 15);
+      ctx.fillStyle = '#7E22CE';
+      ctx.fillRect(-8, -4, 16, 8);
+    } else if (this.id === 'black-widow') {
+      // Widow: Black stealth suit with violet belt
+      ctx.fillStyle = '#0F172A';
+      ctx.fillRect(-7, -10, 14, 13);
+      ctx.fillStyle = '#A855F7';
+      ctx.fillRect(-6, 0, 12, 2);
+    } else if (this.id === 'thor') {
+      // Thor: Red cape + silver armor
+      ctx.fillStyle = '#DC2626'; // Cape behind
+      ctx.fillRect(-10, -8, 20, 14);
+      ctx.fillStyle = '#64748B'; // Armor
+      ctx.fillRect(-8, -10, 16, 12);
+      ctx.fillStyle = '#00E5FF';
+      ctx.fillRect(-4, -6, 2, 2);
+      ctx.fillRect(2, -6, 2, 2);
+    } else if (this.id === 'spider-man') {
+      // Spider-Man: Red & blue suit
+      ctx.fillStyle = '#DC2626';
+      ctx.fillRect(-7, -10, 14, 8);
+      ctx.fillStyle = '#1D4ED8';
+      ctx.fillRect(-7, -2, 14, 5);
+    } else if (this.id === 'doctor-strange') {
+      // Strange: High red collar cape & blue robes
+      ctx.fillStyle = '#DC2626';
+      ctx.fillRect(-9, -12, 18, 16);
+      ctx.fillStyle = '#1E3A8A';
+      ctx.fillRect(-6, -9, 12, 12);
+      ctx.fillStyle = '#F59E0B';
+      ctx.fillRect(-2, -6, 4, 3);
+    } else {
+      // Generic / Vision / Hawkeye
+      ctx.fillStyle = this.hero.color;
+      ctx.fillRect(-7, -10, 14, 13);
+    }
+
+    // 3. Arms & Hands
+    ctx.fillStyle = this.id === 'hulk' ? '#15803D' : '#FFD2A0';
+    ctx.fillRect(-10, -8 + handBob, 3, 8);
+    ctx.fillRect(7, -8 - handBob, 3, 8);
+
+    // 4. Head & Face
+    ctx.fillStyle = this.id === 'hulk' ? '#15803D' : (this.id === 'vision' ? '#DC2626' : '#FFD2A0');
+    ctx.fillRect(-6, -20, 12, 11);
+
+    // Eyes
+    ctx.fillStyle = '#17150E';
+    if (this.id === 'spider-man') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(-4, -16, 3, 3);
+      ctx.fillRect(1, -16, 3, 3);
+    } else if (this.id === 'vision') {
+      ctx.fillStyle = '#FBBF24'; // Mind stone
+      ctx.fillRect(-1.5, -20, 3, 3);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(-4, -15, 2, 2);
+      ctx.fillRect(2, -15, 2, 2);
+    } else {
+      ctx.fillRect(-4, -16, 2, 2);
+      ctx.fillRect(2, -16, 2, 2);
+    }
+
+    // 5. Hair / Beard / Helmet
+    if (this.id === 'tony-stark') {
+      ctx.fillStyle = '#17150E';
+      ctx.fillRect(-7, -23, 14, 5); // Hair
+      ctx.fillRect(-2, -12, 4, 2); // Goatee
+    } else if (this.id === 'captain-america' || this.id === 'thor') {
+      ctx.fillStyle = '#FBBF24'; // Blonde hair
+      ctx.fillRect(-7, -23, 14, 6);
+      if (this.id === 'thor') ctx.fillRect(-8, -20, 2, 10); // Long hair
+    } else if (this.id === 'black-widow') {
+      ctx.fillStyle = '#B91C1C'; // Red hair
+      ctx.fillRect(-8, -23, 16, 8);
+      ctx.fillRect(-9, -18, 3, 12);
+    } else if (this.id === 'doctor-strange') {
+      ctx.fillStyle = '#17150E';
+      ctx.fillRect(-7, -23, 14, 5);
+      ctx.fillStyle = '#E2E8F0'; // White streak
+      ctx.fillRect(-7, -21, 2, 4);
+      ctx.fillRect(5, -21, 2, 4);
+    } else if (this.id !== 'spider-man' && this.id !== 'vision') {
+      ctx.fillStyle = '#4B5563';
+      ctx.fillRect(-7, -23, 14, 5);
+    }
+
+    ctx.restore();
+  }
+}
+
+// Flying Envelope Sprite
 class FlyingEnvelope {
   constructor(x1, y1, x2, y2, color, onArrival) {
     this.x1 = x1; this.y1 = y1;
     this.x2 = x2; this.y2 = y2;
-    this.color = color || '#00D4FF';
+    this.color = color || '#A855F7';
     this.progress = 0;
-    this.speed = 1.6;
+    this.speed = 1.8;
     this.onArrival = onArrival;
-    this.curveHeight = -40 - Math.random() * 30;
+    this.curveHeight = -50 - Math.random() * 30;
     playSfx('envelope');
   }
 
@@ -274,346 +487,68 @@ class FlyingEnvelope {
     this.progress += dt * this.speed * simSpeed;
     if (this.progress >= 1) {
       if (this.onArrival) this.onArrival();
-      return false; // remove
+      return false;
     }
     return true;
   }
 
-  draw(ctx) {
+  draw(ctx, scaleX, scaleY) {
     const t = this.progress;
-    // Quadratic bezier curve
     const cx = (this.x1 + this.x2) / 2;
     const cy = Math.min(this.y1, this.y2) + this.curveHeight;
 
-    const x = (1-t)*(1-t)*this.x1 + 2*(1-t)*t*cx + t*t*this.x2;
-    const y = (1-t)*(1-t)*this.y1 + 2*(1-t)*t*cy + t*t*this.y2;
+    const nx = (1-t)*(1-t)*this.x1 + 2*(1-t)*t*cx + t*t*this.x2;
+    const ny = (1-t)*(1-t)*this.y1 + 2*(1-t)*t*cy + t*t*this.y2;
 
-    // Glowing Trail
-    ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    const px = nx * scaleX;
+    const py = ny * scaleY;
+
+    // Glowing envelope pixel rect
+    ctx.save();
+    ctx.translate(px, py);
+
+    // Trail
     ctx.fillStyle = this.color;
     ctx.shadowColor = this.color;
-    ctx.shadowBlur = 12;
-    ctx.fill();
+    ctx.shadowBlur = 10;
+    ctx.fillRect(-8, -6, 16, 12);
     ctx.shadowBlur = 0;
 
-    // Envelope Icon
-    ctx.font = '14px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('✉️', x, y - 2);
+    // Pixel envelope details
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(-7, -5, 14, 10);
+    ctx.fillStyle = '#A855F7';
+    ctx.beginPath();
+    ctx.moveTo(-7, -5); ctx.lineTo(0, 1); ctx.lineTo(7, -5);
+    ctx.strokeStyle = '#A855F7';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.restore();
   }
 }
 
-class AgentAvatar {
-  constructor(data) {
-    this.data = data;
-    this.id = data.id;
-    this.name = data.name;
-    this.alias = data.alias;
-    this.avatar = data.avatar;
-    this.color = data.color;
-    this.role = data.role;
-    this.model = data.model;
-
-    this.homeX = 0;
-    this.homeY = 0;
-    this.x = 0;
-    this.y = 0;
-    this.targetX = 0;
-    this.targetY = 0;
-    this.state = 'AT_DESK'; // AT_DESK, WALKING, WATER_COOLER, TALKING, SMASHING
-    this.stateTimer = 2000 + Math.random() * 4000;
-    this.bob = Math.random() * Math.PI * 2;
-    this.typingTimer = 0;
-    this.codeParticles = [];
-    this.statusTag = 'CODING';
-  }
-
-  initPositions(w, h) {
-    this.homeX = w * this.data.deskX;
-    this.homeY = h * this.data.deskY;
-    this.x = this.homeX;
-    this.y = this.homeY;
-    this.targetX = this.homeX;
-    this.targetY = this.homeY;
-  }
-
-  speak(customText = null) {
-    const text = customText || this.data.dialogs[Math.floor(Math.random() * this.data.dialogs.length)];
-    createSpeechBubble(this, text);
-    addDrawerLog(this.alias.split(' ')[0], text);
-    playSfx('pop');
-  }
-
-  update(dt) {
-    this.bob += dt * 4;
-
-    // Movement
-    const dx = this.targetX - this.x;
-    const dy = this.targetY - this.y;
-    const dist = Math.hypot(dx, dy);
-
-    if (dist > 5) {
-      const speed = 75 * simSpeed * dt;
-      this.x += (dx / dist) * speed;
-      this.y += (dy / dist) * speed;
-      this.state = 'WALKING';
-    } else {
-      if (this.state === 'WALKING') {
-        // Arrived
-        if (Math.hypot(this.x - this.homeX, this.y - this.homeY) < 10) {
-          this.state = 'AT_DESK';
-          this.statusTag = 'CODING';
-        } else {
-          this.state = 'WATER_COOLER';
-          this.statusTag = 'COFFEE BREAK';
-          if (Math.random() < 0.6) this.speak("Refueling coffee at the water cooler.");
-        }
-      }
-    }
-
-    // State machine logic
-    this.stateTimer -= dt * 1000 * simSpeed;
-    if (this.stateTimer <= 0) {
-      if (this.state === 'AT_DESK') {
-        // Occasionally take a break or walk to water cooler
-        if (Math.random() < 0.35) {
-          const cooler = OFFICE_LANDMARKS['WATER_COOLER'];
-          this.targetX = canvas.width * cooler.nx + (Math.random() - 0.5) * 60;
-          this.targetY = canvas.height * cooler.ny + (Math.random() - 0.5) * 30;
-          this.stateTimer = 4000 + Math.random() * 4000;
-        } else {
-          this.stateTimer = 5000 + Math.random() * 6000;
-          if (Math.random() < 0.4) this.speak();
-        }
-      } else {
-        // Return to desk
-        this.targetX = this.homeX;
-        this.targetY = this.homeY;
-        this.stateTimer = 6000 + Math.random() * 8000;
-      }
-    }
-
-    // Code particles at desk
-    if (this.state === 'AT_DESK') {
-      this.typingTimer += dt;
-      if (this.typingTimer > 0.4) {
-        this.typingTimer = 0;
-        if (Math.random() < 0.5) {
-          this.codeParticles.push({
-            x: this.x + (Math.random()-0.5)*16,
-            y: this.y - 12,
-            vy: -15 - Math.random()*20,
-            text: ['0', '1', '{}', '=>', 'TS', 'OK', '✔'][Math.floor(Math.random()*7)],
-            alpha: 1
-          });
-        }
-      }
-    }
-
-    // Update code particles
-    for (let i = this.codeParticles.length - 1; i >= 0; i--) {
-      const p = this.codeParticles[i];
-      p.y += p.vy * dt;
-      p.alpha -= dt * 1.5;
-      if (p.alpha <= 0) this.codeParticles.splice(i, 1);
-    }
-  }
-
-  draw(ctx) {
-    // 1. Draw Code particles
-    for (const p of this.codeParticles) {
-      ctx.font = '9px "JetBrains Mono", monospace';
-      ctx.fillStyle = this.color;
-      ctx.globalAlpha = p.alpha * 0.8;
-      ctx.fillText(p.text, p.x, p.y);
-      ctx.globalAlpha = 1;
-    }
-
-    const bobY = this.state === 'WALKING' ? Math.sin(this.bob) * 3 : 0;
-
-    // 2. Selected Halo
-    if (selectedHero === this) {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y - 4 + bobY, 20, 0, Math.PI * 2);
-      ctx.strokeStyle = '#FFCA54';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([3, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    // 3. Avatar Shadow & Body
-    ctx.beginPath();
-    ctx.ellipse(this.x, this.y + 12, 12, 5, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.fill();
-
-    // Emoji Character
-    ctx.font = '22px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(this.avatar, this.x, this.y - 4 + bobY);
-
-    // Name Label
-    ctx.font = '600 10px "Space Grotesk", sans-serif';
-    ctx.fillStyle = '#fff';
-    ctx.fillText(this.alias.split(' ')[0], this.x, this.y + 18);
-
-    // Status Tag pill
-    ctx.font = '700 8px "JetBrains Mono", monospace';
-    ctx.fillStyle = this.color;
-    ctx.fillText(this.statusTag, this.x, this.y + 28);
-  }
-}
-
-// Global Simulation Store
-let agents = [];
-let flyingEnvelopes = [];
-let speechBubbles = [];
-
-// Draw Office Desks, Carpets & Furniture
-function drawOfficeFloor(ctx, w, h) {
-  // 1. Floor Background & Subtle Tile Grid
-  ctx.fillStyle = '#080B12';
-  ctx.fillRect(0, 0, w, h);
-
-  ctx.strokeStyle = '#121722';
-  ctx.lineWidth = 1;
-  const tileSize = 38;
-  for (let x = 0; x < w; x += tileSize) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-  }
-  for (let y = 0; y < h; y += tileSize) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-  }
-
-  // 2. Central Conference Carpet Area
-  const conf = OFFICE_LANDMARKS['CONFERENCE_TABLE'];
-  const cx = w * conf.nx;
-  const cy = h * conf.ny;
-
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, 140, 85, 0, 0, Math.PI * 2);
-  ctx.fillStyle = '#0D111A';
-  ctx.fill();
-  ctx.strokeStyle = '#232B3A';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Glass Conference Table with Glowing Center
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, 90, 50, 0, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(0, 212, 255, 0.05)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(0, 212, 255, 0.4)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  // Glowing Mini Arc Core in Conference Table
-  ctx.beginPath();
-  ctx.arc(cx, cy, 14, 0, Math.PI * 2);
-  ctx.fillStyle = '#00D4FF';
-  ctx.shadowColor = '#00D4FF';
-  ctx.shadowBlur = 18;
-  ctx.fill();
-  ctx.shadowBlur = 0;
-
-  ctx.font = '700 9px "Space Grotesk", sans-serif';
-  ctx.fillStyle = '#00D4FF';
-  ctx.textAlign = 'center';
-  ctx.fillText('STARK WAR ROOM HUB', cx, cy + 32);
-
-  // 3. Water Cooler Area
-  const cooler = OFFICE_LANDMARKS['WATER_COOLER'];
-  const kx = w * cooler.nx;
-  const ky = h * cooler.ny;
-
-  ctx.fillStyle = '#121722';
-  ctx.beginPath();
-  ctx.roundRect(kx - 35, ky - 18, 70, 36, 6);
-  ctx.fill();
-  ctx.strokeStyle = '#232B3A';
-  ctx.stroke();
-
-  ctx.font = '16px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('🚰', kx - 12, ky + 2);
-  ctx.fillText('☕', kx + 14, ky + 2);
-
-  ctx.font = '600 8.5px "JetBrains Mono", monospace';
-  ctx.fillStyle = '#A7B0C0';
-  ctx.fillText('BREAK ZONE', kx, ky + 28);
-
-  // 4. Draw Individual Hero Desks
-  HERO_ROSTER.forEach(hero => {
-    const dx = w * hero.deskX;
-    const dy = h * hero.deskY;
-
-    // Desk Carpet mat
-    ctx.fillStyle = '#0F1420';
-    ctx.beginPath();
-    ctx.roundRect(dx - 32, dy - 26, 64, 52, 6);
-    ctx.fill();
-    ctx.strokeStyle = '#182030';
-    ctx.stroke();
-
-    // Wooden Desk Top
-    ctx.fillStyle = '#1A2336';
-    ctx.beginPath();
-    ctx.roundRect(dx - 26, dy - 18, 52, 26, 4);
-    ctx.fill();
-    ctx.strokeStyle = hero.color;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Glowing Computer Monitor
-    ctx.fillStyle = '#0A0D14';
-    ctx.beginPath();
-    ctx.roundRect(dx - 12, dy - 16, 24, 12, 2);
-    ctx.fill();
-
-    // Screen Glow
-    ctx.fillStyle = hero.color;
-    ctx.globalAlpha = 0.7;
-    ctx.fillRect(dx - 10, dy - 14, 20, 8);
-    ctx.globalAlpha = 1;
-
-    // Swivel Chair
-    ctx.beginPath();
-    ctx.arc(dx, dy + 14, 8, 0, Math.PI * 2);
-    ctx.fillStyle = '#232B3A';
-    ctx.fill();
-    ctx.strokeStyle = '#303B52';
-    ctx.stroke();
-  });
-}
-
-// HTML Speech Bubble Overlay
-function createSpeechBubble(agent, text) {
+// Speech Bubble Management
+function createSpeechBubble(character, text) {
   const container = document.getElementById('speechBubbleLayer');
   if (!container) return;
 
   const bubble = document.createElement('div');
   bubble.className = 'speech-bubble';
-  bubble.style.setProperty('--bubble-color', agent.color);
-
   bubble.innerHTML = `
-    <div class="bubble-author">${agent.alias.split(' ')[0]}</div>
-    <div class="bubble-text">${text}</div>
+    <span class="bubble-prefix">${character.hero.name}</span>
+    ${text}
   `;
-
   container.appendChild(bubble);
 
   speechBubbles.push({
     element: bubble,
-    agent: agent,
-    timer: 4.0
+    character: character,
+    timer: 4.5
   });
 }
 
-function updateSpeechBubbles(dt) {
+function updateSpeechBubbles(dt, scaleX, scaleY) {
   for (let i = speechBubbles.length - 1; i >= 0; i--) {
     const b = speechBubbles[i];
     b.timer -= dt * simSpeed;
@@ -621,198 +556,379 @@ function updateSpeechBubbles(dt) {
       b.element.remove();
       speechBubbles.splice(i, 1);
     } else {
-      b.element.style.left = b.agent.x + 'px';
-      b.element.style.top = (b.agent.y - 12) + 'px';
+      b.element.style.left = (b.character.x * scaleX) + 'px';
+      b.element.style.top = (b.character.y * scaleY) + 'px';
     }
   }
 }
 
-// Side Drawer Logs
-function addDrawerLog(author, text) {
-  const feed = document.getElementById('drawerFeed');
-  if (!feed) return;
-  const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const div = document.createElement('div');
-  div.className = 'drawer-row';
-  div.innerHTML = `<span style="color:#717A8C;">[${time}]</span> <span class="author">${author}</span>: ${text}`;
-  feed.appendChild(div);
-  feed.scrollTop = feed.scrollHeight;
+// Draw Authentic Retro Office Floor Layout (Matching Screenshot)
+function drawOfficeEnvironment(ctx, w, h) {
+  const sx = w / 1000;
+  const sy = h / 720;
 
-  while (feed.children.length > 30) {
-    feed.removeChild(feed.firstChild);
+  // 1. Floor Tiles
+  ctx.fillStyle = '#A4B8A2'; // Retro green-tinted office floor
+  ctx.fillRect(0, 0, w, h);
+
+  // Floor grid lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+  ctx.lineWidth = 1;
+  const tile = 32 * sx;
+  for (let x = 0; x < w; x += tile) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
   }
+  for (let y = 0; y < h; y += tile) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  // 2. Thick Exterior Walls & Inner Office Dividers
+  ctx.fillStyle = '#FFFFFF';
+  ctx.strokeStyle = '#17150E';
+  ctx.lineWidth = 4;
+
+  // Outer Border Wall
+  ctx.strokeRect(16*sx, 16*sy, 968*sx, 688*sy);
+
+  // Boss Office Wall (Top-Left room)
+  ctx.strokeRect(16*sx, 16*sy, 220*sx, 240*sy);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(16*sx, 16*sy, 220*sx, 240*sy);
+
+  // Conference Room Wall (Top-Center)
+  ctx.strokeRect(236*sx, 16*sy, 480*sx, 150*sy);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(236*sx, 16*sy, 480*sx, 150*sy);
+
+  // Kitchen / Break Room (Bottom-Right)
+  ctx.strokeRect(716*sx, 480*sy, 268*sx, 224*sy);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(716*sx, 480*sy, 268*sx, 224*sy);
+
+  // Copy Machine / Storage Room (Right-Center)
+  ctx.strokeRect(716*sx, 16*sy, 268*sx, 300*sy);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(716*sx, 16*sy, 268*sx, 300*sy);
+
+  // Floor inside rooms
+  ctx.fillStyle = '#B4C5B2';
+  ctx.fillRect(20*sx, 20*sy, 212*sx, 232*sy); // Boss floor
+  ctx.fillRect(240*sx, 20*sy, 472*sx, 142*sy); // Conf floor
+  ctx.fillRect(720*sx, 484*sy, 260*sx, 216*sy); // Kitchen floor
+  ctx.fillRect(720*sx, 20*sy, 260*sx, 292*sy); // Copy room floor
+
+  // 3. Furniture: Boss Desk (Top-Left)
+  const bx = 110 * sx;
+  const by = 180 * sy;
+  ctx.fillStyle = '#8D6E63'; // Wood desk
+  ctx.fillRect(bx - 36*sx, by - 16*sy, 72*sx, 32*sy);
+  ctx.strokeRect(bx - 36*sx, by - 16*sy, 72*sx, 32*sy);
+  // Boss CRT Monitor
+  ctx.fillStyle = '#1E293B';
+  ctx.fillRect(bx - 14*sx, by - 26*sy, 28*sx, 16*sy);
+  ctx.fillStyle = '#00D4FF';
+  ctx.fillRect(bx - 12*sx, by - 24*sy, 24*sx, 12*sy);
+  // Coffee mug
+  ctx.fillStyle = '#DC2626';
+  ctx.fillRect(bx - 26*sx, by - 8*sy, 8*sx, 8*sy);
+
+  // Wall Clock & Calendar above Boss
+  ctx.fillStyle = '#FFFFFF';
+  ctx.strokeRect(40*sx, 32*sy, 32*sx, 32*sy);
+  ctx.fillRect(40*sx, 32*sy, 32*sx, 32*sy);
+  ctx.font = `${10*sx}px "JetBrains Mono"`;
+  ctx.fillStyle = '#DC2626';
+  ctx.fillText('AUG', 44*sx, 44*sy);
+  ctx.fillStyle = '#17150E';
+  ctx.fillText('28', 48*sx, 58*sy);
+
+  // 4. Furniture: Conference Table (Top-Center)
+  const cx = 475 * sx;
+  const cy = 90 * sy;
+  ctx.fillStyle = '#A0522D';
+  ctx.fillRect(cx - 100*sx, cy - 24*sy, 200*sx, 48*sy);
+  ctx.strokeRect(cx - 100*sx, cy - 24*sy, 200*sx, 48*sy);
+  // 6 Purple Chairs around table
+  ctx.fillStyle = '#7E22CE';
+  [-70, 0, 70].forEach(ox => {
+    ctx.fillRect(cx + ox*sx - 10*sx, cy - 38*sy, 20*sx, 12*sy);
+    ctx.strokeRect(cx + ox*sx - 10*sx, cy - 38*sy, 20*sx, 12*sy);
+    ctx.fillRect(cx + ox*sx - 10*sx, cy + 26*sy, 20*sx, 12*sy);
+    ctx.strokeRect(cx + ox*sx - 10*sx, cy + 26*sy, 20*sx, 12*sy);
+  });
+  // Whiteboard / Easel
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(cx + 120*sx, cy - 30*sy, 34*sx, 40*sy);
+  ctx.strokeRect(cx + 120*sx, cy - 30*sy, 34*sx, 40*sy);
+
+  // 5. Furniture: Kitchen Counter & Coffee Station (Bottom-Right)
+  const kx = 850 * sx;
+  const ky = 620 * sy;
+  ctx.fillStyle = '#CBD5E1'; // Steel sink counter
+  ctx.fillRect(kx - 90*sx, ky - 18*sy, 180*sx, 36*sy);
+  ctx.strokeRect(kx - 90*sx, ky - 18*sy, 180*sx, 36*sy);
+  // Coffee Maker with pot
+  ctx.fillStyle = '#17150E';
+  ctx.fillRect(kx - 60*sx, ky - 34*sy, 22*sx, 22*sy);
+  ctx.fillStyle = '#92400E';
+  ctx.fillRect(kx - 56*sx, ky - 26*sy, 14*sx, 12*sy);
+  // Water Cooler with blue tank
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(kx + 50*sx, ky - 44*sy, 24*sx, 36*sy);
+  ctx.fillStyle = '#38BDF8';
+  ctx.fillRect(kx + 54*sx, ky - 40*sy, 16*sx, 18*sy);
+
+  // 6. Open Office Workstation Desks (Main Floor)
+  const desks = [
+    { x: 175, y: 420 }, { x: 285, y: 420 }, { x: 395, y: 420 },
+    { x: 175, y: 580 }, { x: 285, y: 580 }, { x: 395, y: 580 },
+    { x: 520, y: 220 }, { x: 630, y: 220 },
+    { x: 520, y: 420 }, { x: 630, y: 420 },
+    { x: 520, y: 580 }, { x: 630, y: 580 }
+  ];
+
+  desks.forEach(d => {
+    const dx = d.x * sx;
+    const dy = d.y * sy;
+    // Wooden Desk
+    ctx.fillStyle = '#D97706';
+    ctx.fillRect(dx - 28*sx, dy - 14*sy, 56*sx, 28*sy);
+    ctx.strokeRect(dx - 28*sx, dy - 14*sy, 56*sx, 28*sy);
+    // CRT Monitor
+    ctx.fillStyle = '#1E293B';
+    ctx.fillRect(dx - 10*sx, dy - 22*sy, 20*sx, 12*sy);
+    ctx.fillStyle = '#38BDF8';
+    ctx.fillRect(dx - 8*sx, dy - 20*sy, 16*sx, 8*sy);
+    // Swivel Chair
+    ctx.fillStyle = '#B45309';
+    ctx.fillRect(dx - 10*sx, dy + 16*sy, 20*sx, 10*sy);
+    ctx.strokeRect(dx - 10*sx, dy + 16*sy, 20*sx, 10*sy);
+  });
+
+  // Green corner plants
+  const plants = [{x: 40, y: 680}, {x: 250, y: 50}, {x: 950, y: 50}];
+  plants.forEach(p => {
+    ctx.fillStyle = '#15803D';
+    ctx.beginPath();
+    ctx.arc(p.x * sx, p.y * sy, 14*sx, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  });
 }
 
-// Dispatch Mission & Launch Envelopes
-function dispatchMission(customPrompt) {
-  const prompt = customPrompt || document.getElementById('commandInput')?.value || 'Deconstruct authentication microservice into DAG directives';
-  const tony = agents.find(a => a.id === 'tony-stark');
+// Append Line to Terminal Output
+function appendTerminalLine(type, text) {
+  const terminal = document.getElementById('terminalBody');
+  if (!terminal) return;
+
+  const row = document.createElement('div');
+  row.className = `term-line ${type}`;
+  row.innerHTML = text;
+  terminal.appendChild(row);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+// Master Prompt Dispatch: Envelopes Fly to All Heroes
+function dispatchMasterPrompt() {
+  const input = document.getElementById('queuePromptInput');
+  const prompt = input?.value.trim() || "Let's ask each of the 9 agents what they are up to. In short,";
+
+  const tony = characterEntities.find(c => c.id === 'tony-stark');
   if (!tony) return;
 
+  appendTerminalLine('prompt', `> ${prompt}`);
+  appendTerminalLine('system', `* Brewed for 0.4s`);
+  appendTerminalLine('action', `* On it — sending all 9 agents the directive...`);
   playSfx('repulsor');
-  tony.speak(`Assembling Strike Team for: "${prompt}"`);
-  addDrawerLog('JARVIS', `Master prompt assigned to Tony Stark.`);
 
-  // Launch envelopes from Tony to other heroes
-  setTimeout(() => {
-    agents.forEach((agent, i) => {
-      if (agent.id !== 'tony-stark') {
-        setTimeout(() => {
-          flyingEnvelopes.push(new FlyingEnvelope(tony.x, tony.y, agent.x, agent.y, agent.color, () => {
-            agent.state = 'AT_DESK';
-            agent.targetX = agent.homeX;
-            agent.targetY = agent.homeY;
-            agent.statusTag = 'EXECUTING';
-            agent.speak(`Directive received! Running ${agent.model}`);
-            playSfx('typing');
-          }));
-        }, i * 160);
-      }
-    });
-  }, 500);
+  tony.speak(`Dispatching DAG task graph to strike team.`);
+
+  // Launch flying envelopes from Tony's office to all other desks
+  characterEntities.forEach((char, index) => {
+    if (char.id !== 'tony-stark') {
+      setTimeout(() => {
+        flyingEnvelopes.push(new FlyingEnvelope(tony.x, tony.y, char.x, char.y, char.hero.color, () => {
+          char.state = 'WORKING';
+          char.targetX = char.homeX;
+          char.targetY = char.homeY;
+          char.statusTag = 'working';
+          char.speak(`Directive received! Running ${char.hero.model}`);
+          appendTerminalLine('command', `  L $ ${char.hero.harness} --task="${prompt}"`);
+          appendTerminalLine('success', `  ✔ [${char.hero.shortName}] Task acknowledged and executing.`);
+          playSfx('typing');
+        }));
+      }, index * 140);
+    }
+  });
+
+  if (input) input.value = '';
 }
 
-// Inspect Hero on Click
-function inspectAgent(agent) {
-  selectedHero = agent;
-  const card = document.getElementById('heroInspectorCard');
-  if (!card) return;
+// Switch Active Hero
+function selectHero(heroId) {
+  selectedHeroId = heroId;
+  const hero = HEROES.find(h => h.id === heroId);
+  if (!hero) return;
 
-  card.style.display = 'flex';
-  document.getElementById('inspAvatar').textContent = agent.avatar;
-  document.getElementById('inspName').textContent = agent.name;
-  document.getElementById('inspRole').textContent = agent.role;
-  document.getElementById('inspModel').textContent = agent.model;
-  document.getElementById('inspCap').textContent = agent.data.tokenCap;
-  document.getElementById('inspAccessory').textContent = agent.data.accessory;
-  document.getElementById('inspStatus').textContent = agent.statusTag;
+  // Update Dock Cards Active state
+  document.querySelectorAll('.dock-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.heroId === heroId);
+  });
+
+  // Update Header Boss Info
+  const nameEl = document.getElementById('ccBossName');
+  if (nameEl) nameEl.innerHTML = `${hero.name} <span style="font-size:10px;color:#00D4FF;">[${hero.tag}]</span>`;
+
+  const avatarEl = document.getElementById('ccBossAvatar');
+  if (avatarEl) avatarEl.textContent = hero.isBoss ? '🦾' : '🦸';
+
+  appendTerminalLine('system', `* Switched context to [${hero.name} // ${hero.harness}]`);
+  const char = characterEntities.find(c => c.id === heroId);
+  if (char) char.speak();
 }
 
-// 60 FPS Loop
+// 60 FPS Canvas Animation Loop
 function loop(now) {
   const dt = Math.min((now - lastTime) / 1000, 0.1);
   lastTime = now;
 
-  // 1. Draw Office Floor
-  drawOfficeFloor(ctx, canvas.width, canvas.height);
+  const w = canvas.width;
+  const h = canvas.height;
+  const sx = w / 1000;
+  const sy = h / 720;
 
-  // 2. Update & Draw Flying Envelopes
+  // 1. Draw Office Architecture
+  drawOfficeEnvironment(ctx, w, h);
+
+  // 2. Update & Draw Characters
+  characterEntities.forEach(char => {
+    char.update(dt);
+    char.draw(ctx, sx, sy);
+  });
+
+  // 3. Update & Draw Flying Envelopes
   for (let i = flyingEnvelopes.length - 1; i >= 0; i--) {
     const env = flyingEnvelopes[i];
     if (!env.update(dt)) {
       flyingEnvelopes.splice(i, 1);
     } else {
-      env.draw(ctx);
+      env.draw(ctx, sx, sy);
     }
   }
 
-  // 3. Update & Draw Agents
-  agents.forEach(a => {
-    a.update(dt);
-    a.draw(ctx);
-  });
-
   // 4. Update Speech Bubbles
-  updateSpeechBubbles(dt);
+  updateSpeechBubbles(dt, sx, sy);
 
   requestAnimationFrame(loop);
 }
 
-// Initialize
-function initOffice() {
-  canvas = document.getElementById('warroomCanvas');
+// Initialization
+function init() {
+  canvas = document.getElementById('pixelOfficeCanvas');
   if (!canvas) return;
   ctx = canvas.getContext('2d');
 
   function resize() {
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = canvas.parentElement.clientHeight;
-    agents.forEach(a => a.initPositions(canvas.width, canvas.height));
   }
-
-  // Create 9 Agents
-  agents = HERO_ROSTER.map(data => new AgentAvatar(data));
   resize();
   window.addEventListener('resize', resize);
 
-  // Click on agent to inspect
-  canvas.addEventListener('click', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+  // Create Characters
+  characterEntities = HEROES.map(h => new PixelCharacter(h));
 
-    let clicked = null;
-    for (const a of agents) {
-      if (Math.hypot(a.x - x, a.y - y) < 26) {
-        clicked = a;
-        break;
+  // Populate Bottom Dock Cards
+  const dock = document.getElementById('bottomDockBar');
+  if (dock) {
+    dock.innerHTML = '';
+    HEROES.forEach(h => {
+      const card = document.createElement('div');
+      card.className = `dock-card ${h.id === selectedHeroId ? 'active' : ''}`;
+      card.dataset.heroId = h.id;
+      card.innerHTML = `
+        <div class="dock-card-avatar" style="border-color:${h.color};">
+          ${h.id === 'tony-stark' ? '🦾' : (h.id === 'captain-america' ? '🛡️' : (h.id === 'hulk' ? '🟢' : (h.id === 'black-widow' ? '🕷️' : (h.id === 'thor' ? '⚡' : (h.id === 'hawkeye' ? '🏹' : (h.id === 'spider-man' ? '🕸️' : (h.id === 'doctor-strange' ? '🔮' : '💎')))))))}
+        </div>
+        <div class="dock-card-body">
+          <div class="dock-card-top">
+            <span class="dock-card-name">${h.shortName}</span>
+            <span class="dock-card-tag" style="color:${h.color};">${h.tag}</span>
+            <span style="font-size:9px;color:#15803D;">● idle</span>
+          </div>
+          <span class="dock-card-harness">${h.harness}</span>
+        </div>
+      `;
+      card.addEventListener('click', () => selectHero(h.id));
+      dock.appendChild(card);
+    });
+  }
+
+  // Event Listeners
+  const sendBtn = document.getElementById('sendPromptBtn');
+  if (sendBtn) sendBtn.addEventListener('click', dispatchMasterPrompt);
+
+  const inputEl = document.getElementById('queuePromptInput');
+  if (inputEl) {
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        dispatchMasterPrompt();
       }
-    }
+    });
+  }
 
-    if (clicked) {
-      inspectAgent(clicked);
-      clicked.speak();
-    } else if (selectedHero) {
-      selectedHero.targetX = x;
-      selectedHero.targetY = y;
-      selectedHero.state = 'WALKING';
-      selectedHero.statusTag = 'DISPATCHED';
-      playSfx('typing');
-    }
+  // Tab switching in terminal
+  document.querySelectorAll('.cc-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cc-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeTab = tab.dataset.tab;
+      appendTerminalLine('system', `* Switched tab to [${activeTab.toUpperCase()}]`);
+    });
   });
 
+  // Modal Open / Close for `<> IDE`
+  const ideBtn = document.getElementById('openIdeModalBtn');
+  const ideModal = document.getElementById('ideModalBackdrop');
+  const closeModalBtn = document.getElementById('closeIdeModalBtn');
+
+  if (ideBtn && ideModal) {
+    ideBtn.addEventListener('click', () => ideModal.classList.add('open'));
+  }
+  if (closeModalBtn && ideModal) {
+    closeModalBtn.addEventListener('click', () => ideModal.classList.remove('open'));
+  }
+  if (ideModal) {
+    ideModal.addEventListener('click', (e) => {
+      if (e.target === ideModal) ideModal.classList.remove('open');
+    });
+  }
+
+  // IDE Modal Sub-tabs
+  document.querySelectorAll('.ide-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ide-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.ide-guide-section').forEach(sec => sec.style.display = 'none');
+      const targetSec = document.getElementById(btn.dataset.target);
+      if (targetSec) targetSec.style.display = 'block';
+    });
+  });
+
+  // Start 60 FPS Loop
   requestAnimationFrame(loop);
 
-  // Auto-welcome
+  // Initial welcome terminal lines
   setTimeout(() => {
-    addDrawerLog('JARVIS', 'Stark Tower Autonomous Office Floor online.');
-    agents[0].speak("Office floor initialized. All 9 agents at stations.");
-  }, 400);
+    appendTerminalLine('system', `* STARK TOWER WAR ROOM — Multi-Agent Harness Initialized.`);
+    appendTerminalLine('system', `* 9 agents online across Claude, Gemini, GPT-4o, Grok, and Ollama.`);
+    appendTerminalLine('action', `> Let's ask each of the 9 agents what are they up to. In short,`);
+    appendTerminalLine('system', `* On it — sending each of the 9 agents a short "what are you up to?" query.`);
+    appendTerminalLine('command', `  L $ cd /Users/shubhranshgupta/codebase/AIprojects/LKO/agentharness`);
+    appendTerminalLine('command', `  L $ node bin/stark.js assemble --agents=9`);
+    appendTerminalLine('tip', `* Ruminating.. (14s · 656 tokens) L Tip: Type a prompt below and hit Send ➔ to dispatch`);
+  }, 300);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  initOffice();
-
-  const dispatchBtn = document.getElementById('dispatchMissionBtn');
-  if (dispatchBtn) dispatchBtn.addEventListener('click', () => dispatchMission());
-
-  const cmdInput = document.getElementById('commandInput');
-  if (cmdInput) {
-    cmdInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') dispatchMission();
-    });
-  }
-
-  const assembleBtn = document.getElementById('assembleAllBtn');
-  if (assembleBtn) {
-    assembleBtn.addEventListener('click', () => {
-      const conf = OFFICE_LANDMARKS['CONFERENCE_TABLE'];
-      addDrawerLog('CAP', 'All agents assemble at Conference Table!');
-      agents.forEach((a, i) => {
-        const angle = (Math.PI * 2 / agents.length) * i;
-        a.targetX = canvas.width * conf.nx + Math.cos(angle) * 75;
-        a.targetY = canvas.height * conf.ny + Math.sin(angle) * 45;
-        a.state = 'WALKING';
-        a.statusTag = 'ASSEMBLED';
-      });
-      agents[0].speak("Scavengers Assemble!");
-      playSfx('repulsor');
-    });
-  }
-
-  const soundBtn = document.getElementById('soundToggleBtn');
-  if (soundBtn) {
-    soundBtn.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      soundBtn.textContent = soundEnabled ? '🔊 SFX: ON' : '🔇 SFX: OFF';
-    });
-  }
-
-  const speedBtn = document.getElementById('speedToggleBtn');
-  if (speedBtn) {
-    speedBtn.addEventListener('click', () => {
-      simSpeed = simSpeed === 1 ? 2 : (simSpeed === 2 ? 5 : 1);
-      speedBtn.textContent = `⚡ Speed: ${simSpeed}x`;
-    });
-  }
-});
+document.addEventListener('DOMContentLoaded', init);
