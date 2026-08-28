@@ -58,20 +58,21 @@ export abstract class BaseHero {
     systemPrompt: string,
     preferredProvider?: ProviderType
   ): Promise<{ text: string; tokens: number; provider: ProviderType }> {
-    const targetProviderType = this.arcReactor.getOptimalProvider(
-      preferredProvider || this.profile.preferredProvider
-    );
+    const geminiProvider = this.providers.get('gemini');
+    let targetProviderType: ProviderType = 'gemini';
 
-    const provider = this.providers.get(targetProviderType) || this.providers.get('mock')!;
+    const preferred = preferredProvider || this.profile.preferredProvider;
+    if (preferred && this.providers.get(preferred) && this.arcReactor.canExecute(preferred)) {
+      targetProviderType = preferred;
+    } else if (geminiProvider && this.arcReactor.canExecute('gemini')) {
+      targetProviderType = 'gemini';
+    } else {
+      targetProviderType = this.arcReactor.getOptimalProvider(preferred);
+    }
 
-    if (!this.arcReactor.canExecute(targetProviderType)) {
-      this.metrics.rateLimitHits += 1;
-      this.comms.send(
-        this.profile.id,
-        'orchestrator',
-        'war-room',
-        `⚠️ Power limit reached on ${targetProviderType}. Rerouting power via Arc Reactor grid.`
-      );
+    const provider = this.providers.get(targetProviderType) || geminiProvider;
+    if (!provider) {
+      throw new Error(`[Hero ${this.profile.name}] No AI provider available. Please ensure GEMINI_API_KEY is configured.`);
     }
 
     try {
@@ -92,16 +93,21 @@ export abstract class BaseHero {
         provider: response.provider,
       };
     } catch (err: any) {
-      const mockProvider = this.providers.get('mock')!;
-      const response = await mockProvider.execute(prompt, {
-        systemPrompt: `${systemPrompt}\n\nYou are ${this.profile.name} (${this.profile.callsign}), ${this.profile.title}. Catchphrase: "${this.profile.catchphrase}"`,
-      });
-
-      return {
-        text: response.content,
-        tokens: response.tokensUsed,
-        provider: 'mock',
-      };
+      if (targetProviderType !== 'gemini' && geminiProvider) {
+        try {
+          const geminiResp = await geminiProvider.execute(prompt, {
+            systemPrompt: `${systemPrompt}\n\nYou are ${this.profile.name} (${this.profile.callsign}), ${this.profile.title}. Catchphrase: "${this.profile.catchphrase}"`,
+          });
+          return {
+            text: geminiResp.content,
+            tokens: geminiResp.tokensUsed,
+            provider: 'gemini',
+          };
+        } catch (geminiErr: any) {
+          throw new Error(`[Hero ${this.profile.name}] Live AI execution failed: ${geminiErr.message}`);
+        }
+      }
+      throw new Error(`[Hero ${this.profile.name}] Live AI execution failed: ${err.message}`);
     }
   }
 
