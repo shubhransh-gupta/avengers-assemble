@@ -1,31 +1,32 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — Munder-Difflin Retro Pixel Office & Command Center
-   Design: Authentic Retro Office Canvas + Modern Command Center & PTY Terminal
-   Fonts: 'Space Grotesk', 'Inter', 'JetBrains Mono', 'VT323', 'Press Start 2P'
+   STARK TOWER WAR ROOM — AVENGERS ASSEMBLE ULTIMATE THEME
+   Palette: Quantum Void (#050811), Arc Cyan (#00F0FF), Gold (#FFD700),
+   Vibranium Slate (#0D1322), Gamma Green (#00FF87), Mystic Orange (#FF9900)
    ══════════════════════════════════════════════════════════════════════ */
 
 :root {
   color-scheme: dark;
-  --bg-floor: #A4B8A2;       /* Classic retro office tile tint */
-  --bg-sidebar: #FFFDF7;     /* Retro warm command center cream */
-  --bg-sidebar-dark: #121722;
-  --panel-bg: #F5EFE0;
-  --panel-border: #D8CEB9;
-  --ink: #1F2421;
-  --ink-dark: #E9EDF5;
-  --muted: #5C675E;
-  --accent: #00D4FF;
-  --gold: #FFCA54;
-  --retro-yellow: #F7D78A;
-  --retro-tab-active: #F4C430;
-  --green: #28C840;
-  --red: #FF5F57;
-  --border-strong: #2A364F;
+  --bg-deep: #040711;
+  --bg-surface: #090E1C;
+  --bg-card: #0E162B;
+  --bg-card-hover: #14203D;
+  --border: #1B2A4A;
+  --border-glow: #00F0FF;
+  --border-gold: #FFD700;
+  
+  --arc-cyan: #00F0FF;
+  --arc-glow: rgba(0, 240, 255, 0.4);
+  --quantum-purple: #A855F7;
+  --gold: #FFD700;
+  --gamma-green: #00FF87;
+  --red-alert: #FF3366;
+  --text-main: #F1F5F9;
+  --text-muted: #94A3B8;
+  --text-dim: #64748B;
 
   --font-display: "Space Grotesk", "Inter", sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", "VT323", monospace;
-  --font-pixel: "VT323", "JetBrains Mono", monospace;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 *, *::before, *::after {
@@ -39,37 +40,36 @@ html, body {
   height: 100vh;
   overflow: hidden;
   font-family: var(--font-body);
-  background: #0B0E14;
-  color: var(--ink-dark);
+  background: var(--bg-deep);
+  color: var(--text-main);
   user-select: none;
   -webkit-font-smoothing: antialiased;
 }
 
-/* App Master Layout: Top Viewport (Canvas + Terminal) and Bottom Dock */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  background: radial-gradient(circle at 50% 20%, #0A1226 0%, #040711 85%);
 }
 
-/* Main Split View: Left Canvas (62%) & Right Command Center (38%) */
+/* Master Split View: Left Canvas Floor (63%) & Right JARVIS Command Center (37%) */
 .main-workspace {
   display: flex;
   flex: 1;
   min-height: 0;
   position: relative;
-  background: #080B12;
 }
 
-/* Left Canvas Area */
+/* ── LEFT: STARK TOWER WAR ROOM FLOOR ── */
 .office-canvas-wrapper {
-  flex: 1.65;
+  flex: 1.7;
   position: relative;
   overflow: hidden;
-  background: #9DB39A;
-  border-right: 2px solid #232B3A;
+  background: #060A14;
+  border-right: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,11 +83,11 @@ html, body {
   height: 100%;
 }
 
-/* Canvas Overlay UI */
+/* High-Tech Telemetry Badges Overlay */
 .canvas-top-bar {
   position: absolute;
-  top: 10px;
-  left: 12px;
+  top: 12px;
+  left: 14px;
   display: flex;
   gap: 8px;
   z-index: 20;
@@ -96,45 +96,60 @@ html, body {
 .canvas-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 253, 247, 0.94);
-  color: #17150E;
+  gap: 7px;
+  background: rgba(9, 14, 28, 0.88);
+  backdrop-filter: blur(10px);
+  color: var(--text-main);
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 6px;
-  border: 1px solid #C8BEA8;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  letter-spacing: 0.03em;
+}
+
+.canvas-pill.arc {
+  border-color: rgba(0, 240, 255, 0.4);
+  color: var(--arc-cyan);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+}
+
+.canvas-pill.gold {
+  border-color: rgba(255, 215, 0, 0.4);
+  color: var(--gold);
 }
 
 .canvas-pill .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #28C840;
-  animation: blink 1.2s infinite;
+  background: var(--gamma-green);
+  box-shadow: 0 0 8px var(--gamma-green);
+  animation: reactorBlink 1.4s infinite;
 }
 
-/* Retro Pixel Speech Bubbles */
+/* Avengers High-Tech Speech Bubbles */
 .speech-bubble {
   position: absolute;
-  background: #FFFFFF;
-  border: 2px solid #17150E;
-  color: #17150E;
-  padding: 6px 10px;
-  border-radius: 4px;
+  background: rgba(14, 22, 43, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid var(--bubble-border, var(--arc-cyan));
+  color: #FFFFFF;
+  padding: 7px 12px;
+  border-radius: 6px;
   font-family: var(--font-mono);
   font-size: 11.5px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.4;
   pointer-events: none;
-  z-index: 30;
-  max-width: 210px;
-  box-shadow: 2px 3px 0px rgba(0,0,0,0.4);
+  z-index: 35;
+  max-width: 230px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 15px var(--bubble-glow, rgba(0,240,255,0.25));
   transform: translate(-50%, -100%);
-  margin-top: -34px;
-  animation: bubblePop 0.15s ease-out;
+  margin-top: -36px;
+  animation: heroPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .speech-bubble::after {
@@ -145,27 +160,29 @@ html, body {
   transform: translateX(-50%);
   border-width: 6px 6px 0;
   border-style: solid;
-  border-color: #17150E transparent transparent;
+  border-color: var(--bubble-border, var(--arc-cyan)) transparent transparent;
   display: block;
   width: 0;
 }
 
 .speech-bubble .bubble-prefix {
-  color: #0088cc;
   font-size: 10px;
+  font-weight: 800;
+  color: var(--bubble-color, var(--arc-cyan));
   display: block;
   margin-bottom: 2px;
-  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-/* Right Command Center & Terminal Panel */
+/* ── RIGHT: JARVIS COMMAND CENTER & TERMINAL ── */
 .command-center-panel {
   flex: 1;
-  min-width: 380px;
-  max-width: 520px;
-  background: #FFFDF7;
-  color: #17150E;
-  border-left: 2px solid #232B3A;
+  min-width: 390px;
+  max-width: 540px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-left: 2px solid var(--border);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -173,15 +190,15 @@ html, body {
   z-index: 25;
 }
 
-/* Header with Boss Info & Mode Switches */
+/* Header with Tony Stark Boss Info & Mode Switches */
 .cc-header {
-  padding: 10px 14px;
-  background: #F5EFE0;
-  border-bottom: 1px solid #D8CEB9;
+  padding: 12px 16px;
+  background: #0B1124;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cc-boss-info {
@@ -191,43 +208,42 @@ html, body {
 }
 
 .cc-boss-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  background: #00D4FF;
-  border: 1.5px solid #17150E;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: radial-gradient(circle, #00F0FF 10%, #A855F7 60%, #050811 100%);
+  border: 1.5px solid var(--arc-cyan);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .cc-boss-name {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 12.5px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #17150E;
+  font-size: 13.5px;
+  color: #FFFFFF;
   line-height: 1.2;
 }
 
 .cc-status-pill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
-  background: #E8F5E9;
-  color: #1B5E20;
-  border: 1px solid #A5D6A7;
-  padding: 2px 6px;
+  background: rgba(0, 255, 135, 0.12);
+  color: var(--gamma-green);
+  border: 1px solid rgba(0, 255, 135, 0.3);
+  padding: 2px 7px;
   border-radius: 4px;
 }
 
 .cc-status-pill .dot {
-  width: 5px; height: 5px; border-radius: 50%; background: #2E7D32;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--gamma-green);
 }
 
 .cc-header-actions {
@@ -239,37 +255,40 @@ html, body {
 .cc-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: #FFFFFF;
-  border: 1px solid #C8BEA8;
-  color: #17150E;
+  gap: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 120ms ease;
+  transition: all 140ms ease;
   text-decoration: none;
 }
 .cc-btn:hover {
-  background: #F0E6D2;
-  border-color: #17150E;
+  background: var(--bg-card-hover);
+  border-color: var(--arc-cyan);
+  color: var(--arc-cyan);
+  transform: translateY(-1px);
 }
 .cc-btn.active {
-  background: #17150E;
-  color: #FFFFFF;
-  border-color: #17150E;
+  background: var(--arc-cyan);
+  color: #040711;
+  border-color: var(--arc-cyan);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
 }
 
 /* Tab Navigation Bar */
 .cc-tabs-bar {
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 6px 10px 0;
-  background: #EDE4D0;
-  border-bottom: 1px solid #D8CEB9;
+  gap: 3px;
+  padding: 8px 12px 0;
+  background: #080D1D;
+  border-bottom: 1px solid var(--border);
   overflow-x: auto;
 }
 
@@ -277,9 +296,9 @@ html, body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  color: #5C675E;
-  padding: 5px 10px;
-  border-radius: 4px 4px 0 0;
+  color: var(--text-muted);
+  padding: 6px 11px;
+  border-radius: 6px 6px 0 0;
   cursor: pointer;
   border: 1px solid transparent;
   border-bottom: none;
@@ -288,86 +307,90 @@ html, body {
   align-items: center;
   gap: 5px;
   white-space: nowrap;
+  transition: all 120ms ease;
 }
 .cc-tab:hover {
-  color: #17150E;
-  background: rgba(255, 255, 255, 0.4);
+  color: var(--arc-cyan);
+  background: rgba(0, 240, 255, 0.05);
 }
 .cc-tab.active {
-  background: #FFFDF7;
-  color: #17150E;
-  border-color: #D8CEB9;
-  border-bottom: 1px solid #FFFDF7;
+  background: var(--bg-surface);
+  color: var(--arc-cyan);
+  border-color: var(--border);
+  border-bottom: 1px solid var(--bg-surface);
   margin-bottom: -1px;
 }
 
-/* Terminal Content Area */
+/* JARVIS Live Terminal Body */
 .cc-terminal-body {
   flex: 1;
-  background: #FFFDF7;
-  padding: 12px 14px;
+  background: #060914;
+  padding: 14px 16px;
   overflow-y: auto;
   font-family: var(--font-mono);
   font-size: 12px;
-  line-height: 1.55;
-  color: #17150E;
+  line-height: 1.6;
+  color: var(--text-main);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
+  position: relative;
 }
 
 .term-line {
   word-break: break-word;
 }
 .term-line.prompt {
-  background: #17150E;
+  background: rgba(0, 240, 255, 0.1);
+  border-left: 3px solid var(--arc-cyan);
   color: #FFFFFF;
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 4px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 4px 0;
 }
 .term-line.system {
-  color: #6B7280;
-  font-size: 11px;
+  color: var(--text-dim);
+  font-size: 11.5px;
 }
 .term-line.action {
-  color: #1E40AF;
+  color: var(--arc-cyan);
   font-weight: 600;
 }
 .term-line.command {
-  background: #F3F4F6;
-  border-left: 2px solid #3B82F6;
-  padding: 3px 8px;
-  color: #1F2937;
+  background: rgba(255, 215, 0, 0.06);
+  border-left: 3px solid var(--gold);
+  padding: 4px 10px;
+  color: #FFEA79;
+  border-radius: 2px;
 }
 .term-line.success {
-  color: #15803D;
+  color: var(--gamma-green);
   font-weight: 700;
 }
 .term-line.tip {
-  color: #B45309;
+  color: #A855F7;
   font-size: 11px;
 }
 
-/* Terminal Context & Status Row */
+/* Context & Stark Mesh Status Row */
 .cc-meta-status {
-  padding: 6px 14px;
-  background: #F5EFE0;
-  border-top: 1px solid #D8CEB9;
+  padding: 7px 16px;
+  background: #090E1F;
+  border-top: 1px solid var(--border);
   font-family: var(--font-mono);
   font-size: 11px;
-  color: #6B7280;
+  color: var(--text-muted);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* Queue / Prompt Input Area */
+/* Queue / Prompt Dispatcher Area */
 .cc-queue-area {
-  padding: 10px 14px;
-  background: #FFFDF7;
-  border-top: 1px solid #D8CEB9;
+  padding: 12px 16px;
+  background: #080C1B;
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -377,26 +400,31 @@ html, body {
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;
-  color: #6B7280;
+  color: var(--arc-cyan);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .queue-textarea {
   width: 100%;
-  height: 58px;
-  background: #FFFFFF;
-  border: 1px solid #D8CEB9;
-  border-radius: 4px;
-  padding: 8px 10px;
+  height: 60px;
+  background: #0C1224;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: #17150E;
+  font-size: 12.5px;
+  color: #FFFFFF;
   resize: none;
   outline: none;
+  transition: border-color 140ms ease;
 }
 .queue-textarea:focus {
-  border-color: #17150E;
+  border-color: var(--arc-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
 }
 
 .queue-actions {
@@ -412,51 +440,51 @@ html, body {
 }
 
 .send-btn {
-  background: #F4C430;
-  border: 1.5px solid #17150E;
-  color: #17150E;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
+  background: var(--arc-cyan);
+  border: 1px solid var(--arc-cyan);
+  color: #040711;
+  font-family: var(--font-display);
+  font-size: 12.5px;
   font-weight: 800;
-  padding: 6px 14px;
-  border-radius: 4px;
+  padding: 7px 18px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 1px 2px 0px #17150E;
-  transition: all 120ms ease;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+  transition: all 140ms ease;
 }
 .send-btn:hover {
-  background: #FFD84D;
+  background: #38BDF8;
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.6);
   transform: translateY(-1px);
 }
 .send-btn:active {
-  transform: translateY(1px);
-  box-shadow: none;
+  transform: translateY(0);
 }
 
-/* Bottom Character Dock Bar */
+/* ── BOTTOM: AVENGERS STRIKE TEAM DOCK ── */
 .bottom-dock-bar {
-  height: 94px;
-  background: #F5EFE0;
-  border-top: 2px solid #232B3A;
+  height: 96px;
+  background: #070B18;
+  border-top: 2px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 12px;
+  gap: 10px;
+  padding: 0 16px;
   overflow-x: auto;
   flex-shrink: 0;
   z-index: 30;
 }
 
 .dock-card {
-  min-width: 170px;
-  height: 74px;
-  background: #FFFDF7;
-  border: 1.5px solid #C8BEA8;
-  border-radius: 6px;
-  padding: 6px 10px;
+  min-width: 175px;
+  height: 72px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -466,22 +494,23 @@ html, body {
   flex-shrink: 0;
 }
 .dock-card:hover {
-  border-color: #17150E;
+  border-color: var(--card-color, var(--arc-cyan));
+  background: var(--bg-card-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 12px var(--card-glow, rgba(0,240,255,0.2));
 }
 .dock-card.active {
-  background: #FFF8E7;
-  border-color: #F4C430;
-  box-shadow: 0 0 0 2px #F4C430;
+  background: #111B36;
+  border-color: var(--card-color, var(--arc-cyan));
+  box-shadow: 0 0 0 2px var(--card-color, var(--arc-cyan)), 0 0 18px var(--card-glow, rgba(0,240,255,0.35));
 }
 
 .dock-card-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  background: #E8F0FE;
-  border: 1px solid #C8BEA8;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #080D1D;
+  border: 1.5px solid var(--card-color, var(--border));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -505,26 +534,25 @@ html, body {
 
 .dock-card-name {
   font-family: var(--font-display);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 800;
-  color: #17150E;
-  text-transform: uppercase;
+  color: #FFFFFF;
 }
 
 .dock-card-tag {
   font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
-  background: #E5E7EB;
-  color: #374151;
-  padding: 1px 4px;
+  color: var(--card-color, var(--arc-cyan));
+  background: rgba(0, 240, 255, 0.1);
+  padding: 1px 5px;
   border-radius: 3px;
 }
 
 .dock-card-harness {
   font-family: var(--font-mono);
   font-size: 9.5px;
-  color: #6B7280;
+  color: var(--text-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -534,8 +562,8 @@ html, body {
 .ide-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(11, 14, 20, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(4, 7, 17, 0.85);
+  backdrop-filter: blur(8px);
   z-index: 100;
   display: none;
   align-items: center;
@@ -547,24 +575,24 @@ html, body {
 }
 
 .ide-modal {
-  width: 780px;
+  width: 800px;
   max-width: 100%;
   max-height: 90vh;
-  background: #121722;
-  border: 1px solid #303B52;
+  background: #0B1124;
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 30px rgba(0, 240, 255, 0.25);
   border-radius: 12px;
-  color: #E9EDF5;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  color: var(--text-main);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: modalIn 0.2s ease-out;
+  animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ide-modal-header {
-  padding: 14px 20px;
-  background: #182030;
-  border-bottom: 1px solid #232B3A;
+  padding: 16px 22px;
+  background: #0E162F;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -572,21 +600,21 @@ html, body {
 
 .ide-modal-title {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
-  color: #00D4FF;
+  color: var(--arc-cyan);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .ide-modal-close {
   background: transparent;
-  border: 1px solid #303B52;
-  color: #A7B0C0;
-  font-size: 14px;
-  width: 28px;
-  height: 28px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
   border-radius: 6px;
   cursor: pointer;
   display: grid;
@@ -594,14 +622,14 @@ html, body {
 }
 .ide-modal-close:hover {
   color: #FFFFFF;
-  border-color: #00D4FF;
+  border-color: var(--arc-cyan);
 }
 
 .ide-modal-tabs {
   display: flex;
-  background: #0D111A;
-  border-bottom: 1px solid #232B3A;
-  padding: 0 16px;
+  background: #070B18;
+  border-bottom: 1px solid var(--border);
+  padding: 0 18px;
   gap: 8px;
   overflow-x: auto;
 }
@@ -610,46 +638,44 @@ html, body {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
-  color: #A7B0C0;
-  padding: 10px 14px;
+  color: var(--text-muted);
+  padding: 11px 15px;
   background: transparent;
   border: none;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 120ms ease;
 }
-.ide-tab-btn:hover {
-  color: #FFFFFF;
-}
+.ide-tab-btn:hover { color: #FFFFFF; }
 .ide-tab-btn.active {
-  color: #00D4FF;
-  border-bottom-color: #00D4FF;
+  color: var(--arc-cyan);
+  border-bottom-color: var(--arc-cyan);
 }
 
 .ide-modal-content {
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: #CBD5E1;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-muted);
 }
 
 .ide-code-block {
-  background: #080B12;
-  border: 1px solid #232B3A;
+  background: #050811;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: #00D4FF;
-  margin: 10px 0 16px;
+  font-size: 12.5px;
+  color: var(--arc-cyan);
+  margin: 12px 0 18px;
   overflow-x: auto;
 }
 
-/* Animations */
-@keyframes blink { 50% { opacity: 0.25; } }
-@keyframes bubblePop {
-  from { opacity: 0; transform: translate(-50%, -85%) scale(0.9); }
+/* Keyframe Animations */
+@keyframes reactorBlink { 50% { opacity: 0.3; } }
+@keyframes heroPop {
+  from { opacity: 0; transform: translate(-50%, -85%) scale(0.92); }
   to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
 }
 @keyframes modalIn {

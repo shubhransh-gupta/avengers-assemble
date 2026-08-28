@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stark Tower // Munder-Difflin Office Floor — Scavengers Assemble</title>
-  <meta name="description" content="Authentic 2D pixel-art office floor and live multi-agent command center. Powered by Shubhransh Gupta." />
+  <title>Stark Tower War Room — Avengers Assemble Live Deck</title>
+  <meta name="description" content="Futuristic Avengers-themed multi-agent coding war room. Coordinated by Tony Stark, audited by Captain America, debugged by The Hulk." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
 
   <!-- Fonts: Space Grotesk, Inter, JetBrains Mono -->
@@ -18,18 +18,18 @@
 
   <div class="app-container">
     
-    <!-- Top Main Split Workspace (Canvas + Command Center) -->
+    <!-- Top Main Split Workspace (Avengers Floor + JARVIS Command Center) -->
     <main class="main-workspace">
       
-      <!-- LEFT: Pixel Office Floor Canvas Area -->
+      <!-- LEFT: Stark Tower War Room Deck Canvas Area -->
       <section class="office-canvas-wrapper">
         <div class="canvas-top-bar">
-          <div class="canvas-pill">
+          <div class="canvas-pill arc">
             <span class="dot"></span>
-            <span>$ using Bash &bull; 9 Agents Active</span>
+            <span>⚡ ARC REACTOR CORE: 99.8% ONLINE</span>
           </div>
-          <div class="canvas-pill">
-            <span>⚡ Arc Reactor: 99.8% Online</span>
+          <div class="canvas-pill gold">
+            <span>🛡️ AVENGERS MESH: 9 HEROES ACTIVE</span>
           </div>
         </div>
 
@@ -39,76 +39,77 @@
         <div id="speechBubbleLayer" style="position:absolute;inset:0;pointer-events:none;z-index:30;"></div>
       </section>
 
-      <!-- RIGHT: Command Center & PTY Terminal -->
+      <!-- RIGHT: JARVIS Command Center & Telemetry Terminal -->
       <section class="command-center-panel">
         
-        <!-- Header with Boss Info & Mode Switches -->
+        <!-- Header with Tony Stark Info & Mode Switches -->
         <header class="cc-header">
           <div class="cc-boss-info">
             <div class="cc-boss-avatar" id="ccBossAvatar">🦾</div>
             <div>
-              <div class="cc-boss-name" id="ccBossName">Tony Stark <span style="font-size:10px;color:#00D4FF;">[GOD]</span></div>
+              <div class="cc-boss-name" id="ccBossName">Tony Stark <span style="font-size:10.5px;color:var(--arc-cyan);">[GOD Orchestrator]</span></div>
               <div class="cc-status-pill">
                 <span class="dot"></span>
-                <span>working &bull; Tony runs the floor</span>
+                <span>JARVIS OS &bull; Code Level Omega</span>
               </div>
             </div>
           </div>
 
           <div class="cc-header-actions">
             <button class="cc-btn active" title="Autonomous orchestration">▶ auto</button>
-            <button class="cc-btn" id="openIdeModalBtn" title="Setup with Antigravity, Cursor, Claude Code, Gemini">&lt;&gt; IDE</button>
+            <button class="cc-btn" id="openIdeModalBtn" title="Connect Antigravity, Cursor, Claude Code, Gemini">&lt;&gt; IDE</button>
             <a href="hud.html" class="cc-btn" title="Open Holographic HUD">🚀 HUD</a>
             <a href="index.html" class="cc-btn" title="Back to Landing Page">🏠 Home</a>
           </div>
         </header>
 
-        <!-- Tab Navigation Bar -->
+        <!-- Telemetry Tab Navigation Bar -->
         <nav class="cc-tabs-bar">
           <button class="cc-tab active" data-tab="terminal">⌨️ terminal</button>
-          <button class="cc-tab" data-tab="monitor">📊 monitor</button>
-          <button class="cc-tab" data-tab="tasks">✔ tasks</button>
-          <button class="cc-tab" data-tab="askme">❓ ask me</button>
-          <button class="cc-tab" data-tab="triggers">⚡ triggers</button>
-          <button class="cc-tab" data-tab="memory">🧠 memory</button>
-          <button class="cc-tab" data-tab="graph">🕸️ graph</button>
-          <button class="cc-tab" data-tab="activity">📡 activity</button>
-          <button class="cc-tab" data-tab="workers">👥 workers</button>
+          <button class="cc-tab" data-tab="monitor">📊 reactor</button>
+          <button class="cc-tab" data-tab="tasks">✔ directives</button>
+          <button class="cc-tab" data-tab="memory">💎 mind stone</button>
+          <button class="cc-tab" data-tab="graph">🕸️ dag graph</button>
+          <button class="cc-tab" data-tab="activity">📡 comms</button>
+          <button class="cc-tab" data-tab="workers">👥 heroes</button>
         </nav>
 
         <!-- Terminal Sub-Header -->
-        <div style="padding:4px 14px;background:#F5EFE0;border-bottom:1px solid #D8CEB9;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:#6B7280;">
-          <span>● live &bull; pty pty-god</span>
-          <span>12px +</span>
+        <div style="padding:5px 16px;background:#090F22;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--text-dim);">
+          <span>● live &bull; stark-comms-mesh // pty-god</span>
+          <span style="color:var(--arc-cyan);">Claude 3.7 Sonnet</span>
         </div>
 
         <!-- Terminal Body Stream -->
         <div class="cc-terminal-body" id="terminalBody">
-          <!-- Dynamically populated terminal lines -->
+          <!-- Dynamically populated JARVIS logs -->
         </div>
 
         <!-- Context Token Meter -->
         <div class="cc-meta-status">
-          <span>ctx 144k/1000k (14%) &bull; StarkCommsMesh</span>
-          <span style="color:#B45309;">bypass permissions on (shift+tab to cycle) &rarr; for agents</span>
+          <span>ctx 144k/1000k (14%) &bull; 0 Rate Limits</span>
+          <span style="color:var(--gold);">bypass permissions on (shift+tab to cycle)</span>
         </div>
 
-        <!-- Queue / Prompt Input Area -->
+        <!-- Queue / Prompt Dispatcher Area -->
         <div class="cc-queue-area">
-          <div class="queue-label">Queue / Master Prompt</div>
+          <div class="queue-label">
+            <span>⚡</span>
+            <span>Assign Tactical Directive to Tony Stark</span>
+          </div>
           <textarea 
             class="queue-textarea" 
             id="queuePromptInput"
-            placeholder="Tony is ready — type a task or question for the agents... (Enter to Send)"
-          >Let's ask each of the 9 agents what they are up to. In short,</textarea>
+            placeholder="Assign directive to Tony Stark... e.g. 'Build secure JWT auth microservice, unit test suite, and Docker container' (Enter to Dispatch)"
+          >Build a high-performance JWT authentication service with unit tests and Dockerfile</textarea>
 
           <div class="queue-actions">
             <div class="queue-left-btns">
-              <button class="cc-btn" style="font-size:11px;">+ files</button>
-              <button class="cc-btn" style="font-size:11px;">🎙️ voice</button>
+              <button class="cc-btn" style="font-size:11px;">+ Directives</button>
+              <button class="cc-btn" style="font-size:11px;">🎙️ Comms</button>
             </div>
             <button class="send-btn" id="sendPromptBtn">
-              <span>send</span>
+              <span>Assemble &amp; Dispatch</span>
               <span>&rarr;</span>
             </button>
           </div>
@@ -117,7 +118,7 @@
 
     </main>
 
-    <!-- Bottom Horizontal Character Dock -->
+    <!-- Bottom Horizontal Avengers Strike Team Dock -->
     <footer class="bottom-dock-bar" id="bottomDockBar">
       <!-- Dynamically populated cards for all 9 heroes -->
     </footer>
@@ -148,7 +149,7 @@
         
         <!-- Google Antigravity -->
         <div class="ide-guide-section" id="guideAntigravity">
-          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting with Google Antigravity / AGY CLI</h4>
+          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting with Google Antigravity / AGY CLI</h4>
           <p>Scavengers Assemble can be invoked directly as a subagent or sidecar daemon in your Antigravity environment:</p>
           <div class="ide-code-block">
 # Run the Stark HUD sidecar server inside Antigravity:
@@ -162,7 +163,7 @@ npx scavengers-assemble assemble "Refactor auth middleware and generate unit tes
 
         <!-- Cursor IDE -->
         <div class="ide-guide-section" id="guideCursor" style="display:none;">
-          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting with Cursor IDE</h4>
+          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting with Cursor IDE</h4>
           <p>Add Scavengers Assemble rules to your <code>.cursorrules</code> file to enable multi-agent task deconstruction from inside Cursor Composer:</p>
           <div class="ide-code-block">
 # .cursorrules
@@ -176,7 +177,7 @@ When executing large multi-file refactors or QA review:
 
         <!-- Claude Code -->
         <div class="ide-guide-section" id="guideClaude" style="display:none;">
-          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting Claude Code CLI</h4>
+          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting Claude Code CLI</h4>
           <p>Link your existing Anthropic API key or Claude Code CLI subscription without paying extra:</p>
           <div class="ide-code-block">
 export ANTHROPIC_API_KEY="sk-ant-api03-..."
@@ -186,7 +187,7 @@ npx scavengers-assemble assemble --provider="claude-code"
 
         <!-- Gemini 2.5 -->
         <div class="ide-guide-section" id="guideGemini" style="display:none;">
-          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting Gemini 2.5 Flash / Pro</h4>
+          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting Gemini 2.5 Flash / Pro</h4>
           <p>Leverage Google's 1M+ token context window with Steve Rogers (Captain America) and Clint Barton (Hawkeye):</p>
           <div class="ide-code-block">
 export GEMINI_API_KEY="AIzaSy..."
@@ -196,7 +197,7 @@ npx scavengers-assemble assemble --provider="gemini"
 
         <!-- OpenAI GPT-4o -->
         <div class="ide-guide-section" id="guideOpenAI" style="display:none;">
-          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting OpenAI GPT-4o &amp; Codex</h4>
+          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting OpenAI GPT-4o &amp; Codex</h4>
           <p>Power Black Widow's Security Recon and zero-day dependency auditing:</p>
           <div class="ide-code-block">
 export OPENAI_API_KEY="sk-proj-..."
@@ -206,7 +207,7 @@ npx scavengers-assemble assemble --provider="openai"
 
         <!-- Ollama Local LLM -->
         <div class="ide-guide-section" id="guideOllama" style="display:none;">
-          <h4 style="color:#00D4FF;margin-bottom:8px;">Connecting Ollama (100% Free &amp; Local Offline)</h4>
+          <h4 style="color:#00F0FF;margin-bottom:8px;">Connecting Ollama (100% Free &amp; Local Offline)</h4>
           <p>Run Bruce Banner &amp; Hulk with zero API costs using DeepSeek-R1 or Qwen locally:</p>
           <div class="ide-code-block">
 # 1. Start Ollama with DeepSeek-R1
