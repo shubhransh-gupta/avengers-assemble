@@ -1,19 +1,18 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — VISUAL-FIRST INTERACTIVE AGENTIC HUD
-   Design: Communicate Through Visuals, Icons, Energy Gauges, DAG Nodes,
-   Color Swatches & Particle Animations (Zero Text Clutter)
+   STARK TOWER WAR ROOM — MARVEL MULTIVERSE BATTLEGROUND HUD
+   Theme: Infinity Gauntlet · Dr Doom Arena · Kang Citadel · Chaos Incursion
    ══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700;800&display=swap');
 
 :root {
   color-scheme: dark;
-  --bg-deep: #03060F;
-  --bg-surface: #070D1D;
-  --bg-card: #0D152B;
-  --bg-card-hover: #131F3F;
-  --border: #1A284A;
-  --border-light: #263A68;
+  --bg-deep: #02040A;
+  --bg-surface: #060A17;
+  --bg-card: #0B1226;
+  --bg-card-hover: #101B38;
+  --border: #16223E;
+  --border-light: #22355F;
   --border-glow: #00F0FF;
 
   --arc-cyan: #00F0FF;
@@ -22,6 +21,7 @@
   --gold: #FFD700;
   --gamma-green: #00FF87;
   --red-alert: #FF3366;
+  --chaos-crimson: #EF4444;
 
   --text-main: #FFFFFF;
   --text-muted: #94A3B8;
@@ -51,13 +51,13 @@ html, body {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   1. VISUAL ONBOARDING GATEWAY (Iconic Holographic Hub)
+   1. VISUAL ONBOARDING GATEWAY
    ══════════════════════════════════════════════════════════════════════ */
 .onboarding-screen {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: radial-gradient(circle at 50% 20%, #0C1736 0%, #03060F 85%);
+  background: radial-gradient(circle at 50% 20%, #0A1430 0%, #02040A 85%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,7 +74,7 @@ html, body {
 .onboarding-card {
   width: 740px;
   max-width: 100%;
-  background: rgba(8, 13, 28, 0.96);
+  background: rgba(6, 10, 24, 0.96);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-light);
   border-radius: 20px;
@@ -112,7 +112,6 @@ html, body {
   align-items: center;
   justify-content: center;
   font-size: 26px;
-  animation: reactorPulse 2.5s infinite;
 }
 
 .ob-title-wrap h1 {
@@ -125,7 +124,6 @@ html, body {
 
 .ob-title-wrap h1 span { color: var(--arc-cyan); }
 
-/* Provider Visual Grid */
 .provider-visual-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -142,15 +140,13 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  position: relative;
-  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 160ms ease;
 }
 
 .prov-tile:hover {
   border-color: var(--arc-cyan);
   background: var(--bg-card-hover);
   transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(0, 240, 255, 0.2);
 }
 
 .prov-tile.selected {
@@ -159,18 +155,13 @@ html, body {
   box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
 }
 
-.prov-tile .p-icon {
-  font-size: 28px;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
-}
-
+.prov-tile .p-icon { font-size: 28px; }
 .prov-tile .p-name {
   font-family: var(--font-display);
   font-size: 12.5px;
   font-weight: 800;
   color: #FFFFFF;
 }
-
 .prov-tile .p-status {
   width: 6px;
   height: 6px;
@@ -179,11 +170,10 @@ html, body {
   box-shadow: 0 0 8px var(--gamma-green);
 }
 
-/* Connect Action Bar */
 .ob-connect-bar {
   display: flex;
   gap: 12px;
-  background: #050814;
+  background: #040712;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px 16px;
@@ -196,11 +186,7 @@ html, body {
   align-items: center;
   gap: 12px;
 }
-
-.ob-selected-icon {
-  font-size: 24px;
-}
-
+.ob-selected-icon { font-size: 24px; }
 .ob-selected-name {
   font-family: var(--font-display);
   font-size: 15px;
@@ -209,9 +195,6 @@ html, body {
 }
 
 .ob-badge-auth {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
   font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--gamma-green);
@@ -240,12 +223,11 @@ html, body {
 
 .ob-glow-connect-btn:hover {
   background: #38BDF8;
-  box-shadow: 0 0 35px rgba(0, 240, 255, 0.7);
   transform: translateY(-1px);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   2. MAIN WAR ROOM PLATFORM (Visual First)
+   2. MAIN WAR ROOM PLATFORM
    ══════════════════════════════════════════════════════════════════════ */
 .app-container {
   display: flex;
@@ -255,10 +237,10 @@ html, body {
   overflow: hidden;
 }
 
-/* Top App Header (Visual Gauges & Avatar Stack) */
+/* Top App Header */
 .warroom-top-bar {
-  height: 54px;
-  background: #060B18;
+  height: 52px;
+  background: #050813;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -306,7 +288,7 @@ html, body {
 .top-power-bar {
   width: 110px;
   height: 6px;
-  background: #0C1428;
+  background: #0A1122;
   border: 1px solid var(--border);
   border-radius: 3px;
   overflow: hidden;
@@ -320,7 +302,6 @@ html, body {
   transition: width 0.3s ease;
 }
 
-/* Active Avatar Stack */
 .top-avatar-stack {
   display: flex;
   align-items: center;
@@ -339,6 +320,7 @@ html, body {
   font-size: 14px;
   margin-left: -6px;
   box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  cursor: pointer;
   transition: transform 140ms ease;
 }
 .stack-avatar:hover {
@@ -372,14 +354,12 @@ html, body {
   background: var(--bg-card-hover);
   border-color: var(--arc-cyan);
   color: var(--arc-cyan);
-  transform: translateY(-1px);
 }
 
 .top-icon-btn.gold {
   background: var(--gold);
   color: #03060F;
   border-color: var(--gold);
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
 }
 
 /* Visual Hero Spawner Palette */
@@ -387,7 +367,7 @@ html, body {
   display: flex;
   gap: 8px;
   padding: 8px 16px;
-  background: #050914;
+  background: #040712;
   border-bottom: 1px solid var(--border);
   align-items: center;
   overflow-x: auto;
@@ -410,24 +390,17 @@ html, body {
   border-color: var(--pill-color, var(--arc-cyan));
   background: var(--bg-card-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 10px var(--pill-glow, rgba(0,240,255,0.3));
-}
-
-.v-spawn-pill.active {
-  border-color: var(--pill-color, var(--arc-cyan));
-  background: #101934;
-  box-shadow: 0 0 0 1.5px var(--pill-color, var(--arc-cyan));
 }
 
 .v-spawn-pill .v-avatar { font-size: 16px; }
 .v-spawn-pill .v-label {
   font-family: var(--font-display);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 800;
   color: #FFFFFF;
 }
 
-/* Master Split View (Canvas & Visual Task HUD) */
+/* Canvas Area */
 .main-workspace {
   display: flex;
   flex: 1;
@@ -439,7 +412,7 @@ html, body {
   flex: 1.8;
   position: relative;
   overflow: hidden;
-  background: #03060F;
+  background: #02040A;
   border-right: 2px solid var(--border);
 }
 
@@ -447,12 +420,13 @@ html, body {
   display: block;
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 
 /* Speech Bubbles */
 .speech-bubble {
   position: absolute;
-  background: rgba(10, 16, 36, 0.95);
+  background: rgba(8, 14, 30, 0.96);
   backdrop-filter: blur(10px);
   border: 1.5px solid var(--bubble-border, var(--arc-cyan));
   color: #FFFFFF;
@@ -464,13 +438,22 @@ html, body {
   line-height: 1.4;
   pointer-events: none;
   z-index: 35;
-  max-width: 220px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 15px rgba(0,240,255,0.25);
+  max-width: 230px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(0,240,255,0.25);
   transform: translate(-50%, -100%);
   margin-top: -36px;
 }
 
-/* Right Visual Task HUD & DAG Pipeline */
+.speech-bubble .bubble-prefix {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--bubble-color, var(--arc-cyan));
+  display: block;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+/* Right Visual Task HUD */
 .command-center-panel {
   flex: 1;
   min-width: 380px;
@@ -485,7 +468,7 @@ html, body {
 
 .hud-panel-header {
   padding: 12px 16px;
-  background: #060B18;
+  background: #050813;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -502,13 +485,12 @@ html, body {
   gap: 8px;
 }
 
-/* Visual Action Tiles Grid */
 .hud-action-tiles {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   padding: 12px 14px;
-  background: #050814;
+  background: #040710;
   border-bottom: 1px solid var(--border);
 }
 
@@ -528,14 +510,10 @@ html, body {
   border-color: var(--tile-color, var(--arc-cyan));
   background: var(--bg-card-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5), 0 0 10px var(--tile-color, var(--arc-cyan));
 }
 
 .action-tile .tile-icon { font-size: 20px; }
-.action-tile .tile-text {
-  display: flex;
-  flex-direction: column;
-}
+.action-tile .tile-text { display: flex; flex-direction: column; }
 .action-tile .tile-name {
   font-family: var(--font-display);
   font-size: 11.5px;
@@ -548,10 +526,10 @@ html, body {
   color: var(--text-muted);
 }
 
-/* Visual DAG Pipeline Flow Area */
+/* Visual DAG Pipeline */
 .hud-dag-pipeline {
   flex: 1;
-  background: #03060F;
+  background: #02040A;
   padding: 14px;
   overflow-y: auto;
   display: flex;
@@ -580,7 +558,6 @@ html, body {
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-  animation: nodeSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dag-node-left {
@@ -593,7 +570,7 @@ html, body {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  background: #050914;
+  background: #040710;
   border: 1px solid var(--node-color, var(--border));
   display: flex;
   align-items: center;
@@ -627,7 +604,7 @@ html, body {
 /* Prompt Dispatch Bar */
 .hud-dispatch-bar {
   padding: 12px 14px;
-  background: #050914;
+  background: #040710;
   border-top: 1px solid var(--border);
   display: flex;
   gap: 8px;
@@ -636,7 +613,7 @@ html, body {
 
 .hud-prompt-input {
   flex: 1;
-  background: #080D1E;
+  background: #070D1D;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 14px;
@@ -677,7 +654,7 @@ html, body {
 /* Bottom Active Hero Dock */
 .bottom-dock-bar {
   height: 76px;
-  background: #040712;
+  background: #03050F;
   border-top: 2px solid var(--border);
   display: flex;
   align-items: center;
@@ -710,14 +687,14 @@ html, body {
 
 .hero-chip-card.active {
   border-color: var(--card-color, var(--arc-cyan));
-  background: #0F1730;
+  background: #0C152E;
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
 }
 
 .hero-chip-avatar {
   width: 32px; height: 32px;
   border-radius: 6px;
-  background: #040712;
+  background: #03050F;
   border: 1px solid var(--card-color, var(--border));
   display: flex; align-items: center; justify-content: center;
   font-size: 16px;
@@ -745,12 +722,12 @@ html, body {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   3. VISUAL CUSTOM HERO FORGE MODAL
+   3. CUSTOM HERO MODAL
    ══════════════════════════════════════════════════════════════════════ */
 .custom-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(3, 6, 15, 0.85);
+  background: rgba(2, 4, 10, 0.85);
   backdrop-filter: blur(10px);
   z-index: 150;
   display: none;
@@ -764,7 +741,7 @@ html, body {
 .custom-modal {
   width: 660px;
   max-width: 100%;
-  background: #080D1E;
+  background: #070B1A;
   border: 1px solid var(--arc-cyan);
   border-radius: 16px;
   box-shadow: 0 25px 80px rgba(0,0,0,0.9), 0 0 35px rgba(0, 240, 255, 0.25);
@@ -775,7 +752,7 @@ html, body {
 
 .modal-header-bar {
   padding: 14px 20px;
-  background: #0C142D;
+  background: #0A1128;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -807,7 +784,6 @@ html, body {
   gap: 16px;
 }
 
-/* Visual Palette Circles */
 .color-swatch-row {
   display: flex;
   gap: 10px;
@@ -820,20 +796,16 @@ html, body {
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: transform 140ms ease, box-shadow 140ms ease;
+  transition: transform 140ms ease;
 }
 
-.color-circle:hover {
-  transform: scale(1.15);
-}
-
+.color-circle:hover { transform: scale(1.15); }
 .color-circle.selected {
   border-color: #FFFFFF;
   box-shadow: 0 0 12px currentColor;
   transform: scale(1.18);
 }
 
-/* Archetype Icon Tiles */
 .archetype-tiles-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -841,7 +813,7 @@ html, body {
 }
 
 .arch-tile {
-  background: #040712;
+  background: #03050F;
   border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 10px 6px;
@@ -872,12 +844,14 @@ html, body {
   color: #FFFFFF;
 }
 
-@keyframes reactorPulse {
-  0%, 100% { box-shadow: 0 0 20px var(--arc-cyan); }
-  50% { box-shadow: 0 0 35px var(--arc-cyan), 0 0 10px #FFFFFF; }
-}
-
-@keyframes nodeSlideIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+.form-input {
+  background: #03050F;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #FFFFFF;
+  outline: none;
+  width: 100%;
 }
