@@ -78,14 +78,16 @@ export function createMissionControlServer(
     }
 
     try {
-      orchestrator.launchMission(prompt).catch((err) => {
-        console.error('[MissionControl] Mission execution error:', err);
-      });
+      const mission = await orchestrator.launchMission(prompt);
 
       res.json({
         success: true,
-        message: 'Avengers Assembled! Mission launched.',
+        message: 'Avengers Assembled! Mission completed.',
         prompt,
+        missionId: mission.id,
+        summary: mission.finalSummary,
+        result: (mission as any).result || mission.finalSummary,
+        directives: mission.directives,
       });
     } catch (err: any) {
       res.status(500).json({ error: err.message });

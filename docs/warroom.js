@@ -983,6 +983,68 @@ function updateDagPipeline() {
   });
 }
 
+// Markdown Formatter for Rich HUD Responses & Code Blocks
+function formatMarkdown(text) {
+  if (!text) return '';
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Fenced code blocks with language header and 1-click COPY CODE button
+  html = html.replace(/```([a-zA-Z0-9_\-\.]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+    const cleanCode = code.trim();
+    const encoded = encodeURIComponent(cleanCode);
+    const langLabel = lang ? lang.toUpperCase() : 'CODE';
+    return `<div class="hud-code-block">
+      <div class="hud-code-header">
+        <span>⚡ ${langLabel}</span>
+        <button class="hud-copy-code-btn" onclick="copyCodeSnippet('${encoded}', this)">📋 COPY CODE</button>
+      </div>
+      <pre><code>${cleanCode}</code></pre>
+    </div>`;
+  });
+
+  // Headers
+  html = html.replace(/^### (.*$)/gim, '<h3 style="color:#00F0FF;font-size:13px;font-family:var(--font-display);margin:14px 0 6px;">$1</h3>');
+  html = html.replace(/^#### (.*$)/gim, '<h4 style="color:#FFD700;font-size:12px;font-family:var(--font-display);margin:10px 0 4px;">$1</h4>');
+  html = html.replace(/^## (.*$)/gim, '<h2 style="color:#00F0FF;font-size:14px;font-family:var(--font-display);margin:16px 0 8px;">$1</h2>');
+  html = html.replace(/^# (.*$)/gim, '<h1 style="color:#FFFFFF;font-size:15px;font-family:var(--font-display);margin:18px 0 10px;">$1</h1>');
+
+  // Blockquotes
+  html = html.replace(/^> (.*$)/gim, '<blockquote style="border-left:3px solid #00F0FF;padding-left:10px;color:#94A3B8;margin:6px 0;">$1</blockquote>');
+
+  // Horizontal rules
+  html = html.replace(/^---$/gim, '<hr style="border:none;border-top:1px solid #16223E;margin:12px 0;" />');
+
+  // Bold
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#FFFFFF;">$1</strong>');
+
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code style="background:#0F1A30;color:#00F0FF;padding:2px 6px;border-radius:4px;font-size:11px;">$1</code>');
+
+  // Bullet points
+  html = html.replace(/^\- (.*$)/gim, '<div style="display:flex;gap:6px;margin:3px 0;"><span>&bull;</span><span>$1</span></div>');
+
+  // Line breaks
+  html = html.replace(/\n\n/g, '<div style="height:8px;"></div>');
+  html = html.replace(/\n/g, '<br/>');
+
+  return html;
+}
+
+window.copyCodeSnippet = function(encoded, btn) {
+  const code = decodeURIComponent(encoded);
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✔ COPIED!';
+    btn.style.color = '#00FF87';
+    setTimeout(() => {
+      btn.textContent = '📋 COPY CODE';
+      btn.style.color = '';
+    }, 2500);
+  });
+};
+
 // Dispatch Mission Prompt — real call to Gemini via backend
 async function dispatchPrompt(customText = null) {
   const input = document.getElementById('hudPromptInput');
@@ -992,7 +1054,7 @@ async function dispatchPrompt(customText = null) {
   if (!tony) return;
 
   playSfx('repulsor');
-  tony.speak(`Dispatching to Gemini: "${prompt.slice(0, 40)}..."`);
+  tony.speak(`Directives dispatched to Gemini: "${prompt.slice(0, 36)}..."`);
   updateDagPipeline();
 
   // Animate data packets to all spawned agents
@@ -1000,15 +1062,15 @@ async function dispatchPrompt(customText = null) {
     if (hero !== tony) {
       setTimeout(() => {
         quantumDataPackets.push(new QuantumDataPacket(tony.x, tony.y, hero.x, hero.y, hero.color, () => {
-          hero.speak(`Engaging threat in ${hero.chamber.split(' ')[0]}`);
+          hero.speak(`Engaging directive in ${hero.chamber.split(' ')[0]}`);
           playSfx('packet');
         }));
       }, index * 130);
     }
   });
 
-  // Show loading state in response panel
-  showResponsePanel('⚡ Dispatching directive to Gemini 2.5 Pro...', true);
+  // Show live loading state in response panel
+  showResponsePanel(`⚡ DISPATCHING TO GEMINI // DIRECTIVES IN PROGRESS...\n\nAnalyzing request: "${prompt}"\nTony Stark and the Scavengers strike team are generating architecture & code...`, true);
 
   // Call the real backend — POST /api/mission/launch
   try {
@@ -1019,8 +1081,10 @@ async function dispatchPrompt(customText = null) {
     });
     const data = await res.json();
     if (res.ok) {
-      tony.speak('Mission launched. Directives streaming to strike team!');
-      showResponsePanel(`✅ MISSION LAUNCHED // GEMINI 2.5 PRO\n\nPrompt: "${prompt}"\n\nScavengers Assemble — subagents executing directives in parallel. Live updates streaming below.`);
+      const deliverable = data.result || data.summary || data.message || "Mission completed.";
+      showResponsePanel(deliverable, false);
+      tony.speak('Mission deliverable compiled! Ready in HUD.');
+      playSfx('snap');
     } else {
       showResponsePanel(`❌ Error: ${data.error || 'Mission failed to launch'}`);
     }
@@ -1029,34 +1093,32 @@ async function dispatchPrompt(customText = null) {
   }
 }
 
-// Response Panel — shows Gemini output below dispatch bar
+// Response Panel — shows formatted Gemini output below dispatch bar
 function showResponsePanel(text, isLoading = false) {
   let panel = document.getElementById('hudResponsePanel');
   if (!panel) {
     panel = document.createElement('div');
     panel.id = 'hudResponsePanel';
-    panel.style.cssText = `
-      margin-top: 10px;
-      background: #040B1A;
-      border: 1px solid var(--border-light, #22355F);
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-family: var(--font-mono, monospace);
-      font-size: 11.5px;
-      color: #94A3B8;
-      white-space: pre-wrap;
-      line-height: 1.65;
-      max-height: 140px;
-      overflow-y: auto;
-      user-select: text;
-      -webkit-user-select: text;
-    `;
+    panel.className = 'hud-response-panel';
     const bar = document.querySelector('.hud-dispatch-bar');
     if (bar) bar.insertAdjacentElement('afterend', panel);
   }
-  panel.style.borderColor = isLoading ? '#FFD700' : '#00F0FF';
-  panel.style.color = isLoading ? '#FFD700' : '#94A3B8';
-  panel.textContent = text;
+  
+  panel.classList.toggle('loading', isLoading);
+
+  if (isLoading) {
+    panel.innerHTML = `<div style="display:flex;align-items:center;gap:8px;color:#FFD700;font-weight:700;">
+      <span style="display:inline-block;animation:pulse 1s infinite;">⚡</span>
+      <span>DISPATCHING DIRECTIVES // GEMINI 2.5 PRO &amp; SCAVENGERS ASSEMBLE...</span>
+    </div>
+    <div style="margin-top:8px;color:#94A3B8;font-size:11.5px;line-height:1.6;">
+      Tony Stark is formulating task DAGs across hero subagents. Please wait while code is synthesized...
+    </div>`;
+  } else {
+    panel.innerHTML = formatMarkdown(text);
+  }
+
+  panel.scrollTop = 0;
 }
 
 // Forge Custom Superhero
@@ -1324,9 +1386,10 @@ function init() {
           showResponsePanel(`✅ DIRECTIVE COMPLETE\n\nHero: ${data.heroId || 'Agent'}\nResult: ${String(data.result || 'Completed').slice(0, 200)}`);
         }
         else if (type === 'mission_completed') {
-          showResponsePanel(`🎉 MISSION COMPLETE // ALL DIRECTIVES VERIFIED\n\n${String(data.result || data.summary || 'All directives executed successfully').slice(0, 400)}`);
+          const deliverable = data.result || data.summary || data.finalSummary || 'All directives executed successfully.';
+          showResponsePanel(deliverable, false);
           const tony = activeHeroes.find(h => h.id === 'tony-stark');
-          if (tony) tony.speak('Mission complete. Scavengers victorious!');
+          if (tony) tony.speak('Mission complete! Check deliverable.');
           playSfx('snap');
         }
         else if (type === 'comms_message') {
@@ -1346,7 +1409,7 @@ document.addEventListener('DOMContentLoaded', init);
 
 // ── Live AI Provider Status Polling ─────────────────────────
 const PROVIDER_META = {
-  gemini:       { label: 'Gemini',      model: 'gemini-2.5-pro'      },
+  gemini:       { label: 'Gemini',      model: 'gemini-3.5-flash-lite'      },
   'claude-code':{ label: 'Claude Code', model: 'claude-sonnet'       },
   openai:       { label: 'OpenAI Codex',model: 'gpt-4o'              },
   grok:         { label: 'xAI Grok',    model: 'grok-2'              },

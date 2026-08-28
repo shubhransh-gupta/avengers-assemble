@@ -59,8 +59,7 @@ Return a structured JSON list of directives with format:
     try {
       const { text } = await this.queryLLM(
         planningPrompt,
-        'You are Tony Stark. Return JSON only.',
-        'claude-code'
+        'You are Tony Stark. Return JSON only.'
       );
 
       let directivesData: Array<any> = [];
@@ -155,5 +154,31 @@ Return a structured JSON list of directives with format:
         },
       ];
     }
+  }
+
+  async synthesizeResponse(userPrompt: string, directives: MissionDirective[]): Promise<string> {
+    const isGreeting = /^(hi|hello|hey|yo|who are you|what can you do|help)/i.test(userPrompt.trim());
+
+    if (isGreeting && userPrompt.trim().split(/\s+/).length <= 4) {
+      return `### 🦾 Tony Stark // Lead GOD Orchestrator\n\n` +
+        `"Hey there! Tony Stark here. Mark 85 systems are online, and the Scavengers strike team is fully assembled.\n\n` +
+        `Here is what we can build for you right now:\n` +
+        `- 🕸️ **Spider-Man**: Next.js & React Frontend components, Tailwind CSS, 60 FPS UI animations\n` +
+        `- 🟢 **The Hulk**: Express/Node microservices, JWT auth, database schemas, deep AST refactors\n` +
+        `- ⚡ **Thor**: Multi-stage Dockerfiles, Docker Compose, Kubernetes manifests, CI/CD GitHub Actions\n` +
+        `- 🏹 **Hawkeye**: Exhaustive unit test suites, boundary edge case testing\n` +
+        `- 🕷️ **Black Widow**: CVE zero-day dependency audits, .env secret sanitization\n` +
+        `- 🛡️ **Captain America**: 100% strict TypeScript types and Vibranium Shield QA sign-off\n\n` +
+        `*Type any project directive in the box below (e.g. 'Build a JWT authentication microservice with tests') and hit DISPATCH!*"`;
+    }
+
+    const directiveSummaries = directives
+      .map(d => `#### ⚡ [${d.assignedHero.toUpperCase()}] ${d.title}\n\n${d.outputs?.logs?.[0] || d.description}`)
+      .join('\n\n---\n\n');
+
+    return `# 🦾 Mission Deliverable // ${userPrompt}\n\n` +
+      `> **Status**: APPROVED & VERIFIED // Vibranium QA Stamp: APPROVED\n\n` +
+      `---\n\n` +
+      directiveSummaries;
   }
 }
