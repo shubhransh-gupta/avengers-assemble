@@ -1,1522 +1,714 @@
-/* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS WAR ROOM — INTERACTIVE MULTIVERSE BATTLEGROUND ENGINE
-   Powered by Shubhransh Gupta · Direct Terminal & Gemini Integration
-   ══════════════════════════════════════════════════════════════════════ */
+/**
+ * ══════════════════════════════════════════════════════════════════════
+ * SCAVENGERS // LIVING OFFICE FLOOR & STARK COMMAND CENTER (docs/warroom.js)
+ * ══════════════════════════════════════════════════════════════════════
+ */
 
-let canvas, ctx;
-let lastTime = performance.now();
-let soundEnabled = true;
-let simSpeed = 1;
-let selectedHeroId = 'tony-stark';
-let audioCtx = null;
-let challengeTimer = 4000;
+// ── State Management ────────────────────────────────────────────────
+const state = {
+  ws: null,
+  heroes: [],
+  activeDirectives: [],
+  telemetryLogs: [],
+  arcReactorPowerPct: 99.8,
+  tokensConsumed: 0,
+  activeMissionId: null,
+};
 
-// Available Pre-Configured Scavengers with exact Chamber Coordinates
-const PRESET_HEROES = {
+// ── Hero Configuration & Sprite Metadata ────────────────────────────
+const HERO_SPRITES = {
   'tony-stark': {
     id: 'tony-stark',
-    name: 'Tony Stark',
-    shortName: 'TONY STARK',
-    tag: 'GOD',
-    role: 'Lead GOD Orchestrator',
-    chamber: 'Scavengers Bridge',
+    name: 'TONY',
+    callsign: 'GOD',
+    avatar: '🦾',
     harness: 'claudeTerminalHarness',
-    model: 'Antigravity / Claude',
-    color: '#00F0FF',
-    archetype: 'iron',
-    officeX: 80, officeY: 350,
-    dialogs: [
-      "JARVIS, deconstruct the master prompt into DAG directives.",
-      "Scavengers Core load balancing: 100% optimal. Directives streaming.",
-      "Cap, your strict types look solid. Approved.",
-      "Hulk, smash that memory bottleneck now."
-    ]
+    color: '#FF2A4D',
+    border: '#FFC83B',
+    bgColor: '#FFF5EB',
+    tagColor: '#2563EB',
+    defaultPos: { x: 96, y: 150 },
+    deskPos: { x: 96, y: 150 },
+    currentPos: { x: 96, y: 150 },
+    targetPos: { x: 96, y: 150 },
+    facing: 'down',
+    state: 'working',
+    clothesColor: '#1E293B',
+    hairColor: '#451A03',
   },
   'captain-america': {
     id: 'captain-america',
-    name: 'Steve Rogers',
-    shortName: 'CAPTAIN AMERICA',
-    tag: 'QA',
-    role: 'QA Commander & Standards',
-    chamber: 'Scavengers Bridge',
+    name: 'CAP',
+    callsign: 'QA',
+    avatar: '🛡️',
     harness: 'geminiProHarness',
-    model: 'Gemini',
-    color: '#38BDF8',
-    archetype: 'cap',
-    officeX: 190, officeY: 350,
-    dialogs: [
-      "I can do this all day. No unhandled promise rejections on my watch.",
-      "Vibranium Shield QA stamp applied: 100% strict TypeScript types verified.",
-      "Language, team! Clean commits only on main branch.",
-      "All assertions green across test suites."
-    ]
-  },
-  'spider-man': {
-    id: 'spider-man',
-    name: 'Peter Parker',
-    shortName: 'SPIDER-MAN',
-    tag: 'UI',
-    role: 'Frontend Hero & UI/UX',
-    chamber: 'Scavengers Bridge',
-    harness: 'claudeFrontendHarness',
-    model: 'Antigravity / UI',
-    color: '#38BDF8',
-    archetype: 'spidey',
-    officeX: 80, officeY: 480,
-    dialogs: [
-      "Your friendly neighborhood frontend hero swinging in!",
-      "Spun up accessible React components with buttery 60 FPS Tailwind animations!",
-      "Hey Mr. Stark, I fixed the dark mode toggle!"
-    ]
+    color: '#3B82F6',
+    border: '#3B82F6',
+    bgColor: '#EFF6FF',
+    tagColor: '#2563EB',
+    defaultPos: { x: 236, y: 530 },
+    deskPos: { x: 236, y: 530 },
+    currentPos: { x: 236, y: 530 },
+    targetPos: { x: 236, y: 530 },
+    facing: 'up',
+    state: 'idle',
+    clothesColor: '#2563EB',
+    hairColor: '#FDE047',
   },
   'hulk': {
     id: 'hulk',
-    name: 'Bruce Banner & Hulk',
-    shortName: 'THE HULK',
-    tag: 'AST',
-    role: 'Deep AST Refactorer',
-    chamber: 'Scavengers Bridge',
+    name: 'HULK',
+    callsign: 'AST',
+    avatar: '🟢',
     harness: 'ollamaDeepSeekHarness',
-    model: 'Ollama (Local)',
-    color: '#00FF87',
-    archetype: 'hulk',
-    officeX: 190, officeY: 480,
-    dialogs: [
-      "HULK SMASH O(N^2) BOTTLENECK! REFACTOR WITH GAMMA SPEED!!",
-      "Banner mode: Profiling heap memory snapshot...",
-      "FOUND CIRCULAR DEPENDENCY! HULK CRUSH BUG!!"
-    ]
+    color: '#22C55E',
+    border: '#22C55E',
+    bgColor: '#F0FDF4',
+    tagColor: '#16A34A',
+    defaultPos: { x: 130, y: 390 },
+    deskPos: { x: 130, y: 390 },
+    currentPos: { x: 130, y: 390 },
+    targetPos: { x: 130, y: 390 },
+    facing: 'down',
+    state: 'idle',
+    clothesColor: '#16A34A',
+    hairColor: '#14532D',
   },
   'black-widow': {
     id: 'black-widow',
-    name: 'Natasha Romanoff',
-    shortName: 'BLACK WIDOW',
-    tag: 'SEC',
-    role: 'Security Recon & CVE Audit',
-    chamber: 'Doom Arena',
+    name: 'WIDOW',
+    callsign: 'SEC',
+    avatar: '🕷️',
     harness: 'openaiGpt4oHarness',
-    model: 'OpenAI Codex',
     color: '#A855F7',
-    archetype: 'widow',
-    officeX: 360, officeY: 125,
-    dialogs: [
-      "Infiltrating Doom's Latverian network. Isolating zero-days.",
-      "Sanitized API bearer keys in .env. Ledger clean.",
-      "Auth perimeter fortified against Doom-bots."
-    ]
+    border: '#A855F7',
+    bgColor: '#FAF5FF',
+    tagColor: '#9333EA',
+    defaultPos: { x: 184, y: 390 },
+    deskPos: { x: 184, y: 390 },
+    currentPos: { x: 184, y: 390 },
+    targetPos: { x: 184, y: 390 },
+    facing: 'down',
+    state: 'idle',
+    clothesColor: '#18181B',
+    hairColor: '#DC2626',
   },
   'thor': {
     id: 'thor',
-    name: 'Thor Odinson',
-    shortName: 'THOR',
-    tag: 'OPS',
-    role: 'DevOps & Lightning Builds',
-    chamber: 'Infinity Vault',
+    name: 'THOR',
+    callsign: 'OPS',
+    avatar: '⚡',
     harness: 'xaiGrokHarness',
-    model: 'xAI Grok',
-    color: '#00E5FF',
-    archetype: 'thor',
-    officeX: 200, officeY: 175,
-    dialogs: [
-      "BY THE POWER OF MJOLNIR, SUMMONING THE DOCKER BIFROST!",
-      "Kubernetes ingress struck by lightning! Multi-stage build forged in 4.2s.",
-      "CI/CD pipeline humming with thunderous high voltage."
-    ]
+    color: '#00D5E8',
+    border: '#00D5E8',
+    bgColor: '#ECFEFF',
+    tagColor: '#0284C7',
+    defaultPos: { x: 236, y: 200 },
+    deskPos: { x: 236, y: 200 },
+    currentPos: { x: 236, y: 200 },
+    targetPos: { x: 236, y: 200 },
+    facing: 'down',
+    state: 'idle',
+    clothesColor: '#475569',
+    hairColor: '#FDE047',
   },
   'hawkeye': {
     id: 'hawkeye',
-    name: 'Clint Barton',
-    shortName: 'HAWKEYE',
-    tag: 'TEST',
-    role: 'Precision Unit Testing',
-    chamber: 'Infinity Vault',
+    name: 'HAWKEYE',
+    callsign: 'TEST',
+    avatar: '🏹',
     harness: 'geminiFlashHarness',
-    model: 'Gemini',
-    color: '#FFD700',
-    archetype: 'hawkeye',
-    officeX: 75, officeY: 175,
-    dialogs: [
-      "I played 18 test suites, I shot 18 passing assertions. Can't seem to miss.",
-      "Locking on boundary conditions: null, undefined, NaN, Infinity. Bullseye!"
-    ]
+    color: '#F59E0B',
+    border: '#F59E0B',
+    bgColor: '#FFFBEB',
+    tagColor: '#D97706',
+    defaultPos: { x: 290, y: 200 },
+    deskPos: { x: 290, y: 200 },
+    currentPos: { x: 290, y: 200 },
+    targetPos: { x: 290, y: 200 },
+    facing: 'down',
+    state: 'idle',
+    clothesColor: '#581C87',
+    hairColor: '#78350F',
   },
-  'vision': {
-    id: 'vision',
-    name: 'Vision',
-    shortName: 'VISION',
-    tag: 'MEM',
-    role: 'Mind Stone Memory',
-    chamber: 'Kang Citadel',
-    harness: 'mindStoneMemory',
-    model: 'Gemini',
-    color: '#FFD700',
-    archetype: 'vision',
-    officeX: 775, officeY: 175,
-    dialogs: [
-      "Accessing Mind Stone semantic knowledge matrix...",
-      "Indexed 42 architecture conventions into persistent org memory.",
-      "Synchronizing context across all active agent mental nodes."
-    ]
+  'spider-man': {
+    id: 'spider-man',
+    name: 'SPIDEY',
+    callsign: 'UI',
+    avatar: '🕸️',
+    harness: 'claudeTerminalHarness',
+    color: '#EF4444',
+    border: '#60A5FA',
+    bgColor: '#EFF6FF',
+    tagColor: '#2563EB',
+    defaultPos: { x: 76, y: 390 },
+    deskPos: { x: 76, y: 390 },
+    currentPos: { x: 76, y: 390 },
+    targetPos: { x: 76, y: 390 },
+    facing: 'down',
+    state: 'idle',
+    clothesColor: '#EF4444',
+    hairColor: '#78350F',
   },
   'doctor-strange': {
     id: 'doctor-strange',
-    name: 'Stephen Strange',
-    shortName: 'DOCTOR STRANGE',
-    tag: 'SIM',
-    role: 'Multiverse Simulator',
-    chamber: 'Chaos Incursion',
-    harness: 'timeStoneEngine',
-    model: 'Antigravity / Reasoning',
-    color: '#FF9900',
-    archetype: 'strange',
-    officeX: 842, officeY: 530,
-    dialogs: [
-      "Opening the Eye of Agamotto. Simulating 14,000,605 timelines...",
-      "Reality-616 selected: Incursions averted with 98.4% success.",
-      "Time Stone snapshot sealed. Instant rollback ready if build fails."
-    ]
+    name: 'STRANGE',
+    callsign: 'TIME',
+    avatar: '🔮',
+    harness: 'geminiFlashHarness',
+    color: '#8B5CF6',
+    border: '#8B5CF6',
+    bgColor: '#F5F3FF',
+    tagColor: '#7C3AED',
+    defaultPos: { x: 76, y: 530 },
+    deskPos: { x: 76, y: 530 },
+    currentPos: { x: 76, y: 530 },
+    targetPos: { x: 76, y: 530 },
+    facing: 'up',
+    state: 'idle',
+    clothesColor: '#1E40AF',
+    hairColor: '#172554',
+  },
+  'vision': {
+    id: 'vision',
+    name: 'VISION',
+    callsign: 'MIND',
+    avatar: '💎',
+    harness: 'geminiProHarness',
+    color: '#10B981',
+    border: '#10B981',
+    bgColor: '#ECFDF5',
+    tagColor: '#059669',
+    defaultPos: { x: 316, y: 520 }, // Standing near coffee station
+    deskPos: { x: 316, y: 520 },
+    currentPos: { x: 316, y: 520 },
+    targetPos: { x: 316, y: 520 },
+    facing: 'left',
+    state: 'refueling',
+    clothesColor: '#047857',
+    hairColor: '#E11D48',
   }
 };
 
-let activeHeroes = [];
-let quantumDataPackets = [];
-let speechBubbles = [];
-let spawnParticles = [];
+// ── DOM References ──────────────────────────────────────────────────
+let canvas, ctx;
+let terminalFeed, masterPromptInput, sendPromptBtn;
+let bottomAgentDock, speechBubbleLayer;
+let arcReactorCapacityLabel, ctxMetaLabel;
 
-// Audio Synthesizer
-function getAudio() {
-  if (!audioCtx) {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    audioCtx = new AudioContext();
+// ── Initialization ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  canvas = document.getElementById('pixelOfficeCanvas');
+  ctx = canvas.getContext('2d');
+  
+  terminalFeed = document.getElementById('terminalFeed');
+  masterPromptInput = document.getElementById('masterPromptInput');
+  sendPromptBtn = document.getElementById('sendPromptBtn');
+  bottomAgentDock = document.getElementById('bottomAgentDock');
+  speechBubbleLayer = document.getElementById('speechBubbleLayer');
+  arcReactorCapacityLabel = document.getElementById('arcReactorCapacityLabel');
+  ctxMetaLabel = document.getElementById('ctxMetaLabel');
+
+  initCanvas();
+  renderBottomDock();
+  setupEventListeners();
+  initWebSocket();
+  fetchInitialStatus();
+  
+  // Show initial coffee break speech bubble
+  setTimeout(() => {
+    showSpeechBubble('vision', 'Refueling at the coffee machine.');
+  }, 1000);
+});
+
+// ── Canvas Setup & Pixel Renderer ───────────────────────────────────
+function initCanvas() {
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
   }
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(gameLoop);
 }
 
-function playSfx(type) {
-  if (!soundEnabled) return;
-  try {
-    const ctx = getAudio();
-    const now = ctx.currentTime;
-    if (type === 'repulsor') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(160, now);
-      osc.frequency.exponentialRampToValueAtTime(920, now + 0.18);
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.25);
-    } else if (type === 'doom') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(90, now);
-      osc.frequency.exponentialRampToValueAtTime(350, now + 0.3);
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.36);
-    } else if (type === 'wanda') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(740, now);
-      osc.frequency.exponentialRampToValueAtTime(180, now + 0.4);
-      gain.gain.setValueAtTime(0.22, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.41);
-    } else if (type === 'snap') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(880, now);
-      osc.frequency.exponentialRampToValueAtTime(110, now + 0.5);
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.51);
-    } else if (type === 'packet') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(460, now);
-      osc.frequency.exponentialRampToValueAtTime(1150, now + 0.12);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.13);
-    } else if (type === 'pop') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(580, now);
-      osc.frequency.exponentialRampToValueAtTime(950, now + 0.08);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.09);
-    }
-  } catch {}
+function gameLoop(timestamp) {
+  updateHeroPositions();
+  drawLivingOffice();
+  requestAnimationFrame(gameLoop);
 }
 
-// Realistic Superhero Entity
-class SuperheroEntity {
-  constructor(config) {
-    this.id = config.id;
-    this.name = config.name;
-    this.shortName = config.shortName || config.name;
-    this.tag = config.tag || 'AGENT';
-    this.role = config.role;
-    this.chamber = config.chamber;
-    this.harness = config.harness;
-    this.model = config.model;
-    this.color = config.color || '#00F0FF';
-    this.archetype = config.archetype || 'iron';
-    this.dialogs = config.dialogs || ["Directive acknowledged. Ready for action."];
-
-    this.homeX = config.officeX || 80;
-    this.homeY = config.officeY || 350;
-    this.x = this.homeX; // SPAWN DIRECTLY IN ASSIGNED CHAMBER BOX
-    this.y = this.homeY;
-    this.targetX = this.homeX;
-    this.targetY = this.homeY;
-    this.state = 'WORKING';
-    this.animTimer = Math.random() * 10;
-    this.actionTimer = 2000 + Math.random() * 3000;
-  }
-
-  speak(text = null) {
-    const dialog = text || this.dialogs[Math.floor(Math.random() * this.dialogs.length)];
-    createSpeechBubble(this, dialog);
-    playSfx('pop');
-  }
-
-  update(dt) {
-    this.animTimer += dt * 4 * simSpeed;
-    const dx = this.targetX - this.x;
-    const dy = this.targetY - this.y;
+function updateHeroPositions() {
+  for (const hero of Object.values(HERO_SPRITES)) {
+    const dx = hero.targetPos.x - hero.currentPos.x;
+    const dy = hero.targetPos.y - hero.currentPos.y;
     const dist = Math.hypot(dx, dy);
 
-    if (dist > 2) {
-      this.state = 'WALKING';
-      const speed = 75 * simSpeed * dt;
-      this.x += (dx / dist) * speed;
-      this.y += (dy / dist) * speed;
+    if (dist > 1.5) {
+      hero.currentPos.x += (dx / dist) * 1.5;
+      hero.currentPos.y += (dy / dist) * 1.5;
+      hero.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
     } else {
-      this.state = 'WORKING';
-    }
-
-    this.actionTimer -= dt * 1000 * simSpeed;
-    if (this.actionTimer <= 0) {
-      if (this.state === 'WORKING') {
-        // Micro-wander strictly within its chamber box (+/- 14px)
-        this.targetX = this.homeX + (Math.random() - 0.5) * 28;
-        this.targetY = this.homeY + (Math.random() - 0.5) * 20;
-        this.actionTimer = 3000 + Math.random() * 4000;
-        if (Math.random() < 0.25) this.speak();
-      } else {
-        this.targetX = this.homeX;
-        this.targetY = this.homeY;
-        this.actionTimer = 4000;
-      }
-    }
-  }
-
-  draw(ctx, scaleX, scaleY) {
-    const px = this.x * scaleX;
-    const py = this.y * scaleY;
-    const isWalking = this.state === 'WALKING';
-    const bob = isWalking ? Math.sin(this.animTimer * 2) * 3 : Math.sin(this.animTimer) * 1.5;
-
-    ctx.save();
-    ctx.translate(px, py);
-
-    // Glowing base energy circle
-    ctx.beginPath();
-    ctx.ellipse(0, 14, 20, 8, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx.fill();
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Selected Halo Pulse
-    if (selectedHeroId === this.id) {
-      const pulse = Math.sin(this.animTimer * 3) * 3;
-      ctx.beginPath();
-      ctx.ellipse(0, 10, 26 + pulse, 12 + pulse/2, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = this.color;
-      ctx.lineWidth = 2.5;
-      ctx.shadowColor = this.color;
-      ctx.shadowBlur = 15;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-    }
-
-    ctx.translate(0, bob);
-
-    // ── High-Visibility Name Badge above Hero ──
-    ctx.font = `bold 10px "Space Grotesk", sans-serif`;
-    ctx.textAlign = 'center';
-    const badgeText = `${this.shortName} [${this.tag}]`;
-    const textWidth = ctx.measureText(badgeText).width;
-    
-    ctx.fillStyle = 'rgba(2, 6, 20, 0.9)';
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.roundRect(-textWidth / 2 - 5, -42, textWidth + 10, 15, 4);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = this.color;
-    ctx.fillText(badgeText, 0, -31);
-
-    // Cape
-    if (this.archetype === 'thor' || this.archetype === 'strange' || this.archetype === 'vision') {
-      ctx.beginPath();
-      ctx.moveTo(-12, -10);
-      ctx.bezierCurveTo(-16, 4, -14, 16, -10, 18);
-      ctx.lineTo(10, 18);
-      ctx.bezierCurveTo(14, 16, 16, 4, 12, -10);
-      ctx.closePath();
-      ctx.fillStyle = this.archetype === 'vision' ? '#EAB308' : '#DC2626';
-      ctx.fill();
-    }
-
-    // Legs
-    ctx.fillStyle = '#0F172A';
-    if (this.archetype === 'iron') {
-      ctx.fillStyle = '#991B1B'; ctx.fillRect(-8, 2, 6, 13); ctx.fillRect(2, 2, 6, 13);
-      ctx.fillStyle = '#D97706'; ctx.fillRect(-8, 5, 6, 3); ctx.fillRect(2, 5, 6, 3);
-    } else if (this.archetype === 'cap') {
-      ctx.fillStyle = '#1E3A8A'; ctx.fillRect(-8, 2, 6, 12); ctx.fillRect(2, 2, 6, 12);
-      ctx.fillStyle = '#991B1B'; ctx.fillRect(-9, 10, 7, 4); ctx.fillRect(2, 10, 7, 4);
-    } else if (this.archetype === 'hulk') {
-      ctx.fillStyle = '#15803D'; ctx.fillRect(-12, 2, 9, 14); ctx.fillRect(3, 2, 9, 14);
-      ctx.fillStyle = '#6B21A8'; ctx.fillRect(-13, -2, 26, 7);
-    } else {
-      ctx.fillRect(-8, 2, 6, 13); ctx.fillRect(2, 2, 6, 13);
-    }
-
-    // Torso / Armor
-    if (this.archetype === 'iron') {
-      ctx.fillStyle = '#B91C1C';
-      ctx.beginPath(); ctx.roundRect(-12, -16, 24, 20, 4); ctx.fill();
-      ctx.fillStyle = '#F59E0B'; ctx.fillRect(-13, -16, 5, 7); ctx.fillRect(8, -16, 5, 7);
-      ctx.beginPath(); ctx.arc(0, -6, 4, 0, Math.PI * 2);
-      ctx.fillStyle = this.color;
-      ctx.shadowColor = this.color; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
-    } else if (this.archetype === 'cap') {
-      ctx.fillStyle = '#1D4ED8';
-      ctx.beginPath(); ctx.roundRect(-11, -16, 22, 20, 4); ctx.fill();
-      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(-4, -13, 8, 5);
-      ctx.fillStyle = '#DC2626'; ctx.fillRect(-8, -2, 16, 5);
-      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(-5, -2, 3, 5); ctx.fillRect(2, -2, 3, 5);
-      // Vibranium Shield on Arm
-      ctx.beginPath(); ctx.arc(13, -5, 10, 0, Math.PI * 2); ctx.fillStyle = '#DC2626'; ctx.fill();
-      ctx.beginPath(); ctx.arc(13, -5, 7.5, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill();
-      ctx.beginPath(); ctx.arc(13, -5, 5, 0, Math.PI * 2); ctx.fillStyle = '#1D4ED8'; ctx.fill();
-      ctx.beginPath(); ctx.arc(13, -5, 2, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill();
-    } else if (this.archetype === 'hulk') {
-      ctx.fillStyle = '#15803D';
-      ctx.beginPath(); ctx.roundRect(-16, -20, 32, 26, 6); ctx.fill();
-    } else if (this.archetype === 'widow') {
-      ctx.fillStyle = '#0F172A';
-      ctx.beginPath(); ctx.roundRect(-10, -15, 20, 19, 4); ctx.fill();
-      ctx.fillStyle = '#DC2626'; ctx.fillRect(-3, 0, 6, 4);
-      ctx.fillStyle = '#00F0FF'; ctx.fillRect(-12, -5, 3, 5); ctx.fillRect(9, -5, 3, 5);
-    } else if (this.archetype === 'thor') {
-      ctx.fillStyle = '#334155';
-      ctx.beginPath(); ctx.roundRect(-11, -16, 22, 20, 4); ctx.fill();
-      ctx.fillStyle = '#00E5FF';
-      ctx.beginPath(); ctx.arc(-5, -9, 3, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(5, -9, 3, 0, Math.PI * 2); ctx.fill();
-    } else if (this.archetype === 'spidey') {
-      ctx.fillStyle = '#DC2626';
-      ctx.beginPath(); ctx.roundRect(-10, -16, 20, 12, 4); ctx.fill();
-      ctx.fillStyle = '#1D4ED8'; ctx.fillRect(-10, -4, 20, 8);
-    } else if (this.archetype === 'strange') {
-      ctx.fillStyle = '#1E3A8A';
-      ctx.beginPath(); ctx.roundRect(-10, -15, 20, 19, 4); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, -6, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#00FF87'; ctx.fill();
-    } else {
-      ctx.fillStyle = this.color;
-      ctx.beginPath(); ctx.roundRect(-10, -15, 20, 19, 4); ctx.fill();
-    }
-
-    // Head
-    ctx.fillStyle = this.archetype === 'hulk' ? '#15803D' : (this.archetype === 'vision' ? '#991B1B' : '#FED7AA');
-    ctx.beginPath(); ctx.arc(0, -23, 8.5, 0, Math.PI * 2); ctx.fill();
-
-    // Eyes
-    if (this.archetype === 'spidey') {
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath(); ctx.ellipse(-4, -23, 3.5, 2.5, -0.2, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(4, -23, 3.5, 2.5, 0.2, 0, Math.PI * 2); ctx.fill();
-    } else {
-      ctx.fillStyle = '#0F172A';
-      ctx.fillRect(-4, -23, 2.5, 2.5); ctx.fillRect(2, -23, 2.5, 2.5);
-    }
-
-    ctx.restore();
-  }
-}
-
-// Quantum Data Packet
-class QuantumDataPacket {
-  constructor(x1, y1, x2, y2, color, onArrival) {
-    this.x1 = x1; this.y1 = y1;
-    this.x2 = x2; this.y2 = y2;
-    this.color = color || '#00F0FF';
-    this.progress = 0;
-    this.speed = 2.2;
-    this.onArrival = onArrival;
-    this.curveHeight = -55 - Math.random() * 30;
-    playSfx('packet');
-  }
-
-  update(dt) {
-    this.progress += dt * this.speed * simSpeed;
-    if (this.progress >= 1) {
-      if (this.onArrival) this.onArrival();
-      return false;
-    }
-    return true;
-  }
-
-  draw(ctx, scaleX, scaleY) {
-    const t = this.progress;
-    const cx = (this.x1 + this.x2) / 2;
-    const cy = Math.min(this.y1, this.y2) + this.curveHeight;
-
-    const nx = (1-t)*(1-t)*this.x1 + 2*(1-t)*t*cx + t*t*this.x2;
-    const ny = (1-t)*(1-t)*this.y1 + 2*(1-t)*t*cy + t*t*this.y2;
-
-    const px = nx * scaleX;
-    const py = ny * scaleY;
-
-    ctx.save();
-    ctx.translate(px, py);
-    ctx.fillStyle = this.color;
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 15;
-    ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-  }
-}
-
-function spawnParticleBeam(x, y, color) {
-  for (let i = 0; i < 28; i++) {
-    spawnParticles.push({
-      x: x, y: y,
-      vx: (Math.random() - 0.5) * 90,
-      vy: (Math.random() - 0.5) * 90,
-      color: color,
-      alpha: 1,
-      radius: Math.random() * 3.5 + 2
-    });
-  }
-  playSfx('repulsor');
-}
-
-function createSpeechBubble(character, text) {
-  const container = document.getElementById('speechBubbleLayer');
-  if (!container) return;
-
-  const bubble = document.createElement('div');
-  bubble.className = 'speech-bubble';
-  bubble.style.setProperty('--bubble-color', character.color || '#00F0FF');
-  bubble.style.setProperty('--bubble-border', character.color || '#00F0FF');
-
-  bubble.innerHTML = `
-    <span class="bubble-prefix">${character.shortName || character.name}</span>
-    ${text}
-  `;
-  container.appendChild(bubble);
-
-  speechBubbles.push({
-    element: bubble,
-    character: character,
-    timer: 4.0
-  });
-}
-
-function updateSpeechBubbles(dt, scaleX, scaleY) {
-  for (let i = speechBubbles.length - 1; i >= 0; i--) {
-    const b = speechBubbles[i];
-    b.timer -= dt * simSpeed;
-    if (b.timer <= 0) {
-      b.element.remove();
-      speechBubbles.splice(i, 1);
-    } else {
-      b.element.style.left = (b.character.x * scaleX) + 'px';
-      b.element.style.top = (b.character.y * scaleY) + 'px';
+      hero.currentPos.x = hero.targetPos.x;
+      hero.currentPos.y = hero.targetPos.y;
     }
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// DRAW MULTIVERSE BATTLEGROUND WITH CLEAN CENTERED LABELS
-// ══════════════════════════════════════════════════════════════════════
-function drawMultiverseBattleground(ctx, w, h) {
-  const sx = w / 1000;
-  const sy = h / 720;
-  const now = performance.now() * 0.001;
-
-  ctx.fillStyle = '#02040A';
-  ctx.fillRect(0, 0, w, h);
-
-  // Background Hex Grid
-  ctx.strokeStyle = 'rgba(0, 240, 255, 0.04)';
-  ctx.lineWidth = 1;
-  const gridSize = 45 * sx;
-  for (let x = 0; x < w; x += gridSize) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-  }
-  for (let y = 0; y < h; y += gridSize) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-  }
-
-  // ── CHAMBER 1: 💎 INFINITY GAUNTLET VAULT (Top-Left) ──
-  const c1x = 24 * sx, c1y = 20 * sy, c1w = 230 * sx, c1h = 220 * sy;
-  ctx.fillStyle = 'rgba(255, 215, 0, 0.04)';
-  ctx.fillRect(c1x, c1y, c1w, c1h);
-  ctx.strokeStyle = '#FFD700'; ctx.lineWidth = 1.5; ctx.strokeRect(c1x, c1y, c1w, c1h);
-
-  // Centered Header Badge
-  ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
-  ctx.fillRect(c1x, c1y, c1w, 24*sy);
-  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#FFD700';
-  ctx.textAlign = 'center';
-  ctx.fillText('💎 1. INFINITY GAUNTLET VAULT', c1x + c1w / 2, c1y + 16*sy);
-
-  // Pedestal & Glowing Infinity Gauntlet
-  const gx = c1x + 115 * sx;
-  const gy = c1y + 115 * sy;
-
-  // Cosmic shockwave rings
-  ctx.beginPath();
-  ctx.arc(gx, gy, (28 + Math.sin(now * 3) * 4) * sx, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Pedestal
-  ctx.fillStyle = '#0F172A';
-  ctx.beginPath(); ctx.roundRect(gx - 20*sx, gy + 10*sy, 40*sx, 16*sy, 3); ctx.fill();
-  ctx.strokeStyle = '#FFD700'; ctx.stroke();
-
-  // Golden Gauntlet Body
-  ctx.fillStyle = '#F59E0B';
-  ctx.beginPath(); ctx.roundRect(gx - 12*sx, gy - 16*sy, 24*sx, 28*sy, 4); ctx.fill();
-  ctx.strokeStyle = '#FFD700'; ctx.lineWidth = 1.5; ctx.stroke();
-
-  // 6 Infinity Stones
-  const stones = [
-    { x: -7, y: -10, color: '#A855F7' }, // Purple Power
-    { x: -2, y: -12, color: '#38BDF8' }, // Blue Space
-    { x: 3,  y: -10, color: '#EF4444' }, // Red Reality
-    { x: 8,  y: -6,  color: '#F97316' }, // Orange Soul
-    { x: -8, y: -4,  color: '#00FF87' }, // Green Time
-    { x: 0,  y: -2,  color: '#FFD700' }  // Yellow Mind
-  ];
-
-  stones.forEach(s => {
-    ctx.beginPath();
-    ctx.arc(gx + s.x*sx, gy + s.y*sy, 2.5*sx, 0, Math.PI * 2);
-    ctx.fillStyle = s.color;
-    ctx.shadowColor = s.color; ctx.shadowBlur = 8; ctx.fill(); ctx.shadowBlur = 0;
-  });
-
-  // ── CHAMBER 2: 👑 DR DOOM'S LATVERIAN THRONE (Top-Center) ──
-  const c2x = 270 * sx, c2y = 20 * sy, c2w = 420 * sx, c2h = 160 * sy;
-  ctx.fillStyle = 'rgba(0, 255, 135, 0.04)';
-  ctx.fillRect(c2x, c2y, c2w, c2h);
-  ctx.strokeStyle = '#00FF87'; ctx.lineWidth = 1.5; ctx.strokeRect(c2x, c2y, c2w, c2h);
-
-  // Centered Header Badge
-  ctx.fillStyle = 'rgba(0, 255, 135, 0.2)';
-  ctx.fillRect(c2x, c2y, c2w, 24*sy);
-  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#00FF87';
-  ctx.textAlign = 'center';
-  ctx.fillText('👑 2. DR DOOM // LATVERIAN CRUSHING ARENA', c2x + c2w / 2, c2y + 16*sy);
-
-  // Dr Doom Character Sprite
-  const dx = c2x + 210 * sx;
-  const dy = c2y + 90 * sy;
-
-  // Fortress Stone Platform
-  ctx.fillStyle = '#0B1528';
-  ctx.beginPath(); ctx.roundRect(dx - 50*sx, dy + 12*sy, 100*sx, 16*sy, 3); ctx.fill();
-  ctx.strokeStyle = '#00FF87'; ctx.stroke();
-
-  // Crushed Robot parts
-  ctx.fillStyle = '#475569';
-  ctx.fillRect(dx - 35*sx, dy + 8*sy, 12*sx, 6*sy);
-  ctx.fillRect(dx + 22*sx, dy + 9*sy, 14*sx, 5*sy);
-
-  // Doom Cloak (Emerald Green)
-  ctx.fillStyle = '#15803D';
-  ctx.beginPath();
-  ctx.moveTo(dx - 12*sx, dy - 16*sy);
-  ctx.lineTo(dx + 12*sx, dy - 16*sy);
-  ctx.lineTo(dx + 16*sx, dy + 14*sy);
-  ctx.lineTo(dx - 16*sx, dy + 14*sy);
-  ctx.closePath();
-  ctx.fill();
-
-  // Titanium Armor Torso
-  ctx.fillStyle = '#64748B';
-  ctx.fillRect(dx - 8*sx, dy - 12*sy, 16*sx, 16*sy);
-  ctx.fillStyle = '#FFD700'; // Gold chain clasp
-  ctx.fillRect(-4*sx + dx, dy - 10*sy, 8*sx, 2*sy);
-
-  // Mask & Hood
-  ctx.fillStyle = '#15803D'; // Green Hood
-  ctx.beginPath(); ctx.arc(dx, dy - 20*sy, 8*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#94A3B8'; // Iron Face Mask
-  ctx.beginPath(); ctx.arc(dx, dy - 19*sy, 6*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#0F172A';
-  ctx.fillRect(dx - 4*sx, dy - 20*sy, 2*sx, 2*sy);
-  ctx.fillRect(dx + 2*sx, dy - 20*sy, 2*sx, 2*sy);
-
-  // Green Latverian Sorcery Flames
-  const flamePulse = (Math.sin(now * 6) + 1) * 3;
-  ctx.fillStyle = '#00FF87';
-  ctx.shadowColor = '#00FF87'; ctx.shadowBlur = 12;
-  ctx.beginPath(); ctx.arc(dx - 14*sx, dy - 4*sy, (4 + flamePulse)*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(dx + 14*sx, dy - 4*sy, (4 + flamePulse)*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.shadowBlur = 0;
-
-  // ── CHAMBER 3: ⏳ KANG'S QUANTUM CITADEL (Top-Right) ──
-  const c3x = 710 * sx, c3y = 20 * sy, c3w = 265 * sx, c3h = 220 * sy;
-  ctx.fillStyle = 'rgba(168, 85, 247, 0.04)';
-  ctx.fillRect(c3x, c3y, c3w, c3h);
-  ctx.strokeStyle = '#A855F7'; ctx.lineWidth = 1.5; ctx.strokeRect(c3x, c3y, c3w, c3h);
-
-  // Centered Header Badge
-  ctx.fillStyle = 'rgba(168, 85, 247, 0.2)';
-  ctx.fillRect(c3x, c3y, c3w, 24*sy);
-  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#A855F7';
-  ctx.textAlign = 'center';
-  ctx.fillText('⏳ 3. KANG // QUANTUM CITADEL', c3x + c3w / 2, c3y + 16*sy);
-
-  // Kang on Floating Time Throne
-  const kx = c3x + 132 * sx;
-  const ky = c3y + 115 * sy;
-
-  // Rotating Timeline Rings
-  ctx.save();
-  ctx.translate(kx, ky);
-  ctx.rotate(now * 0.7);
-  ctx.beginPath(); ctx.ellipse(0, 0, 42*sx, 20*sy, 0, 0, Math.PI * 2);
-  ctx.strokeStyle = '#38BDF8'; ctx.lineWidth = 1.5; ctx.stroke();
-  ctx.rotate(-now * 1.4);
-  ctx.beginPath(); ctx.ellipse(0, 0, 30*sx, 14*sy, 0.5, 0, Math.PI * 2);
-  ctx.strokeStyle = '#A855F7'; ctx.stroke();
-  ctx.restore();
-
-  // Kang Body
-  ctx.fillStyle = '#15803D'; ctx.fillRect(kx - 12*sx, ky - 14*sy, 24*sx, 24*sy);
-  ctx.fillStyle = '#6B21A8'; ctx.fillRect(kx - 8*sx, ky - 10*sy, 16*sx, 18*sy);
-  ctx.fillStyle = '#0284C7';
-  ctx.beginPath(); ctx.arc(kx, ky - 18*sy, 7*sx, 0, Math.PI * 2);
-  ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
-
-  // ── CHAMBER 4: 🦾 SCAVENGERS HELICARRIER BRIDGE (Bottom-Left) ──
-  const c4x = 24 * sx, c4y = 260 * sy, c4w = 230 * sx, c4h = 430 * sy;
-  ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
-  ctx.fillRect(c4x, c4y, c4w, c4h);
-  ctx.strokeStyle = '#00F0FF'; ctx.lineWidth = 1.5; ctx.strokeRect(c4x, c4y, c4w, c4h);
-
-  // Centered Header Badge
-  ctx.fillStyle = 'rgba(0, 240, 255, 0.18)';
-  ctx.fillRect(c4x, c4y, c4w, 24*sy);
-  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#00F0FF';
-  ctx.textAlign = 'center';
-  ctx.fillText('🦾 4. SCAVENGERS BRIDGE', c4x + c4w / 2, c4y + 16*sy);
-
-  // Hologram CAD Screen
-  ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
-  ctx.fillRect(c4x + 20*sx, c4y + 40*sy, 70*sx, 35*sy);
-  ctx.strokeStyle = '#00F0FF'; ctx.strokeRect(c4x + 20*sx, c4y + 40*sy, 70*sx, 35*sy);
-
-  // ── CHAMBER 5: 🔴 CHAOS MAGIC INCURSIONS (Bottom-Right) ──
-  const c5x = 710 * sx, c5y = 260 * sy, c5w = 265 * sx, c5h = 430 * sy;
-  ctx.fillStyle = 'rgba(239, 68, 68, 0.04)';
-  ctx.fillRect(c5x, c5y, c5w, c5h);
-  ctx.strokeStyle = '#EF4444'; ctx.lineWidth = 1.5; ctx.strokeRect(c5x, c5y, c5w, c5h);
-
-  // Centered Header Badge
-  ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
-  ctx.fillRect(c5x, c5y, c5w, 24*sy);
-  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#EF4444';
-  ctx.textAlign = 'center';
-  ctx.fillText('🔴 5. CHAOS MAGIC // INCURSIONS', c5x + c5w / 2, c5y + 16*sy);
-
-  // Floating Scarlet Witch & Chaos Hex Mandalas
-  const wx = c5x + 132 * sx;
-  const wy = c5y + 130 * sy;
-
-  // Swirling Red Chaos Hex
-  ctx.save();
-  ctx.translate(wx, wy);
-  ctx.rotate(now * 1.2);
-  ctx.beginPath(); ctx.arc(0, 0, 36*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#EF4444'; ctx.lineWidth = 2; ctx.setLineDash([8, 8]); ctx.stroke();
-  ctx.rotate(-now * 2.4);
-  ctx.beginPath(); ctx.arc(0, 0, 22*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#DC2626'; ctx.stroke(); ctx.setLineDash([]);
-  ctx.restore();
-
-  // Wanda Body
-  const wBob = Math.sin(now * 3) * 4;
-  ctx.fillStyle = '#7F1D1D'; ctx.fillRect(wx - 9*sx, wy - 12*sy + wBob, 18*sx, 22*sy);
-  ctx.fillStyle = '#DC2626'; ctx.fillRect(wx - 7*sx, wy - 8*sy + wBob, 14*sx, 10*sy);
-  ctx.fillStyle = '#FED7AA'; ctx.beginPath(); ctx.arc(wx, wy - 18*sy + wBob, 7*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#78350F'; ctx.fillRect(wx - 9*sx, wy - 22*sy + wBob, 18*sx, 6*sy);
-  // Scarlet Crown
-  ctx.fillStyle = '#DC2626';
-  ctx.beginPath();
-  ctx.moveTo(wx - 8*sx, wy - 24*sy + wBob);
-  ctx.lineTo(wx, wy - 19*sy + wBob);
-  ctx.lineTo(wx + 8*sx, wy - 24*sy + wBob);
-  ctx.lineWidth = 2; ctx.strokeStyle = '#EF4444'; ctx.stroke();
-  // Chaos Magic Glow in Hands
-  ctx.fillStyle = '#EF4444'; ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 14;
-  ctx.beginPath(); ctx.arc(wx - 14*sx, wy + wBob, 4*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(wx + 14*sx, wy + wBob, 4*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.shadowBlur = 0;
-
-  // ── 6. CENTER: MASSIVE PULSING SCAVENGERS CORE GRID ──
-  const ax = 480 * sx;
-  const ay = 390 * sy;
-
-  // Outer Power Ring
-  ctx.beginPath();
-  ctx.arc(ax, ay, 88*sx, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
-  ctx.fill();
-  ctx.strokeStyle = '#00F0FF';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  // Rotating Magnetic Confinement Rings
-  ctx.save();
-  ctx.translate(ax, ay);
-  ctx.rotate(now * 0.5);
-  ctx.beginPath(); ctx.arc(0, 0, 70*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)'; ctx.lineWidth = 2; ctx.setLineDash([8, 8]); ctx.stroke();
-  ctx.rotate(-now * 1.1);
-  ctx.beginPath(); ctx.arc(0, 0, 50*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#00F0FF'; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
-  ctx.restore();
-
-  // Giant Glowing Scavengers "A" Logo
-  ctx.font = `bold ${44*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#00F0FF'; ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 20;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('A', ax, ay);
-  ctx.shadowBlur = 0;
-
-  ctx.font = `700 ${10*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#00F0FF';
-  ctx.textAlign = 'center';
-  ctx.fillText('SCAVENGERS POWER GRID: 100% ONLINE', ax, ay + 105*sy);
-
-  // Conduits Radiating from Core to All 5 Chambers
-  ctx.strokeStyle = 'rgba(0, 240, 255, 0.14)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([6, 6]);
-  const hubs = [
-    { x: gx, y: gy }, { x: dx, y: dy }, { x: kx, y: ky },
-    { x: c4x + 115*sx, y: c4y + 200*sy }, { x: wx, y: wy }
-  ];
-  hubs.forEach(h => {
-    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(h.x, h.y); ctx.stroke();
-  });
-  ctx.setLineDash([]);
-}
-
-// Spawn Agent into Active Floor directly into their Chamber
-function spawnHeroAgent(heroKey) {
-  const existing = activeHeroes.find(h => h.id === heroKey);
-  if (existing) {
-    selectHero(heroKey);
-    spawnParticleBeam(existing.x, existing.y, existing.color);
-    existing.speak();
-    return;
-  }
-
-  const tmpl = PRESET_HEROES[heroKey];
-  if (!tmpl) return;
-
-  const entity = new SuperheroEntity(tmpl);
-  activeHeroes.push(entity);
-
-  spawnParticleBeam(entity.homeX, entity.homeY, tmpl.color);
-  entity.speak(`Deployed to ${tmpl.chamber.split(' ')[0]}!`);
-
-  updateActiveDock();
-  updateTopAvatarStack();
-  selectHero(entity.id);
-  updateDagPipeline();
-}
-
-// Assemble All Agents
-function assembleAllStrikeTeam() {
-  Object.keys(PRESET_HEROES).forEach((key, index) => {
-    setTimeout(() => {
-      spawnHeroAgent(key);
-    }, index * 100);
-  });
-}
-
-// Update Top Avatar Stack
-function updateTopAvatarStack() {
-  const stack = document.getElementById('topAvatarStack');
-  if (!stack) return;
-
-  stack.innerHTML = '';
-  activeHeroes.forEach(h => {
-    const av = document.createElement('div');
-    av.className = 'stack-avatar';
-    av.style.borderColor = h.color;
-    av.title = `${h.name} (${h.chamber})`;
-    const emoji = h.archetype === 'iron' ? '🦾' : (h.archetype === 'cap' ? '🛡️' : (h.archetype === 'hulk' ? '🟢' : (h.archetype === 'widow' ? '🕷️' : (h.archetype === 'thor' ? '⚡' : (h.archetype === 'hawkeye' ? '🏹' : (h.archetype === 'spidey' ? '🕸️' : (h.archetype === 'strange' ? '🔮' : '💎')))))));
-    av.textContent = emoji;
-    av.addEventListener('click', () => selectHero(h.id));
-    stack.appendChild(av);
-  });
-}
-
-// Update Bottom Active Dock
-function updateActiveDock() {
-  const dock = document.getElementById('bottomDockBar');
-  if (!dock) return;
-
-  dock.innerHTML = '';
-  activeHeroes.forEach(h => {
-    const card = document.createElement('div');
-    card.className = `hero-chip-card ${h.id === selectedHeroId ? 'active' : ''}`;
-    card.dataset.heroId = h.id;
-    card.style.setProperty('--card-color', h.color);
-
-    const avatar = h.archetype === 'iron' ? '🦾' : (h.archetype === 'cap' ? '🛡️' : (h.archetype === 'hulk' ? '🟢' : (h.archetype === 'widow' ? '🕷️' : (h.archetype === 'thor' ? '⚡' : (h.archetype === 'hawkeye' ? '🏹' : (h.archetype === 'spidey' ? '🕸️' : (h.archetype === 'strange' ? '🔮' : '💎')))))));
-
-    card.innerHTML = `
-      <div class="hero-chip-avatar" style="border-color:${h.color};">
-        ${avatar}
-      </div>
-      <div class="hero-chip-info">
-        <div class="hero-chip-name">${h.shortName}</div>
-        <div class="hero-chip-sub" style="color:${h.color};">${h.chamber.split(' ')[0]} &bull; ${h.tag}</div>
-      </div>
-    `;
-    card.addEventListener('click', () => selectHero(h.id));
-    dock.appendChild(card);
-  });
-}
-
-// Switch Hero Focus
-function selectHero(heroId) {
-  selectedHeroId = heroId;
-  const hero = activeHeroes.find(h => h.id === heroId);
-  if (!hero) return;
-
-  document.querySelectorAll('.hero-chip-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.heroId === heroId);
-  });
-
-  const labelEl = document.getElementById('activeHeroHudLabel');
-  if (labelEl) labelEl.textContent = `${hero.name.toUpperCase()} // ${hero.role.toUpperCase()}`;
-
-  hero.speak();
-  playSfx('packet');
-}
-
-// Visual DAG Pipeline Dynamic Rendering
-function updateDagPipeline() {
-  const pipeline = document.getElementById('hudDagPipeline');
-  if (!pipeline) return;
-
-  pipeline.innerHTML = `
-    <div class="dag-pipeline-title">
-      <span>🕸️</span>
-      <span>ACTIVE TASK DAG PIPELINE</span>
-    </div>
-  `;
-
-  activeHeroes.forEach((h, index) => {
-    const card = document.createElement('div');
-    card.className = 'dag-node-card';
-    card.style.setProperty('--node-color', h.color);
-
-    const emoji = h.archetype === 'iron' ? '🦾' : (h.archetype === 'cap' ? '🛡️' : (h.archetype === 'hulk' ? '🟢' : (h.archetype === 'widow' ? '🕷️' : (h.archetype === 'thor' ? '⚡' : (h.archetype === 'hawkeye' ? '🏹' : (h.archetype === 'spidey' ? '🕸️' : (h.archetype === 'strange' ? '🔮' : '💎')))))));
-
-    const statusText = index === 0 ? '● MASTER DAG' : (index === 1 ? '✔ VERIFIED' : '⚡ EXECUTING');
-    const statusColor = index === 1 ? 'var(--gamma-green)' : h.color;
-
-    card.innerHTML = `
-      <div class="dag-node-left">
-        <div class="dag-node-avatar" style="border-color:${h.color};">${emoji}</div>
-        <div>
-          <div class="dag-node-title">${h.name}</div>
-          <div class="dag-node-task">${h.role} &bull; ${h.chamber.split(' ')[0]}</div>
-        </div>
-      </div>
-      <div class="dag-progress-ring" style="color:${statusColor};">${statusText}</div>
-    `;
-    pipeline.appendChild(card);
-  });
-}
-
-// Markdown Formatter for Rich HUD Responses & Code Blocks
-function formatMarkdown(text) {
-  if (!text) return '';
-  let html = text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-
-  // Fenced code blocks with language header and 1-click COPY CODE button
-  html = html.replace(/```([a-zA-Z0-9_\-\.]*)\n([\s\S]*?)```/g, (match, lang, code) => {
-    const cleanCode = code.trim();
-    const encoded = encodeURIComponent(cleanCode);
-    const langLabel = lang ? lang.toUpperCase() : 'CODE';
-    return `<div class="hud-code-block">
-      <div class="hud-code-header">
-        <span>⚡ ${langLabel}</span>
-        <button class="hud-copy-code-btn" onclick="copyCodeSnippet('${encoded}', this)">📋 COPY CODE</button>
-      </div>
-      <pre><code>${cleanCode}</code></pre>
-    </div>`;
-  });
-
-  // Headers
-  html = html.replace(/^### (.*$)/gim, '<h3 style="color:#00F0FF;font-size:13px;font-family:var(--font-display);margin:14px 0 6px;">$1</h3>');
-  html = html.replace(/^#### (.*$)/gim, '<h4 style="color:#FFD700;font-size:12px;font-family:var(--font-display);margin:10px 0 4px;">$1</h4>');
-  html = html.replace(/^## (.*$)/gim, '<h2 style="color:#00F0FF;font-size:14px;font-family:var(--font-display);margin:16px 0 8px;">$1</h2>');
-  html = html.replace(/^# (.*$)/gim, '<h1 style="color:#FFFFFF;font-size:15px;font-family:var(--font-display);margin:18px 0 10px;">$1</h1>');
-
-  // Blockquotes
-  html = html.replace(/^> (.*$)/gim, '<blockquote style="border-left:3px solid #00F0FF;padding-left:10px;color:#94A3B8;margin:6px 0;">$1</blockquote>');
-
-  // Horizontal rules
-  html = html.replace(/^---$/gim, '<hr style="border:none;border-top:1px solid #16223E;margin:12px 0;" />');
-
-  // Bold
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#FFFFFF;">$1</strong>');
-
-  // Inline code
-  html = html.replace(/`([^`]+)`/g, '<code style="background:#0F1A30;color:#00F0FF;padding:2px 6px;border-radius:4px;font-size:11px;">$1</code>');
-
-  // Bullet points
-  html = html.replace(/^\- (.*$)/gim, '<div style="display:flex;gap:6px;margin:3px 0;"><span>&bull;</span><span>$1</span></div>');
-
-  // Line breaks
-  html = html.replace(/\n\n/g, '<div style="height:8px;"></div>');
-  html = html.replace(/\n/g, '<br/>');
-
-  return html;
-}
-
-window.copyCodeSnippet = function(encoded, btn) {
-  const code = decodeURIComponent(encoded);
-  navigator.clipboard.writeText(code).then(() => {
-    btn.textContent = '✔ COPIED!';
-    btn.style.color = '#00FF87';
-    setTimeout(() => {
-      btn.textContent = '📋 COPY CODE';
-      btn.style.color = '';
-    }, 2500);
-  });
-};
-
-// Dispatch Mission Prompt — real call to Gemini via backend
-async function dispatchPrompt(customText = null) {
-  const input = document.getElementById('hudPromptInput');
-  const prompt = customText || input?.value.trim() || "Build JWT auth middleware with unit tests";
-
-  if (input && !customText) {
-    input.value = '';
-  }
-
-  const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
-  if (!tony) return;
-
-  playSfx('repulsor');
-  tony.speak(`Directives dispatched to Gemini: "${prompt.slice(0, 36)}..."`);
-  updateDagPipeline();
-
-  // Animate data packets to all spawned agents
-  activeHeroes.forEach((hero, index) => {
-    if (hero !== tony) {
-      setTimeout(() => {
-        quantumDataPackets.push(new QuantumDataPacket(tony.x, tony.y, hero.x, hero.y, hero.color, () => {
-          hero.speak(`Engaging directive in ${hero.chamber.split(' ')[0]}`);
-          playSfx('packet');
-        }));
-      }, index * 130);
-    }
-  });
-
-  // Show live loading state in response panel
-  showResponsePanel(`⚡ DISPATCHING TO GEMINI // DIRECTIVES IN PROGRESS...\n\nAnalyzing request: "${prompt}"\nTony Stark and the Scavengers strike team are generating architecture & code...`, true);
-
-  // Call backend — POST /api/mission/launch
-  try {
-    const isStaticGitHubPages = location.hostname.includes('github.io');
-    const apiUrl = isStaticGitHubPages ? 'http://localhost:3000/api/mission/launch' : '/api/mission/launch';
-
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      const deliverable = data.result || data.summary || data.message || "Mission completed.";
-      showResponsePanel(deliverable, false);
-      tony.speak('Mission deliverable compiled & saved to workspace!');
-      playSfx('snap');
-    } else {
-      showResponsePanel(`❌ Error: ${data.error || 'Mission failed to launch'}`);
-    }
-  } catch (err) {
-    // If static GitHub Pages demo or server down, provide clear instructions + instant fallback preview
-    const isGitHubPages = location.hostname.includes('github.io');
-    const fallbackText = isGitHubPages
-      ? `### 🌐 SCAVENGERS WAR ROOM // ONLINE PREVIEW\n\n` +
-        `> **NOTICE**: You are currently testing the online static preview on GitHub Pages.\n` +
-        `> To enable **live Gemini file writing directly to your computer's filesystem**:\n\n` +
-        `\`\`\`bash\n# 1. Start your local Scavengers Harness\ncd agentharness\nnode bin/stark.js hud --port 3000\n\n# 2. Open in browser:\nhttp://localhost:3000/warroom.html\n\`\`\`\n\n` +
-        `---\n\n` +
-        `### 🦾 Tony Stark // Tactical Directive Preview for: "${prompt}"\n\n` +
-        `- 🕸️ **[SPIDER-MAN]**: Dispatched to create UI Views & Components\n` +
-        `- 🟢 **[HULK]**: Dispatched to implement Core Logic & ViewModels\n` +
-        `- ⚡ **[THOR]**: Dispatched to generate Package Manifest & Build config\n` +
-        `- 🏹 **[HAWKEYE]**: Dispatched to generate Unit Test Suites\n` +
-        `- 🛡️ **[CAPTAIN AMERICA]**: QA Review & Vibranium Seal Applied\n\n` +
-        `*Run locally on http://localhost:3000 to write full source files to ./workspace/*`
-      : `### ❌ Local Backend Not Connected\n\n` +
-        `Make sure your local Scavengers server is active on port 3000:\n\n` +
-        `\`\`\`bash\nnode bin/stark.js hud --port 3000\n\`\`\``;
-
-    showResponsePanel(fallbackText, false);
-    tony.speak('Run locally on localhost:3000 for disk workspace generation!');
-  }
-}
-
-let liveMissionThoughts = [];
-
-function appendLiveThought(msg) {
-  liveMissionThoughts.push(msg);
-  const panel = document.getElementById('hudResponsePanel');
-  if (panel && panel.classList.contains('loading')) {
-    const logsHtml = liveMissionThoughts
-      .slice(-8)
-      .map(item => {
-        let color = '#38BDF8';
-        if (item.includes('THOUGHT')) color = '#FFD700';
-        else if (item.includes('ACTION')) color = '#00F0FF';
-        else if (item.includes('COMPLETED') || item.includes('VERIFIED')) color = '#00FF87';
-        else if (item.includes('ERROR')) color = '#FF4444';
-        return `<div style="font-family:var(--font-mono);font-size:11px;line-height:1.6;color:${color};margin-bottom:4px;border-left:2px solid ${color};padding-left:8px;">${item}</div>`;
-      })
-      .join('');
-
-    panel.innerHTML = `<div style="display:flex;align-items:center;gap:8px;color:#FFD700;font-weight:700;margin-bottom:10px;">
-      <span style="display:inline-block;animation:pulse 1s infinite;">⚡</span>
-      <span>MISSION IN FLIGHT // LIVE MULTI-AGENT THOUGHT STREAM</span>
-    </div>
-    <div style="background:rgba(2,6,23,0.9);border:1px solid rgba(56,189,248,0.25);border-radius:8px;padding:10px 12px;max-height:220px;overflow-y:auto;">
-      ${logsHtml}
-    </div>`;
-    panel.scrollTop = panel.scrollHeight;
-  }
-}
-
-// Response Panel — shows formatted Gemini output below dispatch bar
-function showResponsePanel(text, isLoading = false) {
-  let panel = document.getElementById('hudResponsePanel');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.id = 'hudResponsePanel';
-    panel.className = 'hud-response-panel';
-    const bar = document.querySelector('.hud-dispatch-bar');
-    if (bar) bar.insertAdjacentElement('afterend', panel);
-  }
-  
-  panel.classList.toggle('loading', isLoading);
-
-  if (isLoading) {
-    liveMissionThoughts = [];
-    panel.innerHTML = `<div style="display:flex;align-items:center;gap:8px;color:#FFD700;font-weight:700;">
-      <span style="display:inline-block;animation:pulse 1s infinite;">⚡</span>
-      <span>DISPATCHING DIRECTIVES // GEMINI &amp; SCAVENGERS ASSEMBLE...</span>
-    </div>
-    <div style="margin-top:8px;color:#94A3B8;font-size:11.5px;line-height:1.6;">
-      Tony Stark is formulating task DAGs across hero subagents. Please wait while code is synthesized...
-    </div>`;
-  } else {
-    panel.innerHTML = formatMarkdown(text);
-  }
-
-  panel.scrollTop = 0;
-}
-
-// Forge Custom Superhero
-function forgeCustomHero(e) {
-  e.preventDefault();
-  const name = document.getElementById('customHeroName')?.value.trim() || 'Custom Hero';
-  const role = document.getElementById('customHeroRole')?.value.trim() || 'Specialist';
-  const archetype = document.querySelector('.arch-tile.selected')?.dataset.archetype || 'iron';
-  const color = document.querySelector('.color-circle.selected')?.dataset.color || '#00F0FF';
-
-  let chamber = 'Scavengers Bridge';
-  let coords = { officeX: 80, officeY: 480 };
-  if (archetype === 'widow') {
-    chamber = 'Doom Arena'; coords = { officeX: 360, officeY: 125 };
-  } else if (archetype === 'thor' || archetype === 'hawkeye') {
-    chamber = 'Infinity Vault'; coords = { officeX: 139, officeY: 175 };
-  } else if (archetype === 'strange') {
-    chamber = 'Chaos Incursion'; coords = { officeX: 842, officeY: 530 };
-  } else if (archetype === 'vision') {
-    chamber = 'Kang Citadel'; coords = { officeX: 775, officeY: 175 };
-  }
-
-  const customId = 'custom_' + Date.now();
-  const customHero = new SuperheroEntity({
-    id: customId,
-    name: name,
-    shortName: name.toUpperCase(),
-    tag: 'CUSTOM',
-    role: role,
-    chamber: chamber,
-    harness: 'customAgentHarness',
-    model: 'Antigravity / Custom',
-    color: color,
-    archetype: archetype,
-    officeX: coords.officeX + (Math.random() - 0.5) * 20,
-    officeY: coords.officeY + (Math.random() - 0.5) * 20,
-    dialogs: [`Custom hero ${name} deployed in ${chamber}! Ready for action.`]
-  });
-
-  activeHeroes.push(customHero);
-  spawnParticleBeam(customHero.x, customHero.y, color);
-  customHero.speak();
-
-  updateActiveDock();
-  updateTopAvatarStack();
-  selectHero(customId);
-  updateDagPipeline();
-
-  document.getElementById('customHeroModalBackdrop')?.classList.remove('open');
-}
-
-// 60 FPS Loop
-function loop(now) {
-  const dt = Math.min((now - lastTime) / 1000, 0.1);
-  lastTime = now;
-
+// ── Draw Office Layout Matching Screenshot ──────────────────────────
+function drawLivingOffice() {
   const w = canvas.width;
   const h = canvas.height;
-  const sx = w / 1000;
-  const sy = h / 720;
+  const scale = Math.max(1, Math.min(w / 480, h / 360));
 
-  drawMultiverseBattleground(ctx, w, h);
+  ctx.save();
+  ctx.scale(scale, scale);
 
-  // Periodic Villain Challenge Speech Bubbles
-  challengeTimer -= dt * 1000 * simSpeed;
-  if (challengeTimer <= 0) {
-    challengeTimer = 6000 + Math.random() * 4000;
-    const challenges = [
-      { x: 480, y: 110, color: '#00FF87', shortName: 'DR DOOM', text: "Kneel before DOOM! Latveria will crush your build!" },
-      { x: 842, y: 135, color: '#A855F7', shortName: 'KANG THE CONQUEROR', text: "I conquer timelines! Challenge the Conqueror if you dare!" },
-      { x: 842, y: 390, color: '#EF4444', shortName: 'SCARLET WITCH', text: "Chaos magic will rewrite your reality! Step forward, Scavengers!" },
-      { x: 139, y: 135, color: '#FFD700', shortName: 'INFINITY GAUNTLET', text: "All 6 Cosmic stones pulse with power! Dare you wield it?" }
-    ];
-    const picked = challenges[Math.floor(Math.random() * challenges.length)];
-    createSpeechBubble(picked, picked.text);
+  // 1. Base Green Floor with Grid
+  ctx.fillStyle = '#8FA89D';
+  ctx.fillRect(0, 0, w / scale, h / scale);
+
+  ctx.strokeStyle = '#829A8F';
+  ctx.lineWidth = 1;
+  const tileSize = 20;
+  for (let x = 0; x < w / scale; x += tileSize) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h / scale);
+    ctx.stroke();
+  }
+  for (let y = 0; y < h / scale; y += tileSize) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w / scale, y);
+    ctx.stroke();
   }
 
-  // Draw Spawn Beam Particles
-  for (let i = spawnParticles.length - 1; i >= 0; i--) {
-    const p = spawnParticles[i];
-    p.x += p.vx * dt;
-    p.y += p.vy * dt;
-    p.alpha -= dt * 2.2;
-    ctx.beginPath(); ctx.arc(p.x * sx, p.y * sy, p.radius, 0, Math.PI * 2);
-    ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(p.alpha, 0); ctx.fill(); ctx.globalAlpha = 1;
-    if (p.alpha <= 0) spawnParticles.splice(i, 1);
-  }
+  // 2. Corner Plants
+  drawPlant(10, 10);
+  drawPlant(10, 290);
+  drawPlant(105, 20);
+  drawPlant(430, 20);
 
-  // Draw Active Superhero Entities
-  activeHeroes.forEach(h => {
-    h.update(dt);
-    h.draw(ctx, sx, sy);
+  // 3. Top-Left: Tony's Corner Office
+  ctx.fillStyle = '#A9BBB2';
+  ctx.fillRect(8, 8, 95, 100);
+  ctx.strokeStyle = '#2A2433';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(8, 8, 95, 100);
+
+  // Office Desk & Laptop
+  ctx.fillStyle = '#78350F';
+  ctx.fillRect(30, 70, 36, 18);
+  ctx.strokeRect(30, 70, 36, 18);
+
+  ctx.fillStyle = '#00D5E8';
+  ctx.fillRect(42, 73, 10, 8); // Screen
+
+  // Calendar on Wall
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(18, 14, 16, 14);
+  ctx.strokeRect(18, 14, 16, 14);
+  ctx.fillStyle = '#EF4444';
+  ctx.font = '6px "JetBrains Mono"';
+  ctx.fillText('AUG', 21, 20);
+  ctx.fillStyle = '#181320';
+  ctx.fillText('28', 22, 26);
+
+  // 4. Top-Center: Conference Room
+  ctx.fillStyle = '#9CB0A6';
+  ctx.fillRect(115, 8, 200, 70);
+  ctx.strokeStyle = '#2A2433';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(115, 8, 200, 70);
+
+  // Conference Table
+  ctx.fillStyle = '#854D0E';
+  ctx.fillRect(165, 28, 90, 26);
+  ctx.strokeRect(165, 28, 90, 26);
+
+  // Purple Conference Chairs
+  ctx.fillStyle = '#7E22CE';
+  [175, 205, 235].forEach((cx) => {
+    ctx.fillRect(cx, 22, 10, 5); // top row
+    ctx.fillRect(cx, 55, 10, 5); // bottom row
   });
 
-  // Draw Quantum Packets
-  for (let i = quantumDataPackets.length - 1; i >= 0; i--) {
-    const packet = quantumDataPackets[i];
-    if (!packet.update(dt)) {
-      quantumDataPackets.splice(i, 1);
-    } else {
-      packet.draw(ctx, sx, sy);
-    }
+  // Whiteboard
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(268, 28, 14, 26);
+  ctx.strokeRect(268, 28, 14, 26);
+
+  // 5. Bottom-Right: Kitchenette & Coffee Station
+  ctx.fillStyle = '#CBD5E1';
+  ctx.fillRect(350, 240, 120, 110);
+  ctx.strokeStyle = '#2A2433';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(350, 240, 120, 110);
+
+  // Counter
+  ctx.fillStyle = '#94A3B8';
+  ctx.fillRect(360, 265, 80, 18);
+  ctx.strokeRect(360, 265, 80, 18);
+
+  // Coffee Maker
+  ctx.fillStyle = '#18181B';
+  ctx.fillRect(370, 258, 10, 9);
+
+  // Water Cooler (Blue)
+  ctx.fillStyle = '#38BDF8';
+  ctx.fillRect(420, 254, 12, 16);
+  ctx.strokeRect(420, 254, 12, 16);
+
+  // 6. Bullpen Desks with CRT Monitors
+  // Top Row Desks
+  drawBullpenDesk(225, 80);
+  drawBullpenDesk(280, 80);
+
+  // Middle Row Desks
+  drawBullpenDesk(65, 180);
+  drawBullpenDesk(120, 180);
+  drawBullpenDesk(175, 180);
+  drawBullpenDesk(230, 180);
+  drawBullpenDesk(280, 180);
+
+  // Bottom Row Desks
+  drawBullpenDesk(65, 240);
+  drawBullpenDesk(120, 240);
+  drawBullpenDesk(175, 240);
+  drawBullpenDesk(230, 240);
+  drawBullpenDesk(280, 240);
+
+  // 7. Render All Hero Pixel Sprites
+  for (const hero of Object.values(HERO_SPRITES)) {
+    drawPixelHero(hero);
   }
 
-  updateSpeechBubbles(dt, sx, sy);
-  requestAnimationFrame(loop);
+  ctx.restore();
 }
 
-// Interactive Clicks on Characters, Villains & Artifacts
-function handleCanvasClick(e) {
-  const rect = canvas.getBoundingClientRect();
-  const clickX = (e.clientX - rect.left) * (1000 / canvas.width);
-  const clickY = (e.clientY - rect.top) * (720 / canvas.height);
+function drawPlant(x, y) {
+  ctx.fillStyle = '#14532D';
+  ctx.beginPath();
+  ctx.arc(x + 7, y + 7, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#2A2433';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
 
-  // 1. Check if clicked directly on any active superhero
-  for (const hero of activeHeroes) {
-    const dist = Math.hypot(clickX - hero.x, clickY - hero.y);
-    if (dist < 32) {
-      selectHero(hero.id);
-      spawnParticleBeam(hero.x, hero.y, hero.color);
+function drawBullpenDesk(x, y) {
+  ctx.fillStyle = '#D97706';
+  ctx.fillRect(x, y, 26, 18);
+  ctx.strokeStyle = '#2A2433';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x, y, 26, 18);
+
+  // Blue CRT Monitor
+  ctx.fillStyle = '#0284C7';
+  ctx.fillRect(x + 8, y + 4, 10, 7);
+  ctx.strokeStyle = '#2A2433';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x + 8, y + 4, 10, 7);
+}
+
+// ── Draw 16x16 Pixel Art Hero Character ─────────────────────────────
+function drawPixelHero(hero) {
+  const x = hero.currentPos.x;
+  const y = hero.currentPos.y;
+
+  // Head (Skin tone)
+  ctx.fillStyle = '#FBBF24';
+  ctx.fillRect(x - 5, y - 12, 10, 8);
+
+  // Hair
+  ctx.fillStyle = hero.hairColor || '#78350F';
+  ctx.fillRect(x - 5, y - 14, 10, 4);
+
+  // Eyes (based on facing)
+  ctx.fillStyle = '#181320';
+  if (hero.facing === 'down') {
+    ctx.fillRect(x - 3, y - 8, 2, 2);
+    ctx.fillRect(x + 1, y - 8, 2, 2);
+  } else if (hero.facing === 'left') {
+    ctx.fillRect(x - 4, y - 8, 2, 2);
+  } else if (hero.facing === 'right') {
+    ctx.fillRect(x + 2, y - 8, 2, 2);
+  }
+
+  // Torso / Suit
+  ctx.fillStyle = hero.clothesColor || '#2563EB';
+  ctx.fillRect(x - 6, y - 4, 12, 10);
+
+  // Arms / Hands
+  ctx.fillStyle = '#FBBF24';
+  ctx.fillRect(x - 8, y - 2, 2, 6);
+  ctx.fillRect(x + 6, y - 2, 2, 6);
+
+  // Legs
+  ctx.fillStyle = '#1E293B';
+  ctx.fillRect(x - 4, y + 6, 3, 5);
+  ctx.fillRect(x + 1, y + 6, 3, 5);
+
+  // Status Indicator Dot over head if working
+  if (hero.state === 'working') {
+    ctx.fillStyle = '#22C55E';
+    ctx.beginPath();
+    ctx.arc(x, y - 18, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ── Speech Bubble Rendering ─────────────────────────────────────────
+function showSpeechBubble(heroId, text, durationMs = 6000) {
+  const hero = HERO_SPRITES[heroId];
+  if (!hero) return;
+
+  const existing = document.getElementById(`bubble-${heroId}`);
+  if (existing) existing.remove();
+
+  const bubble = document.createElement('div');
+  bubble.id = `bubble-${heroId}`;
+  bubble.className = 'office-speech-bubble';
+
+  // Calculate screen coordinates based on canvas scale
+  const rect = canvas.getBoundingClientRect();
+  const scale = Math.max(1, Math.min(canvas.width / 480, canvas.height / 360));
+  const screenX = hero.currentPos.x * scale;
+  const screenY = hero.currentPos.y * scale;
+
+  bubble.style.left = `${screenX}px`;
+  bubble.style.top = `${screenY}px`;
+
+  bubble.innerHTML = `
+    <span class="bubble-hero-name">${hero.name}</span>
+    ${escapeHtml(text)}
+  `;
+
+  speechBubbleLayer.appendChild(bubble);
+
+  setTimeout(() => {
+    if (bubble.parentElement) bubble.remove();
+  }, durationMs);
+}
+
+// ── Bottom Agent Cards Dock ─────────────────────────────────────────
+function renderBottomDock() {
+  bottomAgentDock.innerHTML = '';
+
+  for (const hero of Object.values(HERO_SPRITES)) {
+    const card = document.createElement('div');
+    card.className = 'dock-hero-card';
+    card.id = `dock-card-${hero.id}`;
+    card.style.setProperty('--card-border', hero.border);
+    card.style.setProperty('--card-bg', hero.bgColor);
+    card.style.setProperty('--card-color', hero.tagColor);
+
+    card.innerHTML = `
+      <div class="dock-hero-avatar">${hero.avatar}</div>
+      <div class="dock-hero-info">
+        <div class="dock-hero-top">
+          <span class="dock-hero-name">${hero.name}</span>
+          <span class="dock-hero-tag">${hero.callsign}</span>
+          <span class="pill-dot ${hero.state === 'working' ? 'green' : 'green'}" id="dock-dot-${hero.id}"></span>
+          <span style="font-size:8px; color:#5B5166;">${hero.state}</span>
+        </div>
+        <div class="dock-hero-sub">${hero.harness}</div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      showSpeechBubble(hero.id, `Agent ${hero.name} ready for duty.`);
+      appendTerminalFeed(`● [${hero.name}] Telemetry synchronized.`);
+    });
+
+    bottomAgentDock.appendChild(card);
+  }
+}
+
+// ── Terminal Feed Stream ────────────────────────────────────────────
+function appendTerminalFeed(text, bulletColor = 'blue') {
+  const line = document.createElement('div');
+  line.className = 'feed-line';
+
+  // Format tags like [TONY], [SPIDEY], etc.
+  const tagMatch = text.match(/^●?\s*\[([a-zA-Z0-9_\-\s]+)\]/);
+  if (tagMatch) {
+    const tagName = tagMatch[1];
+    const rest = text.replace(/^●?\s*\[([a-zA-Z0-9_\-\s]+)\]\s*/, '');
+    line.innerHTML = `<span class="bullet ${bulletColor}">●</span> <span class="feed-tag">[${escapeHtml(tagName)}]</span> ${escapeHtml(rest)}`;
+  } else {
+    line.innerHTML = `<span class="bullet ${bulletColor}">●</span> ${escapeHtml(text)}`;
+  }
+
+  terminalFeed.appendChild(line);
+  terminalFeed.scrollTop = terminalFeed.scrollHeight;
+}
+
+function appendDeliverableCard(markdownContent, workspacePath) {
+  const card = document.createElement('div');
+  card.className = 'deliverable-card';
+
+  let html = `<h2>🦾 Mission Completed // Code Written to Disk</h2>`;
+  if (workspacePath) {
+    html += `<p style="font-size:11px; margin-bottom:8px;">📁 <strong>Workspace:</strong> <code>${escapeHtml(workspacePath)}</code></p>`;
+  }
+
+  // Parse simple code blocks
+  const codeBlockRegex = /```([a-zA-Z0-9_\-\.]*)\n([\s\S]*?)```/g;
+  let lastIndex = 0;
+  let match;
+  let parsed = '';
+
+  while ((match = codeBlockRegex.exec(markdownContent)) !== null) {
+    const lang = match[1] || 'text';
+    const code = match[2];
+    parsed += escapeHtml(markdownContent.substring(lastIndex, match.index));
+    parsed += `<pre><code>${escapeHtml(code)}</code><button class="copy-btn" onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`); this.innerText='Copied!';">Copy</button></pre>`;
+    lastIndex = match.index + match[0].length;
+  }
+  parsed += escapeHtml(markdownContent.substring(lastIndex));
+
+  card.innerHTML = html + `<div style="font-size:11px; line-height:1.5;">${parsed.replace(/\n/g, '<br/>')}</div>`;
+  terminalFeed.appendChild(card);
+  terminalFeed.scrollTop = terminalFeed.scrollHeight;
+}
+
+// ── Mission Launch & User Interaction ───────────────────────────────
+function setupEventListeners() {
+  // Tab Switching
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach((c) => (c.style.display = 'none'));
+
+      btn.classList.add('active');
+      const tabId = `${btn.dataset.tab}Tab`;
+      const target = document.getElementById(tabId);
+      if (target) target.style.display = 'flex';
+    });
+  });
+
+  // Enter to send in Master Prompt
+  masterPromptInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      dispatchMasterPrompt();
+    }
+  });
+
+  sendPromptBtn.addEventListener('click', dispatchMasterPrompt);
+}
+
+async function dispatchMasterPrompt() {
+  const prompt = masterPromptInput.value.trim();
+  if (!prompt) return;
+
+  masterPromptInput.value = '';
+  appendTerminalFeed(`● [USER] ${prompt}`, 'gold');
+  appendTerminalFeed(`● [TONY] Received directive: "${prompt}". Assembling strike team...`, 'blue');
+
+  // Move heroes to conference table & desks
+  HERO_SPRITES['tony-stark'].state = 'working';
+  HERO_SPRITES['spider-man'].targetPos = { x: 180, y: 55 }; // Walk to conference
+  HERO_SPRITES['hulk'].targetPos = { x: 210, y: 55 };
+  HERO_SPRITES['captain-america'].targetPos = { x: 240, y: 55 };
+
+  showSpeechBubble('tony-stark', 'Deconstructing directives for the strike team.');
+
+  try {
+    const res = await fetch('/api/mission/launch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      appendTerminalFeed(`● [ERROR] Mission dispatch failed: ${err}`, 'purple');
       return;
     }
-  }
 
-  // 2. Click Dr Doom (Top-Center Arena)
-  if (clickX > 380 && clickX < 580 && clickY > 40 && clickY < 160) {
-    createSpeechBubble({ x: 480, y: 110, color: '#00FF87', shortName: 'DR DOOM' }, "Kneel before DOOM! Latverian supremacy is absolute!");
-    playSfx('doom');
-    return;
-  }
-  // 3. Click Scarlet Witch (Bottom-Right Incursion)
-  else if (clickX > 770 && clickX < 920 && clickY > 320 && clickY < 460) {
-    createSpeechBubble({ x: 842, y: 390, color: '#EF4444', shortName: 'SCARLET WITCH' }, "You don't understand the power of Chaos Magic... Incursion is here!");
-    playSfx('wanda');
-    return;
-  }
-  // 4. Click Kang (Top-Right Citadel)
-  else if (clickX > 770 && clickX < 920 && clickY > 40 && clickY < 180) {
-    createSpeechBubble({ x: 842, y: 135, color: '#A855F7', shortName: 'KANG THE CONQUEROR' }, "I will burn 14 million timelines to erase your build!");
-    playSfx('repulsor');
-    return;
-  }
-  // 5. Click Infinity Gauntlet (Top-Left Vault)
-  else if (clickX > 50 && clickX < 220 && clickY > 50 && clickY < 180) {
-    createSpeechBubble({ x: 139, y: 135, color: '#FFD700', shortName: 'INFINITY GAUNTLET' }, "*SNAP* Cosmic power radiating across the multiverse!");
-    playSfx('snap');
-    return;
-  }
-  // 6. Click Center Scavengers Core
-  else if (Math.hypot(clickX - 480, clickY - 390) < 80) {
-    createSpeechBubble({ x: 480, y: 390, color: '#00F0FF', shortName: 'SCAVENGERS CORE' }, "⚡ ARC REACTOR: 100% ONLINE. All 5 Chambers synchronized!");
-    playSfx('repulsor');
-    return;
+    const data = await res.json();
+    if (data.success) {
+      appendDeliverableCard(data.summary, data.workspacePath);
+    }
+  } catch (err) {
+    appendTerminalFeed(`● [ERROR] Network failure: ${err.message}`, 'purple');
+  } finally {
+    // Return heroes to their desks
+    for (const hero of Object.values(HERO_SPRITES)) {
+      hero.targetPos = { ...hero.deskPos };
+      hero.state = 'idle';
+    }
+    renderBottomDock();
   }
 }
 
-// Initialize directly
-function init() {
-  canvas = document.getElementById('pixelOfficeCanvas');
-  if (!canvas) return;
-  ctx = canvas.getContext('2d');
+// ── WebSocket Integration ───────────────────────────────────────────
+function initWebSocket() {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = `${protocol}//${window.location.host}`;
 
-  function resize() {
-    canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-  canvas.addEventListener('click', handleCanvasClick);
+  state.ws = new WebSocket(wsUrl);
 
-  // Spawn Tony Stark by default immediately inside Scavengers Bridge
-  const tony = new SuperheroEntity(PRESET_HEROES['tony-stark']);
-  activeHeroes = [tony];
-  updateActiveDock();
-  updateTopAvatarStack();
-  updateDagPipeline();
+  state.ws.onopen = () => {
+    console.log('⚡ Connected to Stark Comms Network WebSocket');
+  };
 
-  tony.speak("Scavengers Assemble! Multiverse War Room online.");
+  state.ws.onmessage = (event) => {
+    try {
+      const msg = JSON.parse(event.data);
+      handleWebSocketMessage(msg);
+    } catch {}
+  };
 
-  // Visual Spawner Strip Pills
-  document.querySelectorAll('.v-spawn-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      const heroKey = pill.dataset.hero;
-      if (heroKey === 'all') {
-        assembleAllStrikeTeam();
-      } else {
-        spawnHeroAgent(heroKey);
-      }
-    });
-  });
-
-  // Action Tiles
-  document.querySelectorAll('.action-tile').forEach(tile => {
-    tile.addEventListener('click', () => {
-      const task = tile.dataset.task;
-      let prompt = "Build secure JWT authentication microservice";
-      if (task === 'QA_TESTS') prompt = "Run strict TypeScript linting and generate 100% boundary unit tests";
-      else if (task === 'SEC_AUDIT') prompt = "Scan dependencies for CVE zero-days and sanitize credentials";
-      else if (task === 'DOCKER_CI') prompt = "Generate multi-stage Dockerfile and GitHub Actions CI/CD workflow";
-      dispatchPrompt(prompt);
-    });
-  });
-
-  // Dispatch Button & Enter Key
-  const dispatchBtn = document.getElementById('hudDispatchBtn');
-  const promptInput = document.getElementById('hudPromptInput');
-
-  if (dispatchBtn) dispatchBtn.addEventListener('click', () => dispatchPrompt());
-  if (promptInput) {
-    promptInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        dispatchPrompt();
-      }
-    });
-  }
-
-  // Custom Hero Modal
-  const openCustomBtn = document.getElementById('openCustomHeroModalBtn');
-  const customModal = document.getElementById('customHeroModalBackdrop');
-  const closeCustomBtn = document.getElementById('closeCustomHeroModalBtn');
-  const customForm = document.getElementById('customHeroForm');
-
-  if (openCustomBtn && customModal) {
-    openCustomBtn.addEventListener('click', () => customModal.classList.add('open'));
-  }
-  if (closeCustomBtn && customModal) {
-    closeCustomBtn.addEventListener('click', () => customModal.classList.remove('open'));
-  }
-  if (customForm) {
-    customForm.addEventListener('submit', forgeCustomHero);
-  }
-
-  document.querySelectorAll('.arch-tile').forEach(tile => {
-    tile.addEventListener('click', () => {
-      document.querySelectorAll('.arch-tile').forEach(t => t.classList.remove('selected'));
-      tile.classList.add('selected');
-    });
-  });
-
-  document.querySelectorAll('.color-circle').forEach(circle => {
-    circle.addEventListener('click', () => {
-      document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
-      circle.classList.add('selected');
-    });
-  });
-
-  // WebSocket — stream live mission updates from Gemini backend
-  try {
-    const wsUrl = `ws://${location.host}`;
-    const ws = new WebSocket(wsUrl);
-
-    ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(event.data);
-        const { type, data } = msg;
-
-        if (type === 'mission_started') {
-          showResponsePanel(`🚀 MISSION STARTED\n\n"${data.prompt || data.description || 'Mission active'}"\n\nScavengers assembling — directives streaming to agents...`, true);
-          activeHeroes.forEach(h => h.speak('Directive received!'));
-        }
-        else if (type === 'directive_started') {
-          const hero = activeHeroes.find(h => h.id === data.assignedHero);
-          const text = `⚡ [ACTION // ${(data.assignedHero || 'HERO').toUpperCase()}] Writing source code for "${data.title}"...`;
-          appendLiveThought(text);
-          if (hero) hero.speak(`Writing "${data.title.slice(0, 32)}..."`);
-        }
-        else if (type === 'directive_completed') {
-          const hero = activeHeroes.find(h => h.id === (data.assignedHero || data.heroId));
-          const text = `✅ [COMPLETED // ${(data.assignedHero || data.heroId || 'HERO').toUpperCase()}] Finished "${data.title || 'Directive'}"`;
-          appendLiveThought(text);
-          if (hero) hero.speak(`Directive verified!`);
-        }
-        else if (type === 'mission_completed') {
-          const deliverable = data.result || data.summary || data.finalSummary || 'All directives executed successfully.';
-          showResponsePanel(deliverable, false);
-          const tony = activeHeroes.find(h => h.id === 'tony-stark');
-          if (tony) tony.speak('Mission complete! Check deliverable.');
-          playSfx('snap');
-        }
-        else if (type === 'comms_message') {
-          const hero = activeHeroes.find(h => h.id === data.from);
-          if (data.content) {
-            appendLiveThought(String(data.content));
-            if (hero) hero.speak(String(data.content).replace(/\[.*?\]\s*/, '').slice(0, 65));
-          }
-        }
-      } catch {}
-    };
-
-    ws.onerror = () => {};
-  } catch {}
-
-  requestAnimationFrame(loop);
+  state.ws.onclose = () => {
+    setTimeout(initWebSocket, 2000);
+  };
 }
 
-document.addEventListener('DOMContentLoaded', init);
+function handleWebSocketMessage(msg) {
+  if (msg.type === 'comms_message' && msg.data?.content) {
+    appendTerminalFeed(msg.data.content, 'blue');
+    
+    // Trigger speech bubbles for speaking hero
+    const speakerId = msg.data.from;
+    if (HERO_SPRITES[speakerId]) {
+      showSpeechBubble(speakerId, msg.data.content.replace(/^\[[^\]]+\]\s*/, '').slice(0, 60));
+    }
+  } else if (msg.type === 'directive_started') {
+    const heroId = msg.data?.assignedHero;
+    if (HERO_SPRITES[heroId]) {
+      HERO_SPRITES[heroId].state = 'working';
+      renderBottomDock();
+    }
+    appendTerminalFeed(`● [${(heroId || 'HERO').toUpperCase()}] Writing source code for "${msg.data?.title}"...`, 'green');
+  } else if (msg.type === 'directive_completed') {
+    const heroId = msg.data?.assignedHero || msg.data?.heroId;
+    if (HERO_SPRITES[heroId]) {
+      HERO_SPRITES[heroId].state = 'idle';
+      renderBottomDock();
+    }
+  }
+}
 
-// ── Live AI Provider Status Polling ─────────────────────────
-const PROVIDER_META = {
-  gemini:       { label: 'Gemini',      model: 'gemini-3.5-flash-lite'      },
-  'claude-code':{ label: 'Claude Code', model: 'claude-sonnet'       },
-  openai:       { label: 'OpenAI Codex',model: 'gpt-4o'              },
-  grok:         { label: 'xAI Grok',    model: 'grok-2'              },
-  kimi:         { label: 'Kimi',        model: 'moonshot-v1'         },
-  ollama:       { label: 'Ollama',      model: 'deepseek-r1 (local)' },
-};
-
-async function fetchProviderStatus() {
+// ── Status Polling ──────────────────────────────────────────────────
+async function fetchInitialStatus() {
   try {
     const res = await fetch('/api/status');
-    if (!res.ok) return;
     const data = await res.json();
-    const providerStatus = data?.arcReactor?.providerStatus || {};
-
-    Object.entries(providerStatus).forEach(([key, info]) => {
-      if (key === 'mock') return;
-      const pill = document.getElementById(`pill-${key}`);
-      if (!pill) return;
-
-      const dot   = pill.querySelector('.pill-dot');
-      const model = pill.querySelector('.pill-model');
-      const meta  = PROVIDER_META[key] || {};
-
-      pill.classList.remove('loading', 'active', 'inactive');
-
-      if (info.enabled) {
-        pill.classList.add('active');
-        pill.title = `✅ Connected — ${meta.model || 'model active'} | ${info.powerRemainingPct ?? 100}% power remaining`;
-        if (model) model.textContent = meta.model || 'connected';
-      } else {
-        pill.classList.add('inactive');
-        pill.title = `❌ Not connected — add key to .env`;
-        if (model) model.textContent = 'no key';
+    if (data.arcReactor) {
+      const pct = data.arcReactor.totalPowerRemainingPct || 99.8;
+      if (arcReactorCapacityLabel) {
+        arcReactorCapacityLabel.innerText = `Arc Reactor: ${pct.toFixed(1)}% Online`;
       }
-    });
-  } catch {
-    // server not reachable — leave pills as-is
-  }
+    }
+  } catch {}
 }
 
-// Run immediately + refresh every 30s
-fetchProviderStatus();
-setInterval(fetchProviderStatus, 30000);
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
