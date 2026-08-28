@@ -1,5 +1,3 @@
-# 🦾 SCAVENGERS ASSEMBLE — Earth's Mightiest Multi-Agent Coding Harness
-
 <p align="center">
   <a href="https://github.com/shubhransh-gupta/scavengers-assemble/stargazers">
     <img src="https://img.shields.io/github/stars/shubhransh-gupta/scavengers-assemble?style=for-the-badge&logo=github&color=FFD700&labelColor=030712" alt="Stars" />
