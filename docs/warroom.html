@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stark Tower // War Room &amp; Agent Chambers</title>
-  <meta name="description" content="Onboarding-first multi-agent AI coding war room with dynamic hero spawning and custom hero creator. Powered by Shubhransh Gupta." />
+  <title>Stark Tower // Agentic AI War Room</title>
+  <meta name="description" content="Production multi-agent coding war room with 1-click OAuth & IDE ID login for Antigravity, Cursor, Claude Code, Codex, and Gemini. Powered by Shubhransh Gupta." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
 
-  <!-- Fonts: Space Grotesk, Inter, JetBrains Mono -->
+  <!-- High-Precision Fonts: Space Grotesk, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -17,82 +17,112 @@
 <body>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       1. ONBOARDING GATEWAY (First View — Clean, No Mess, No Clutter)
+       1. ONBOARDING GATEWAY (First View — Clean OAuth & IDE ID Login)
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="onboarding-screen" id="onboardingScreen">
     <div class="onboarding-card">
-      <div class="ob-reactor-badge">⚡</div>
       
-      <div>
-        <h1 class="ob-title">STARK TOWER // <span>ONBOARDING GATEWAY</span></h1>
+      <div class="ob-header">
+        <div class="ob-reactor-badge">⚡</div>
+        <h1 class="ob-title">STARK TOWER // <span>AGENTIC AI GATEWAY</span></h1>
         <p class="ob-subtitle">
-          Connect your existing AI provider to initialize the Arc Reactor. Zero extra subscription fees.
+          Connect your AI agent or IDE via 1-Click OAuth / ID Login or API Key to initialize the Arc Reactor.
         </p>
       </div>
 
-      <!-- Provider Grid -->
+      <!-- Provider Grid (8 Real Integrations) -->
       <div class="provider-select-grid">
-        <div class="provider-card selected" data-provider="claude-code">
-          <span class="icon">🤖</span>
-          <span class="name">Claude Code</span>
-          <span class="tag">Sonnet 3.7</span>
+        <div class="provider-card selected" data-provider="antigravity" data-name="Google Antigravity">
+          <span class="icon">🚀</span>
+          <span class="name">Antigravity</span>
+          <span class="badge">Native AGY</span>
         </div>
-        <div class="provider-card" data-provider="cursor">
+        <div class="provider-card" data-provider="cursor" data-name="Cursor IDE">
           <span class="icon">⚡</span>
           <span class="name">Cursor IDE</span>
-          <span class="tag">Composer / MCP</span>
+          <span class="badge">Composer / MCP</span>
         </div>
-        <div class="provider-card" data-provider="gemini">
-          <span class="icon">✨</span>
-          <span class="name">Gemini 2.5</span>
-          <span class="tag">1M+ Tokens</span>
+        <div class="provider-card" data-provider="claude-code" data-name="Claude Code">
+          <span class="icon">🤖</span>
+          <span class="name">Claude Code</span>
+          <span class="badge">Anthropic CLI</span>
         </div>
-        <div class="provider-card" data-provider="openai">
+        <div class="provider-card" data-provider="codex" data-name="OpenAI Codex">
           <span class="icon">🔷</span>
-          <span class="name">OpenAI</span>
-          <span class="tag">GPT-4o / Codex</span>
+          <span class="name">OpenAI Codex</span>
+          <span class="badge">Codex / Copilot</span>
         </div>
-        <div class="provider-card" data-provider="kimi">
+        <div class="provider-card" data-provider="gemini" data-name="Google Gemini">
+          <span class="icon">✨</span>
+          <span class="name">Gemini</span>
+          <span class="badge">Google OAuth</span>
+        </div>
+        <div class="provider-card" data-provider="kimi" data-name="Kimi">
           <span class="icon">🌙</span>
           <span class="name">Kimi</span>
-          <span class="tag">Moonshot AI</span>
+          <span class="badge">Moonshot AI</span>
         </div>
-        <div class="provider-card" data-provider="grok">
+        <div class="provider-card" data-provider="grok" data-name="xAI Grok">
           <span class="icon">⚡</span>
           <span class="name">xAI Grok</span>
-          <span class="tag">Grok 3</span>
+          <span class="badge">xAI Connect</span>
         </div>
-        <div class="provider-card" data-provider="ollama">
+        <div class="provider-card" data-provider="ollama" data-name="Ollama Local">
           <span class="icon">🦙</span>
           <span class="name">Ollama</span>
-          <span class="tag">DeepSeek (Local)</span>
-        </div>
-        <div class="provider-card" data-provider="simulator">
-          <span class="icon">🎭</span>
-          <span class="name">Simulator</span>
-          <span class="tag">Zero Setup</span>
+          <span class="badge">Local Daemon</span>
         </div>
       </div>
 
-      <!-- API Key / Endpoint Input -->
-      <div class="ob-input-wrap">
-        <label class="ob-label" id="onboardingKeyLabel">Enter Claude Code / Anthropic API Key:</label>
-        <input 
-          type="password" 
-          class="ob-input" 
-          id="onboardingKeyInput" 
-          placeholder="sk-ant-api03-... (Optional: Press Skip for Instant Simulator)" 
-        />
+      <!-- Auth Mode Switch Tabs -->
+      <div class="auth-mode-tabs">
+        <button class="auth-tab-btn active" id="tabOAuthMode">
+          🔐 1-Click OAuth / IDE ID Login
+        </button>
+        <button class="auth-tab-btn" id="tabManualMode">
+          🔑 API Key &amp; Custom Model
+        </button>
       </div>
 
-      <div class="ob-btn-row">
-        <button class="ob-submit-btn" id="initArcReactorBtn">
-          ⚡ Initialize Arc Reactor &amp; Enter Platform
-        </button>
-        <button class="ob-skip-btn" id="skipOnboardingBtn">
-          Launch Simulator &rarr;
+      <!-- Mode 1: OAuth / IDE Login Panel -->
+      <div class="oauth-login-panel" id="oauthPanel">
+        <div class="oauth-info-row">
+          <div class="oauth-provider-name" id="oauthProviderDisplay">
+            <span>🚀</span>
+            <span>Google Antigravity Integration</span>
+          </div>
+          <span class="oauth-badge">✓ Secure Direct Bridge</span>
+        </div>
+
+        <p class="oauth-desc" id="oauthDesc">
+          Instantly connect via local AGY sidecar bridge to coordinate Tony Stark and multi-agent DAG tasks.
+        </p>
+
+        <button class="oauth-connect-btn" id="oauthConnectBtn">
+          <span>⚡</span>
+          <span id="oauthBtnLabel">Connect Google Antigravity &amp; Enter Platform</span>
         </button>
       </div>
+
+      <!-- Mode 2: Manual Key & Model Form -->
+      <div class="manual-key-form" id="manualKeyForm" style="display:none;">
+        <div class="form-row">
+          <div class="form-col">
+            <label id="apiKeyLabel">API Key:</label>
+            <input type="password" class="text-input" id="manualApiKeyInput" placeholder="sk-... / AIzaSy..." />
+          </div>
+          <div class="form-col">
+            <label>Custom Model (Optional):</label>
+            <input type="text" class="text-input" id="manualCustomModelInput" placeholder="e.g. claude-3-7-sonnet / gpt-4o" />
+          </div>
+        </div>
+
+        <button class="oauth-connect-btn" id="manualConnectBtn">
+          <span>⚡</span>
+          <span>Save Credentials &amp; Initialize Arc Reactor</span>
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -119,7 +149,7 @@
           🎨 Forge Custom Hero
         </button>
         <button class="top-btn" id="reopenSettingsBtn" title="Switch AI Provider">
-          ⚙️ Provider
+          ⚙️ Switch Provider
         </button>
       </div>
     </header>
@@ -266,15 +296,8 @@
           </div>
 
           <div class="form-group">
-            <label>Preferred AI Model:</label>
-            <select class="form-select" id="customHeroModel">
-              <option value="Claude 3.7 Sonnet">Claude 3.7 Sonnet</option>
-              <option value="Gemini 2.5 Pro">Gemini 2.5 Pro</option>
-              <option value="GPT-4o">OpenAI GPT-4o</option>
-              <option value="DeepSeek-R1 (Local)">DeepSeek-R1 (Local Ollama)</option>
-              <option value="Kimi Moonshot">Kimi / Moonshot AI</option>
-              <option value="xAI Grok 3">xAI Grok 3</option>
-            </select>
+            <label>AI Agent / Model Name:</label>
+            <input type="text" class="form-input" id="customHeroModel" placeholder="e.g. Claude Code / Codex / Gemini" value="Claude Code" />
           </div>
         </div>
 

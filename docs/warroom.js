@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — ONBOARDING-FIRST AVENGERS PLATFORM ENGINE
-   Chambers: Development, QA/Testing, Security, DevOps/PR, Multiverse
-   Features: Dynamic Agent Spawner, Custom Hero Forge, Realistic Models
+   STARK TOWER WAR ROOM — AGENTIC AI WAR ROOM & MULTIVERSE CHAMBERS
+   Features: 1-Click OAuth & ID Login, Antigravity Bridge, Cursor Connect,
+   Codex, Gemini, Dynamic Hero Spawning, Custom Hero Forge, Sharp Fonts
    ══════════════════════════════════════════════════════════════════════ */
 
 let canvas, ctx;
@@ -10,6 +10,74 @@ let soundEnabled = true;
 let simSpeed = 1;
 let selectedHeroId = 'tony-stark';
 let audioCtx = null;
+
+// Provider descriptions & OAuth labels
+const PROVIDER_METADATA = {
+  'antigravity': {
+    name: 'Google Antigravity',
+    icon: '🚀',
+    desc: 'Connect via local AGY sidecar bridge to coordinate multi-agent DAG execution in Antigravity.',
+    btnLabel: 'Connect Google Antigravity & Enter Platform',
+    badge: '✓ Secure Direct Bridge',
+    keyPlaceholder: 'Local AGY Daemon (Auto-detecting...)'
+  },
+  'cursor': {
+    name: 'Cursor IDE',
+    icon: '⚡',
+    desc: 'Log in with your Cursor account / MCP configuration to dispatch tasks from Composer.',
+    btnLabel: 'Log in with Cursor IDE & Enter Platform',
+    badge: '✓ Cursor MCP Connected',
+    keyPlaceholder: 'Cursor Session Token / API Key'
+  },
+  'claude-code': {
+    name: 'Claude Code',
+    icon: '🤖',
+    desc: 'Authenticate with Anthropic CLI session or OAuth to drive Tony Stark GOD orchestration.',
+    btnLabel: 'Connect Claude Code & Enter Platform',
+    badge: '✓ Anthropic CLI Active',
+    keyPlaceholder: 'sk-ant-api03-...'
+  },
+  'codex': {
+    name: 'OpenAI Codex / Copilot',
+    icon: '🔷',
+    desc: 'Sign in with your OpenAI or GitHub Copilot account for security audits and deep AST refactors.',
+    btnLabel: 'Connect OpenAI Codex & Enter Platform',
+    badge: '✓ OpenAI / Copilot Auth',
+    keyPlaceholder: 'sk-proj-...'
+  },
+  'gemini': {
+    name: 'Google Gemini',
+    icon: '✨',
+    desc: 'Sign in with Google OAuth to harness 1M+ token context windows for QA and test generation.',
+    btnLabel: 'Sign in with Google & Enter Platform',
+    badge: '✓ Google OAuth 2.0',
+    keyPlaceholder: 'AIzaSy...'
+  },
+  'kimi': {
+    name: 'Kimi (Moonshot AI)',
+    icon: '🌙',
+    desc: 'Connect Moonshot AI account for 128k+ long-context multilingual reasoning.',
+    btnLabel: 'Connect Kimi Moonshot & Enter Platform',
+    badge: '✓ Moonshot API Ready',
+    keyPlaceholder: 'sk-...'
+  },
+  'grok': {
+    name: 'xAI Grok',
+    icon: '⚡',
+    desc: 'Connect with xAI session for real-time DevOps and infrastructure synthesis.',
+    btnLabel: 'Connect xAI Grok & Enter Platform',
+    badge: '✓ xAI API Ready',
+    keyPlaceholder: 'xai-...'
+  },
+  'ollama': {
+    name: 'Ollama (Local Offline)',
+    icon: '🦙',
+    desc: 'Direct connection to local Ollama daemon at http://localhost:11434 with zero API costs.',
+    btnLabel: 'Connect Local Ollama Daemon & Enter Platform',
+    badge: '✓ Localhost:11434',
+    keyPlaceholder: 'http://localhost:11434'
+  }
+};
 
 // Available Pre-Configured Avengers
 const PRESET_HEROES = {
@@ -21,7 +89,7 @@ const PRESET_HEROES = {
     role: 'Lead GOD Orchestrator',
     chamber: 'Development Chamber',
     harness: 'claudeTerminalHarness',
-    model: 'Claude 3.7 Sonnet',
+    model: 'Claude Code',
     color: '#00F0FF',
     archetype: 'iron',
     officeX: 130, officeY: 175,
@@ -40,7 +108,7 @@ const PRESET_HEROES = {
     role: 'QA Commander & Standards',
     chamber: 'QA & Testing Chamber',
     harness: 'geminiProHarness',
-    model: 'Gemini 2.5 Pro',
+    model: 'Gemini',
     color: '#38BDF8',
     archetype: 'cap',
     officeX: 175, officeY: 420,
@@ -59,7 +127,7 @@ const PRESET_HEROES = {
     role: 'Deep AST Refactorer',
     chamber: 'Development Chamber',
     harness: 'ollamaDeepSeekHarness',
-    model: 'Ollama / DeepSeek-R1 (Local)',
+    model: 'Ollama (Local)',
     color: '#00FF87',
     archetype: 'hulk',
     officeX: 285, officeY: 420,
@@ -77,7 +145,7 @@ const PRESET_HEROES = {
     role: 'Security Recon & CVE Audit',
     chamber: 'Security & Audit Chamber',
     harness: 'openaiGpt4oHarness',
-    model: 'OpenAI GPT-4o',
+    model: 'OpenAI Codex',
     color: '#A855F7',
     archetype: 'widow',
     officeX: 395, officeY: 420,
@@ -95,7 +163,7 @@ const PRESET_HEROES = {
     role: 'DevOps & Lightning Builds',
     chamber: 'DevOps & PR Chamber',
     harness: 'xaiGrokHarness',
-    model: 'xAI Grok 3',
+    model: 'xAI Grok',
     color: '#00E5FF',
     archetype: 'thor',
     officeX: 520, officeY: 220,
@@ -113,7 +181,7 @@ const PRESET_HEROES = {
     role: 'Precision Unit Testing',
     chamber: 'QA & Testing Chamber',
     harness: 'geminiFlashHarness',
-    model: 'Gemini Flash 2.5',
+    model: 'Gemini',
     color: '#FFD700',
     archetype: 'hawkeye',
     officeX: 630, officeY: 220,
@@ -130,7 +198,7 @@ const PRESET_HEROES = {
     role: 'Frontend Hero & UI/UX',
     chamber: 'Development Chamber',
     harness: 'claudeFrontendHarness',
-    model: 'Claude 3.7 / o3-mini',
+    model: 'Claude Code',
     color: '#38BDF8',
     archetype: 'spidey',
     officeX: 175, officeY: 580,
@@ -148,7 +216,7 @@ const PRESET_HEROES = {
     role: 'Multiverse Simulator',
     chamber: 'Multiverse & Incursion Chamber',
     harness: 'timeStoneEngine',
-    model: 'Claude 3.7 Thinking',
+    model: 'Antigravity / Reasoning',
     color: '#FF9900',
     archetype: 'strange',
     officeX: 780, officeY: 200,
@@ -166,7 +234,7 @@ const PRESET_HEROES = {
     role: 'Mind Stone Memory',
     chamber: 'Mind Stone Knowledge Chamber',
     harness: 'mindStoneMemory',
-    model: 'Gemini Pro Embedding',
+    model: 'Gemini',
     color: '#FFD700',
     archetype: 'vision',
     officeX: 520, officeY: 580,
@@ -178,7 +246,6 @@ const PRESET_HEROES = {
   }
 };
 
-// Active Spawns (Only Tony Stark by Default)
 let activeHeroes = [];
 let quantumDataPackets = [];
 let speechBubbles = [];
@@ -213,18 +280,18 @@ function playSfx(type) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(200, now);
-      osc.frequency.exponentialRampToValueAtTime(1400, now + 0.25);
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(1300, now + 0.22);
+      gain.gain.setValueAtTime(0.22, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.29);
+      osc.start(now); osc.stop(now + 0.26);
     } else if (type === 'packet') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
+      osc.frequency.setValueAtTime(460, now);
+      osc.frequency.exponentialRampToValueAtTime(1150, now + 0.12);
       gain.gain.setValueAtTime(0.12, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
       osc.connect(gain); gain.connect(ctx.destination);
@@ -260,7 +327,7 @@ class SuperheroEntity {
 
     this.homeX = config.officeX || 480;
     this.homeY = config.officeY || 340;
-    this.x = 480; // Starts from central Arc Core elevator
+    this.x = 480;
     this.y = 340;
     this.targetX = this.homeX;
     this.targetY = this.homeY;
@@ -339,7 +406,7 @@ class SuperheroEntity {
 
     ctx.translate(0, bob);
 
-    // Cape rendering for thor / strange / vision / custom
+    // Cape rendering
     if (this.archetype === 'thor' || this.archetype === 'strange' || this.archetype === 'vision') {
       ctx.beginPath();
       ctx.moveTo(-10, -10);
@@ -409,7 +476,6 @@ class SuperheroEntity {
       ctx.beginPath(); ctx.arc(0, -6, 3, 0, Math.PI * 2);
       ctx.fillStyle = '#00FF87'; ctx.fill();
     } else {
-      // Custom Hero Styling
       ctx.fillStyle = this.color;
       ctx.beginPath(); ctx.roundRect(-8, -13, 16, 16, 3); ctx.fill();
     }
@@ -536,7 +602,7 @@ function drawChamberFloor(ctx, w, h) {
   const sy = h / 720;
   const now = performance.now() * 0.001;
 
-  ctx.fillStyle = '#050914';
+  ctx.fillStyle = '#040711';
   ctx.fillRect(0, 0, w, h);
 
   // Hex Deck Grid
@@ -769,9 +835,8 @@ function forgeCustomHero(e) {
   const chamber = document.getElementById('customHeroChamber')?.value || 'Development Chamber';
   const archetype = document.getElementById('customHeroArchetype')?.value || 'iron';
   const color = document.getElementById('customHeroColor')?.value || '#00F0FF';
-  const model = document.getElementById('customHeroModel')?.value || 'Claude 3.7 Sonnet';
+  const model = document.getElementById('customHeroModel')?.value || 'Claude Code';
 
-  // Chamber placement coords
   let coords = { officeX: 200, officeY: 200 };
   if (chamber.includes('QA')) coords = { officeX: 175, officeY: 420 };
   else if (chamber.includes('Security')) coords = { officeX: 395, officeY: 420 };
@@ -804,7 +869,6 @@ function forgeCustomHero(e) {
   updateArcLoadMeter();
   selectHero(customId);
 
-  // Close modal
   document.getElementById('customHeroModalBackdrop')?.classList.remove('open');
 }
 
@@ -820,7 +884,6 @@ function loop(now) {
 
   drawChamberFloor(ctx, w, h);
 
-  // Draw Spawn Particles
   for (let i = spawnParticles.length - 1; i >= 0; i--) {
     const p = spawnParticles[i];
     p.x += p.vx * dt;
@@ -831,13 +894,11 @@ function loop(now) {
     if (p.alpha <= 0) spawnParticles.splice(i, 1);
   }
 
-  // Draw Heroes
   activeHeroes.forEach(h => {
     h.update(dt);
     h.draw(ctx, sx, sy);
   });
 
-  // Draw Quantum Data Packets
   for (let i = quantumDataPackets.length - 1; i >= 0; i--) {
     const packet = quantumDataPackets[i];
     if (!packet.update(dt)) {
@@ -853,7 +914,6 @@ function loop(now) {
 
 // Initialize Onboarding & War Room
 function init() {
-  // Check if onboarding completed previously
   const savedProvider = localStorage.getItem('stark_provider');
   const onboardingScreen = document.getElementById('onboardingScreen');
 
@@ -878,50 +938,87 @@ function init() {
   updateActiveDock();
   updateArcLoadMeter();
 
-  // Onboarding Provider selection
-  let selectedProvider = 'claude-code';
+  // Provider Selection Logic
+  let selectedProvider = 'antigravity';
+
+  function updateProviderView(providerKey) {
+    selectedProvider = providerKey;
+    const meta = PROVIDER_METADATA[providerKey] || PROVIDER_METADATA['antigravity'];
+
+    // Update OAuth Panel
+    const disp = document.getElementById('oauthProviderDisplay');
+    if (disp) disp.innerHTML = `<span>${meta.icon}</span><span>${meta.name} Integration</span>`;
+
+    const desc = document.getElementById('oauthDesc');
+    if (desc) desc.textContent = meta.desc;
+
+    const btnLabel = document.getElementById('oauthBtnLabel');
+    if (btnLabel) btnLabel.textContent = meta.btnLabel;
+
+    // Update Manual Form
+    const keyLabel = document.getElementById('apiKeyLabel');
+    if (keyLabel) keyLabel.textContent = `${meta.name} API Key / Session:`;
+
+    const keyInput = document.getElementById('manualApiKeyInput');
+    if (keyInput) keyInput.placeholder = meta.keyPlaceholder;
+  }
+
   document.querySelectorAll('.provider-card').forEach(card => {
     card.addEventListener('click', () => {
       document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
-      selectedProvider = card.dataset.provider;
-
-      const input = document.getElementById('onboardingKeyInput');
-      const label = document.getElementById('onboardingKeyLabel');
-      if (input && label) {
-        if (selectedProvider === 'ollama') {
-          label.textContent = 'Ollama Endpoint URL:';
-          input.value = 'http://localhost:11434';
-        } else if (selectedProvider === 'simulator') {
-          label.textContent = 'Zero-Setup Simulator:';
-          input.value = 'Offline Mock Engine (No key needed)';
-        } else {
-          label.textContent = `Enter ${card.querySelector('.name').textContent} API Key:`;
-          input.placeholder = `sk-... / AIza...`;
-        }
-      }
+      updateProviderView(card.dataset.provider);
     });
   });
 
-  // Onboarding Submit
-  const initBtn = document.getElementById('initArcReactorBtn');
-  if (initBtn) {
-    initBtn.addEventListener('click', () => {
-      localStorage.setItem('stark_provider', selectedProvider);
-      onboardingScreen?.classList.add('hidden');
-      playSfx('beam');
-      appendTerminalLine('system', `* Initialized Arc Reactor with provider [${selectedProvider.toUpperCase()}]`);
-      tony.speak("Arc Reactor initialized. Welcome to Stark Tower!");
+  // Auth Mode Tabs (OAuth vs Manual)
+  const tabOAuth = document.getElementById('tabOAuthMode');
+  const tabManual = document.getElementById('tabManualMode');
+  const oauthPanel = document.getElementById('oauthPanel');
+  const manualForm = document.getElementById('manualKeyForm');
+
+  if (tabOAuth && tabManual && oauthPanel && manualForm) {
+    tabOAuth.addEventListener('click', () => {
+      tabOAuth.classList.add('active');
+      tabManual.classList.remove('active');
+      oauthPanel.style.display = 'flex';
+      manualForm.style.display = 'none';
+    });
+
+    tabManual.addEventListener('click', () => {
+      tabManual.classList.add('active');
+      tabOAuth.classList.remove('active');
+      oauthPanel.style.display = 'none';
+      manualForm.style.display = 'flex';
     });
   }
 
-  const skipBtn = document.getElementById('skipOnboardingBtn');
-  if (skipBtn) {
-    skipBtn.addEventListener('click', () => {
-      localStorage.setItem('stark_provider', 'simulator');
+  // 1-Click Connect (OAuth / IDE Login)
+  const oauthBtn = document.getElementById('oauthConnectBtn');
+  if (oauthBtn) {
+    oauthBtn.addEventListener('click', () => {
+      localStorage.setItem('stark_provider', selectedProvider);
       onboardingScreen?.classList.add('hidden');
       playSfx('beam');
-      tony.speak("Simulator engine active. Ready for directives.");
+      const meta = PROVIDER_METADATA[selectedProvider] || PROVIDER_METADATA['antigravity'];
+      appendTerminalLine('system', `* Connected via 1-Click ID Login: [${meta.name.toUpperCase()}]`);
+      tony.speak(`Connected to ${meta.name}! Ready for directives.`);
+    });
+  }
+
+  // Manual Connect
+  const manualBtn = document.getElementById('manualConnectBtn');
+  if (manualBtn) {
+    manualBtn.addEventListener('click', () => {
+      const customModel = document.getElementById('manualCustomModelInput')?.value.trim();
+      localStorage.setItem('stark_provider', selectedProvider);
+      if (customModel) localStorage.setItem('stark_model', customModel);
+
+      onboardingScreen?.classList.add('hidden');
+      playSfx('beam');
+      const meta = PROVIDER_METADATA[selectedProvider] || PROVIDER_METADATA['antigravity'];
+      appendTerminalLine('system', `* Initialized credentials for [${meta.name.toUpperCase()}]`);
+      tony.speak(`Arc Reactor initialized with ${meta.name}!`);
     });
   }
 
@@ -974,8 +1071,8 @@ function init() {
   requestAnimationFrame(loop);
 
   setTimeout(() => {
-    appendTerminalLine('system', `* STARK TOWER WAR ROOM PLATFORM ONLINE.`);
-    appendTerminalLine('system', `* Tony Stark active in Development Chamber. Click "+ Spawn Hero" to expand.`);
+    appendTerminalLine('system', `* STARK TOWER // AGENTIC AI WAR ROOM ONLINE.`);
+    appendTerminalLine('system', `* Tony Stark active in Development Chamber. Click "+ Spawn Heroes" to expand.`);
   }, 300);
 }
 
