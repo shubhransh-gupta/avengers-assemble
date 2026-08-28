@@ -125,7 +125,7 @@ npm start
 
 ---
 
-## ⚡ Core Systems (Stark Tech)
+## ⚡ Core Systems (Powered by Shubhransh Gupta)
 
 ### 1. Arc Reactor Power Grid (`src/core/arc-reactor.ts`)
 Maintains a rolling 5-hour sliding window of token consumption across Claude Pro, OpenAI Tier 4, Gemini quotas, and local Ollama instances.
