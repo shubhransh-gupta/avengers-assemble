@@ -29,9 +29,25 @@ export async function runHudCommand(options: any = {}): Promise<void> {
     )
   );
 
+  const warroomUrl = `http://localhost:${port}/warroom.html`;
+
   if (!options.noOpen) {
     try {
-      await open(url);
+      const { exec } = await import('node:child_process');
+      // Attempt to open in a dedicated standalone app window without address bar / tabs
+      const appCmd = process.platform === 'darwin'
+        ? `open -na "Google Chrome" --args --app="${warroomUrl}" --window-size=1440,900 || open -na "Brave Browser" --args --app="${warroomUrl}" --window-size=1440,900 || open "${warroomUrl}"`
+        : process.platform === 'win32'
+        ? `start chrome --app="${warroomUrl}" --window-size=1440,900 || start msedge --app="${warroomUrl}" || start "${warroomUrl}"`
+        : `google-chrome --app="${warroomUrl}" --window-size=1440,900 || brave --app="${warroomUrl}" || xdg-open "${warroomUrl}"`;
+
+      exec(appCmd, async (err) => {
+        if (err) {
+          try {
+            await open(warroomUrl);
+          } catch {}
+        }
+      });
     } catch {
       // Ignored if headless
     }

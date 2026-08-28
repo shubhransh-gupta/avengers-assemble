@@ -1,8 +1,7 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — ULTRA-REALISTIC AVENGERS & MULTIVERSE ENGINE
-   Rooms: 1. Dr Doom Events  2. Secret Wars Events  3. Incursions
-   Features: High-Fidelity Character Rendering, Dimensional Rifts,
-   Holographic Incursion Radars, Quantum Data Nodes & JARVIS Telemetry
+   STARK TOWER WAR ROOM — ONBOARDING-FIRST AVENGERS PLATFORM ENGINE
+   Chambers: Development, QA/Testing, Security, DevOps/PR, Multiverse
+   Features: Dynamic Agent Spawner, Custom Hero Forge, Realistic Models
    ══════════════════════════════════════════════════════════════════════ */
 
 let canvas, ctx;
@@ -10,10 +9,182 @@ let lastTime = performance.now();
 let soundEnabled = true;
 let simSpeed = 1;
 let selectedHeroId = 'tony-stark';
-let activeTab = 'terminal';
 let audioCtx = null;
 
-// Stark Web Audio Synthesizer
+// Available Pre-Configured Avengers
+const PRESET_HEROES = {
+  'tony-stark': {
+    id: 'tony-stark',
+    name: 'Tony Stark',
+    shortName: 'TONY STARK',
+    tag: 'GOD',
+    role: 'Lead GOD Orchestrator',
+    chamber: 'Development Chamber',
+    harness: 'claudeTerminalHarness',
+    model: 'Claude 3.7 Sonnet',
+    color: '#00F0FF',
+    archetype: 'iron',
+    officeX: 130, officeY: 175,
+    dialogs: [
+      "JARVIS, deconstruct the master prompt into DAG directives.",
+      "Arc Reactor load balancing: 99.8% optimal. Directives streaming.",
+      "Cap, your strict types look solid. Approved.",
+      "Hulk, smash that memory bottleneck now."
+    ]
+  },
+  'captain-america': {
+    id: 'captain-america',
+    name: 'Steve Rogers',
+    shortName: 'CAPTAIN AMERICA',
+    tag: 'QA',
+    role: 'QA Commander & Standards',
+    chamber: 'QA & Testing Chamber',
+    harness: 'geminiProHarness',
+    model: 'Gemini 2.5 Pro',
+    color: '#38BDF8',
+    archetype: 'cap',
+    officeX: 175, officeY: 420,
+    dialogs: [
+      "I can do this all day. No unhandled promise rejections on my watch.",
+      "Vibranium Shield QA stamp applied: 100% strict TypeScript types verified.",
+      "Language, team! Clean commits only on main branch.",
+      "All assertions green across test suites."
+    ]
+  },
+  'hulk': {
+    id: 'hulk',
+    name: 'Bruce Banner & Hulk',
+    shortName: 'THE HULK',
+    tag: 'AST',
+    role: 'Deep AST Refactorer',
+    chamber: 'Development Chamber',
+    harness: 'ollamaDeepSeekHarness',
+    model: 'Ollama / DeepSeek-R1 (Local)',
+    color: '#00FF87',
+    archetype: 'hulk',
+    officeX: 285, officeY: 420,
+    dialogs: [
+      "HULK SMASH O(N^2) BOTTLENECK! REFACTOR WITH GAMMA SPEED!!",
+      "Banner mode: Profiling heap memory snapshot...",
+      "FOUND CIRCULAR DEPENDENCY! HULK CRUSH BUG!!"
+    ]
+  },
+  'black-widow': {
+    id: 'black-widow',
+    name: 'Natasha Romanoff',
+    shortName: 'BLACK WIDOW',
+    tag: 'SEC',
+    role: 'Security Recon & CVE Audit',
+    chamber: 'Security & Audit Chamber',
+    harness: 'openaiGpt4oHarness',
+    model: 'OpenAI GPT-4o',
+    color: '#A855F7',
+    archetype: 'widow',
+    officeX: 395, officeY: 420,
+    dialogs: [
+      "Infiltrating codebase perimeter. Scanning dependencies for zero-days.",
+      "Sanitized API bearer keys in .env. Ledger clean.",
+      "CVE vulnerability isolated and patched. Auth perimeter fortified."
+    ]
+  },
+  'thor': {
+    id: 'thor',
+    name: 'Thor Odinson',
+    shortName: 'THOR',
+    tag: 'OPS',
+    role: 'DevOps & Lightning Builds',
+    chamber: 'DevOps & PR Chamber',
+    harness: 'xaiGrokHarness',
+    model: 'xAI Grok 3',
+    color: '#00E5FF',
+    archetype: 'thor',
+    officeX: 520, officeY: 220,
+    dialogs: [
+      "BY THE POWER OF MJOLNIR, SUMMONING THE DOCKER BIFROST!",
+      "Kubernetes ingress struck by lightning! Multi-stage build forged in 4.2s.",
+      "CI/CD pipeline humming with thunderous high voltage."
+    ]
+  },
+  'hawkeye': {
+    id: 'hawkeye',
+    name: 'Clint Barton',
+    shortName: 'HAWKEYE',
+    tag: 'TEST',
+    role: 'Precision Unit Testing',
+    chamber: 'QA & Testing Chamber',
+    harness: 'geminiFlashHarness',
+    model: 'Gemini Flash 2.5',
+    color: '#FFD700',
+    archetype: 'hawkeye',
+    officeX: 630, officeY: 220,
+    dialogs: [
+      "I played 18 test suites, I shot 18 passing assertions. Can't seem to miss.",
+      "Locking on boundary conditions: null, undefined, NaN, Infinity. Bullseye!"
+    ]
+  },
+  'spider-man': {
+    id: 'spider-man',
+    name: 'Peter Parker',
+    shortName: 'SPIDER-MAN',
+    tag: 'UI',
+    role: 'Frontend Hero & UI/UX',
+    chamber: 'Development Chamber',
+    harness: 'claudeFrontendHarness',
+    model: 'Claude 3.7 / o3-mini',
+    color: '#38BDF8',
+    archetype: 'spidey',
+    officeX: 175, officeY: 580,
+    dialogs: [
+      "Your friendly neighborhood frontend hero swinging in!",
+      "Spun up accessible React components with buttery 60 FPS Tailwind animations!",
+      "Hey Mr. Stark, I fixed the dark mode toggle!"
+    ]
+  },
+  'doctor-strange': {
+    id: 'doctor-strange',
+    name: 'Stephen Strange',
+    shortName: 'DOCTOR STRANGE',
+    tag: 'SIM',
+    role: 'Multiverse Simulator',
+    chamber: 'Multiverse & Incursion Chamber',
+    harness: 'timeStoneEngine',
+    model: 'Claude 3.7 Thinking',
+    color: '#FF9900',
+    archetype: 'strange',
+    officeX: 780, officeY: 200,
+    dialogs: [
+      "Opening the Eye of Agamotto. Simulating 14,000,605 timelines...",
+      "Reality-616 selected: Incursions averted with 98.4% success.",
+      "Time Stone snapshot sealed. Instant rollback ready if build fails."
+    ]
+  },
+  'vision': {
+    id: 'vision',
+    name: 'Vision',
+    shortName: 'VISION',
+    tag: 'MEM',
+    role: 'Mind Stone Memory',
+    chamber: 'Mind Stone Knowledge Chamber',
+    harness: 'mindStoneMemory',
+    model: 'Gemini Pro Embedding',
+    color: '#FFD700',
+    archetype: 'vision',
+    officeX: 520, officeY: 580,
+    dialogs: [
+      "Accessing Mind Stone semantic knowledge matrix...",
+      "Indexed 42 architecture conventions into persistent org memory.",
+      "Synchronizing context across all active agent mental nodes."
+    ]
+  }
+};
+
+// Active Spawns (Only Tony Stark by Default)
+let activeHeroes = [];
+let quantumDataPackets = [];
+let speechBubbles = [];
+let spawnParticles = [];
+
+// Audio Synthesizer
 function getAudio() {
   if (!audioCtx) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -32,48 +203,38 @@ function playSfx(type) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(140, now);
+      osc.frequency.setValueAtTime(160, now);
       osc.frequency.exponentialRampToValueAtTime(920, now + 0.18);
       gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.26);
-    } else if (type === 'shield') {
+      osc.start(now); osc.stop(now + 0.25);
+    } else if (type === 'beam') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(780, now);
-      osc.frequency.exponentialRampToValueAtTime(240, now + 0.32);
-      gain.gain.setValueAtTime(0.22, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.32);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.33);
-    } else if (type === 'incursion') {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(320, now);
-      osc.frequency.exponentialRampToValueAtTime(60, now + 0.45);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.exponentialRampToValueAtTime(1400, now + 0.25);
       gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.46);
+      osc.start(now); osc.stop(now + 0.29);
     } else if (type === 'packet') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(480, now);
-      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.14);
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
       gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(now); osc.stop(now + 0.15);
+      osc.start(now); osc.stop(now + 0.13);
     } else if (type === 'pop') {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(620, now);
-      osc.frequency.exponentialRampToValueAtTime(980, now + 0.08);
+      osc.frequency.setValueAtTime(580, now);
+      osc.frequency.exponentialRampToValueAtTime(950, now + 0.08);
       gain.gain.setValueAtTime(0.14, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
       osc.connect(gain); gain.connect(ctx.destination);
@@ -82,271 +243,95 @@ function playSfx(type) {
   } catch {}
 }
 
-// 9 Avengers Roster Definitions
-const HEROES = [
-  {
-    id: 'tony-stark',
-    name: 'Tony Stark',
-    shortName: 'TONY STARK',
-    tag: 'GOD',
-    role: 'Lead GOD Orchestrator',
-    harness: 'claudeTerminalHarness',
-    model: 'Claude 3.7 Sonnet / Claude Code',
-    tokenCap: '80,000 / hr',
-    color: '#00F0FF',
-    officeX: 130, officeY: 175,
-    isBoss: true,
-    dialogs: [
-      "JARVIS, deconstruct the master prompt into DAG directives.",
-      "Arc Reactor load balancing: 99.8% optimal. Incursion timeline sealed.",
-      "Cap, your strict types look solid. Approved.",
-      "Hulk, smash that memory bottleneck now."
-    ]
-  },
-  {
-    id: 'captain-america',
-    name: 'Steve Rogers',
-    shortName: 'CAPTAIN AMERICA',
-    tag: 'QA',
-    role: 'QA Commander & Standards',
-    harness: 'geminiProHarness',
-    model: 'Gemini 2.5 Pro',
-    tokenCap: '120,000 / hr',
-    color: '#38BDF8',
-    officeX: 175, officeY: 420,
-    dialogs: [
-      "I can do this all day. No unhandled promise rejections on my watch.",
-      "Vibranium Shield QA stamp applied: 100% strict TypeScript types verified.",
-      "Language, team! Clean commits only on main branch.",
-      "All assertions green across 16 test suites."
-    ]
-  },
-  {
-    id: 'hulk',
-    name: 'Bruce Banner & Hulk',
-    shortName: 'THE HULK',
-    tag: 'AST',
-    role: 'Deep AST Refactorer',
-    harness: 'ollamaDeepSeekHarness',
-    model: 'Ollama / DeepSeek-R1 (Local)',
-    tokenCap: 'Unlimited (Local)',
-    color: '#00FF87',
-    officeX: 285, officeY: 420,
-    dialogs: [
-      "HULK SMASH O(N^2) BOTTLENECK! REFACTOR WITH GAMMA SPEED!!",
-      "Banner mode: Profiling heap memory snapshot...",
-      "FOUND CIRCULAR DEPENDENCY! HULK CRUSH BUG!!",
-      "That's my secret, Cap. My worker threads are always running."
-    ]
-  },
-  {
-    id: 'black-widow',
-    name: 'Natasha Romanoff',
-    shortName: 'BLACK WIDOW',
-    tag: 'SEC',
-    role: 'Security Recon & CVE Audit',
-    harness: 'openaiGpt4oHarness',
-    model: 'OpenAI GPT-4o',
-    tokenCap: '60,000 / hr',
-    color: '#A855F7',
-    officeX: 395, officeY: 420,
-    dialogs: [
-      "Infiltrating codebase perimeter. Scanning dependencies for zero-days.",
-      "Sanitized API bearer keys in .env. Ledger clean.",
-      "CVE-2026-8812 vulnerability isolated and patched.",
-      "Stealth recon complete. Auth boundary 100% fortified."
-    ]
-  },
-  {
-    id: 'thor',
-    name: 'Thor Odinson',
-    shortName: 'THOR',
-    tag: 'OPS',
-    role: 'DevOps & Lightning Builds',
-    harness: 'xaiGrokHarness',
-    model: 'xAI Grok 3',
-    tokenCap: '60,000 / hr',
-    color: '#00E5FF',
-    officeX: 520, officeY: 220,
-    dialogs: [
-      "BY THE POWER OF MJOLNIR, SUMMONING THE DOCKER BIFROST!",
-      "Kubernetes ingress struck by lightning! Multi-stage build forged in 4.2s.",
-      "Bring me Thanos and a multi-region container cluster!",
-      "CI/CD pipeline humming with thunderous high voltage."
-    ]
-  },
-  {
-    id: 'hawkeye',
-    name: 'Clint Barton',
-    shortName: 'HAWKEYE',
-    tag: 'TEST',
-    role: 'Precision Unit Testing',
-    harness: 'geminiFlashHarness',
-    model: 'Gemini Flash 2.5',
-    tokenCap: '150,000 / hr',
-    color: '#FFD700',
-    officeX: 630, officeY: 220,
-    dialogs: [
-      "I played 18 test suites, I shot 18 passing assertions. Can't seem to miss.",
-      "Locking on boundary conditions: null, undefined, NaN, Infinity. Bullseye!",
-      "100% code coverage achieved. Target eliminated.",
-      "Fired trick arrow: Async mock race conditions neutralized."
-    ]
-  },
-  {
-    id: 'spider-man',
-    name: 'Peter Parker',
-    shortName: 'SPIDER-MAN',
-    tag: 'UI',
-    role: 'Frontend Hero & UI/UX',
-    harness: 'claudeFrontendHarness',
-    model: 'Claude 3.7 / o3-mini',
-    tokenCap: '80,000 / hr',
-    color: '#38BDF8',
-    officeX: 175, officeY: 580,
-    dialogs: [
-      "Your friendly neighborhood frontend hero swinging in!",
-      "Spun up accessible React components with buttery 60 FPS Tailwind animations!",
-      "With great frontend power comes great responsive design responsibility!",
-      "Hey Mr. Stark, I fixed the dark mode toggle!"
-    ]
-  },
-  {
-    id: 'doctor-strange',
-    name: 'Stephen Strange',
-    shortName: 'DOCTOR STRANGE',
-    tag: 'SIM',
-    role: 'Multiverse Simulator',
-    harness: 'timeStoneEngine',
-    model: 'Claude 3.7 Thinking',
-    tokenCap: '50,000 / hr',
-    color: '#FF9900',
-    officeX: 395, officeY: 580,
-    dialogs: [
-      "Opening the Eye of Agamotto. Simulating 14,000,605 timelines...",
-      "Reality-616 selected: Incursions averted with 98.4% success.",
-      "Time Stone snapshot sealed. Instant rollback ready if build fails.",
-      "Dormammu, I've come to resolve merge conflicts!"
-    ]
-  },
-  {
-    id: 'vision',
-    name: 'Vision',
-    shortName: 'VISION',
-    tag: 'MEM',
-    role: 'Mind Stone Memory',
-    harness: 'mindStoneMemory',
-    model: 'Gemini Pro Embedding',
-    tokenCap: '100,000 / hr',
-    color: '#FFD700',
-    officeX: 520, officeY: 580,
-    dialogs: [
-      "Accessing Mind Stone semantic knowledge matrix...",
-      "Indexed 42 architecture conventions into persistent org memory.",
-      "Synchronizing context across all 9 agent mental nodes.",
-      "Historical bug resolution patterns retrieved and applied."
-    ]
-  }
-];
+// Realistic Superhero Entity
+class SuperheroEntity {
+  constructor(config) {
+    this.id = config.id;
+    this.name = config.name;
+    this.shortName = config.shortName || config.name;
+    this.tag = config.tag || 'AGENT';
+    this.role = config.role;
+    this.chamber = config.chamber;
+    this.harness = config.harness;
+    this.model = config.model;
+    this.color = config.color || '#00F0FF';
+    this.archetype = config.archetype || 'iron';
+    this.dialogs = config.dialogs || ["Directive acknowledged. Ready for action."];
 
-let quantumDataPackets = [];
-let speechBubbles = [];
-let characterEntities = [];
-
-// High-Fidelity Realistic Superhero Character Entity
-class RealisticSuperhero {
-  constructor(hero) {
-    this.hero = hero;
-    this.id = hero.id;
-    this.homeX = hero.officeX;
-    this.homeY = hero.officeY;
-    this.x = hero.officeX;
-    this.y = hero.officeY;
-    this.targetX = hero.officeX;
-    this.targetY = hero.officeY;
-    this.state = 'WORKING';
+    this.homeX = config.officeX || 480;
+    this.homeY = config.officeY || 340;
+    this.x = 480; // Starts from central Arc Core elevator
+    this.y = 340;
+    this.targetX = this.homeX;
+    this.targetY = this.homeY;
+    this.state = 'SPAWNING';
     this.animTimer = 0;
-    this.actionTimer = 3000 + Math.random() * 4000;
-    this.auraPulse = Math.random() * Math.PI * 2;
+    this.actionTimer = 2000 + Math.random() * 3000;
   }
 
   speak(text = null) {
-    const dialog = text || this.hero.dialogs[Math.floor(Math.random() * this.hero.dialogs.length)];
+    const dialog = text || this.dialogs[Math.floor(Math.random() * this.dialogs.length)];
     createSpeechBubble(this, dialog);
-    appendTerminalLine('action', `● [${this.hero.shortName}] ${dialog}`);
+    appendTerminalLine('action', `● [${this.shortName}] ${dialog}`);
     playSfx('pop');
   }
 
   update(dt) {
     this.animTimer += dt * 4 * simSpeed;
-    this.auraPulse += dt * 3;
-
     const dx = this.targetX - this.x;
     const dy = this.targetY - this.y;
     const dist = Math.hypot(dx, dy);
 
     if (dist > 4) {
       this.state = 'WALKING';
-      const speed = 50 * simSpeed * dt;
+      const speed = 55 * simSpeed * dt;
       this.x += (dx / dist) * speed;
       this.y += (dy / dist) * speed;
     } else {
-      if (this.state === 'WALKING') {
-        this.state = 'WORKING';
-      }
+      this.state = 'WORKING';
     }
 
     this.actionTimer -= dt * 1000 * simSpeed;
     if (this.actionTimer <= 0) {
       if (this.state === 'WORKING') {
-        if (Math.random() < 0.3) {
-          // Roam towards Incursions room, Secret Wars nexus, or Arc Core
-          const targets = [
-            { x: 850, y: 150 }, // Incursions Room
-            { x: 480, y: 80 },  // Secret Wars Room
-            { x: 130, y: 175 }, // Dr Doom Room
-            { x: 480, y: 340 }  // Center Arc Core
-          ];
-          const chosen = targets[Math.floor(Math.random() * targets.length)];
-          this.targetX = chosen.x + (Math.random() - 0.5) * 50;
-          this.targetY = chosen.y + (Math.random() - 0.5) * 40;
-          this.actionTimer = 4000 + Math.random() * 4000;
+        if (Math.random() < 0.25) {
+          this.targetX = 480 + (Math.random() - 0.5) * 80;
+          this.targetY = 340 + (Math.random() - 0.5) * 60;
+          this.actionTimer = 4000;
         } else {
-          this.actionTimer = 5000 + Math.random() * 6000;
-          if (Math.random() < 0.35) this.speak();
+          this.actionTimer = 5000 + Math.random() * 5000;
+          if (Math.random() < 0.3) this.speak();
         }
       } else {
         this.targetX = this.homeX;
         this.targetY = this.homeY;
-        this.actionTimer = 6000 + Math.random() * 7000;
+        this.actionTimer = 6000;
       }
     }
   }
 
-  // Draw Realistic Superhero Model (Polished vector rendering with shading & speculars)
   draw(ctx, scaleX, scaleY) {
     const px = this.x * scaleX;
     const py = this.y * scaleY;
     const isWalking = this.state === 'WALKING';
     const bob = isWalking ? Math.sin(this.animTimer * 2) * 3 : 0;
-    const breath = Math.sin(this.auraPulse) * 0.5;
 
     ctx.save();
     ctx.translate(px, py);
 
-    // 1. Soft Dynamic Shadow
+    // Ground Shadow
     ctx.beginPath();
     ctx.ellipse(0, 14, 16, 6, 0, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
     ctx.fill();
 
-    // 2. Selection Ring & Hero Aura
+    // Selected Halo
     if (selectedHeroId === this.id) {
       ctx.beginPath();
       ctx.ellipse(0, 8, 22, 10, 0, 0, Math.PI * 2);
-      ctx.strokeStyle = '#00F0FF';
+      ctx.strokeStyle = this.color;
       ctx.lineWidth = 2;
-      ctx.shadowColor = '#00F0FF';
+      ctx.shadowColor = this.color;
       ctx.shadowBlur = 10;
       ctx.stroke();
       ctx.shadowBlur = 0;
@@ -354,193 +339,100 @@ class RealisticSuperhero {
 
     ctx.translate(0, bob);
 
-    // 3. CAPE RENDERING (Thor, Strange, Vision)
-    if (this.id === 'thor' || this.id === 'doctor-strange' || this.id === 'vision') {
+    // Cape rendering for thor / strange / vision / custom
+    if (this.archetype === 'thor' || this.archetype === 'strange' || this.archetype === 'vision') {
       ctx.beginPath();
       ctx.moveTo(-10, -10);
       ctx.bezierCurveTo(-14, 4, -12, 14, -8, 16);
       ctx.lineTo(8, 16);
       ctx.bezierCurveTo(12, 14, 14, 4, 10, -10);
       ctx.closePath();
-      ctx.fillStyle = this.id === 'vision' ? '#EAB308' : '#DC2626';
+      ctx.fillStyle = this.archetype === 'vision' ? '#EAB308' : '#DC2626';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.stroke();
     }
 
-    // 4. LEGS & BOOTS
+    // Legs
     ctx.fillStyle = '#0F172A';
-    if (this.id === 'tony-stark') {
-      ctx.fillStyle = '#991B1B'; // Crimson armor legs
-      ctx.fillRect(-7, 2, 5, 11);
-      ctx.fillRect(2, 2, 5, 11);
-      ctx.fillStyle = '#D97706'; // Gold knee pads
-      ctx.fillRect(-7, 4, 5, 3); ctx.fillRect(2, 4, 5, 3);
-    } else if (this.id === 'captain-america') {
-      ctx.fillStyle = '#1E3A8A';
-      ctx.fillRect(-7, 2, 5, 10);
-      ctx.fillRect(2, 2, 5, 10);
-      ctx.fillStyle = '#991B1B'; // Red leather boots
-      ctx.fillRect(-8, 9, 6, 4); ctx.fillRect(2, 9, 6, 4);
-    } else if (this.id === 'hulk') {
-      ctx.fillStyle = '#15803D'; // Green legs
-      ctx.fillRect(-10, 2, 8, 12);
-      ctx.fillRect(2, 2, 8, 12);
-      ctx.fillStyle = '#6B21A8'; // Purple pants
-      ctx.fillRect(-11, -2, 22, 6);
+    if (this.archetype === 'iron') {
+      ctx.fillStyle = '#991B1B'; ctx.fillRect(-7, 2, 5, 11); ctx.fillRect(2, 2, 5, 11);
+      ctx.fillStyle = '#D97706'; ctx.fillRect(-7, 4, 5, 3); ctx.fillRect(2, 4, 5, 3);
+    } else if (this.archetype === 'cap') {
+      ctx.fillStyle = '#1E3A8A'; ctx.fillRect(-7, 2, 5, 10); ctx.fillRect(2, 2, 5, 10);
+      ctx.fillStyle = '#991B1B'; ctx.fillRect(-8, 9, 6, 4); ctx.fillRect(2, 9, 6, 4);
+    } else if (this.archetype === 'hulk') {
+      ctx.fillStyle = '#15803D'; ctx.fillRect(-10, 2, 8, 12); ctx.fillRect(2, 2, 8, 12);
+      ctx.fillStyle = '#6B21A8'; ctx.fillRect(-11, -2, 22, 6);
     } else {
-      ctx.fillRect(-7, 2, 5, 11);
-      ctx.fillRect(2, 2, 5, 11);
+      ctx.fillRect(-7, 2, 5, 11); ctx.fillRect(2, 2, 5, 11);
     }
 
-    // 5. TORSO & SUIT DETAILS
-    if (this.id === 'tony-stark') {
-      // Mark 85 Nano Armor Torso
+    // Torso / Superhero Armor
+    if (this.archetype === 'iron') {
       ctx.fillStyle = '#B91C1C';
-      ctx.beginPath();
-      ctx.roundRect(-10, -14, 20, 17, 3);
-      ctx.fill();
-      // Gold shoulder & chest plates
-      ctx.fillStyle = '#F59E0B';
-      ctx.fillRect(-11, -14, 4, 6); ctx.fillRect(7, -14, 4, 6);
-      // Glowing Arc Reactor
-      ctx.beginPath();
-      ctx.arc(0, -6, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#00F0FF';
-      ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 10;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    } else if (this.id === 'captain-america') {
-      // Cap Star Uniform
+      ctx.beginPath(); ctx.roundRect(-10, -14, 20, 17, 3); ctx.fill();
+      ctx.fillStyle = '#F59E0B'; ctx.fillRect(-11, -14, 4, 6); ctx.fillRect(7, -14, 4, 6);
+      ctx.beginPath(); ctx.arc(0, -6, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
+    } else if (this.archetype === 'cap') {
       ctx.fillStyle = '#1D4ED8';
-      ctx.beginPath();
-      ctx.roundRect(-9, -14, 18, 17, 3);
-      ctx.fill();
-      // White Star
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(-3, -11, 6, 4);
-      // Red & White abdomen stripes
-      ctx.fillStyle = '#DC2626';
-      ctx.fillRect(-7, -2, 14, 4);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(-4, -2, 2, 4); ctx.fillRect(2, -2, 2, 4);
-      // Vibranium Shield on back
-      ctx.beginPath();
-      ctx.arc(10, -5, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#DC2626'; ctx.fill();
-      ctx.beginPath(); ctx.arc(10, -5, 6, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFFFFF'; ctx.fill();
-      ctx.beginPath(); ctx.arc(10, -5, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#1D4ED8'; ctx.fill();
-      ctx.beginPath(); ctx.arc(10, -5, 1.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFFFFF'; ctx.fill();
-    } else if (this.id === 'hulk') {
-      // Massive Green Gamma Titan
+      ctx.beginPath(); ctx.roundRect(-9, -14, 18, 17, 3); ctx.fill();
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(-3, -11, 6, 4);
+      ctx.fillStyle = '#DC2626'; ctx.fillRect(-7, -2, 14, 4);
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(-4, -2, 2, 4); ctx.fillRect(2, -2, 2, 4);
+      // Shield
+      ctx.beginPath(); ctx.arc(10, -5, 8, 0, Math.PI * 2); ctx.fillStyle = '#DC2626'; ctx.fill();
+      ctx.beginPath(); ctx.arc(10, -5, 6, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      ctx.beginPath(); ctx.arc(10, -5, 4, 0, Math.PI * 2); ctx.fillStyle = '#1D4ED8'; ctx.fill();
+      ctx.beginPath(); ctx.arc(10, -5, 1.5, 0, Math.PI * 2); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+    } else if (this.archetype === 'hulk') {
       ctx.fillStyle = '#15803D';
-      ctx.beginPath();
-      ctx.roundRect(-14, -18, 28, 22, 5);
-      ctx.fill();
-      // Muscle chest definition
-      ctx.strokeStyle = '#14532D';
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(-10, -14, 20, 10);
-    } else if (this.id === 'black-widow') {
-      // Sleek Tactical Catsuit
+      ctx.beginPath(); ctx.roundRect(-14, -18, 28, 22, 5); ctx.fill();
+    } else if (this.archetype === 'widow') {
       ctx.fillStyle = '#0F172A';
-      ctx.beginPath();
-      ctx.roundRect(-8, -13, 16, 16, 3);
-      ctx.fill();
-      // Red Hourglass Belt
-      ctx.fillStyle = '#DC2626';
-      ctx.fillRect(-2, 0, 4, 3);
-      // Widow's Bite blue gauntlets
-      ctx.fillStyle = '#00F0FF';
-      ctx.fillRect(-10, -4, 2, 4); ctx.fillRect(8, -4, 2, 4);
-    } else if (this.id === 'thor') {
-      // Asgardian Silver Battle Armor
+      ctx.beginPath(); ctx.roundRect(-8, -13, 16, 16, 3); ctx.fill();
+      ctx.fillStyle = '#DC2626'; ctx.fillRect(-2, 0, 4, 3);
+      ctx.fillStyle = '#00F0FF'; ctx.fillRect(-10, -4, 2, 4); ctx.fillRect(8, -4, 2, 4);
+    } else if (this.archetype === 'thor') {
       ctx.fillStyle = '#334155';
-      ctx.beginPath();
-      ctx.roundRect(-9, -14, 18, 17, 3);
-      ctx.fill();
-      // Glowing blue armor discs
+      ctx.beginPath(); ctx.roundRect(-9, -14, 18, 17, 3); ctx.fill();
       ctx.fillStyle = '#00E5FF';
       ctx.beginPath(); ctx.arc(-4, -8, 2.5, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.arc(4, -8, 2.5, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(-4, -2, 2.5, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(4, -2, 2.5, 0, Math.PI * 2); ctx.fill();
-    } else if (this.id === 'spider-man') {
-      // Webbed Red & Blue Suit
+    } else if (this.archetype === 'spidey') {
       ctx.fillStyle = '#DC2626';
       ctx.beginPath(); ctx.roundRect(-8, -14, 16, 10, 3); ctx.fill();
-      ctx.fillStyle = '#1D4ED8';
-      ctx.fillRect(-8, -4, 16, 7);
-      // Black Spider Icon
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(-2, -9, 4, 4);
-    } else if (this.id === 'doctor-strange') {
-      // Sorcerer Robes & Eye of Agamotto
+      ctx.fillStyle = '#1D4ED8'; ctx.fillRect(-8, -4, 16, 7);
+    } else if (this.archetype === 'strange') {
       ctx.fillStyle = '#1E3A8A';
       ctx.beginPath(); ctx.roundRect(-8, -13, 16, 16, 3); ctx.fill();
-      // Eye of Agamotto (Time Stone glow)
       ctx.beginPath(); ctx.arc(0, -6, 3, 0, Math.PI * 2);
-      ctx.fillStyle = '#00FF87';
-      ctx.shadowColor = '#00FF87'; ctx.shadowBlur = 8;
-      ctx.fill(); ctx.shadowBlur = 0;
+      ctx.fillStyle = '#00FF87'; ctx.fill();
     } else {
-      ctx.fillStyle = this.hero.color;
+      // Custom Hero Styling
+      ctx.fillStyle = this.color;
       ctx.beginPath(); ctx.roundRect(-8, -13, 16, 16, 3); ctx.fill();
     }
 
-    // 6. HEAD, HELMET, MASK & HAIR
-    ctx.fillStyle = this.id === 'hulk' ? '#15803D' : (this.id === 'vision' ? '#991B1B' : '#FED7AA');
-    ctx.beginPath();
-    ctx.arc(0, -20, 7, 0, Math.PI * 2);
-    ctx.fill();
+    // Head
+    ctx.fillStyle = this.archetype === 'hulk' ? '#15803D' : (this.archetype === 'vision' ? '#991B1B' : '#FED7AA');
+    ctx.beginPath(); ctx.arc(0, -20, 7, 0, Math.PI * 2); ctx.fill();
 
     // Eyes
-    if (this.id === 'spider-man') {
+    if (this.archetype === 'spidey') {
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath(); ctx.ellipse(-3.5, -20, 3, 2, -0.2, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.ellipse(3.5, -20, 3, 2, 0.2, 0, Math.PI * 2); ctx.fill();
-    } else if (this.id === 'vision') {
-      // Glowing Mind Stone
-      ctx.beginPath(); ctx.arc(0, -25, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#FFD700';
-      ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(-3, -20, 2, 2); ctx.fillRect(1, -20, 2, 2);
     } else {
       ctx.fillStyle = '#0F172A';
       ctx.fillRect(-3.5, -20, 2, 2); ctx.fillRect(1.5, -20, 2, 2);
-    }
-
-    // Hair / Facial Details
-    if (this.id === 'tony-stark') {
-      ctx.fillStyle = '#1C1917';
-      ctx.beginPath(); ctx.arc(0, -23, 7.5, Math.PI, 0); ctx.fill(); // Swept hair
-      ctx.fillRect(-2, -15, 4, 2); // Goatee
-    } else if (this.id === 'captain-america' || this.id === 'thor') {
-      ctx.fillStyle = '#F59E0B'; // Blonde hair
-      ctx.beginPath(); ctx.arc(0, -23, 7.5, Math.PI, 0); ctx.fill();
-      if (this.id === 'thor') {
-        ctx.fillRect(-8, -20, 3, 10); ctx.fillRect(5, -20, 3, 10); // Long hair
-      }
-    } else if (this.id === 'black-widow') {
-      ctx.fillStyle = '#B91C1C'; // Auburn hair
-      ctx.beginPath(); ctx.arc(0, -23, 8.5, Math.PI, 0); ctx.fill();
-      ctx.fillRect(-9, -20, 3, 12); ctx.fillRect(6, -20, 3, 12);
-    } else if (this.id === 'doctor-strange') {
-      ctx.fillStyle = '#1C1917';
-      ctx.beginPath(); ctx.arc(0, -23, 7.5, Math.PI, 0); ctx.fill();
-      ctx.fillStyle = '#E2E8F0'; // White temples
-      ctx.fillRect(-7, -21, 2, 4); ctx.fillRect(5, -21, 2, 4);
     }
 
     ctx.restore();
   }
 }
 
-// Quantum Data Packet Entity
+// Quantum Data Packet
 class QuantumDataPacket {
   constructor(x1, y1, x2, y2, color, onArrival) {
     this.x1 = x1; this.y1 = y1;
@@ -575,18 +467,30 @@ class QuantumDataPacket {
 
     ctx.save();
     ctx.translate(px, py);
-
     ctx.fillStyle = this.color;
     ctx.shadowColor = this.color;
     ctx.shadowBlur = 15;
     ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
     ctx.shadowBlur = 0;
-
     ctx.fillStyle = '#FFFFFF';
     ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill();
-
     ctx.restore();
   }
+}
+
+// Particle Beams for Spawning
+function spawnParticleBeam(x, y, color) {
+  for (let i = 0; i < 20; i++) {
+    spawnParticles.push({
+      x: x, y: y,
+      vx: (Math.random() - 0.5) * 60,
+      vy: (Math.random() - 0.5) * 60,
+      color: color,
+      alpha: 1,
+      radius: Math.random() * 3 + 1.5
+    });
+  }
+  playSfx('beam');
 }
 
 // Speech Bubble Management
@@ -596,11 +500,11 @@ function createSpeechBubble(character, text) {
 
   const bubble = document.createElement('div');
   bubble.className = 'speech-bubble';
-  bubble.style.setProperty('--bubble-color', character.hero.color);
-  bubble.style.setProperty('--bubble-border', character.hero.color);
+  bubble.style.setProperty('--bubble-color', character.color);
+  bubble.style.setProperty('--bubble-border', character.color);
 
   bubble.innerHTML = `
-    <span class="bubble-prefix">${character.hero.shortName}</span>
+    <span class="bubble-prefix">${character.shortName}</span>
     ${text}
   `;
   container.appendChild(bubble);
@@ -608,7 +512,7 @@ function createSpeechBubble(character, text) {
   speechBubbles.push({
     element: bubble,
     character: character,
-    timer: 4.5
+    timer: 4.0
   });
 }
 
@@ -626,18 +530,17 @@ function updateSpeechBubbles(dt, scaleX, scaleY) {
   }
 }
 
-// Draw Realistic Stark Tower Floor Map with the 3 Named Event Rooms
-function drawRealisticWarRoom(ctx, w, h) {
+// Draw the High-Tech Chamber Floor Map
+function drawChamberFloor(ctx, w, h) {
   const sx = w / 1000;
   const sy = h / 720;
   const now = performance.now() * 0.001;
 
-  // 1. Dark Metallic Titanium Hex Deck
   ctx.fillStyle = '#050914';
   ctx.fillRect(0, 0, w, h);
 
-  // Hex / Grid Energy Lines
-  ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+  // Hex Deck Grid
+  ctx.strokeStyle = 'rgba(0, 240, 255, 0.04)';
   ctx.lineWidth = 1;
   const gridSize = 45 * sx;
   for (let x = 0; x < w; x += gridSize) {
@@ -647,218 +550,208 @@ function drawRealisticWarRoom(ctx, w, h) {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
   }
 
-  // 2. Outer War Room Frame
-  ctx.strokeStyle = '#1E293B';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(14*sx, 14*sy, 972*sx, 692*sy);
+  // 1. DEVELOPMENT CHAMBER (Top-Left)
+  const c1x = 14 * sx, c1y = 14 * sy, c1w = 236 * sx, c1h = 240 * sy;
+  ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
+  ctx.fillRect(c1x, c1y, c1w, c1h);
+  ctx.strokeStyle = '#00F0FF'; ctx.lineWidth = 1.5; ctx.strokeRect(c1x, c1y, c1w, c1h);
+  ctx.fillStyle = 'rgba(0, 240, 255, 0.15)'; ctx.fillRect(c1x, c1y, c1w, 24*sy);
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`; ctx.fillStyle = '#00F0FF';
+  ctx.fillText('💻 1. DEVELOPMENT CHAMBER', c1x + 10*sx, c1y + 16*sy);
 
-  // ── ROOM 1: DR DOOM EVENTS (Top-Left) ──
-  const r1x = 14 * sx, r1y = 14 * sy, r1w = 236 * sx, r1h = 240 * sy;
-  ctx.fillStyle = 'rgba(16, 185, 129, 0.04)'; // Latverian Emerald Tint
-  ctx.fillRect(r1x, r1y, r1w, r1h);
-  ctx.strokeStyle = '#10B981';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(r1x, r1y, r1w, r1h);
+  // 2. QA & TESTING CHAMBER (Bottom-Left)
+  const c2x = 14 * sx, c2y = 264 * sy, c2w = 236 * sx, c2h = 240 * sy;
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.03)';
+  ctx.fillRect(c2x, c2y, c2w, c2h);
+  ctx.strokeStyle = '#38BDF8'; ctx.lineWidth = 1.5; ctx.strokeRect(c2x, c2y, c2w, c2h);
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.15)'; ctx.fillRect(c2x, c2y, c2w, 24*sy);
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`; ctx.fillStyle = '#38BDF8';
+  ctx.fillText('🛡️ 2. QA & TESTING CHAMBER', c2x + 10*sx, c2y + 16*sy);
 
-  // Room 1 Header Banner
-  ctx.fillStyle = 'rgba(16, 185, 129, 0.18)';
-  ctx.fillRect(r1x, r1y, r1w, 26*sy);
-  ctx.font = `bold ${11*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#10B981';
-  ctx.fillText('🔮 1. DR DOOM EVENTS // CHRONO-SPIRE', r1x + 12*sx, r1y + 18*sy);
+  // 3. SECURITY & AUDIT CHAMBER (Top-Center)
+  const c3x = 260 * sx, c3y = 14 * sy, c3w = 440 * sx, c3h = 160 * sy;
+  ctx.fillStyle = 'rgba(168, 85, 247, 0.03)';
+  ctx.fillRect(c3x, c3y, c3w, c3h);
+  ctx.strokeStyle = '#A855F7'; ctx.lineWidth = 1.5; ctx.strokeRect(c3x, c3y, c3w, c3h);
+  ctx.fillStyle = 'rgba(168, 85, 247, 0.15)'; ctx.fillRect(c3x, c3y, c3w, 24*sy);
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`; ctx.fillStyle = '#A855F7';
+  ctx.fillText('🔒 3. SECURITY & AUDIT CHAMBER', c3x + 12*sx, c3y + 16*sy);
 
-  // Latverian Anomaly Core in Room 1
-  ctx.beginPath();
-  ctx.arc(r1x + 120*sx, r1y + 140*sy, 32*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
+  // 4. DEVOPS & PR CHAMBER (Top-Right)
+  const c4x = 710 * sx, c4y = 14 * sy, c4w = 276 * sx, c4h = 280 * sy;
+  ctx.fillStyle = 'rgba(0, 229, 255, 0.03)';
+  ctx.fillRect(c4x, c4y, c4w, c4h);
+  ctx.strokeStyle = '#00E5FF'; ctx.lineWidth = 1.5; ctx.strokeRect(c4x, c4y, c4w, c4h);
+  ctx.fillStyle = 'rgba(0, 229, 255, 0.15)'; ctx.fillRect(c4x, c4y, c4w, 24*sy);
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`; ctx.fillStyle = '#00E5FF';
+  ctx.fillText('🚀 4. DEVOPS & PR CHAMBER', c4x + 12*sx, c4y + 16*sy);
 
-  // ── ROOM 2: SECRET WARS EVENTS (Top-Center) ──
-  const r2x = 260 * sx, r2y = 14 * sy, r2w = 440 * sx, r2h = 160 * sy;
-  ctx.fillStyle = 'rgba(245, 158, 11, 0.04)'; // Beyonder Gold Tint
-  ctx.fillRect(r2x, r2y, r2w, r2h);
-  ctx.strokeStyle = '#F59E0B';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(r2x, r2y, r2w, r2h);
+  // 5. MULTIVERSE & INCURSION CHAMBER (Bottom-Right)
+  const c5x = 710 * sx, c5y = 304 * sy, c5w = 276 * sx, c5h = 400 * sy;
+  ctx.fillStyle = 'rgba(255, 153, 0, 0.03)';
+  ctx.fillRect(c5x, c5y, c5w, c5h);
+  ctx.strokeStyle = '#FF9900'; ctx.lineWidth = 1.5; ctx.strokeRect(c5x, c5y, c5w, c5h);
+  ctx.fillStyle = 'rgba(255, 153, 0, 0.15)'; ctx.fillRect(c5x, c5y, c5w, 24*sy);
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`; ctx.fillStyle = '#FF9900';
+  ctx.fillText('🔮 5. MULTIVERSE & INCURSIONS', c5x + 12*sx, c5y + 16*sy);
 
-  // Room 2 Header Banner
-  ctx.fillStyle = 'rgba(245, 158, 11, 0.18)';
-  ctx.fillRect(r2x, r2y, r2w, 26*sy);
-  ctx.font = `bold ${11*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#F59E0B';
-  ctx.fillText('⚡ 2. SECRET WARS EVENTS // BATTLEWORLD NEXUS', r2x + 14*sx, r2y + 18*sy);
-
-  // Holographic Battleworld Map Table in Room 2
-  ctx.fillStyle = '#0B132B';
-  ctx.fillRect(r2x + 60*sx, r2y + 50*sy, r2w - 120*sx, 75*sy);
-  ctx.strokeStyle = '#F59E0B';
-  ctx.strokeRect(r2x + 60*sx, r2y + 50*sy, r2w - 120*sx, 75*sy);
-  // Hologram Grid inside table
-  ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
-  ctx.strokeRect(r2x + 80*sx, r2y + 60*sy, r2w - 160*sx, 55*sy);
-
-  // ── ROOM 3: INCURSIONS (Top-Right & Dimensional Chamber) ──
-  const r3x = 710 * sx, r3y = 14 * sy, r3w = 276 * sx, r3h = 280 * sy;
-  ctx.fillStyle = 'rgba(239, 68, 68, 0.05)'; // Red Incursion Alert Tint
-  ctx.fillRect(r3x, r3y, r3w, r3h);
-  ctx.strokeStyle = '#EF4444';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(r3x, r3y, r3w, r3h);
-
-  // Room 3 Header Banner
-  ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
-  ctx.fillRect(r3x, r3y, r3w, 26*sy);
-  ctx.font = `bold ${11*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#EF4444';
-  ctx.fillText('🌌 3. INCURSIONS // COLLISION RADAR', r3x + 12*sx, r3y + 18*sy);
-
-  // Collapsing Multiverse Rift Hologram in Room 3
-  const rx = r3x + 138 * sx;
-  const ry = r3y + 150 * sy;
-  ctx.save();
-  ctx.translate(rx, ry);
-  ctx.rotate(now * 0.8);
-  ctx.beginPath();
-  ctx.arc(0, 0, 48*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#EF4444';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([8, 6]);
-  ctx.stroke();
-  ctx.rotate(-now * 1.6);
-  ctx.beginPath();
-  ctx.arc(0, 0, 28*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#A855F7';
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-
-  // ── 4. CENTRAL ARC REACTOR & AVENGERS CREST ──
+  // Central Arc Reactor Grid
   const ax = 480 * sx;
   const ay = 360 * sy;
 
-  // Outer Pulsing Arc Power Ring
-  ctx.beginPath();
-  ctx.arc(ax, ay, 95*sx, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
-  ctx.fill();
-  ctx.strokeStyle = '#00F0FF';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  ctx.beginPath(); ctx.arc(ax, ay, 90*sx, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(0, 240, 255, 0.03)'; ctx.fill();
+  ctx.strokeStyle = '#00F0FF'; ctx.lineWidth = 2; ctx.stroke();
 
-  // Rotating Quantum Turbine Rings
   ctx.save();
   ctx.translate(ax, ay);
   ctx.rotate(now * 0.5);
-  ctx.beginPath();
-  ctx.arc(0, 0, 78*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([8, 8]);
-  ctx.stroke();
-
+  ctx.beginPath(); ctx.arc(0, 0, 72*sx, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)'; ctx.lineWidth = 2; ctx.setLineDash([8, 8]); ctx.stroke();
   ctx.rotate(-now * 1.1);
-  ctx.beginPath();
-  ctx.arc(0, 0, 56*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#00F0FF';
-  ctx.setLineDash([4, 4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(0, 0, 52*sx, 0, Math.PI * 2);
+  ctx.strokeStyle = '#00F0FF'; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
   ctx.restore();
 
-  // Giant Glowing Avengers "A"
-  ctx.font = `bold ${48*sx}px "Space Grotesk", sans-serif`;
-  ctx.fillStyle = '#00F0FF';
-  ctx.shadowColor = '#00F0FF';
-  ctx.shadowBlur = 20;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('A', ax, ay);
+  ctx.font = `bold ${44*sx}px "Space Grotesk", sans-serif`;
+  ctx.fillStyle = '#00F0FF'; ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 18;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('A', ax, ay);
   ctx.shadowBlur = 0;
 
-  ctx.font = `700 ${10.5*sx}px "Space Grotesk", sans-serif`;
+  ctx.font = `700 ${10*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#00F0FF';
-  ctx.fillText('ARC REACTOR POWER GRID', ax, ay + 115*sy);
+  ctx.fillText('ARC REACTOR POWER GRID', ax, ay + 110*sy);
 
-  // 5. Glowing Power Conduits Connecting All Rooms
-  ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+  // Conduits
+  ctx.strokeStyle = 'rgba(0, 240, 255, 0.12)';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([6, 6]);
-  HEROES.forEach(h => {
-    ctx.beginPath();
-    ctx.moveTo(h.officeX * sx, h.officeY * sy);
-    ctx.lineTo(ax, ay);
-    ctx.stroke();
+  activeHeroes.forEach(h => {
+    ctx.beginPath(); ctx.moveTo(h.officeX * sx, h.officeY * sy); ctx.lineTo(ax, ay); ctx.stroke();
   });
   ctx.setLineDash([]);
-
-  // 6. Superhero Workstation Pods (Main Floor)
-  const pods = [
-    { x: 175, y: 420, color: '#38BDF8', label: 'QA BRIEFING' },
-    { x: 285, y: 420, color: '#00FF87', label: 'GAMMA CORE' },
-    { x: 395, y: 420, color: '#A855F7', label: 'CYBER VAULT' },
-    { x: 175, y: 580, color: '#38BDF8', label: 'WEB TECH' },
-    { x: 395, y: 580, color: '#FF9900', label: 'MYSTIC RUNES' },
-    { x: 520, y: 220, color: '#00E5FF', label: 'BIFROST COIL' },
-    { x: 630, y: 220, color: '#FFD700', label: 'TARGET RANGE' },
-    { x: 520, y: 580, color: '#FFD700', label: 'MIND STONE' }
-  ];
-
-  pods.forEach(p => {
-    const px = p.x * sx;
-    const py = p.y * sy;
-    ctx.fillStyle = '#0D152A';
-    ctx.beginPath(); ctx.roundRect(px - 32*sx, py - 18*sy, 64*sx, 36*sy, 4); ctx.fill();
-    ctx.strokeStyle = p.color;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Hologram Monitor Glow
-    ctx.fillStyle = 'rgba(0, 240, 255, 0.2)';
-    ctx.beginPath(); ctx.roundRect(px - 16*sx, py - 28*sy, 32*sx, 16*sy, 2); ctx.fill();
-    ctx.strokeStyle = p.color;
-    ctx.stroke();
-  });
 }
 
-// Append Line to Terminal Output
+// Append Line to Terminal Feed
 function appendTerminalLine(type, text) {
-  const terminal = document.getElementById('terminalBody');
+  const terminal = document.getElementById('telemetryFeed');
   if (!terminal) return;
-
   const row = document.createElement('div');
-  row.className = `term-line ${type}`;
+  row.className = `term-row ${type}`;
   row.innerHTML = text;
   terminal.appendChild(row);
   terminal.scrollTop = terminal.scrollHeight;
 }
 
-// Master Mission Dispatch
-function dispatchMasterPrompt() {
-  const input = document.getElementById('queuePromptInput');
-  const prompt = input?.value.trim() || "Deconstruct multi-agent task into DAG directives";
+// Spawn Agent into Active Floor
+function spawnHeroAgent(heroKey) {
+  if (activeHeroes.some(h => h.id === heroKey)) {
+    selectHero(heroKey);
+    return;
+  }
 
-  const tony = characterEntities.find(c => c.id === 'tony-stark');
+  const tmpl = PRESET_HEROES[heroKey];
+  if (!tmpl) return;
+
+  const entity = new SuperheroEntity(tmpl);
+  activeHeroes.push(entity);
+
+  spawnParticleBeam(480, 340, tmpl.color);
+  appendTerminalLine('action', `⚡ Beamed [${tmpl.name}] into ${tmpl.chamber}.`);
+  entity.speak(`Reporting to ${tmpl.chamber}!`);
+
+  updateActiveDock();
+  updateArcLoadMeter();
+  selectHero(entity.id);
+}
+
+// Assemble All Agents
+function assembleAllStrikeTeam() {
+  Object.keys(PRESET_HEROES).forEach((key, index) => {
+    setTimeout(() => {
+      spawnHeroAgent(key);
+    }, index * 120);
+  });
+}
+
+// Update Bottom Active Dock
+function updateActiveDock() {
+  const dock = document.getElementById('bottomDockBar');
+  if (!dock) return;
+
+  dock.innerHTML = '';
+  activeHeroes.forEach(h => {
+    const card = document.createElement('div');
+    card.className = `hero-chip-card ${h.id === selectedHeroId ? 'active' : ''}`;
+    card.dataset.heroId = h.id;
+    card.style.setProperty('--card-color', h.color);
+
+    const avatar = h.archetype === 'iron' ? '🦾' : (h.archetype === 'cap' ? '🛡️' : (h.archetype === 'hulk' ? '🟢' : (h.archetype === 'widow' ? '🕷️' : (h.archetype === 'thor' ? '⚡' : (h.archetype === 'hawkeye' ? '🏹' : (h.archetype === 'spidey' ? '🕸️' : (h.archetype === 'strange' ? '🔮' : '💎')))))));
+
+    card.innerHTML = `
+      <div class="hero-chip-avatar" style="border-color:${h.color};">
+        ${avatar}
+      </div>
+      <div class="hero-chip-info">
+        <div class="hero-chip-name">${h.shortName}</div>
+        <div class="hero-chip-sub" style="color:${h.color};">${h.chamber.split(' ')[0]} &bull; ${h.tag}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => selectHero(h.id));
+    dock.appendChild(card);
+  });
+}
+
+// Update Arc Reactor Load Meter
+function updateArcLoadMeter() {
+  const count = activeHeroes.length;
+  const loadPct = Math.min(count * 11 + 10, 100);
+  const meter = document.getElementById('arcReactorLoadText');
+  if (meter) meter.textContent = `Arc Reactor: ${loadPct}% (${count} Active)`;
+
+  const agentCountEl = document.getElementById('activeAgentCountText');
+  if (agentCountEl) agentCountEl.textContent = `${count} Hero Agents Online`;
+}
+
+// Switch Hero Focus
+function selectHero(heroId) {
+  selectedHeroId = heroId;
+  const hero = activeHeroes.find(h => h.id === heroId);
+  if (!hero) return;
+
+  document.querySelectorAll('.hero-chip-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.heroId === heroId);
+  });
+
+  const nameEl = document.getElementById('activeHeroName');
+  if (nameEl) nameEl.textContent = `${hero.name} [${hero.tag}]`;
+
+  appendTerminalLine('system', `* Focus shifted to [${hero.name} // ${hero.chamber}]`);
+  hero.speak();
+  playSfx('packet');
+}
+
+// Dispatch Mission Prompt
+function dispatchPrompt(customText = null) {
+  const input = document.getElementById('promptTextarea');
+  const prompt = customText || input?.value.trim() || "Build JWT auth middleware and generate unit tests";
+
+  const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
   if (!tony) return;
 
-  appendTerminalLine('prompt', `> [JARVIS] Directive: ${prompt}`);
-  appendTerminalLine('system', `* Dr. Doom Chrono-Spire & Incursions Radar monitored.`);
-  appendTerminalLine('action', `* Tony Stark streaming task graph to all 8 Avengers.`);
+  appendTerminalLine('prompt', `> Directive: "${prompt}"`);
+  appendTerminalLine('system', `* Tony Stark deconstructing DAG across ${activeHeroes.length} active chambers.`);
   playSfx('repulsor');
 
-  tony.speak(`Scavengers Assemble! Executing: "${prompt}"`);
+  tony.speak(`Directives dispatched to strike team!`);
 
-  // Launch Quantum Packets
-  characterEntities.forEach((char, index) => {
-    if (char.id !== 'tony-stark') {
+  activeHeroes.forEach((hero, index) => {
+    if (hero !== tony) {
       setTimeout(() => {
-        quantumDataPackets.push(new QuantumDataPacket(tony.x, tony.y, char.x, char.y, char.hero.color, () => {
-          char.state = 'WORKING';
-          char.targetX = char.homeX;
-          char.targetY = char.homeY;
-          char.speak(`Directive received! Harnessing ${char.hero.model}`);
-          appendTerminalLine('command', `  L $ ${char.hero.harness} --task="${prompt}"`);
-          appendTerminalLine('success', `  ✔ [${char.hero.shortName}] Active on directive.`);
+        quantumDataPackets.push(new QuantumDataPacket(tony.x, tony.y, hero.x, hero.y, hero.color, () => {
+          hero.speak(`Executing in ${hero.chamber}`);
+          appendTerminalLine('command', `  L $ ${hero.harness || 'agentRunner'} --task="${prompt}"`);
+          appendTerminalLine('success', `  ✔ [${hero.shortName}] Active.`);
           playSfx('packet');
         }));
       }, index * 130);
@@ -868,26 +761,51 @@ function dispatchMasterPrompt() {
   if (input) input.value = '';
 }
 
-// Switch Active Hero
-function selectHero(heroId) {
-  selectedHeroId = heroId;
-  const hero = HEROES.find(h => h.id === heroId);
-  if (!hero) return;
+// Forge Custom Superhero Entity
+function forgeCustomHero(e) {
+  e.preventDefault();
+  const name = document.getElementById('customHeroName')?.value.trim() || 'Custom Hero';
+  const role = document.getElementById('customHeroRole')?.value.trim() || 'Specialist';
+  const chamber = document.getElementById('customHeroChamber')?.value || 'Development Chamber';
+  const archetype = document.getElementById('customHeroArchetype')?.value || 'iron';
+  const color = document.getElementById('customHeroColor')?.value || '#00F0FF';
+  const model = document.getElementById('customHeroModel')?.value || 'Claude 3.7 Sonnet';
 
-  document.querySelectorAll('.dock-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.heroId === heroId);
+  // Chamber placement coords
+  let coords = { officeX: 200, officeY: 200 };
+  if (chamber.includes('QA')) coords = { officeX: 175, officeY: 420 };
+  else if (chamber.includes('Security')) coords = { officeX: 395, officeY: 420 };
+  else if (chamber.includes('DevOps')) coords = { officeX: 520, officeY: 220 };
+  else if (chamber.includes('Multiverse')) coords = { officeX: 780, officeY: 200 };
+
+  const customId = 'custom_' + Date.now();
+  const customHero = new SuperheroEntity({
+    id: customId,
+    name: name,
+    shortName: name.toUpperCase(),
+    tag: 'CUSTOM',
+    role: role,
+    chamber: chamber,
+    harness: 'customAgentHarness',
+    model: model,
+    color: color,
+    archetype: archetype,
+    officeX: coords.officeX + (Math.random() - 0.5) * 30,
+    officeY: coords.officeY + (Math.random() - 0.5) * 30,
+    dialogs: [`Custom agent ${name} online in ${chamber}! Ready for directives.`]
   });
 
-  const nameEl = document.getElementById('ccBossName');
-  if (nameEl) nameEl.innerHTML = `${hero.name} <span style="font-size:10px;color:#00F0FF;">[${hero.tag}]</span>`;
+  activeHeroes.push(customHero);
+  spawnParticleBeam(480, 340, color);
+  appendTerminalLine('action', `🎨 Forged and deployed custom superhero [${name}] to ${chamber}!`);
+  customHero.speak();
 
-  const avatarEl = document.getElementById('ccBossAvatar');
-  if (avatarEl) avatarEl.textContent = hero.isBoss ? '🦾' : (hero.id === 'captain-america' ? '🛡️' : (hero.id === 'hulk' ? '🟢' : (hero.id === 'black-widow' ? '🕷️' : (hero.id === 'thor' ? '⚡' : (hero.id === 'hawkeye' ? '🏹' : (hero.id === 'spider-man' ? '🕸️' : (hero.id === 'doctor-strange' ? '🔮' : '💎')))))));
+  updateActiveDock();
+  updateArcLoadMeter();
+  selectHero(customId);
 
-  appendTerminalLine('system', `* Focused on [${hero.name} // ${hero.harness}]`);
-  const char = characterEntities.find(c => c.id === heroId);
-  if (char) char.speak();
-  playSfx('packet');
+  // Close modal
+  document.getElementById('customHeroModalBackdrop')?.classList.remove('open');
 }
 
 // 60 FPS Loop
@@ -900,16 +818,26 @@ function loop(now) {
   const sx = w / 1000;
   const sy = h / 720;
 
-  // 1. Draw Realistic War Room with the 3 Named Rooms
-  drawRealisticWarRoom(ctx, w, h);
+  drawChamberFloor(ctx, w, h);
 
-  // 2. Update & Draw Characters
-  characterEntities.forEach(char => {
-    char.update(dt);
-    char.draw(ctx, sx, sy);
+  // Draw Spawn Particles
+  for (let i = spawnParticles.length - 1; i >= 0; i--) {
+    const p = spawnParticles[i];
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.alpha -= dt * 2.5;
+    ctx.beginPath(); ctx.arc(p.x * sx, p.y * sy, p.radius, 0, Math.PI * 2);
+    ctx.fillStyle = p.color; ctx.globalAlpha = Math.max(p.alpha, 0); ctx.fill(); ctx.globalAlpha = 1;
+    if (p.alpha <= 0) spawnParticles.splice(i, 1);
+  }
+
+  // Draw Heroes
+  activeHeroes.forEach(h => {
+    h.update(dt);
+    h.draw(ctx, sx, sy);
   });
 
-  // 3. Update & Draw Quantum Data Nodes
+  // Draw Quantum Data Packets
   for (let i = quantumDataPackets.length - 1; i >= 0; i--) {
     const packet = quantumDataPackets[i];
     if (!packet.update(dt)) {
@@ -919,14 +847,20 @@ function loop(now) {
     }
   }
 
-  // 4. Update Speech Bubbles
   updateSpeechBubbles(dt, sx, sy);
-
   requestAnimationFrame(loop);
 }
 
-// Initialize
+// Initialize Onboarding & War Room
 function init() {
+  // Check if onboarding completed previously
+  const savedProvider = localStorage.getItem('stark_provider');
+  const onboardingScreen = document.getElementById('onboardingScreen');
+
+  if (savedProvider && onboardingScreen) {
+    onboardingScreen.classList.add('hidden');
+  }
+
   canvas = document.getElementById('pixelOfficeCanvas');
   if (!canvas) return;
   ctx = canvas.getContext('2d');
@@ -938,99 +872,110 @@ function init() {
   resize();
   window.addEventListener('resize', resize);
 
-  characterEntities = HEROES.map(h => new RealisticSuperhero(h));
+  // Spawn Tony Stark by default
+  const tony = new SuperheroEntity(PRESET_HEROES['tony-stark']);
+  activeHeroes = [tony];
+  updateActiveDock();
+  updateArcLoadMeter();
 
-  // Populate Bottom Dock Cards
-  const dock = document.getElementById('bottomDockBar');
-  if (dock) {
-    dock.innerHTML = '';
-    HEROES.forEach(h => {
-      const card = document.createElement('div');
-      card.className = `dock-card ${h.id === selectedHeroId ? 'active' : ''}`;
-      card.dataset.heroId = h.id;
-      card.style.setProperty('--card-color', h.color);
+  // Onboarding Provider selection
+  let selectedProvider = 'claude-code';
+  document.querySelectorAll('.provider-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedProvider = card.dataset.provider;
 
-      const avatar = h.id === 'tony-stark' ? '🦾' : (h.id === 'captain-america' ? '🛡️' : (h.id === 'hulk' ? '🟢' : (h.id === 'black-widow' ? '🕷️' : (h.id === 'thor' ? '⚡' : (h.id === 'hawkeye' ? '🏹' : (h.id === 'spider-man' ? '🕸️' : (h.id === 'doctor-strange' ? '🔮' : '💎')))))));
-
-      card.innerHTML = `
-        <div class="dock-card-avatar" style="border-color:${h.color};">
-          ${avatar}
-        </div>
-        <div class="dock-card-body">
-          <div class="dock-card-top">
-            <span class="dock-card-name">${h.shortName}</span>
-            <span class="dock-card-tag" style="color:${h.color};">${h.tag}</span>
-            <span style="font-size:9px;color:#00FF87;">● online</span>
-          </div>
-          <span class="dock-card-harness">${h.harness}</span>
-        </div>
-      `;
-      card.addEventListener('click', () => selectHero(h.id));
-      dock.appendChild(card);
-    });
-  }
-
-  // Dispatch prompt button
-  const sendBtn = document.getElementById('sendPromptBtn');
-  if (sendBtn) sendBtn.addEventListener('click', dispatchMasterPrompt);
-
-  const inputEl = document.getElementById('queuePromptInput');
-  if (inputEl) {
-    inputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        dispatchMasterPrompt();
+      const input = document.getElementById('onboardingKeyInput');
+      const label = document.getElementById('onboardingKeyLabel');
+      if (input && label) {
+        if (selectedProvider === 'ollama') {
+          label.textContent = 'Ollama Endpoint URL:';
+          input.value = 'http://localhost:11434';
+        } else if (selectedProvider === 'simulator') {
+          label.textContent = 'Zero-Setup Simulator:';
+          input.value = 'Offline Mock Engine (No key needed)';
+        } else {
+          label.textContent = `Enter ${card.querySelector('.name').textContent} API Key:`;
+          input.placeholder = `sk-... / AIza...`;
+        }
       }
     });
+  });
+
+  // Onboarding Submit
+  const initBtn = document.getElementById('initArcReactorBtn');
+  if (initBtn) {
+    initBtn.addEventListener('click', () => {
+      localStorage.setItem('stark_provider', selectedProvider);
+      onboardingScreen?.classList.add('hidden');
+      playSfx('beam');
+      appendTerminalLine('system', `* Initialized Arc Reactor with provider [${selectedProvider.toUpperCase()}]`);
+      tony.speak("Arc Reactor initialized. Welcome to Stark Tower!");
+    });
   }
 
-  // Tab switching
-  document.querySelectorAll('.cc-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.cc-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      activeTab = tab.dataset.tab;
-      appendTerminalLine('system', `* Switched telemetry tab to [${activeTab.toUpperCase()}]`);
+  const skipBtn = document.getElementById('skipOnboardingBtn');
+  if (skipBtn) {
+    skipBtn.addEventListener('click', () => {
+      localStorage.setItem('stark_provider', 'simulator');
+      onboardingScreen?.classList.add('hidden');
+      playSfx('beam');
+      tony.speak("Simulator engine active. Ready for directives.");
+    });
+  }
+
+  // Quick Preset Spawner Chips
+  document.querySelectorAll('.spawn-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const heroKey = chip.dataset.hero;
+      if (heroKey === 'all') {
+        assembleAllStrikeTeam();
+      } else {
+        spawnHeroAgent(heroKey);
+      }
     });
   });
 
-  // Modal Setup
-  const ideBtn = document.getElementById('openIdeModalBtn');
-  const ideModal = document.getElementById('ideModalBackdrop');
-  const closeModalBtn = document.getElementById('closeIdeModalBtn');
+  // Custom Hero Modal
+  const openCustomBtn = document.getElementById('openCustomHeroModalBtn');
+  const customModal = document.getElementById('customHeroModalBackdrop');
+  const closeCustomBtn = document.getElementById('closeCustomHeroModalBtn');
+  const customForm = document.getElementById('customHeroForm');
 
-  if (ideBtn && ideModal) {
-    ideBtn.addEventListener('click', () => ideModal.classList.add('open'));
+  if (openCustomBtn && customModal) {
+    openCustomBtn.addEventListener('click', () => customModal.classList.add('open'));
   }
-  if (closeModalBtn && ideModal) {
-    closeModalBtn.addEventListener('click', () => ideModal.classList.remove('open'));
+  if (closeCustomBtn && customModal) {
+    closeCustomBtn.addEventListener('click', () => customModal.classList.remove('open'));
   }
-  if (ideModal) {
-    ideModal.addEventListener('click', (e) => {
-      if (e.target === ideModal) ideModal.classList.remove('open');
-    });
+  if (customForm) {
+    customForm.addEventListener('submit', forgeCustomHero);
   }
 
-  // IDE Modal Sub-tabs
-  document.querySelectorAll('.ide-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.ide-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.ide-guide-section').forEach(sec => sec.style.display = 'none');
-      const targetSec = document.getElementById(btn.dataset.target);
-      if (targetSec) targetSec.style.display = 'block';
+  // Prompt Dispatcher
+  const dispatchBtn = document.getElementById('dispatchPromptBtn');
+  if (dispatchBtn) dispatchBtn.addEventListener('click', () => dispatchPrompt());
+
+  document.querySelectorAll('.template-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      dispatchPrompt(pill.dataset.prompt);
     });
   });
 
-  // Start 60 FPS Loop
+  // Settings re-open onboarding
+  const settingsBtn = document.getElementById('reopenSettingsBtn');
+  if (settingsBtn && onboardingScreen) {
+    settingsBtn.addEventListener('click', () => {
+      onboardingScreen.classList.remove('hidden');
+    });
+  }
+
   requestAnimationFrame(loop);
 
   setTimeout(() => {
-    appendTerminalLine('system', `* STARK TOWER // MULTIVERSE WAR ROOM ONLINE.`);
-    appendTerminalLine('system', `* Monitoring: 1. Dr Doom Events · 2. Secret Wars · 3. Incursions`);
-    appendTerminalLine('action', `> [JARVIS] All 9 Avengers active on Arc Reactor Power Grid.`);
-    appendTerminalLine('command', `  L $ node bin/stark.js assemble --multiverse`);
-    appendTerminalLine('tip', `* Tip: Type a prompt below and hit Assemble & Dispatch ➔`);
+    appendTerminalLine('system', `* STARK TOWER WAR ROOM PLATFORM ONLINE.`);
+    appendTerminalLine('system', `* Tony Stark active in Development Chamber. Click "+ Spawn Hero" to expand.`);
   }, 300);
 }
 
