@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — AGENTIC AI WAR ROOM & MULTIVERSE CHAMBERS
-   Features: 1-Click OAuth & ID Login, Antigravity Bridge, Cursor Connect,
-   Codex, Gemini, Dynamic Hero Spawning, Custom Hero Forge, Sharp Fonts
+   STARK TOWER WAR ROOM — VISUAL-FIRST INTERACTIVE AGENTIC ENGINE
+   Features: Visual DAG Pipeline, Avatar Stack, Holographic Radar Rings,
+   Dynamic Superhero Particle Spawners, Custom Hero Forge Customizer
    ══════════════════════════════════════════════════════════════════════ */
 
 let canvas, ctx;
@@ -10,74 +10,6 @@ let soundEnabled = true;
 let simSpeed = 1;
 let selectedHeroId = 'tony-stark';
 let audioCtx = null;
-
-// Provider descriptions & OAuth labels
-const PROVIDER_METADATA = {
-  'antigravity': {
-    name: 'Google Antigravity',
-    icon: '🚀',
-    desc: 'Connect via local AGY sidecar bridge to coordinate multi-agent DAG execution in Antigravity.',
-    btnLabel: 'Connect Google Antigravity & Enter Platform',
-    badge: '✓ Secure Direct Bridge',
-    keyPlaceholder: 'Local AGY Daemon (Auto-detecting...)'
-  },
-  'cursor': {
-    name: 'Cursor IDE',
-    icon: '⚡',
-    desc: 'Log in with your Cursor account / MCP configuration to dispatch tasks from Composer.',
-    btnLabel: 'Log in with Cursor IDE & Enter Platform',
-    badge: '✓ Cursor MCP Connected',
-    keyPlaceholder: 'Cursor Session Token / API Key'
-  },
-  'claude-code': {
-    name: 'Claude Code',
-    icon: '🤖',
-    desc: 'Authenticate with Anthropic CLI session or OAuth to drive Tony Stark GOD orchestration.',
-    btnLabel: 'Connect Claude Code & Enter Platform',
-    badge: '✓ Anthropic CLI Active',
-    keyPlaceholder: 'sk-ant-api03-...'
-  },
-  'codex': {
-    name: 'OpenAI Codex / Copilot',
-    icon: '🔷',
-    desc: 'Sign in with your OpenAI or GitHub Copilot account for security audits and deep AST refactors.',
-    btnLabel: 'Connect OpenAI Codex & Enter Platform',
-    badge: '✓ OpenAI / Copilot Auth',
-    keyPlaceholder: 'sk-proj-...'
-  },
-  'gemini': {
-    name: 'Google Gemini',
-    icon: '✨',
-    desc: 'Sign in with Google OAuth to harness 1M+ token context windows for QA and test generation.',
-    btnLabel: 'Sign in with Google & Enter Platform',
-    badge: '✓ Google OAuth 2.0',
-    keyPlaceholder: 'AIzaSy...'
-  },
-  'kimi': {
-    name: 'Kimi (Moonshot AI)',
-    icon: '🌙',
-    desc: 'Connect Moonshot AI account for 128k+ long-context multilingual reasoning.',
-    btnLabel: 'Connect Kimi Moonshot & Enter Platform',
-    badge: '✓ Moonshot API Ready',
-    keyPlaceholder: 'sk-...'
-  },
-  'grok': {
-    name: 'xAI Grok',
-    icon: '⚡',
-    desc: 'Connect with xAI session for real-time DevOps and infrastructure synthesis.',
-    btnLabel: 'Connect xAI Grok & Enter Platform',
-    badge: '✓ xAI API Ready',
-    keyPlaceholder: 'xai-...'
-  },
-  'ollama': {
-    name: 'Ollama (Local Offline)',
-    icon: '🦙',
-    desc: 'Direct connection to local Ollama daemon at http://localhost:11434 with zero API costs.',
-    btnLabel: 'Connect Local Ollama Daemon & Enter Platform',
-    badge: '✓ Localhost:11434',
-    keyPlaceholder: 'http://localhost:11434'
-  }
-};
 
 // Available Pre-Configured Avengers
 const PRESET_HEROES = {
@@ -251,7 +183,7 @@ let quantumDataPackets = [];
 let speechBubbles = [];
 let spawnParticles = [];
 
-// Audio Synthesizer
+// Stark Web Audio Synthesizer
 function getAudio() {
   if (!audioCtx) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -339,7 +271,6 @@ class SuperheroEntity {
   speak(text = null) {
     const dialog = text || this.dialogs[Math.floor(Math.random() * this.dialogs.length)];
     createSpeechBubble(this, dialog);
-    appendTerminalLine('action', `● [${this.shortName}] ${dialog}`);
     playSfx('pop');
   }
 
@@ -386,7 +317,7 @@ class SuperheroEntity {
     ctx.save();
     ctx.translate(px, py);
 
-    // Ground Shadow
+    // Soft Shadow
     ctx.beginPath();
     ctx.ellipse(0, 14, 16, 6, 0, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
@@ -578,7 +509,7 @@ function createSpeechBubble(character, text) {
   speechBubbles.push({
     element: bubble,
     character: character,
-    timer: 4.0
+    timer: 3.5
   });
 }
 
@@ -602,7 +533,7 @@ function drawChamberFloor(ctx, w, h) {
   const sy = h / 720;
   const now = performance.now() * 0.001;
 
-  ctx.fillStyle = '#040711';
+  ctx.fillStyle = '#03060F';
   ctx.fillRect(0, 0, w, h);
 
   // Hex Deck Grid
@@ -698,17 +629,6 @@ function drawChamberFloor(ctx, w, h) {
   ctx.setLineDash([]);
 }
 
-// Append Line to Terminal Feed
-function appendTerminalLine(type, text) {
-  const terminal = document.getElementById('telemetryFeed');
-  if (!terminal) return;
-  const row = document.createElement('div');
-  row.className = `term-row ${type}`;
-  row.innerHTML = text;
-  terminal.appendChild(row);
-  terminal.scrollTop = terminal.scrollHeight;
-}
-
 // Spawn Agent into Active Floor
 function spawnHeroAgent(heroKey) {
   if (activeHeroes.some(h => h.id === heroKey)) {
@@ -723,12 +643,13 @@ function spawnHeroAgent(heroKey) {
   activeHeroes.push(entity);
 
   spawnParticleBeam(480, 340, tmpl.color);
-  appendTerminalLine('action', `⚡ Beamed [${tmpl.name}] into ${tmpl.chamber}.`);
   entity.speak(`Reporting to ${tmpl.chamber}!`);
 
   updateActiveDock();
+  updateTopAvatarStack();
   updateArcLoadMeter();
   selectHero(entity.id);
+  updateDagPipeline();
 }
 
 // Assemble All Agents
@@ -737,6 +658,24 @@ function assembleAllStrikeTeam() {
     setTimeout(() => {
       spawnHeroAgent(key);
     }, index * 120);
+  });
+}
+
+// Update Top Avatar Stack
+function updateTopAvatarStack() {
+  const stack = document.getElementById('topAvatarStack');
+  if (!stack) return;
+
+  stack.innerHTML = '';
+  activeHeroes.forEach(h => {
+    const av = document.createElement('div');
+    av.className = 'stack-avatar';
+    av.style.borderColor = h.color;
+    av.title = h.name;
+    const emoji = h.archetype === 'iron' ? '🦾' : (h.archetype === 'cap' ? '🛡️' : (h.archetype === 'hulk' ? '🟢' : (h.archetype === 'widow' ? '🕷️' : (h.archetype === 'thor' ? '⚡' : (h.archetype === 'hawkeye' ? '🏹' : (h.archetype === 'spidey' ? '🕸️' : (h.archetype === 'strange' ? '🔮' : '💎')))))));
+    av.textContent = emoji;
+    av.addEventListener('click', () => selectHero(h.id));
+    stack.appendChild(av);
   });
 }
 
@@ -771,12 +710,13 @@ function updateActiveDock() {
 // Update Arc Reactor Load Meter
 function updateArcLoadMeter() {
   const count = activeHeroes.length;
-  const loadPct = Math.min(count * 11 + 10, 100);
-  const meter = document.getElementById('arcReactorLoadText');
-  if (meter) meter.textContent = `Arc Reactor: ${loadPct}% (${count} Active)`;
+  const loadPct = Math.min(count * 11 + 14, 100);
 
-  const agentCountEl = document.getElementById('activeAgentCountText');
-  if (agentCountEl) agentCountEl.textContent = `${count} Hero Agents Online`;
+  const pctLabel = document.getElementById('arcReactorPctLabel');
+  if (pctLabel) pctLabel.textContent = `${loadPct}%`;
+
+  const barFill = document.getElementById('arcReactorBarFill');
+  if (barFill) barFill.style.width = `${loadPct}%`;
 }
 
 // Switch Hero Focus
@@ -789,59 +729,92 @@ function selectHero(heroId) {
     c.classList.toggle('active', c.dataset.heroId === heroId);
   });
 
-  const nameEl = document.getElementById('activeHeroName');
-  if (nameEl) nameEl.textContent = `${hero.name} [${hero.tag}]`;
+  const labelEl = document.getElementById('activeHeroHudLabel');
+  if (labelEl) labelEl.textContent = `${hero.name.toUpperCase()} // ${hero.role.toUpperCase()}`;
 
-  appendTerminalLine('system', `* Focus shifted to [${hero.name} // ${hero.chamber}]`);
   hero.speak();
   playSfx('packet');
 }
 
+// Visual DAG Pipeline Dynamic Rendering
+function updateDagPipeline(taskType = 'DEFAULT') {
+  const pipeline = document.getElementById('hudDagPipeline');
+  if (!pipeline) return;
+
+  pipeline.innerHTML = `
+    <div class="dag-pipeline-title">
+      <span>🕸️</span>
+      <span>ACTIVE TASK DAG PIPELINE</span>
+    </div>
+  `;
+
+  activeHeroes.forEach((h, index) => {
+    const card = document.createElement('div');
+    card.className = 'dag-node-card';
+    card.style.setProperty('--node-color', h.color);
+
+    const emoji = h.archetype === 'iron' ? '🦾' : (h.archetype === 'cap' ? '🛡️' : (h.archetype === 'hulk' ? '🟢' : (h.archetype === 'widow' ? '🕷️' : (h.archetype === 'thor' ? '⚡' : (h.archetype === 'hawkeye' ? '🏹' : (h.archetype === 'spidey' ? '🕸️' : (h.archetype === 'strange' ? '🔮' : '💎')))))));
+
+    const statusText = index === 0 ? '● MASTER DAG' : (index === 1 ? '✔ VERIFIED' : '⚡ EXECUTING');
+    const statusColor = index === 1 ? 'var(--gamma-green)' : h.color;
+
+    card.innerHTML = `
+      <div class="dag-node-left">
+        <div class="dag-node-avatar" style="border-color:${h.color};">${emoji}</div>
+        <div>
+          <div class="dag-node-title">${h.name}</div>
+          <div class="dag-node-task">${h.role} &bull; ${h.chamber.split(' ')[0]}</div>
+        </div>
+      </div>
+      <div class="dag-progress-ring" style="color:${statusColor};">${statusText}</div>
+    `;
+    pipeline.appendChild(card);
+  });
+}
+
 // Dispatch Mission Prompt
 function dispatchPrompt(customText = null) {
-  const input = document.getElementById('promptTextarea');
-  const prompt = customText || input?.value.trim() || "Build JWT auth middleware and generate unit tests";
+  const input = document.getElementById('hudPromptInput');
+  const prompt = customText || input?.value.trim() || "Build JWT auth middleware with unit tests";
 
   const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
   if (!tony) return;
 
-  appendTerminalLine('prompt', `> Directive: "${prompt}"`);
-  appendTerminalLine('system', `* Tony Stark deconstructing DAG across ${activeHeroes.length} active chambers.`);
   playSfx('repulsor');
-
-  tony.speak(`Directives dispatched to strike team!`);
+  tony.speak(`Directives dispatched to ${activeHeroes.length} hero chambers!`);
+  updateDagPipeline();
 
   activeHeroes.forEach((hero, index) => {
     if (hero !== tony) {
       setTimeout(() => {
         quantumDataPackets.push(new QuantumDataPacket(tony.x, tony.y, hero.x, hero.y, hero.color, () => {
-          hero.speak(`Executing in ${hero.chamber}`);
-          appendTerminalLine('command', `  L $ ${hero.harness || 'agentRunner'} --task="${prompt}"`);
-          appendTerminalLine('success', `  ✔ [${hero.shortName}] Active.`);
+          hero.speak(`Active on directive in ${hero.chamber.split(' ')[0]}`);
           playSfx('packet');
         }));
       }, index * 130);
     }
   });
-
-  if (input) input.value = '';
 }
 
-// Forge Custom Superhero Entity
+// Forge Custom Superhero
 function forgeCustomHero(e) {
   e.preventDefault();
   const name = document.getElementById('customHeroName')?.value.trim() || 'Custom Hero';
   const role = document.getElementById('customHeroRole')?.value.trim() || 'Specialist';
-  const chamber = document.getElementById('customHeroChamber')?.value || 'Development Chamber';
-  const archetype = document.getElementById('customHeroArchetype')?.value || 'iron';
-  const color = document.getElementById('customHeroColor')?.value || '#00F0FF';
-  const model = document.getElementById('customHeroModel')?.value || 'Claude Code';
+  const archetype = document.querySelector('.arch-tile.selected')?.dataset.archetype || 'iron';
+  const color = document.querySelector('.color-circle.selected')?.dataset.color || '#00F0FF';
 
+  let chamber = 'Development Chamber';
   let coords = { officeX: 200, officeY: 200 };
-  if (chamber.includes('QA')) coords = { officeX: 175, officeY: 420 };
-  else if (chamber.includes('Security')) coords = { officeX: 395, officeY: 420 };
-  else if (chamber.includes('DevOps')) coords = { officeX: 520, officeY: 220 };
-  else if (chamber.includes('Multiverse')) coords = { officeX: 780, officeY: 200 };
+  if (archetype === 'cap' || archetype === 'hawkeye') {
+    chamber = 'QA & Testing Chamber'; coords = { officeX: 175, officeY: 420 };
+  } else if (archetype === 'widow') {
+    chamber = 'Security & Audit Chamber'; coords = { officeX: 395, officeY: 420 };
+  } else if (archetype === 'thor') {
+    chamber = 'DevOps & PR Chamber'; coords = { officeX: 520, officeY: 220 };
+  } else if (archetype === 'strange') {
+    chamber = 'Multiverse & Incursion Chamber'; coords = { officeX: 780, officeY: 200 };
+  }
 
   const customId = 'custom_' + Date.now();
   const customHero = new SuperheroEntity({
@@ -852,22 +825,23 @@ function forgeCustomHero(e) {
     role: role,
     chamber: chamber,
     harness: 'customAgentHarness',
-    model: model,
+    model: 'Antigravity / Custom',
     color: color,
     archetype: archetype,
     officeX: coords.officeX + (Math.random() - 0.5) * 30,
     officeY: coords.officeY + (Math.random() - 0.5) * 30,
-    dialogs: [`Custom agent ${name} online in ${chamber}! Ready for directives.`]
+    dialogs: [`Custom hero ${name} online in ${chamber}! Ready for directives.`]
   });
 
   activeHeroes.push(customHero);
   spawnParticleBeam(480, 340, color);
-  appendTerminalLine('action', `🎨 Forged and deployed custom superhero [${name}] to ${chamber}!`);
   customHero.speak();
 
   updateActiveDock();
+  updateTopAvatarStack();
   updateArcLoadMeter();
   selectHero(customId);
+  updateDagPipeline();
 
   document.getElementById('customHeroModalBackdrop')?.classList.remove('open');
 }
@@ -912,7 +886,7 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
-// Initialize Onboarding & War Room
+// Initialize
 function init() {
   const savedProvider = localStorage.getItem('stark_provider');
   const onboardingScreen = document.getElementById('onboardingScreen');
@@ -936,96 +910,39 @@ function init() {
   const tony = new SuperheroEntity(PRESET_HEROES['tony-stark']);
   activeHeroes = [tony];
   updateActiveDock();
+  updateTopAvatarStack();
   updateArcLoadMeter();
+  updateDagPipeline();
 
   // Provider Selection Logic
   let selectedProvider = 'antigravity';
+  document.querySelectorAll('.prov-tile').forEach(tile => {
+    tile.addEventListener('click', () => {
+      document.querySelectorAll('.prov-tile').forEach(t => t.classList.remove('selected'));
+      tile.classList.add('selected');
+      selectedProvider = tile.dataset.provider;
 
-  function updateProviderView(providerKey) {
-    selectedProvider = providerKey;
-    const meta = PROVIDER_METADATA[providerKey] || PROVIDER_METADATA['antigravity'];
-
-    // Update OAuth Panel
-    const disp = document.getElementById('oauthProviderDisplay');
-    if (disp) disp.innerHTML = `<span>${meta.icon}</span><span>${meta.name} Integration</span>`;
-
-    const desc = document.getElementById('oauthDesc');
-    if (desc) desc.textContent = meta.desc;
-
-    const btnLabel = document.getElementById('oauthBtnLabel');
-    if (btnLabel) btnLabel.textContent = meta.btnLabel;
-
-    // Update Manual Form
-    const keyLabel = document.getElementById('apiKeyLabel');
-    if (keyLabel) keyLabel.textContent = `${meta.name} API Key / Session:`;
-
-    const keyInput = document.getElementById('manualApiKeyInput');
-    if (keyInput) keyInput.placeholder = meta.keyPlaceholder;
-  }
-
-  document.querySelectorAll('.provider-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.provider-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      updateProviderView(card.dataset.provider);
+      const nameEl = document.getElementById('obSelectedName');
+      const iconEl = document.getElementById('obSelectedIcon');
+      if (nameEl) nameEl.textContent = tile.dataset.name;
+      if (iconEl) iconEl.textContent = tile.dataset.icon;
     });
   });
 
-  // Auth Mode Tabs (OAuth vs Manual)
-  const tabOAuth = document.getElementById('tabOAuthMode');
-  const tabManual = document.getElementById('tabManualMode');
-  const oauthPanel = document.getElementById('oauthPanel');
-  const manualForm = document.getElementById('manualKeyForm');
-
-  if (tabOAuth && tabManual && oauthPanel && manualForm) {
-    tabOAuth.addEventListener('click', () => {
-      tabOAuth.classList.add('active');
-      tabManual.classList.remove('active');
-      oauthPanel.style.display = 'flex';
-      manualForm.style.display = 'none';
-    });
-
-    tabManual.addEventListener('click', () => {
-      tabManual.classList.add('active');
-      tabOAuth.classList.remove('active');
-      oauthPanel.style.display = 'none';
-      manualForm.style.display = 'flex';
-    });
-  }
-
-  // 1-Click Connect (OAuth / IDE Login)
-  const oauthBtn = document.getElementById('oauthConnectBtn');
-  if (oauthBtn) {
-    oauthBtn.addEventListener('click', () => {
+  const obConnectBtn = document.getElementById('obConnectBtn');
+  if (obConnectBtn) {
+    obConnectBtn.addEventListener('click', () => {
       localStorage.setItem('stark_provider', selectedProvider);
       onboardingScreen?.classList.add('hidden');
       playSfx('beam');
-      const meta = PROVIDER_METADATA[selectedProvider] || PROVIDER_METADATA['antigravity'];
-      appendTerminalLine('system', `* Connected via 1-Click ID Login: [${meta.name.toUpperCase()}]`);
-      tony.speak(`Connected to ${meta.name}! Ready for directives.`);
+      tony.speak("Arc Reactor online. Welcome to Stark Tower!");
     });
   }
 
-  // Manual Connect
-  const manualBtn = document.getElementById('manualConnectBtn');
-  if (manualBtn) {
-    manualBtn.addEventListener('click', () => {
-      const customModel = document.getElementById('manualCustomModelInput')?.value.trim();
-      localStorage.setItem('stark_provider', selectedProvider);
-      if (customModel) localStorage.setItem('stark_model', customModel);
-
-      onboardingScreen?.classList.add('hidden');
-      playSfx('beam');
-      const meta = PROVIDER_METADATA[selectedProvider] || PROVIDER_METADATA['antigravity'];
-      appendTerminalLine('system', `* Initialized credentials for [${meta.name.toUpperCase()}]`);
-      tony.speak(`Arc Reactor initialized with ${meta.name}!`);
-    });
-  }
-
-  // Quick Preset Spawner Chips
-  document.querySelectorAll('.spawn-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const heroKey = chip.dataset.hero;
+  // Visual Spawner Strip Pills
+  document.querySelectorAll('.v-spawn-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const heroKey = pill.dataset.hero;
       if (heroKey === 'all') {
         assembleAllStrikeTeam();
       } else {
@@ -1033,6 +950,22 @@ function init() {
       }
     });
   });
+
+  // Action Tiles
+  document.querySelectorAll('.action-tile').forEach(tile => {
+    tile.addEventListener('click', () => {
+      const task = tile.dataset.task;
+      let prompt = "Build secure JWT authentication microservice";
+      if (task === 'QA_TESTS') prompt = "Run strict TypeScript linting and generate 100% boundary unit tests";
+      else if (task === 'SEC_AUDIT') prompt = "Scan dependencies for CVE zero-days and sanitize credentials";
+      else if (task === 'DOCKER_CI') prompt = "Generate multi-stage Dockerfile and GitHub Actions CI/CD workflow";
+      dispatchPrompt(prompt);
+    });
+  });
+
+  // Dispatch Button
+  const dispatchBtn = document.getElementById('hudDispatchBtn');
+  if (dispatchBtn) dispatchBtn.addEventListener('click', () => dispatchPrompt());
 
   // Custom Hero Modal
   const openCustomBtn = document.getElementById('openCustomHeroModalBtn');
@@ -1050,17 +983,22 @@ function init() {
     customForm.addEventListener('submit', forgeCustomHero);
   }
 
-  // Prompt Dispatcher
-  const dispatchBtn = document.getElementById('dispatchPromptBtn');
-  if (dispatchBtn) dispatchBtn.addEventListener('click', () => dispatchPrompt());
-
-  document.querySelectorAll('.template-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      dispatchPrompt(pill.dataset.prompt);
+  // Archetype & Color Selectors in Modal
+  document.querySelectorAll('.arch-tile').forEach(tile => {
+    tile.addEventListener('click', () => {
+      document.querySelectorAll('.arch-tile').forEach(t => t.classList.remove('selected'));
+      tile.classList.add('selected');
     });
   });
 
-  // Settings re-open onboarding
+  document.querySelectorAll('.color-circle').forEach(circle => {
+    circle.addEventListener('click', () => {
+      document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+      circle.classList.add('selected');
+    });
+  });
+
+  // Reopen Settings
   const settingsBtn = document.getElementById('reopenSettingsBtn');
   if (settingsBtn && onboardingScreen) {
     settingsBtn.addEventListener('click', () => {
@@ -1069,11 +1007,6 @@ function init() {
   }
 
   requestAnimationFrame(loop);
-
-  setTimeout(() => {
-    appendTerminalLine('system', `* STARK TOWER // AGENTIC AI WAR ROOM ONLINE.`);
-    appendTerminalLine('system', `* Tony Stark active in Development Chamber. Click "+ Spawn Heroes" to expand.`);
-  }, 300);
 }
 
 document.addEventListener('DOMContentLoaded', init);

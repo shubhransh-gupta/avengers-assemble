@@ -4,122 +4,88 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stark Tower // Agentic AI War Room</title>
-  <meta name="description" content="Production multi-agent coding war room with 1-click OAuth & IDE ID login for Antigravity, Cursor, Claude Code, Codex, and Gemini. Powered by Shubhransh Gupta." />
+  <meta name="description" content="Visual-first multi-agent AI coding war room with 1-click OAuth, DAG pipeline visualization, and interactive superhero chambers." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
 
   <!-- High-Precision Fonts: Space Grotesk, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="warroom.css" />
 </head>
 <body>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       1. ONBOARDING GATEWAY (First View — Clean OAuth & IDE ID Login)
+       1. VISUAL ONBOARDING GATEWAY (Iconic Holographic Hub)
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="onboarding-screen" id="onboardingScreen">
     <div class="onboarding-card">
       
-      <div class="ob-header">
-        <div class="ob-reactor-badge">⚡</div>
-        <h1 class="ob-title">STARK TOWER // <span>AGENTIC AI GATEWAY</span></h1>
-        <p class="ob-subtitle">
-          Connect your AI agent or IDE via 1-Click OAuth / ID Login or API Key to initialize the Arc Reactor.
-        </p>
-      </div>
-
-      <!-- Provider Grid (8 Real Integrations) -->
-      <div class="provider-select-grid">
-        <div class="provider-card selected" data-provider="antigravity" data-name="Google Antigravity">
-          <span class="icon">🚀</span>
-          <span class="name">Antigravity</span>
-          <span class="badge">Native AGY</span>
-        </div>
-        <div class="provider-card" data-provider="cursor" data-name="Cursor IDE">
-          <span class="icon">⚡</span>
-          <span class="name">Cursor IDE</span>
-          <span class="badge">Composer / MCP</span>
-        </div>
-        <div class="provider-card" data-provider="claude-code" data-name="Claude Code">
-          <span class="icon">🤖</span>
-          <span class="name">Claude Code</span>
-          <span class="badge">Anthropic CLI</span>
-        </div>
-        <div class="provider-card" data-provider="codex" data-name="OpenAI Codex">
-          <span class="icon">🔷</span>
-          <span class="name">OpenAI Codex</span>
-          <span class="badge">Codex / Copilot</span>
-        </div>
-        <div class="provider-card" data-provider="gemini" data-name="Google Gemini">
-          <span class="icon">✨</span>
-          <span class="name">Gemini</span>
-          <span class="badge">Google OAuth</span>
-        </div>
-        <div class="provider-card" data-provider="kimi" data-name="Kimi">
-          <span class="icon">🌙</span>
-          <span class="name">Kimi</span>
-          <span class="badge">Moonshot AI</span>
-        </div>
-        <div class="provider-card" data-provider="grok" data-name="xAI Grok">
-          <span class="icon">⚡</span>
-          <span class="name">xAI Grok</span>
-          <span class="badge">xAI Connect</span>
-        </div>
-        <div class="provider-card" data-provider="ollama" data-name="Ollama Local">
-          <span class="icon">🦙</span>
-          <span class="name">Ollama</span>
-          <span class="badge">Local Daemon</span>
+      <div class="ob-visual-header">
+        <div class="ob-arc-reactor-logo">⚡</div>
+        <div class="ob-title-wrap">
+          <h1>STARK TOWER // <span>AGENTIC AI GATEWAY</span></h1>
         </div>
       </div>
 
-      <!-- Auth Mode Switch Tabs -->
-      <div class="auth-mode-tabs">
-        <button class="auth-tab-btn active" id="tabOAuthMode">
-          🔐 1-Click OAuth / IDE ID Login
-        </button>
-        <button class="auth-tab-btn" id="tabManualMode">
-          🔑 API Key &amp; Custom Model
-        </button>
-      </div>
-
-      <!-- Mode 1: OAuth / IDE Login Panel -->
-      <div class="oauth-login-panel" id="oauthPanel">
-        <div class="oauth-info-row">
-          <div class="oauth-provider-name" id="oauthProviderDisplay">
-            <span>🚀</span>
-            <span>Google Antigravity Integration</span>
-          </div>
-          <span class="oauth-badge">✓ Secure Direct Bridge</span>
+      <!-- Provider Visual Grid (8 Real Integrations) -->
+      <div class="provider-visual-grid">
+        <div class="prov-tile selected" data-provider="antigravity" data-name="Google Antigravity" data-icon="🚀">
+          <span class="p-icon">🚀</span>
+          <span class="p-name">Antigravity</span>
+          <span class="p-status"></span>
         </div>
-
-        <p class="oauth-desc" id="oauthDesc">
-          Instantly connect via local AGY sidecar bridge to coordinate Tony Stark and multi-agent DAG tasks.
-        </p>
-
-        <button class="oauth-connect-btn" id="oauthConnectBtn">
-          <span>⚡</span>
-          <span id="oauthBtnLabel">Connect Google Antigravity &amp; Enter Platform</span>
-        </button>
+        <div class="prov-tile" data-provider="cursor" data-name="Cursor IDE" data-icon="⚡">
+          <span class="p-icon">⚡</span>
+          <span class="p-name">Cursor IDE</span>
+          <span class="p-status"></span>
+        </div>
+        <div class="prov-tile" data-provider="claude-code" data-name="Claude Code" data-icon="🤖">
+          <span class="p-icon">🤖</span>
+          <span class="p-name">Claude Code</span>
+          <span class="p-status"></span>
+        </div>
+        <div class="prov-tile" data-provider="codex" data-name="OpenAI Codex" data-icon="🔷">
+          <span class="p-icon">🔷</span>
+          <span class="p-name">OpenAI Codex</span>
+          <span class="p-status"></span>
+        </div>
+        <div class="prov-tile" data-provider="gemini" data-name="Google Gemini" data-icon="✨">
+          <span class="p-icon">✨</span>
+          <span class="p-name">Gemini</span>
+          <span class="p-status"></span>
+        </div>
+        <div class="prov-tile" data-provider="kimi" data-name="Kimi" data-icon="🌙">
+          <span class="p-icon">🌙</span>
+          <span class="p-name">Kimi</span>
+          <span class="p-status"></span>
+        </div>
+        <div class="prov-tile" data-provider="grok" data-name="xAI Grok" data-icon="⚡">
+          <span class="p-icon">⚡</span>
+          <span class="p-name">xAI Grok</span>
+          <span class="p-status"></span>
+        </div>
+        <div class="prov-tile" data-provider="ollama" data-name="Ollama Local" data-icon="🦙">
+          <span class="p-icon">🦙</span>
+          <span class="p-name">Ollama Local</span>
+          <span class="p-status"></span>
+        </div>
       </div>
 
-      <!-- Mode 2: Manual Key & Model Form -->
-      <div class="manual-key-form" id="manualKeyForm" style="display:none;">
-        <div class="form-row">
-          <div class="form-col">
-            <label id="apiKeyLabel">API Key:</label>
-            <input type="password" class="text-input" id="manualApiKeyInput" placeholder="sk-... / AIzaSy..." />
-          </div>
-          <div class="form-col">
-            <label>Custom Model (Optional):</label>
-            <input type="text" class="text-input" id="manualCustomModelInput" placeholder="e.g. claude-3-7-sonnet / gpt-4o" />
+      <!-- Action Bar -->
+      <div class="ob-connect-bar">
+        <div class="ob-selected-info">
+          <span class="ob-selected-icon" id="obSelectedIcon">🚀</span>
+          <div>
+            <div class="ob-selected-name" id="obSelectedName">Google Antigravity</div>
+            <span class="ob-badge-auth">● 1-Click Direct Bridge</span>
           </div>
         </div>
 
-        <button class="oauth-connect-btn" id="manualConnectBtn">
-          <span>⚡</span>
-          <span>Save Credentials &amp; Initialize Arc Reactor</span>
+        <button class="ob-glow-connect-btn" id="obConnectBtn">
+          <span>⚡ CONNECT &amp; ENTER</span>
+          <span>&rarr;</span>
         </button>
       </div>
 
@@ -127,47 +93,83 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       2. MAIN WAR ROOM PLATFORM
+       2. MAIN WAR ROOM PLATFORM (Visual First)
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="app-container">
     
-    <!-- Top Bar -->
+    <!-- Top Bar with Visual Gauges -->
     <header class="warroom-top-bar">
-      <div class="top-brand">
-        <div class="top-reactor"></div>
-        <div class="top-title">Stark Tower // <span>War Room Platform</span></div>
+      <div class="top-brand-hud">
+        <div class="top-reactor-dial">⚡</div>
+        <div class="top-reactor-meter">
+          <div class="top-meter-label">
+            <span>ARC REACTOR</span>
+            <span style="color:var(--arc-cyan);" id="arcReactorPctLabel">25%</span>
+          </div>
+          <div class="top-power-bar">
+            <div class="top-power-fill" id="arcReactorBarFill"></div>
+          </div>
+        </div>
+
+        <!-- Live Avatar Stack -->
+        <div class="top-avatar-stack" id="topAvatarStack">
+          <div class="stack-avatar" title="Tony Stark">🦾</div>
+        </div>
       </div>
 
-      <div class="top-actions">
-        <div class="top-pill arc" id="arcReactorLoadText">
-          ⚡ Arc Reactor: 21% (1 Active)
-        </div>
-        <div class="top-pill gold" id="activeAgentCountText">
-          1 Hero Agent Online
-        </div>
-        <button class="top-btn gold" id="openCustomHeroModalBtn">
-          🎨 Forge Custom Hero
+      <div class="top-action-icons">
+        <button class="top-icon-btn gold" id="openCustomHeroModalBtn">
+          <span>🎨</span>
+          <span>FORGE HERO</span>
         </button>
-        <button class="top-btn" id="reopenSettingsBtn" title="Switch AI Provider">
-          ⚙️ Switch Provider
+        <button class="top-icon-btn" id="reopenSettingsBtn" title="Switch AI Provider">
+          <span>⚙️</span>
+          <span>PROVIDER</span>
         </button>
       </div>
     </header>
 
-    <!-- Quick Spawner Palette -->
-    <div class="preset-spawner-palette">
-      <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--text-dim);font-weight:700;display:flex;align-items:center;margin-right:4px;">
-        SPAWN HEROES:
+    <!-- Visual Spawner Strip -->
+    <div class="visual-spawner-strip">
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--arc-cyan);font-weight:700;margin-right:4px;">
+        ⚡ SPAWN:
       </span>
-      <button class="spawn-chip" data-hero="captain-america">🛡️ + Cap (QA)</button>
-      <button class="spawn-chip" data-hero="hulk">🟢 + Hulk (AST)</button>
-      <button class="spawn-chip" data-hero="black-widow">🕷️ + Widow (Security)</button>
-      <button class="spawn-chip" data-hero="thor">⚡ + Thor (DevOps)</button>
-      <button class="spawn-chip" data-hero="hawkeye">🏹 + Hawkeye (Tests)</button>
-      <button class="spawn-chip" data-hero="spider-man">🕸️ + Spidey (UI)</button>
-      <button class="spawn-chip" data-hero="doctor-strange">🔮 + Strange (Multiverse)</button>
-      <button class="spawn-chip" data-hero="vision">💎 + Vision (Memory)</button>
-      <button class="spawn-chip" data-hero="all" style="border-color:var(--gold);color:var(--gold);">⚡ + Assemble All</button>
+      <div class="v-spawn-pill" data-hero="captain-america" style="--pill-color:#38BDF8;--pill-glow:rgba(56,189,248,0.4);">
+        <span class="v-avatar">🛡️</span>
+        <span class="v-label">Cap (QA)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="hulk" style="--pill-color:#00FF87;--pill-glow:rgba(0,255,135,0.4);">
+        <span class="v-avatar">🟢</span>
+        <span class="v-label">Hulk (AST)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="black-widow" style="--pill-color:#A855F7;--pill-glow:rgba(168,85,247,0.4);">
+        <span class="v-avatar">🕷️</span>
+        <span class="v-label">Widow (Security)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="thor" style="--pill-color:#00E5FF;--pill-glow:rgba(0,229,255,0.4);">
+        <span class="v-avatar">⚡</span>
+        <span class="v-label">Thor (DevOps)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="hawkeye" style="--pill-color:#FFD700;--pill-glow:rgba(255,215,0,0.4);">
+        <span class="v-avatar">🏹</span>
+        <span class="v-label">Hawkeye (Tests)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="spider-man" style="--pill-color:#38BDF8;--pill-glow:rgba(56,189,248,0.4);">
+        <span class="v-avatar">🕸️</span>
+        <span class="v-label">Spidey (UI)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="doctor-strange" style="--pill-color:#FF9900;--pill-glow:rgba(255,153,0,0.4);">
+        <span class="v-avatar">🔮</span>
+        <span class="v-label">Strange (Multiverse)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="vision" style="--pill-color:#FFD700;--pill-glow:rgba(255,215,0,0.4);">
+        <span class="v-avatar">💎</span>
+        <span class="v-label">Vision (Memory)</span>
+      </div>
+      <div class="v-spawn-pill" data-hero="all" style="--pill-color:#FFD700;--pill-glow:rgba(255,215,0,0.5);border-color:var(--gold);">
+        <span class="v-avatar">⚡</span>
+        <span class="v-label" style="color:var(--gold);">ASSEMBLE ALL</span>
+      </div>
     </div>
 
     <!-- Master Split Workspace -->
@@ -179,130 +181,197 @@
         <div id="speechBubbleLayer" style="position:absolute;inset:0;pointer-events:none;z-index:30;"></div>
       </section>
 
-      <!-- RIGHT: Clean Task Dispatcher & Telemetry Feed -->
+      <!-- RIGHT: Visual Task HUD & Live DAG Pipeline -->
       <section class="command-center-panel">
-        <div class="cc-header-bar">
-          <div class="cc-header-title">
+        
+        <div class="hud-panel-header">
+          <div class="hud-title">
             <span>📡</span>
-            <span id="activeHeroName">Tony Stark [GOD]</span>
+            <span id="activeHeroHudLabel">TONY STARK // GOD ORCHESTRATOR</span>
           </div>
-          <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--gamma-green);">● TELEMETRY ONLINE</span>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--gamma-green);font-weight:700;">
+            ● 99.8% OPTIMAL
+          </span>
         </div>
 
-        <!-- Real-Time Feed -->
-        <div class="cc-telemetry-feed" id="telemetryFeed">
-          <!-- Populated live -->
-        </div>
-
-        <!-- Prompt Dispatcher Box -->
-        <div class="cc-dispatch-box">
-          <div class="quick-templates-row">
-            <span class="template-pill" data-prompt="Build secure JWT authentication microservice with rate limiting">
-              ⚡ JWT Auth
-            </span>
-            <span class="template-pill" data-prompt="Run strict TypeScript linting and generate boundary unit tests">
-              🛡️ QA &amp; Tests
-            </span>
-            <span class="template-pill" data-prompt="Scan dependencies for CVE zero-days and sanitize credentials">
-              🔒 Security Audit
-            </span>
-            <span class="template-pill" data-prompt="Generate multi-stage Dockerfile and GitHub Actions CI/CD workflow">
-              🚀 Docker &amp; CI/CD
-            </span>
+        <!-- Visual Action Tiles Grid -->
+        <div class="hud-action-tiles">
+          <div class="action-tile" data-task="JWT_AUTH" style="--tile-color:#00F0FF;">
+            <span class="tile-icon">⚡</span>
+            <div class="tile-text">
+              <span class="tile-name">JWT AUTH</span>
+              <span class="tile-sub">Token Guard &bull; Rate Limit</span>
+            </div>
           </div>
-
-          <textarea 
-            class="prompt-textarea" 
-            id="promptTextarea" 
-            placeholder="Assign task to active hero agents in chambers... (Enter to Dispatch)"
-          >Build high-performance JWT auth middleware with unit tests and Dockerfile</textarea>
-
-          <div class="dispatch-action-row">
-            <span style="font-family:var(--font-mono);font-size:10.5px;color:var(--text-dim);">
-              Powered by Arc Reactor Grid
-            </span>
-            <button class="assemble-btn" id="dispatchPromptBtn">
-              ⚡ Assemble &amp; Dispatch &rarr;
-            </button>
+          <div class="action-tile" data-task="QA_TESTS" style="--tile-color:#38BDF8;">
+            <span class="tile-icon">🛡️</span>
+            <div class="tile-text">
+              <span class="tile-name">QA SHIELD</span>
+              <span class="tile-sub">Strict Types &bull; 100% Tests</span>
+            </div>
+          </div>
+          <div class="action-tile" data-task="SEC_AUDIT" style="--tile-color:#A855F7;">
+            <span class="tile-icon">🔒</span>
+            <div class="tile-text">
+              <span class="tile-name">CVE AUDIT</span>
+              <span class="tile-sub">Zero-Day &bull; Sanitizer</span>
+            </div>
+          </div>
+          <div class="action-tile" data-task="DOCKER_CI" style="--tile-color:#00E5FF;">
+            <span class="tile-icon">🚀</span>
+            <div class="tile-text">
+              <span class="tile-name">DEVOPS PR</span>
+              <span class="tile-sub">Multi-Stage &bull; Actions</span>
+            </div>
           </div>
         </div>
+
+        <!-- Visual Live DAG Pipeline Flow -->
+        <div class="hud-dag-pipeline" id="hudDagPipeline">
+          <div class="dag-pipeline-title">
+            <span>🕸️</span>
+            <span>ACTIVE TASK DAG PIPELINE</span>
+          </div>
+
+          <!-- Dynamic Node 1: Master Orchestration -->
+          <div class="dag-node-card" style="--node-color:#00F0FF;">
+            <div class="dag-node-left">
+              <div class="dag-node-avatar">🦾</div>
+              <div>
+                <div class="dag-node-title">Tony Stark</div>
+                <div class="dag-node-task">DAG Deconstruction &bull; Load Balancer</div>
+              </div>
+            </div>
+            <div class="dag-progress-ring">● ACTIVE</div>
+          </div>
+
+          <!-- Dynamic Node 2: QA Standards -->
+          <div class="dag-node-card" style="--node-color:#38BDF8;">
+            <div class="dag-node-left">
+              <div class="dag-node-avatar">🛡️</div>
+              <div>
+                <div class="dag-node-title">Captain America</div>
+                <div class="dag-node-task">Vibranium Type Enforcement</div>
+              </div>
+            </div>
+            <div class="dag-progress-ring" style="color:var(--gamma-green);">✔ VERIFIED</div>
+          </div>
+        </div>
+
+        <!-- Prompt Dispatch Bar -->
+        <div class="hud-dispatch-bar">
+          <input 
+            type="text" 
+            class="hud-prompt-input" 
+            id="hudPromptInput" 
+            placeholder="Assign directive to active hero strike team..." 
+            value="Build secure JWT auth microservice with unit tests"
+          />
+          <button class="hud-dispatch-btn" id="hudDispatchBtn">
+            <span>⚡ DISPATCH</span>
+          </button>
+        </div>
+
       </section>
 
     </main>
 
     <!-- Bottom Active Hero Dock -->
     <footer class="bottom-dock-bar" id="bottomDockBar">
-      <!-- Active hero cards -->
+      <!-- Populated dynamically -->
     </footer>
 
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       3. CUSTOM HERO CREATOR MODAL
+       3. VISUAL CUSTOM HERO FORGE MODAL
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="custom-modal-backdrop" id="customHeroModalBackdrop">
     <div class="custom-modal">
       <div class="modal-header-bar">
-        <span class="modal-title">🎨 FORGE YOUR OWN SUPERHERO AGENT</span>
+        <span class="modal-title">
+          <span>🎨</span>
+          <span>FORGE CUSTOM SUPERHERO</span>
+        </span>
         <button class="modal-close-btn" id="closeCustomHeroModalBtn">&times;</button>
       </div>
 
-      <form id="customHeroForm" class="modal-body">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Hero Name / Callsign:</label>
-            <input type="text" class="form-input" id="customHeroName" placeholder="e.g. Symbiote Spidey / Gemma Lead" required value="Symbiote Spider-Man" />
-          </div>
-
-          <div class="form-group">
-            <label>Role / Specialty:</label>
-            <input type="text" class="form-input" id="customHeroRole" placeholder="e.g. Next.js Frontend Architect" required value="Next.js Performance Lead" />
-          </div>
-
-          <div class="form-group">
-            <label>Superhero Archetype:</label>
-            <select class="form-select" id="customHeroArchetype">
-              <option value="iron">Iron Armor (Repulsors &amp; HUD)</option>
-              <option value="spidey" selected>Webbed Suit (Agile Frontend)</option>
-              <option value="cap">Vibranium Shield (QA &amp; Lint)</option>
-              <option value="hulk">Gamma Titan (Deep AST Refactor)</option>
-              <option value="widow">Stealth Tactical (Security Audit)</option>
-              <option value="thor">Asgardian (DevOps &amp; Docker)</option>
-              <option value="strange">Mystic Sorcerer (Multiverse Simulation)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Theme &amp; Glow Color:</label>
-            <select class="form-select" id="customHeroColor">
-              <option value="#00F0FF">Arc Cyan (#00F0FF)</option>
-              <option value="#A855F7" selected>Quantum Purple (#A855F7)</option>
-              <option value="#FFD700">Infinity Gold (#FFD700)</option>
-              <option value="#00FF87">Gamma Green (#00FF87)</option>
-              <option value="#FF3366">Crimson Alert (#FF3366)</option>
-              <option value="#38BDF8">Sky Blue (#38BDF8)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Assigned Chamber:</label>
-            <select class="form-select" id="customHeroChamber">
-              <option value="Development Chamber">💻 Development Chamber</option>
-              <option value="QA & Testing Chamber">🛡️ QA &amp; Testing Chamber</option>
-              <option value="Security & Audit Chamber">🔒 Security &amp; Audit Chamber</option>
-              <option value="DevOps & PR Chamber">🚀 DevOps &amp; PR Chamber</option>
-              <option value="Multiverse & Incursion Chamber">🔮 Multiverse &amp; Incursion Chamber</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>AI Agent / Model Name:</label>
-            <input type="text" class="form-input" id="customHeroModel" placeholder="e.g. Claude Code / Codex / Gemini" value="Claude Code" />
+      <form id="customHeroForm" class="modal-visual-body">
+        
+        <!-- Archetype Icon Tiles -->
+        <div>
+          <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
+            SELECT SUPERHERO ARCHETYPE:
+          </label>
+          <div class="archetype-tiles-row">
+            <div class="arch-tile selected" data-archetype="iron">
+              <span class="a-icon">🦾</span>
+              <span class="a-name">Iron Armor</span>
+            </div>
+            <div class="arch-tile" data-archetype="spidey">
+              <span class="a-icon">🕸️</span>
+              <span class="a-name">Web Suit</span>
+            </div>
+            <div class="arch-tile" data-archetype="cap">
+              <span class="a-icon">🛡️</span>
+              <span class="a-name">Vibranium</span>
+            </div>
+            <div class="arch-tile" data-archetype="hulk">
+              <span class="a-icon">🟢</span>
+              <span class="a-name">Gamma Titan</span>
+            </div>
+            <div class="arch-tile" data-archetype="widow">
+              <span class="a-icon">🕷️</span>
+              <span class="a-name">Stealth</span>
+            </div>
+            <div class="arch-tile" data-archetype="thor">
+              <span class="a-icon">⚡</span>
+              <span class="a-name">Asgardian</span>
+            </div>
+            <div class="arch-tile" data-archetype="strange">
+              <span class="a-icon">🔮</span>
+              <span class="a-name">Sorcerer</span>
+            </div>
+            <div class="arch-tile" data-archetype="vision">
+              <span class="a-icon">💎</span>
+              <span class="a-name">Mind Stone</span>
+            </div>
           </div>
         </div>
 
-        <button type="submit" class="assemble-btn" style="width:100%;padding:11px 0;margin-top:8px;">
-          ⚡ Forge &amp; Deploy Superhero to Chamber
+        <!-- Color Swatch Circles -->
+        <div>
+          <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;">
+            THEME &amp; GLOW ENERGY:
+          </label>
+          <div class="color-swatch-row">
+            <div class="color-circle selected" data-color="#00F0FF" style="background:#00F0FF;"></div>
+            <div class="color-circle" data-color="#A855F7" style="background:#A855F7;"></div>
+            <div class="color-circle" data-color="#FFD700" style="background:#FFD700;"></div>
+            <div class="color-circle" data-color="#00FF87" style="background:#00FF87;"></div>
+            <div class="color-circle" data-color="#FF3366" style="background:#FF3366;"></div>
+            <div class="color-circle" data-color="#38BDF8" style="background:#38BDF8;"></div>
+          </div>
+        </div>
+
+        <!-- Quick Inputs -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">
+              HERO NAME:
+            </label>
+            <input type="text" class="form-input" id="customHeroName" value="Symbiote Spider-Man" required />
+          </div>
+          <div>
+            <label style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">
+              SPECIALTY / ROLE:
+            </label>
+            <input type="text" class="form-input" id="customHeroRole" value="Next.js Frontend Lead" required />
+          </div>
+        </div>
+
+        <button type="submit" class="ob-glow-connect-btn" style="justify-content:center;margin-top:6px;">
+          <span>⚡ FORGE &amp; DEPLOY TO CHAMBER</span>
         </button>
       </form>
     </div>
