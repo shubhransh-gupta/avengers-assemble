@@ -7,10 +7,10 @@
   <meta name="description" content="Interactive futuristic 3D Avengers Character Selector. Select hero agents, review combat telemetry, and deploy directives across the multi-agent mesh." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
 
-  <!-- Google Fonts: Orbitron, Rajdhani, JetBrains Mono -->
+  <!-- Google Fonts: Cursive & Futuristic Heroic Typefaces -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Dancing+Script:wght@600;700;800&family=Caveat:wght@500;600;700&family=Satisfy&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="selector.css" />
 </head>
@@ -26,15 +26,15 @@
       <a href="index.html" class="nav-brand">
         <div class="nav-reactor-mini"></div>
         <div>
-          <div class="nav-brand-title">STARK<span>NET</span> // HERO SELECTOR</div>
-          <span class="nav-brand-sub">TACTICAL MULTI-AGENT HARNESS v1.0</span>
+          <div class="nav-brand-title">Stark<span>net</span> // Hero Selector</div>
+          <span class="nav-brand-sub">Tactical Multi-Agent Harness v1.0</span>
         </div>
       </a>
 
       <div class="nav-actions">
         <div class="hud-pill">
           <span class="dot"></span>
-          <span>ORCHESTRATOR: ONLINE</span>
+          <span>Orchestrator: Online</span>
         </div>
         <button id="soundToggleBtn" class="hud-icon-btn">
           🔊 SFX: ON
@@ -42,7 +42,7 @@
         <a href="hud.html" class="hud-icon-btn">
           🚀 Mission Control HUD
         </a>
-        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="hud-icon-btn" style="border-color:#ff2a4d;color:#ff4d6d;">
+        <a href="https://github.com/shubhransh-gupta/avengers-assemble" target="_blank" class="hud-icon-btn" style="border-color:#a855f7;color:#c084fc;">
           ⭐ Star on GitHub
         </a>
       </div>
@@ -54,7 +54,7 @@
       <!-- LEFT WING: Combat & Radar Specs -->
       <section class="tactical-wing">
         <div class="panel-header">
-          <span class="panel-title">⚡ COMBAT TELEMETRY</span>
+          <span class="panel-title">⚡ Combat Telemetry</span>
           <span class="panel-code">SYS://RADAR.09</span>
         </div>
 
@@ -67,7 +67,7 @@
         <div class="stat-bars-list">
           <div class="stat-bar-item">
             <div class="stat-bar-labels">
-              <span>CODE VELOCITY</span>
+              <span>Code Velocity</span>
               <span class="val" id="statVelocity">98%</span>
             </div>
             <div class="stat-bar-track">
@@ -77,7 +77,7 @@
 
           <div class="stat-bar-item">
             <div class="stat-bar-labels">
-              <span>SECURITY RECON</span>
+              <span>Security Recon</span>
               <span class="val" id="statSecurity">92%</span>
             </div>
             <div class="stat-bar-track">
@@ -87,7 +87,7 @@
 
           <div class="stat-bar-item">
             <div class="stat-bar-labels">
-              <span>TEST PRECISION</span>
+              <span>Test Precision</span>
               <span class="val" id="statPrecision">94%</span>
             </div>
             <div class="stat-bar-track">
@@ -97,7 +97,7 @@
 
           <div class="stat-bar-item">
             <div class="stat-bar-labels">
-              <span>REFACTOR POWER</span>
+              <span>Refactor Power</span>
               <span class="val" id="statRefactor">96%</span>
             </div>
             <div class="stat-bar-track">
@@ -116,7 +116,7 @@
           <div class="hero-avatar-crest" id="heroAvatarCrest">🦾</div>
         </div>
 
-        <div class="hero-rank-tag" id="heroRankTag">OMEGA-CLASS // MASTER ORCHESTRATOR</div>
+        <div class="hero-rank-tag" id="heroRankTag">Omega-Class // Master Orchestrator</div>
         <h1 class="hero-main-title" id="heroMainTitle">Tony Stark</h1>
         <div class="hero-callsign" id="heroCallsign">Iron Man / JARVIS</div>
 
@@ -125,14 +125,14 @@
         </div>
 
         <button class="voice-line-btn" id="voiceLineBtn">
-          <span>🔊</span> Play Audio SFX
+          <span>🔊</span> Play Voice & Audio SFX
         </button>
       </section>
 
       <!-- RIGHT WING: Live Directive Deployment & Model Tech -->
       <section class="directive-wing">
         <div class="panel-header">
-          <span class="panel-title">🎯 DIRECTIVE CONSOLE</span>
+          <span class="panel-title">🎯 Directive Console</span>
           <span class="panel-code">SEC://EXE.STARK</span>
         </div>
 
@@ -169,7 +169,7 @@
           </div>
           <button class="deploy-action-btn" id="deployActionBtn">
             <span>⚡</span>
-            <span>DEPLOY DIRECTIVE</span>
+            <span>Deploy Directive</span>
           </button>
         </div>
 
@@ -192,9 +192,9 @@
       <button class="dock-arrow-btn" id="dockNextBtn" title="Next Hero (Arrow Right)">❯</button>
 
       <div class="keyboard-hint">
-        <span>NAVIGATE:</span>
+        <span>Navigate:</span>
         <kbd>←</kbd> <kbd>→</kbd>
-        <span>OR</span>
+        <span>or</span>
         <kbd>1</kbd>–<kbd>9</kbd>
       </div>
     </footer>

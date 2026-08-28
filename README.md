@@ -2,26 +2,27 @@
 
 <p align="center">
   <a href="https://github.com/shubhransh-gupta/avengers-assemble/stargazers">
-    <img src="https://img.shields.io/github/stars/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=FFD700&labelColor=0d1117" alt="Stars" />
+    <img src="https://img.shields.io/github/stars/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=FFD700&labelColor=030712" alt="Stars" />
   </a>
   <a href="https://github.com/shubhransh-gupta/avengers-assemble/network/members">
-    <img src="https://img.shields.io/github/forks/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=00D4FF&labelColor=0d1117" alt="Forks" />
+    <img src="https://img.shields.io/github/forks/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=00D4FF&labelColor=030712" alt="Forks" />
   </a>
   <a href="https://github.com/shubhransh-gupta/avengers-assemble/issues">
-    <img src="https://img.shields.io/github/issues/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=E8192C&labelColor=0d1117" alt="Issues" />
+    <img src="https://img.shields.io/github/issues/shubhransh-gupta/avengers-assemble?style=for-the-badge&logo=github&color=A855F7&labelColor=030712" alt="Issues" />
   </a>
   <a href="https://github.com/shubhransh-gupta/avengers-assemble/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/LICENSE-MIT-00FF87?style=for-the-badge&labelColor=0d1117" alt="MIT License" />
+    <img src="https://img.shields.io/badge/LICENSE-MIT-00FF87?style=for-the-badge&labelColor=030712" alt="MIT License" />
   </a>
-  <img src="https://img.shields.io/badge/NODE->= 18.0.0-FFC107?style=for-the-badge&logo=node.js&labelColor=0d1117" alt="Node" />
-  <img src="https://img.shields.io/badge/TYPESCRIPT-Strict_Mode-3178C6?style=for-the-badge&logo=typescript&labelColor=0d1117" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/NODE->= 18.0.0-FFC107?style=for-the-badge&logo=node.js&labelColor=030712" alt="Node" />
+  <img src="https://img.shields.io/badge/TYPESCRIPT-Strict_Mode-38BDF8?style=for-the-badge&logo=typescript&labelColor=030712" alt="TypeScript" />
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/ORCHESTRATOR-TONY_STARK_MARK_85-FF2A4D?style=for-the-badge" alt="Tony Stark" />
+  <img src="https://img.shields.io/badge/ORCHESTRATOR-TONY_STARK_MARK_85-A855F7?style=for-the-badge" alt="Tony Stark" />
   <img src="https://img.shields.io/badge/POWER_GRID-ARC_REACTOR_ACTIVE-00F0FF?style=for-the-badge" alt="Arc Reactor" />
-  <img src="https://img.shields.io/badge/QA_STAMP-VIBRANIUM_SHIELD_APPROVED-007BFF?style=for-the-badge" alt="QA" />
-  <img src="https://img.shields.io/badge/HEROES-9_ACTIVE-28C840?style=for-the-badge" alt="9 Heroes" />
+  <img src="https://img.shields.io/badge/QA_STAMP-VIBRANIUM_SHIELD_APPROVED-38BDF8?style=for-the-badge" alt="QA" />
+  <img src="https://img.shields.io/badge/HEROES-9_ACTIVE-22C55E?style=for-the-badge" alt="9 Heroes" />
+  <img src="https://img.shields.io/badge/PALETTE-QUANTUM_VIOLET_%26_ARC_CYAN-C084FC?style=for-the-badge" alt="Quantum Palette" />
 </p>
 
 ```
@@ -37,6 +38,16 @@
 <p align="center">
   <strong>⭐ If this saved your codebase, star this repo. Tony Stark would. ⭐</strong>
 </p>
+
+---
+
+## 🌐 Live Interactive Applications
+
+| App | Link | Description |
+|:---|:---|:---|
+| 🦸 **3D Character Selector** | [**Launch Selector**](https://shubhransh-gupta.github.io/avengers-assemble/selector.html) | Interactive 3D Dribbble-style Character Selector with radar combat telemetry, Web Audio SFX, and live directive deployer. |
+| 🚀 **Marketing Website** | [**View Landing Page**](https://shubhransh-gupta.github.io/avengers-assemble/) | Futuristic Quantum Violet & Arc Cyan homepage with cursive typography and full feature breakdown. |
+| 🖥️ **Stark Tower HUD** | [**Open Mission Control**](https://shubhransh-gupta.github.io/avengers-assemble/hud.html) | Live WebSocket command dashboard with real-time Arc Reactor power monitoring and encrypted comms feed. |
 
 ---
 
@@ -79,13 +90,13 @@ npm start     # → http://localhost:3000 Stark Tower HUD
 
 | Pain Point | Avengers Solution |
 |:---|:---|
-| 🔴 Hit 429 rate limits constantly | **⚡ Arc Reactor Power Grid** — tracks rolling hourly windows, auto-rotates before throttling |
-| 🔴 No team coordination | **📡 War-Room Comms Mesh** — pub/sub channels so heroes coordinate in real time |
-| 🔴 No visual feedback | **🌐 Stark Tower HUD** — holographic WebSocket dashboard with live hero telemetry |
-| 🔴 No rollback safety | **🔮 Time Stone Engine** — Doctor Strange snapshots and rolls back timelines instantly |
-| 🔴 Knowledge lost between sessions | **💎 Mind Stone Memory** — Vision persists semantic org knowledge across all runs |
-| 🔴 Need to pay for more API usage | **🆓 BYOK + Subscription Harvester** — uses what you already pay for |
-| 🔴 Complex setup | **🤖 Zero-Setup Simulator** — works with zero keys, zero config |
+| 🟣 Hit 429 rate limits constantly | **⚡ Arc Reactor Power Grid** — tracks rolling hourly windows, auto-rotates before throttling |
+| 🟣 No team coordination | **📡 War-Room Comms Mesh** — pub/sub channels so heroes coordinate in real time |
+| 🟣 No visual feedback | **🌐 Stark Tower HUD** — holographic WebSocket dashboard with live hero telemetry |
+| 🟣 No rollback safety | **🔮 Time Stone Engine** — Doctor Strange snapshots and rolls back timelines instantly |
+| 🟣 Knowledge lost between sessions | **💎 Mind Stone Memory** — Vision persists semantic org knowledge across all runs |
+| 🟣 Need to pay for more API usage | **🆓 BYOK + Subscription Harvester** — uses what you already pay for |
+| 🟣 Complex setup | **🤖 Zero-Setup Simulator** — works with zero keys, zero config |
 
 ---
 
@@ -110,7 +121,8 @@ npm start     # → http://localhost:3000 Stark Tower HUD
 ### Arc Reactor Power Grid
 Tracks rolling 5-hour token windows across Claude, Gemini, GPT-4, Grok, and Ollama. Auto-rotates providers before throttling. Never hit a 429 again.
 
-### Stark Tower Mission Control HUD
+### Stark Tower Mission Control HUD & 3D Character Selector
+- **Interactive 3D Character Selector** — Dribbble-style hero podium with canvas radar chart & Web Audio SFX
 - **Spinning Arc Reactor Core** — live token gauge
 - **Hero Status Cards** — `IDLE | ANALYZING | EXECUTING | SMASHED | VICTORIOUS`
 - **Encrypted War-Room Comms** — real-time pub/sub feed
@@ -177,6 +189,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 | Free, BYOK, no extra cost | ✅ | ✅ | ⚠️ | ⚠️ |
 | Arc Reactor rate-limit manager | ✅ | ❌ | ❌ | ❌ |
 | Holographic Web Dashboard | ✅ | ✅ | ❌ | ❌ |
+| 3D Character Selector | ✅ Dribbble-Style | ❌ | ❌ | ❌ |
 | Multiverse parallel simulation | ✅ | ❌ | ❌ | ❌ |
 | Persistent cross-session memory | ✅ | ⚠️ | ⚠️ | ⚠️ |
 | Dedicated security recon agent | ✅ | ❌ | ❌ | ❌ |
@@ -210,10 +223,13 @@ avengers-assemble/
 │   ├── providers/        # Claude, Gemini, OpenAI, Grok, Ollama, Mock
 │   ├── cli/              # Terminal commands
 │   └── server/           # WebSocket + REST HUD server
-├── docs/
-│   ├── index.html        # Marketing landing page (GitHub Pages)
-│   ├── hud.html          # Live Mission Control HUD
-│   ├── hud.css           # Cyberpunk Stark Tech styles
+├── docs/                 # Live GitHub Pages Deployments
+│   ├── index.html        # Marketing landing page (Cursive & Quantum Theme)
+│   ├── selector.html     # 3D Avengers Character Selector (Dribbble Style)
+│   ├── selector.css      # Holographic HUD Stylesheet
+│   ├── selector.js       # Character Engine, Canvas Radar & Web Audio SFX
+│   ├── hud.html          # Stark Tower Mission Control HUD
+│   ├── hud.css           # Cyberpunk HUD styles
 │   └── hud.js            # WebSocket client + SFX synthesizer
 ├── test/                 # Automated test suites
 ├── bin/stark.js          # CLI entrypoint
@@ -228,7 +244,7 @@ We welcome all contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guideli
 
 - 🦸 Add a new hero agent (Ant-Man, Wanda, Falcon?)
 - 🔌 Add a new LLM provider
-- 🎨 Improve the Stark Tower HUD
+- 🎨 Improve the Stark Tower HUD / 3D Selector
 - 📝 Improve documentation
 - 🐛 [Report bugs](https://github.com/shubhransh-gupta/avengers-assemble/issues)
 

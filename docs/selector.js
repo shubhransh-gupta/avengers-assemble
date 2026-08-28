@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
    STARKNET / AVENGERS ASSEMBLE — Character Selector Logic & Audio SFX
-   Interactive AAA Hologram Engine + Web Audio Synthesizer
+   Theme: Quantum Violet, Arc Cyan, Vibranium Gold & Mint (No Red)
    ══════════════════════════════════════════════════════════════════════ */
 
 const HEROES_DATA = [
@@ -10,11 +10,11 @@ const HEROES_DATA = [
     alias: 'Iron Man / JARVIS',
     avatar: '🦾',
     role: 'Lead GOD Orchestrator',
-    rank: 'OMEGA-CLASS // MASTER ORCHESTRATOR',
+    rank: 'Omega-Class // Master Orchestrator',
     primaryColor: '#00F0FF',
-    accentColor: '#FF2A4D',
-    dimColor: 'rgba(0, 240, 255, 0.15)',
-    glowColor: 'rgba(0, 240, 255, 0.6)',
+    accentColor: '#A855F7',
+    dimColor: 'rgba(0, 240, 255, 0.16)',
+    glowColor: 'rgba(0, 240, 255, 0.65)',
     weapon: 'Mark 85 Nanotech Armor & Arc Reactor Core v9',
     preferredModel: 'Claude 3.7 Sonnet / Claude Code',
     specialty: 'Task Decomposition & DAG Directive Scheduling',
@@ -45,11 +45,11 @@ const HEROES_DATA = [
     alias: 'Steve Rogers',
     avatar: '🛡️',
     role: 'QA Commander & Standards Enforcer',
-    rank: 'ALPHA-CLASS // STANDARDS ENFORCER',
-    primaryColor: '#007BFF',
+    rank: 'Alpha-Class // Standards Enforcer',
+    primaryColor: '#38BDF8',
     accentColor: '#FFFFFF',
-    dimColor: 'rgba(0, 123, 255, 0.15)',
-    glowColor: 'rgba(0, 123, 255, 0.6)',
+    dimColor: 'rgba(56, 189, 248, 0.16)',
+    glowColor: 'rgba(56, 189, 248, 0.65)',
     weapon: 'Vibranium Shield & Strict TypeScript Linter',
     preferredModel: 'Gemini 2.5 Pro / Antigravity',
     specialty: 'Rigorous Code Review & Strict Type Safety Sign-Off',
@@ -80,11 +80,11 @@ const HEROES_DATA = [
     alias: 'Dr. Banner / The Hulk',
     avatar: '🟢',
     role: 'Deep AST Debugger & Gamma Refactorer',
-    rank: 'OMEGA-CLASS // GAMMA PERFORMANCE ENGINE',
+    rank: 'Omega-Class // Gamma Performance Engine',
     primaryColor: '#00FF66',
     accentColor: '#76FF03',
-    dimColor: 'rgba(0, 255, 102, 0.15)',
-    glowColor: 'rgba(0, 255, 102, 0.6)',
+    dimColor: 'rgba(0, 255, 102, 0.16)',
+    glowColor: 'rgba(0, 255, 102, 0.65)',
     weapon: 'Gamma Radiation Core & AST Memory Smasher',
     preferredModel: 'Ollama / DeepSeek-R1 (Local)',
     specialty: 'O(N²) Bottleneck Smashing & Memory Leak Elimination',
@@ -115,11 +115,11 @@ const HEROES_DATA = [
     alias: 'God of Thunder',
     avatar: '⚡',
     role: 'DevOps & Lightning Builds',
-    rank: 'OMEGA-CLASS // CLOUD BIFROST ARCHITECT',
+    rank: 'Omega-Class // Cloud Bifrost Architect',
     primaryColor: '#00E5FF',
-    accentColor: '#FFEA00',
-    dimColor: 'rgba(0, 229, 255, 0.15)',
-    glowColor: 'rgba(0, 229, 255, 0.6)',
+    accentColor: '#FFD700',
+    dimColor: 'rgba(0, 229, 255, 0.16)',
+    glowColor: 'rgba(0, 229, 255, 0.65)',
     weapon: 'Mjolnir & Multi-Stage Docker Bifrost Builder',
     preferredModel: 'xAI Grok 3 / AWS Bedrock',
     specialty: 'Multi-Stage Dockerfiles, Kubernetes & CI/CD Ingress',
@@ -150,11 +150,11 @@ const HEROES_DATA = [
     alias: 'Natasha Romanoff',
     avatar: '🕷️',
     role: 'Master of Security Recon & CVE Audit',
-    rank: 'ALPHA-CLASS // STEALTH AUDIT & DEFENSE',
-    primaryColor: '#FF0055',
-    accentColor: '#00F5FF',
-    dimColor: 'rgba(255, 0, 85, 0.15)',
-    glowColor: 'rgba(255, 0, 85, 0.6)',
+    rank: 'Alpha-Class // Stealth Audit & Defense',
+    primaryColor: '#A855F7',
+    accentColor: '#00FFC6',
+    dimColor: 'rgba(168, 85, 247, 0.16)',
+    glowColor: 'rgba(168, 85, 247, 0.65)',
     weapon: 'Widow\'s Bite Taser & .env Secret Sanitizer',
     preferredModel: 'OpenAI GPT-4o / Codex',
     specialty: 'CVE Scanning, Zero-Day Defense, Sanitization',
@@ -185,11 +185,11 @@ const HEROES_DATA = [
     alias: 'Clint Barton',
     avatar: '🏹',
     role: 'Precision Sniper Unit Testing',
-    rank: 'ALPHA-CLASS // 100% COVERAGE SNIPER',
+    rank: 'Alpha-Class // 100% Coverage Sniper',
     primaryColor: '#FFB800',
     accentColor: '#7C4DFF',
-    dimColor: 'rgba(255, 184, 0, 0.15)',
-    glowColor: 'rgba(255, 184, 0, 0.6)',
+    dimColor: 'rgba(255, 184, 0, 0.16)',
+    glowColor: 'rgba(255, 184, 0, 0.65)',
     weapon: 'Recurve Bow & 100% Boundary Trick Arrows',
     preferredModel: 'Gemini 2.5 Flash / Flash-Lite',
     specialty: 'Edge-Case Hunter, Null-Safety & Property-Based Tests',
@@ -220,11 +220,11 @@ const HEROES_DATA = [
     alias: 'Peter Parker',
     avatar: '🕸️',
     role: 'Frontend Hero & UI/UX Specialist',
-    rank: 'ALPHA-CLASS // REACT & TAILWIND MATRIX',
-    primaryColor: '#FF2E63',
-    accentColor: '#08D9D6',
-    dimColor: 'rgba(255, 46, 99, 0.15)',
-    glowColor: 'rgba(255, 46, 99, 0.6)',
+    rank: 'Alpha-Class // React & Tailwind Matrix',
+    primaryColor: '#38BDF8',
+    accentColor: '#00FFC6',
+    dimColor: 'rgba(56, 189, 248, 0.16)',
+    glowColor: 'rgba(56, 189, 248, 0.65)',
     weapon: 'Web-Shooters & Reactive Tailwind/Next.js Matrix',
     preferredModel: 'Claude 3.7 Sonnet / OpenAI o3-mini',
     specialty: 'Next.js, Framer Motion Micro-Interactions & Generative UI',
@@ -255,11 +255,11 @@ const HEROES_DATA = [
     alias: 'Stephen Strange',
     avatar: '🔮',
     role: 'Multiverse Simulator & Time Stone Master',
-    rank: 'COSMIC-CLASS // SORCERER SUPREME',
-    primaryColor: '#FF9100',
+    rank: 'Cosmic-Class // Sorcerer Supreme',
+    primaryColor: '#EAB308',
     accentColor: '#00E676',
-    dimColor: 'rgba(255, 145, 0, 0.15)',
-    glowColor: 'rgba(255, 145, 0, 0.6)',
+    dimColor: 'rgba(234, 179, 8, 0.16)',
+    glowColor: 'rgba(234, 179, 8, 0.65)',
     weapon: 'Eye of Agamotto & 14,000,605 Timeline Sandboxes',
     preferredModel: 'Claude 3.7 Sonnet (Thinking Mode)',
     specialty: 'Parallel Multiverse Simulation & Instant Time Stone Rollback',
@@ -290,11 +290,11 @@ const HEROES_DATA = [
     alias: 'Synthezoid',
     avatar: '💎',
     role: 'Mind Stone Knowledge Base & Semantic Sync',
-    rank: 'COSMIC-CLASS // SYNTHETIC INTELLIGENCE',
+    rank: 'Cosmic-Class // Synthetic Intelligence',
     primaryColor: '#FFD700',
     accentColor: '#00BFA5',
-    dimColor: 'rgba(255, 215, 0, 0.15)',
-    glowColor: 'rgba(255, 215, 0, 0.6)',
+    dimColor: 'rgba(255, 215, 0, 0.16)',
+    glowColor: 'rgba(255, 215, 0, 0.65)',
     weapon: 'Mind Stone Solar Beam & Org Memory Mesh',
     preferredModel: 'Gemini Pro 1.5 / Embedding API',
     specialty: 'Persistent Semantic Memory & Cross-Agent Knowledge Synchronization',
@@ -416,7 +416,7 @@ function playHeroSound(type) {
       osc.stop(now + 0.16);
     }
   } catch {
-    // Web audio blocked before interaction
+    // Web audio blocked before user gesture
   }
 }
 
@@ -438,8 +438,8 @@ function initAmbientCanvas() {
     particles.push({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: (Math.random() - 0.5) * 0.8,
+      vx: (Math.random() - 0.5) * 0.7,
+      vy: (Math.random() - 0.5) * 0.7,
       size: Math.random() * 2.5 + 1,
       alpha: Math.random() * 0.5 + 0.2
     });
@@ -494,7 +494,7 @@ function drawRadarChart(hero) {
   ctx.clearRect(0, 0, w, h);
 
   const keys = ['velocity', 'security', 'precision', 'refactor', 'stability', 'quantum'];
-  const labels = ['VELOCITY', 'SECURITY', 'TESTS', 'REFACTOR', 'STABILITY', 'QUANTUM'];
+  const labels = ['Velocity', 'Security', 'Testing', 'Refactor', 'Stability', 'Quantum'];
   const total = keys.length;
 
   // Background Web
@@ -525,11 +525,11 @@ function drawRadarChart(hero) {
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
     ctx.stroke();
 
-    // Labels
-    const lx = cx + (radius + 20) * Math.cos(angle);
+    // Labels in cursive style
+    const lx = cx + (radius + 22) * Math.cos(angle);
     const ly = cy + (radius + 16) * Math.sin(angle);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-    ctx.font = '9px "JetBrains Mono"';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+    ctx.font = '14px "Caveat", cursive';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(labels[i], lx, ly);
@@ -550,9 +550,9 @@ function drawRadarChart(hero) {
   ctx.fillStyle = hero.dimColor;
   ctx.fill();
   ctx.strokeStyle = hero.primaryColor;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.5;
   ctx.shadowColor = hero.primaryColor;
-  ctx.shadowBlur = 10;
+  ctx.shadowBlur = 12;
   ctx.stroke();
   ctx.shadowBlur = 0;
 }
@@ -620,7 +620,7 @@ function selectHero(index, playAudio = true) {
     }
   });
 
-  // Clear & set simulated logs
+  // Render logs
   renderLogs(hero.logs);
 
   if (playAudio) {
@@ -658,15 +658,15 @@ function deployCurrentDirective() {
   playHeroSound(hero.sfx);
 
   terminal.innerHTML = `<div class="t-tag">⚡ [TACTICAL DISPATCH]: Deploying ${hero.name}...</div>
-<div>Task: "${userText}"</div>`;
+<div>Directive: "${userText}"</div>`;
 
   let step = 0;
   const steps = [
-    `[${hero.alias.toUpperCase()}]: Task directive acknowledged. Initializing runtime context.`,
+    `[${hero.alias.toUpperCase()}]: Directive acknowledged. Initializing runtime context.`,
     `[${hero.alias.toUpperCase()}]: Engaging ${hero.preferredModel}...`,
     `[${hero.alias.toUpperCase()}]: Executing: ${hero.specialty}`,
     `[VIBRANIUM-QA]: Standards validation score: 99.8%.`,
-    `<span class="t-success">✔ [SUCCESS]: Directive resolved. 0 errors, full safety verification!</span>`
+    `<span class="t-success">✔ [SUCCESS]: Directive resolved with 0 errors & full safety verification!</span>`
   ];
 
   const interval = setInterval(() => {
@@ -679,7 +679,7 @@ function deployCurrentDirective() {
     } else {
       clearInterval(interval);
     }
-  }, 400);
+  }, 380);
 }
 
 // Populate Bottom Carousel Dock
