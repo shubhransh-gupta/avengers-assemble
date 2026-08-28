@@ -1050,6 +1050,10 @@ async function dispatchPrompt(customText = null) {
   const input = document.getElementById('hudPromptInput');
   const prompt = customText || input?.value.trim() || "Build JWT auth middleware with unit tests";
 
+  if (input && !customText) {
+    input.value = '';
+  }
+
   const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
   if (!tony) return;
 
@@ -1116,6 +1120,35 @@ async function dispatchPrompt(customText = null) {
   }
 }
 
+let liveMissionThoughts = [];
+
+function appendLiveThought(msg) {
+  liveMissionThoughts.push(msg);
+  const panel = document.getElementById('hudResponsePanel');
+  if (panel && panel.classList.contains('loading')) {
+    const logsHtml = liveMissionThoughts
+      .slice(-8)
+      .map(item => {
+        let color = '#38BDF8';
+        if (item.includes('THOUGHT')) color = '#FFD700';
+        else if (item.includes('ACTION')) color = '#00F0FF';
+        else if (item.includes('COMPLETED') || item.includes('VERIFIED')) color = '#00FF87';
+        else if (item.includes('ERROR')) color = '#FF4444';
+        return `<div style="font-family:var(--font-mono);font-size:11px;line-height:1.6;color:${color};margin-bottom:4px;border-left:2px solid ${color};padding-left:8px;">${item}</div>`;
+      })
+      .join('');
+
+    panel.innerHTML = `<div style="display:flex;align-items:center;gap:8px;color:#FFD700;font-weight:700;margin-bottom:10px;">
+      <span style="display:inline-block;animation:pulse 1s infinite;">⚡</span>
+      <span>MISSION IN FLIGHT // LIVE MULTI-AGENT THOUGHT STREAM</span>
+    </div>
+    <div style="background:rgba(2,6,23,0.9);border:1px solid rgba(56,189,248,0.25);border-radius:8px;padding:10px 12px;max-height:220px;overflow-y:auto;">
+      ${logsHtml}
+    </div>`;
+    panel.scrollTop = panel.scrollHeight;
+  }
+}
+
 // Response Panel — shows formatted Gemini output below dispatch bar
 function showResponsePanel(text, isLoading = false) {
   let panel = document.getElementById('hudResponsePanel');
@@ -1130,9 +1163,10 @@ function showResponsePanel(text, isLoading = false) {
   panel.classList.toggle('loading', isLoading);
 
   if (isLoading) {
+    liveMissionThoughts = [];
     panel.innerHTML = `<div style="display:flex;align-items:center;gap:8px;color:#FFD700;font-weight:700;">
       <span style="display:inline-block;animation:pulse 1s infinite;">⚡</span>
-      <span>DISPATCHING DIRECTIVES // GEMINI 2.5 PRO &amp; SCAVENGERS ASSEMBLE...</span>
+      <span>DISPATCHING DIRECTIVES // GEMINI &amp; SCAVENGERS ASSEMBLE...</span>
     </div>
     <div style="margin-top:8px;color:#94A3B8;font-size:11.5px;line-height:1.6;">
       Tony Stark is formulating task DAGs across hero subagents. Please wait while code is synthesized...
@@ -1400,13 +1434,20 @@ function init() {
         const { type, data } = msg;
 
         if (type === 'mission_started') {
-          showResponsePanel(`🚀 MISSION STARTED\n\n"${data.prompt || data.description || 'Mission active'}"\n\nScavengers assembling — directives streaming to agents...`);
+          showResponsePanel(`🚀 MISSION STARTED\n\n"${data.prompt || data.description || 'Mission active'}"\n\nScavengers assembling — directives streaming to agents...`, true);
           activeHeroes.forEach(h => h.speak('Directive received!'));
         }
+        else if (type === 'directive_started') {
+          const hero = activeHeroes.find(h => h.id === data.assignedHero);
+          const text = `⚡ [ACTION // ${(data.assignedHero || 'HERO').toUpperCase()}] Writing source code for "${data.title}"...`;
+          appendLiveThought(text);
+          if (hero) hero.speak(`Writing "${data.title.slice(0, 32)}..."`);
+        }
         else if (type === 'directive_completed') {
-          const hero = activeHeroes.find(h => h.id === data.heroId);
-          if (hero) hero.speak(`Directive complete: ${String(data.result || 'Done').slice(0, 60)}`);
-          showResponsePanel(`✅ DIRECTIVE COMPLETE\n\nHero: ${data.heroId || 'Agent'}\nResult: ${String(data.result || 'Completed').slice(0, 200)}`);
+          const hero = activeHeroes.find(h => h.id === (data.assignedHero || data.heroId));
+          const text = `✅ [COMPLETED // ${(data.assignedHero || data.heroId || 'HERO').toUpperCase()}] Finished "${data.title || 'Directive'}"`;
+          appendLiveThought(text);
+          if (hero) hero.speak(`Directive verified!`);
         }
         else if (type === 'mission_completed') {
           const deliverable = data.result || data.summary || data.finalSummary || 'All directives executed successfully.';
@@ -1417,7 +1458,10 @@ function init() {
         }
         else if (type === 'comms_message') {
           const hero = activeHeroes.find(h => h.id === data.from);
-          if (hero && data.content) hero.speak(String(data.content).slice(0, 80));
+          if (data.content) {
+            appendLiveThought(String(data.content));
+            if (hero) hero.speak(String(data.content).replace(/\[.*?\]\s*/, '').slice(0, 65));
+          }
         }
       } catch {}
     };

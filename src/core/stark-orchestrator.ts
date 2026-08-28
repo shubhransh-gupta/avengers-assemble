@@ -150,6 +150,8 @@ export class StarkOrchestrator extends EventEmitter {
       });
     }
 
+    this.comms.send('orchestrator', 'all', 'war-room', `[THOUGHT // TONY STARK] Decomposed "${userPrompt.slice(0, 50)}..." into ${directives.length} parallel directives. Deploying strike team.`);
+
     mission.status = 'in-flight';
     mission.updatedAt = Date.now();
     this.emit('mission-updated', mission);
@@ -163,6 +165,7 @@ export class StarkOrchestrator extends EventEmitter {
 
       directive.status = 'in-progress';
       directive.startedAt = Date.now();
+      this.comms.send(hero.profile.id, 'all', 'directives', `[ACTION // ${hero.profile.name.toUpperCase()}] Writing source code for "${directive.title}"...`);
       this.emit('directive-started', directive);
       this.emit('mission-updated', mission);
 
@@ -177,9 +180,11 @@ export class StarkOrchestrator extends EventEmitter {
           testResults: result.data?.testResults,
         };
         mission.arcReactorPowerUsed += result.tokensUsed;
+        this.comms.send(hero.profile.id, 'all', 'directives', `[COMPLETED // ${hero.profile.name.toUpperCase()}] Finished "${directive.title}". Tokens: ${result.tokensUsed}.`);
       } catch (err: any) {
         directive.status = 'failed';
         directive.outputs = { logs: [`Error: ${err.message}`] };
+        this.comms.send(hero.profile.id, 'all', 'directives', `[ERROR // ${hero.profile.name.toUpperCase()}] ${err.message}`);
       }
 
       this.emit('directive-completed', directive);
@@ -191,6 +196,7 @@ export class StarkOrchestrator extends EventEmitter {
       const cap = this.heroes.get('captain-america') as CaptainAmericaHero;
       capDirective.status = 'in-progress';
       capDirective.startedAt = Date.now();
+      this.comms.send('captain-america', 'all', 'qa-audit', `[THOUGHT // CAPTAIN AMERICA] Reviewing architecture, code standards, and type safety across all generated directives...`);
       this.emit('directive-started', capDirective);
 
       capDirective.inputs = {
@@ -208,6 +214,7 @@ export class StarkOrchestrator extends EventEmitter {
         qaReview: capResult.data?.qaReview,
       };
       mission.arcReactorPowerUsed += capResult.tokensUsed;
+      this.comms.send('captain-america', 'all', 'qa-audit', `[VERIFIED // CAPTAIN AMERICA] Code reviewed. Vibranium QA Stamp issued!`);
       this.emit('directive-completed', capDirective);
     }
 
@@ -230,11 +237,12 @@ export class StarkOrchestrator extends EventEmitter {
           .join('\n');
 
         fullResult += `\n\n---\n\n### 📁 Generated Project Files Written to Disk\n` +
-          `**Workspace Location**: \`${workspaceProject.relativeWorkspacePath}\`\n\n` +
+          `**Workspace Location**: \`${workspaceProject.workspacePath}\`\n\n` +
           `${fileList}\n\n` +
           `### 🚀 How to Run Your App\n\`\`\`bash\n${workspaceProject.runInstructions.join('\n')}\n\`\`\``;
 
         (mission as any).workspace = workspaceProject;
+        this.comms.send('orchestrator', 'all', 'war-room', `[WORKSPACE SAVED] Project written to disk at: ${workspaceProject.workspacePath} (${workspaceProject.files.length} files)`);
       }
     } catch (err: any) {
       console.warn('[Orchestrator] Warning: could not write workspace files:', err.message);
