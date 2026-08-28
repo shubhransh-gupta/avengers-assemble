@@ -19,109 +19,7 @@
 <body>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       1. VISUAL ONBOARDING GATEWAY
-       ══════════════════════════════════════════════════════════════════════ -->
-  <div class="onboarding-screen" id="onboardingScreen">
-    <div class="onboarding-card">
-      
-      <div class="ob-visual-header">
-        <div class="ob-header-left">
-          <svg class="ob-arc-reactor-logo" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="46" fill="#040814" stroke="#00F0FF" stroke-width="4"/>
-            <circle cx="50" cy="50" r="34" fill="none" stroke="#A855F7" stroke-width="3" stroke-dasharray="8 6"/>
-            <circle cx="50" cy="50" r="22" fill="none" stroke="#00F0FF" stroke-width="3" stroke-dasharray="4 4"/>
-            <circle cx="50" cy="50" r="11" fill="#00F0FF"/>
-            <text x="50" y="57" font-size="18" font-weight="900" fill="#040814" text-anchor="middle">A</text>
-          </svg>
-
-          <div class="ob-title-wrap">
-            <h1>SCAVENGERS // <span>AGENTIC GATEWAY</span></h1>
-            <div class="scavengers-sub-credit">
-              Powered by <a href="https://shubhransh.com" target="_blank" class="cv-link" title="Open Shubhransh Gupta CV">Shubhransh Gupta</a>
-            </div>
-          </div>
-        </div>
-
-        <button class="ob-skip-btn" id="obSkipBtn">
-          ⚡ INSTANT ENTER &rarr;
-        </button>
-      </div>
-
-      <!-- Provider Visual Grid -->
-      <div class="provider-visual-grid">
-        <div class="prov-tile selected" data-provider="antigravity" data-name="Google Antigravity" data-icon="🚀" data-cli="node bin/stark.js hud --port 3000">
-          <span class="p-icon">🚀</span>
-          <span class="p-name">Antigravity</span>
-          <span class="p-status"></span>
-        </div>
-        <div class="prov-tile" data-provider="cursor" data-name="Cursor IDE" data-icon="⚡" data-cli="cursor . && node bin/stark.js hud">
-          <span class="p-icon">⚡</span>
-          <span class="p-name">Cursor IDE</span>
-          <span class="p-status"></span>
-        </div>
-        <div class="prov-tile" data-provider="claude-code" data-name="Claude Code" data-icon="🤖" data-cli="claude -p 'scavengers mission'">
-          <span class="p-icon">🤖</span>
-          <span class="p-name">Claude Code</span>
-          <span class="p-status"></span>
-        </div>
-        <div class="prov-tile" data-provider="codex" data-name="OpenAI Codex" data-icon="🔷" data-cli="export OPENAI_API_KEY=... && node bin/stark.js hud">
-          <span class="p-icon">🔷</span>
-          <span class="p-name">OpenAI Codex</span>
-          <span class="p-status"></span>
-        </div>
-        <div class="prov-tile" data-provider="gemini" data-name="Google Gemini" data-icon="✨" data-cli="export GEMINI_API_KEY=... && node bin/stark.js hud">
-          <span class="p-icon">✨</span>
-          <span class="p-name">Gemini</span>
-          <span class="p-status"></span>
-        </div>
-        <div class="prov-tile" data-provider="kimi" data-name="Kimi" data-icon="🌙" data-cli="export KIMI_API_KEY=... && node bin/stark.js hud">
-          <span class="p-icon">🌙</span>
-          <span class="p-name">Kimi</span>
-          <span class="p-status"></span>
-        </div>
-        <div class="prov-tile" data-provider="grok" data-name="xAI Grok" data-icon="⚡" data-cli="export GROK_API_KEY=... && node bin/stark.js hud">
-          <span class="p-icon">⚡</span>
-          <span class="p-name">xAI Grok</span>
-          <span class="p-status"></span>
-        </div>
-        <div class="prov-tile" data-provider="ollama" data-name="Ollama Local" data-icon="🦙" data-cli="ollama run deepseek-coder && node bin/stark.js hud">
-          <span class="p-icon">🦙</span>
-          <span class="p-name">Ollama Local</span>
-          <span class="p-status"></span>
-        </div>
-      </div>
-
-      <!-- Live CLI Terminal Bridge Command Box -->
-      <div class="ob-cli-box">
-        <div class="ob-cli-text" id="obCliCommandText">
-          $ node bin/stark.js hud --port 3000
-        </div>
-        <button class="ob-cli-copy-btn" id="obCopyCliBtn" title="Copy CLI Command">
-          📋 COPY CLI
-        </button>
-      </div>
-
-      <!-- Action Bar -->
-      <div class="ob-connect-bar">
-        <div class="ob-selected-info">
-          <span class="ob-selected-icon" id="obSelectedIcon">🚀</span>
-          <div>
-            <div class="ob-selected-name" id="obSelectedName">Google Antigravity</div>
-            <span class="ob-badge-auth" id="obBadgeAuth">● 1-Click Live Bridge</span>
-          </div>
-        </div>
-
-        <button class="ob-glow-connect-btn" id="obConnectBtn">
-          <span>⚡ CONNECT &amp; ENTER</span>
-          <span>&rarr;</span>
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════════════════════
-       2. MAIN WAR ROOM PLATFORM
+       MAIN WAR ROOM PLATFORM (Direct Landing — Zero Gateway Modals)
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="app-container">
     
@@ -157,10 +55,6 @@
         <button class="top-icon-btn gold" id="openCustomHeroModalBtn">
           <span>🎨</span>
           <span>FORGE HERO</span>
-        </button>
-        <button class="top-icon-btn" id="reopenSettingsBtn" title="Switch AI Provider">
-          <span>⚙️</span>
-          <span>PROVIDER</span>
         </button>
       </div>
     </header>
@@ -320,7 +214,7 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       3. VISUAL CUSTOM HERO FORGE MODAL
+       VISUAL CUSTOM HERO FORGE MODAL
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="custom-modal-backdrop" id="customHeroModalBackdrop">
     <div class="custom-modal">

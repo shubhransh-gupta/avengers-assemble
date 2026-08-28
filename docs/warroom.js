@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS WAR ROOM — MULTIVERSE BATTLEGROUND ENGINE
-   Theme: Scavengers Core · Powered by Shubhransh Gupta · Live CLI Bridges
+   SCAVENGERS WAR ROOM — DIRECT LIVE MULTIVERSE BATTLEGROUND ENGINE
+   Powered by Shubhransh Gupta · Direct Terminal / CLI Control
    ══════════════════════════════════════════════════════════════════════ */
 
 let canvas, ctx;
@@ -688,7 +688,7 @@ function drawMultiverseBattleground(ctx, w, h) {
 
   // Centered Header Badge
   ctx.fillStyle = 'rgba(168, 85, 247, 0.2)';
-  ctx.fillRect(c3x, c3y, c3w, 24*sy);
+  ctx.fillRect(c3x, c3w, 24*sy);
   ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#A855F7';
   ctx.textAlign = 'center';
@@ -1117,54 +1117,8 @@ function handleCanvasClick(e) {
   }
 }
 
-// Instant Enter & Guaranteed Landing
-function enterWarRoomImmediately(providerKey = 'antigravity') {
-  localStorage.setItem('scavengers_provider', providerKey);
-  const onboardingScreen = document.getElementById('onboardingScreen');
-  if (onboardingScreen) {
-    onboardingScreen.classList.add('hidden');
-    onboardingScreen.style.display = 'none';
-  }
-  playSfx('repulsor');
-  const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
-  if (tony) tony.speak(`${providerKey.toUpperCase()} Connected! Scavengers Assemble!`);
-}
-
-// Connect Real-Time Bridge
-async function connectProviderRealTime(providerKey) {
-  const connectBtn = document.getElementById('obConnectBtn');
-  const badgeAuth = document.getElementById('obBadgeAuth');
-
-  if (connectBtn) connectBtn.innerHTML = `<span>⚡ CONNECTING...</span>`;
-  if (badgeAuth) badgeAuth.textContent = `Connecting to ${providerKey}...`;
-
-  // Immediately hide onboarding screen so user is never stuck
-  enterWarRoomImmediately(providerKey);
-
-  // Send connect request in background
-  try {
-    fetch('/api/connect', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: providerKey })
-    }).then(res => res.json()).then(data => {
-      console.log('[Scavengers] Live Bridge Connected:', data);
-    }).catch(err => {
-      console.log('[Scavengers] Bridge active in client mode');
-    });
-  } catch {}
-}
-
-// Initialize
+// Initialize directly
 function init() {
-  const savedProvider = localStorage.getItem('scavengers_provider');
-  const onboardingScreen = document.getElementById('onboardingScreen');
-
-  if (savedProvider && onboardingScreen) {
-    onboardingScreen.classList.add('hidden');
-    onboardingScreen.style.display = 'none';
-  }
-
   canvas = document.getElementById('pixelOfficeCanvas');
   if (!canvas) return;
   ctx = canvas.getContext('2d');
@@ -1177,58 +1131,14 @@ function init() {
   window.addEventListener('resize', resize);
   canvas.addEventListener('click', handleCanvasClick);
 
-  // Spawn Tony Stark by default
+  // Spawn Tony Stark by default immediately
   const tony = new SuperheroEntity(PRESET_HEROES['tony-stark']);
   activeHeroes = [tony];
   updateActiveDock();
   updateTopAvatarStack();
   updateDagPipeline();
 
-  // Provider Selection Logic
-  let selectedProvider = 'antigravity';
-  document.querySelectorAll('.prov-tile').forEach(tile => {
-    tile.addEventListener('click', () => {
-      document.querySelectorAll('.prov-tile').forEach(t => t.classList.remove('selected'));
-      tile.classList.add('selected');
-      selectedProvider = tile.dataset.provider;
-
-      const nameEl = document.getElementById('obSelectedName');
-      const iconEl = document.getElementById('obSelectedIcon');
-      const cliEl = document.getElementById('obCliCommandText');
-
-      if (nameEl) nameEl.textContent = tile.dataset.name;
-      if (iconEl) iconEl.textContent = tile.dataset.icon;
-      if (cliEl && tile.dataset.cli) cliEl.textContent = `$ ${tile.dataset.cli}`;
-    });
-  });
-
-  const obConnectBtn = document.getElementById('obConnectBtn');
-  if (obConnectBtn) {
-    obConnectBtn.addEventListener('click', () => {
-      connectProviderRealTime(selectedProvider);
-    });
-  }
-
-  // Instant Enter Skip Button
-  const obSkipBtn = document.getElementById('obSkipBtn');
-  if (obSkipBtn) {
-    obSkipBtn.addEventListener('click', () => {
-      enterWarRoomImmediately('antigravity');
-    });
-  }
-
-  // Copy CLI Button
-  const copyCliBtn = document.getElementById('obCopyCliBtn');
-  if (copyCliBtn) {
-    copyCliBtn.addEventListener('click', () => {
-      const cliText = document.getElementById('obCliCommandText')?.textContent.replace(/^\$\s*/, '').trim();
-      if (cliText) {
-        navigator.clipboard.writeText(cliText);
-        copyCliBtn.textContent = '✔ COPIED!';
-        setTimeout(() => { copyCliBtn.textContent = '📋 COPY CLI'; }, 1800);
-      }
-    });
-  }
+  tony.speak("Scavengers Assemble! Multiverse War Room online.");
 
   // Visual Spawner Strip Pills
   document.querySelectorAll('.v-spawn-pill').forEach(pill => {
@@ -1287,14 +1197,6 @@ function init() {
       circle.classList.add('selected');
     });
   });
-
-  const settingsBtn = document.getElementById('reopenSettingsBtn');
-  if (settingsBtn && onboardingScreen) {
-    settingsBtn.addEventListener('click', () => {
-      onboardingScreen.classList.remove('hidden');
-      onboardingScreen.style.display = 'flex';
-    });
-  }
 
   requestAnimationFrame(loop);
 }
