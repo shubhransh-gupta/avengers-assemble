@@ -1,0 +1,11 @@
+2. **Memory Leak Mitigation (CWE-400):** Ensure that `TokenBucketStore` includes a cleanup mechanism (e.g., clearing stale buckets via `setInterval`) so the `Map` doesn't grow unbounded under distributed IP spoofing attacks.
+3. **Strict Typing Compliance:** Ensure `keyGenerator` and `handler` callbacks in `TokenBucketConfig` are strictly typed with default fallbacks to prevent runtime `TypeError` exceptions.
+
+---
+
+## 4. Final Approval Status
+
+**STATUS: REJECTED (PENDING PATCH)**  
+*Reason:* Incomplete code snippet detected in `src/middleware/rateLimiter.ts`. 
+
+"I can review this all day. Stand down unless standard compliant." Bring me the completed file, lock down the memory bounds, and then we'll deploy. Dismissed!

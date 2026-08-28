@@ -8,7 +8,15 @@
 
 ## 📁 Generated Project Files
 
-
+- **`src/middleware/rateLimiter.ts`** (typescript) — *Crafted by hulk*
+- **`package.json`** (json) — *Crafted by thor*
+- **`tsconfig.json`** (json) — *Crafted by thor*
+- **`src/__tests__/rateLimiter.test.ts`** (typescript) — *Crafted by hawkeye*
+- **`security-audit.md`** (markdown) — *Crafted by black-widow*
+- **`security_audit_hardened.go`** (go) — *Crafted by black-widow*
+- **`file_1.markdown`** (markdown) — *Crafted by black-widow*
+- **`qa-compliance.md`** (markdown) — *Crafted by captain-america*
+- **`file_1.txt`** (text) — *Crafted by captain-america*
 
 ---
 
