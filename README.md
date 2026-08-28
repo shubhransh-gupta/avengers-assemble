@@ -16,11 +16,11 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/ORCHESTRATOR-TONY_STARK_MARK_85-A855F7?style=for-the-badge" alt="Tony Stark" />
-  <img src="https://img.shields.io/badge/POWER_GRID-ARC_REACTOR_ACTIVE-00F0FF?style=for-the-badge" alt="Arc Reactor" />
-  <img src="https://img.shields.io/badge/QA_STAMP-VIBRANIUM_SHIELD_APPROVED-38BDF8?style=for-the-badge" alt="QA" />
-  <img src="https://img.shields.io/badge/HEROES-9_ACTIVE-22C55E?style=for-the-badge" alt="9 Heroes" />
-  <img src="https://img.shields.io/badge/THEME-QUANTUM_VIOLET_%26_ARC_CYAN-C084FC?style=for-the-badge" alt="Quantum Palette" />
+  <img src="https://img.shields.io/badge/ORCHESTRATOR-TONY_STARK_LEAD_GOD-00F0FF?style=for-the-badge&logo=probot&labelColor=030712" alt="Tony Stark" />
+  <img src="https://img.shields.io/badge/SCAVENGERS_CORE-100%25_ONLINE-00FF87?style=for-the-badge&logo=speedtest&labelColor=030712" alt="Core Online" />
+  <img src="https://img.shields.io/badge/QA_STAMP-VIBRANIUM_SHIELD_VERIFIED-38BDF8?style=for-the-badge&labelColor=030712" alt="QA" />
+  <img src="https://img.shields.io/badge/MULTIVERSE-5_CHAMBERS_ACTIVE-FF3366?style=for-the-badge&labelColor=030712" alt="Multiverse" />
+  <img src="https://img.shields.io/badge/DEVELOPER_HELPER-SUBAGENT_MESH-FFD700?style=for-the-badge&labelColor=030712" alt="Helper" />
 </p>
 
 ```
@@ -34,7 +34,12 @@
 ```
 
 <p align="center">
-  <strong>⭐ If this saved your codebase, star this repo. Tony Stark would. ⭐</strong><br/>
+  <strong>Earth's Mightiest Agentic AI Coding War Room</strong><br/>
+  <em>Turning Your Existing AI Models into an Autonomous Superhero Strike Team</em><br/>
+  <strong>Powered by <a href="https://shubhransh.com">Shubhransh Gupta</a></strong>
+</p>
+
+<p align="center">
   <a href="https://github.com/shubhransh-gupta/scavengers-assemble/stargazers">
     <img src="https://img.shields.io/github/stars/shubhransh-gupta/scavengers-assemble?style=social&label=⭐%20Star%20Scavengers%20Assemble" />
   </a>
@@ -42,291 +47,214 @@
 
 ---
 
-## 🌐 Live Interactive Applications
+## 🌐 Live Web Apps & Standalone War Room
 
-| App | Link | Description |
-|:---|:---|:---|
-| 🏢 **Live 2.5D War Room** | [**Open Living Floor**](https://shubhransh-gupta.github.io/scavengers-assemble/warroom.html) | **Munder-Difflin Style Autonomous Office Floor** — 60 FPS real-time simulation where characters roam, talk with pop-up speech bubbles, spawn dynamically, and smash bugs with zero user interaction needed! |
-| 🦸 **3D Character Selector** | [**Launch Selector**](https://shubhransh-gupta.github.io/scavengers-assemble/selector.html) | Interactive 3D Dribbble-style Character Selector with radar combat telemetry, Web Audio SFX, and live directive deployer. |
-| 🚀 **Marketing Website** | [**View Landing Page**](https://shubhransh-gupta.github.io/scavengers-assemble/) | Futuristic Quantum Violet & Arc Cyan homepage with clean modern typography and full feature breakdown. |
-| 🖥️ **Stark Tower HUD** | [**Open Mission Control**](https://shubhransh-gupta.github.io/scavengers-assemble/hud.html) | Live WebSocket command dashboard with real-time Arc Reactor power monitoring and encrypted comms feed. |
+| Platform | Link | What It Does |
+| :--- | :--- | :--- |
+| 🏢 **Multiverse War Room** | [**Launch Living Floor**](https://shubhransh-gupta.github.io/scavengers-assemble/warroom.html) | **Living Multiverse Battleground** — 60 FPS autonomous floor with Doctor Doom, Kang, Scarlet Witch, Infinity Gauntlet, and dynamic hero subagents! |
+| 🚀 **Marketing Website** | [**View Landing Page**](https://shubhransh-gupta.github.io/scavengers-assemble/) | Futuristic Neon Arc Cyan & Quantum Purple homepage with architecture breakdown and feature comparison. |
+| 🦸 **3D Character Selector** | [**Open Character Forge**](https://shubhransh-gupta.github.io/scavengers-assemble/selector.html) | Interactive 3D Dribbble-style Hero Selector with combat telemetry and custom sound synthesizer. |
+| 🖥️ **Local Standalone App** | `http://localhost:3000/warroom.html` | Launches inside an isolated window (`--app`) with zero browser tab distractions. |
 
 ---
+
+## 💡 What is Scavengers Assemble?
 
 > *"And if we can't protect your codebase, you can be damn well sure we'll avenge it."*  
 > — **Tony Stark**
 
-**Scavengers Assemble** is a **free, open-source, ultra-performant multi-agent AI coding harness** that turns your existing AI subscriptions into an **elite superhero strike team** — coordinated by Tony Stark, secured by Black Widow, tested by Hawkeye, and reviewed by Captain America himself.
+**Scavengers Assemble** is a **free, open-source, multi-agent AI coding orchestrator**. Instead of interacting with a single chatbot window, Scavengers turns your AI models into a **collaborative superhero strike team**:
 
-Works with **Claude Code**, **Gemini 2.5**, **GPT-4o**, **Grok**, **Ollama/DeepSeek-R1** — using the **subscriptions you already pay for**, harvesting their hourly limits so you never hit a 429 rate limit wall again.
+1. **You give a single prompt** (e.g., *"Build secure JWT authentication microservice with 100% unit tests"*).
+2. **Tony Stark** deconstructs your master prompt into an asynchronous Directed Acyclic Graph (DAG).
+3. **Subagents execute in parallel across specialized chambers**:
+   * 🛡️ **Captain America**: Enforces strict TypeScript types, standards, and asserts 100% boundary tests.
+   * 🟢 **The Hulk**: Deep AST refactorer that smashes memory leaks, circular dependencies, and O(N^2) bottlenecks.
+   * 🕷️ **Black Widow**: Security reconnaissance scanning dependencies for CVE zero-days and sanitizing secrets.
+   * ⚡ **Thor**: DevOps & CI/CD lightning runner deploying Docker multi-stage builds and GitHub Actions.
+   * 🕸️ **Spider-Man**: Frontend hero crafting accessible, responsive React components with buttery 60 FPS animations.
+   * 🔮 **Doctor Strange**: Simulates 14,000,605 execution timelines to predict edge-case build failures before code is written.
+   * 💎 **Vision**: Mind Stone persistent semantic memory preserving architecture conventions across sessions.
 
 ---
 
-## 🚀 30-Second Quickstart
+# 🚀 Step-by-Step Developer Integration Guide
 
-```bash
-# Zero install needed — run instantly with npx
-npx scavengers-assemble assemble "Build JWT auth middleware, unit test suite, and Docker container"
+### *How to Connect Your Existing AI CLI Agents to Scavengers in 60 Seconds*
 
-# Or launch the Stark Tower holographic Mission Control HUD
-npx scavengers-assemble hud
-# → Opens http://localhost:3000 (spinning Arc Reactor, hero telemetry, live comms)
+---
+
+### 📍 Option A: The `.env` Configuration File (Recommended)
+
+1. Create a `.env` file in the root of your project directory:
+   ```bash
+   touch .env
+   ```
+2. Open `.env` in your text editor (VS Code, Cursor, Vim) and paste your available API keys:
+
+```env
+# ═══════════════════════════════════════════════════════════════
+# SCAVENGERS AGENTIC AI CREDENTIALS
+# (Fill whichever AI provider you want to use — all are optional!)
+# ═══════════════════════════════════════════════════════════════
+
+# 1. ANTHROPIC / CLAUDE CODE
+ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxx
+
+# 2. GOOGLE GEMINI / ANTIGRAVITY
+GEMINI_API_KEY=AIzaSyxxxxxxxxxxxxxxxxx
+
+# 3. OPENAI / CODEX
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxx
+
+# 4. xAI GROK
+GROK_API_KEY=xai-xxxxxxxxxxxxxxxxxxxx
+
+# 5. KIMI (MOONSHOT AI)
+KIMI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxx
+
+# 6. OLLAMA / LOCAL MODELS (100% Free - No Key Required!)
+OLLAMA_HOST=http://127.0.0.1:11434
 ```
 
-### Full Local Setup
+3. Start Scavengers:
+   ```bash
+   npm run build
+   node bin/stark.js hud --port 3000
+   ```
+
+---
+
+### 📍 Option B: Direct CLI Terminal Bridges
+
+If you use CLI tools daily, you can connect directly through your terminal:
+
+#### 1. 🚀 Google Antigravity CLI (`agy`)
+Run Scavengers on top of Google Antigravity:
+```bash
+# Where to paste: Run directly in your Terminal / Shell:
+node bin/stark.js hud --port 3000
+
+# Or run a direct multi-agent coding mission via CLI:
+npx scavengers assemble "Build JWT authentication microservice"
+```
+
+#### 2. ⚡ Cursor CLI / IDE (`cursor`)
+Connect Cursor directly:
+```bash
+# Where to paste: In your terminal, open repo with Cursor and launch Scavengers:
+cursor . && node bin/stark.js hud
+```
+
+#### 3. 🤖 Claude Code CLI (`claude`)
+Pipe tasks to Claude Code:
+```bash
+# Where to paste: Run in terminal:
+claude -p "scavengers mission: Refactor AST and eliminate circular dependencies"
+```
+
+#### 4. 🔷 OpenAI Codex CLI (`codex`)
+```bash
+# Where to paste: Run in terminal:
+export OPENAI_API_KEY="your-api-key" && node bin/stark.js hud --port 3000
+```
+
+#### 5. 🦙 Ollama (100% Free / Local DeepSeek)
+```bash
+# Where to paste: Run in terminal:
+ollama run deepseek-coder && node bin/stark.js hud
+```
+
+---
+
+# 🌌 The Multiverse Battleground Chambers
+
+The Scavengers War Room floor features **5 living multiverse chambers**:
+
+```
+┌───────────────────────────┬───────────────────────────────────────────┬───────────────────────────┐
+│ 💎 1. INFINITY VAULT      │ 👑 2. DR DOOM'S LATVERIAN ARENA            │ ⏳ 3. KANG CITADEL        │
+│ 6 Glowing Infinity Stones │ Doom crushing Sentinel with Green Flames  │ 3D Spinning Timeline Rings│
+├───────────────────────────┼───────────────────────────────────────────┼───────────────────────────┤
+│ 🦾 4. SCAVENGERS BRIDGE   │ ⚡ SCAVENGERS CORE POWER GRID             │ 🔴 5. CHAOS INCURSION     │
+│ CAD Armors & Directives   │ Giant Glowing "A" & Conduits to All Rooms │ Floating Scarlet Witch    │
+└───────────────────────────┴───────────────────────────────────────────┴───────────────────────────┘
+```
+
+1. **💎 Chamber 1: Infinity Gauntlet Vault**
+   * Golden pedestal holding the glowing Infinity Gauntlet with **all 6 MCU Infinity Stones** pulsing with cosmic shockwaves.
+   * *Interactive*: Click the Gauntlet on canvas to trigger a cosmic snap!
+2. **👑 Chamber 2: Dr. Doom's Latverian Crushing Arena**
+   * Doctor Doom standing atop a fortress platform with crushed Sentinel parts and rising emerald sorcery flames.
+   * *Interactive*: Click Doom to hear his Latverian taunt: *"Kneel before DOOM! Come fight if you dare, Scavengers!"*
+3. **⏳ Chamber 3: Kang the Conqueror's Quantum Citadel**
+   * Kang floating on his Time Throne with 3D spinning holographic timeline rings.
+   * *Interactive*: Click Kang to trigger temporal distortion shockwaves!
+4. **🦾 Chamber 4: Scavengers Helicarrier Bridge**
+   * Tony Stark's CAD engineering workstation and Vibranium calibration console.
+5. **🔴 Chamber 5: Chaos Magic Incursion & Scarlet Witch**
+   * Wanda Maximoff floating mid-air in a swirling red chaos magic hex vortex.
+   * *Interactive*: Click Scarlet Witch to trigger reality-warping chaos ripples!
+
+---
+
+# 🦸 The Scavengers Strike Roster
+
+| Superhero | Callsign | Specialized Role | Default AI Engine | Chamber |
+| :--- | :--- | :--- | :--- | :--- |
+| 🦾 **Tony Stark** | `GOD` | Lead DAG Orchestrator & Load Balancer | Claude Code / Antigravity | Scavengers Bridge |
+| 🛡️ **Steve Rogers** | `QA` | QA Commander & Vibranium Type Guard | Google Gemini Pro | Scavengers Bridge |
+| 🟢 **The Hulk** | `AST` | Deep AST Refactorer & Memory Smasher | Ollama DeepSeek (Local) | Scavengers Bridge |
+| 🕷️ **Natasha Romanoff** | `SEC` | Security Recon & CVE Zero-Day Audit | OpenAI Codex | Doom Arena |
+| ⚡ **Thor Odinson** | `OPS` | DevOps & Lightning Fast Docker CI/CD | xAI Grok | Infinity Vault |
+| 🏹 **Clint Barton** | `TEST` | Precision Boundary Unit Testing | Google Gemini Flash | Infinity Vault |
+| 🕸️ **Peter Parker** | `UI` | Frontend Specialist & UI/UX Hero | Antigravity / Claude | Scavengers Bridge |
+| 🔮 **Doctor Strange** | `SIM` | 14M Timeline Multiverse Simulator | Antigravity Reasoning | Chaos Incursion |
+| 💎 **Vision** | `MEM` | Mind Stone Semantic Persistent Memory | Google Gemini | Kang Citadel |
+
+---
+
+# 🎨 Custom Hero Forge
+
+Don't see your favorite hero? Click **`🎨 FORGE HERO`** in the header to create your own custom hero:
+1. Choose an **Archetype** (Iron Armor, Web Suit, Vibranium Shield, Gamma Titan, Stealth Catsuit, Asgardian Armor, Sorcerer Robes, Mind Stone).
+2. Choose a **Neon Glow Theme** (Arc Cyan, Quantum Purple, Infinity Gold, Gamma Green, Crimson Alert, Sky Blue).
+3. Assign a **Role / Specialty** (e.g. *GraphQL Architect*, *Rust WebAssembly Engineer*).
+4. Deploy your custom superhero directly to their designated multiverse chamber!
+
+---
+
+# 🛠️ Developer Setup & Commands
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/shubhransh-gupta/scavengers-assemble.git
 cd scavengers-assemble
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Run the test suite
-npm test      # ✔ 6/6 suites pass
+# 3. Build TypeScript codebase
+npm run build
 
-# Launch Stark Tower HUD at http://localhost:3000
-npm start
-```
+# 4. Run automated test suite
+npm test
 
-> **Zero API keys required.** A built-in `MockProvider` simulates all 9 heroes out-of-the-box.
-
----
-
-## 🌟 Why Scavengers Assemble?
-
-| Pain Point | Scavengers Solution |
-|:---|:---|
-| 🟣 Hit 429 rate limits constantly | **⚡ Arc Reactor Power Grid** — tracks rolling hourly windows across all providers, auto-rotates before throttling |
-| 🟣 No team coordination | **📡 War-Room Comms Mesh** — pub/sub channels so heroes coordinate in real time |
-| 🟣 No visual feedback | **🌐 Stark Tower HUD** — holographic WebSocket dashboard with live hero telemetry |
-| 🟣 No rollback safety | **🔮 Time Stone Engine** — Doctor Strange snapshots and rolls back timelines instantly |
-| 🟣 Knowledge lost between sessions | **💎 Mind Stone Memory** — Vision persists semantic org knowledge across all runs |
-| 🟣 Need to pay for more API usage | **🆓 BYOK + Subscription Harvester** — uses what you already pay for |
-| 🟣 Complex setup | **🤖 Zero-Setup Simulator** — works with zero keys, zero config |
-
----
-
-## 🦸 The Scavengers Strike Team
-
-| Hero | Character | Role | Power & Specialization | Preferred Provider |
-|:---|:---|:---|:---|:---|
-| 🦾 **Iron Man** | Tony Stark | **Lead GOD Orchestrator** | Deconstructs prompts → parallel directives, balances Arc Reactor load | Claude 3.7 / Claude Code |
-| 🛡️ **Captain America** | Steve Rogers | **QA Commander** | TypeScript compliance, code review, Vibranium Shield sign-off | Gemini 2.5 / Antigravity |
-| 🟢 **The Hulk** | Bruce Banner | **Debugger & Refactorer** | AST analysis (Banner) + O(N²)→O(log N) smashing (Hulk) | Ollama / DeepSeek-R1 |
-| 🕷️ **Black Widow** | Natasha Romanoff | **Security Recon** | CVE scanning, .env secret sanitization, perimeter defense | OpenAI GPT-4o / Codex |
-| ⚡ **Thor** | Thor Odinson | **DevOps & Builds** | Dockerfile, Kubernetes, CI/CD Bifrost pipelines | xAI Grok 3 |
-| 🏹 **Hawkeye** | Clint Barton | **Precision Testing** | 100% edge-case unit test coverage, boundary assertions | Gemini Flash / Pro |
-| 🕸️ **Spider-Man** | Peter Parker | **Frontend Hero** | React, Tailwind CSS, Next.js, responsive micro-animations | Claude 3.7 / o3-mini |
-| 🔮 **Doctor Strange** | Stephen Strange | **Multiverse Simulator** | 14,000,605 timeline branches, instant Time Stone rollback | Claude 3.7 Thinking |
-| 💎 **Vision** | Vision | **Mind Stone Memory** | Persistent semantic knowledge base across all sessions | Gemini Pro Embedding |
-
----
-
-## ⚡ Core Systems (Powered by Shubhransh Gupta)
-
-### 1. Arc Reactor Power Grid (`src/core/arc-reactor.ts`)
-Maintains a rolling 5-hour sliding window of token consumption across Claude Pro, OpenAI Tier 4, Gemini quotas, and local Ollama instances.
-```
-Provider Health:  claude-code [████████░░] 80%  →  gemini [██████████] 100%  ✓ Optimal
-```
-When a provider exceeds the throttle threshold (default: 85%), traffic is failover-routed to the next optimal provider automatically.
-
-### 2. Stark Tower Mission Control HUD (`docs/hud.html`)
-- **Spinning Arc Reactor Gauge** with live capacity telemetry.
-- **Hero Status Indicators** (`IDLE`, `ANALYZING`, `EXECUTING`, `SMASHED`, `VICTORIOUS`).
-- **Encrypted War-Room Comms Feed** streaming inter-hero JSON messages.
-- **Multiverse Branch Visualizer** rendering alternate reality probabilities.
-- **Web Audio API Synthesizer** generating authentic repulsor blasts, shield clangs, and lightning SFX.
-
-### 3. Interactive 3D Character Selector (`docs/selector.html`)
-- **Dribbble-Style Holographic Character Podium** with rotating energy rings.
-- **Hexagon Radar Chart** graphing velocity, security, test precision, refactoring power, stability, and quantum architecture.
-- **Live Directive Deployer** simulating terminal execution with streaming typewriter output.
-- **Full Keyboard Navigation**: Use `←` / `→` arrows or `1`–`9` keys to switch heroes.
-
-### 4. Time Stone Engine (`src/core/time-stone.ts`)
-Spawns speculative branch realities in isolated workspaces, calculates success probability matrices, and seals the optimal timeline with instant rollback capabilities.
-
-### 5. Mind Stone Persistent Memory (`src/core/mind-stone.ts`)
-Maintains `.stark/memory.json` indexed by semantic tags and keywords so team conventions and bug resolutions persist across all future agent runs.
-
----
-
-## 🖥️ CLI Commands Reference
-
-```bash
-# Assemble the Scavengers for a mission
-scavengers assemble "Implement OAuth2 login with GitHub and Google"
-
-# Open the Stark Tower Holographic Web HUD
-scavengers hud --port 3000
-
-# Inspect Arc Reactor power levels and Hero readiness
-scavengers status
-
-# Alias commands
-stark assemble "Refactor database query layer"
-stark status
-avengers assemble "Build GraphQL API"
+# 5. Launch the Scavengers War Room HUD
+node bin/stark.js hud --port 3000
 ```
 
 ---
 
-## ⚙️ Configuration (`stark.config.json`)
+## 👤 Author & Credits
 
-```json
-{
-  "orchestrator": {
-    "name": "Tony Stark",
-    "callsign": "IRON_MAN",
-    "aiProvider": "claude-code",
-    "model": "claude-3-7-sonnet"
-  },
-  "arcReactor": {
-    "maxHourlyTokens": 200000,
-    "rollingWindowHours": 5,
-    "throttleThresholdPct": 85,
-    "autoFailover": true,
-    "providers": {
-      "claude-code": { "enabled": true, "hourlyTokenLimit": 80000, "priority": 1 },
-      "gemini":      { "enabled": true, "hourlyTokenLimit": 120000, "priority": 2 },
-      "openai":      { "enabled": true, "hourlyTokenLimit": 60000,  "priority": 3 },
-      "grok":        { "enabled": true, "hourlyTokenLimit": 40000,  "priority": 4 },
-      "ollama":      { "enabled": true, "baseUrl": "http://localhost:11434", "priority": 5 },
-      "mock":        { "enabled": true, "priority": 99 }
-    }
-  },
-  "missionControl": {
-    "port": 3000,
-    "soundEffects": true
-  }
-}
-```
-
-### Environment Variables (`.env`)
-
-```env
-ANTHROPIC_API_KEY=sk-ant-...      # Claude Code / Claude 3.7
-GEMINI_API_KEY=AIza...            # Gemini 2.5 Flash / Pro
-OPENAI_API_KEY=sk-proj-...        # GPT-4o / Codex
-XAI_API_KEY=xai-...               # xAI Grok
-OLLAMA_BASE_URL=http://localhost:11434   # Local LLM (DeepSeek-R1, Qwen)
-```
-
-> *(Note: All API keys are optional. The built-in simulator automatically kicks in whenever a provider is unconfigured!)*
-
----
-
-## 📊 Feature Comparison Matrix
-
-<p align="center">
-  <img src="docs/assets/comparison.png" alt="Scavengers Assemble vs Munder-Difflin vs AutoGen vs CrewAI Feature Comparison" width="100%" />
-</p>
-
-| Feature | Scavengers Assemble ⚡ | Munder-Difflin | AutoGen | CrewAI |
-|:---|:---|:---|:---|:---|
-| 🆓 **100% Free (BYOK)** | **✔ Yes** | ✔ Yes | ⚠ Partial | ⚠ Paid Tier |
-| ⚡ **Arc Reactor Rate Limit Manager** | **✔ Built-in** | ✘ No | ✘ No | ✘ No |
-| 🌐 **Holographic Web Dashboard** | **✔ Stark Tower HUD** | ⚠ Office Floor UI | ✘ No | ✘ No |
-| 🔮 **Multiverse Parallel Simulation** | **✔ Doctor Strange** | ✘ No | ✘ No | ✘ No |
-| 💎 **Persistent Cross-Session Memory** | **✔ Mind Stone** | ⚠ Basic | ⚠ In-Memory | ⚠ Limited |
-| 🛡️ **Specialized QA Code Review Agent** | **✔ Captain America** | ✘ No | ⚠ Generic | ⚠ Generic |
-| 🕷️ **Security Recon Dedicated Agent** | **✔ Black Widow** | ✘ No | ✘ No | ✘ No |
-| 🦙 **Local LLM Support (Ollama)** | **✔ Full Support** | ✔ Yes | ⚠ Partial | ⚠ Partial |
-| 🎭 **Zero-Setup Offline Simulator** | **✔ Yes (MockProvider)** | ✘ No | ✘ No | ✘ No |
-| 🧪 **TypeScript + Test Coverage** | **✔ 100% Strict TS** | ⚠ JavaScript | ⚠ Python | ⚠ Python |
-
----
-
-## 🧪 Automated Tests
-
-```
-✔ ArcReactorPowerGrid - initial capacity and optimal provider (0.49ms)
-✔ ArcReactorPowerGrid - power consumption and failover routing (0.17ms)
-✔ StarkCommsNetwork - message routing and channel subscription (0.75ms)
-✔ TimeStoneEngine - multiverse branching and optimal timeline selection (0.15ms)
-✔ MindStoneMemory - persistent indexing and semantic keyword search (0.49ms)
-✔ StarkOrchestrator - full Scavengers Assemble mission execution (41.1ms)
-
-ℹ tests 6 | pass 6 | fail 0
-```
-
----
-
-## 📁 Project Structure
-
-```
-scavengers-assemble/
-├── src/
-│   ├── heroes/           # 9 Hero agent implementations
-│   │   ├── tony-stark.ts      # Lead GOD orchestrator
-│   │   ├── captain-america.ts # QA commander & standards enforcer
-│   │   ├── hulk.ts            # Deep debugger & gamma refactorer
-│   │   ├── black-widow.ts     # Security recon & CVE auditor
-│   │   ├── thor.ts            # DevOps & lightning builds
-│   │   ├── hawkeye.ts         # Precision sniper unit testing
-│   │   ├── spider-man.ts      # Frontend hero & UI/UX specialist
-│   │   ├── doctor-strange.ts  # Multiverse simulator & Time Stone
-│   │   └── vision.ts          # Mind Stone persistent memory
-│   ├── core/             # Core systems
-│   │   ├── arc-reactor.ts     # Hourly token rate-limit power grid
-│   │   ├── stark-comms.ts     # Inter-hero encrypted comms mesh
-│   │   ├── stark-orchestrator.ts # Master mission orchestrator
-│   │   ├── time-stone.ts      # Multiverse timeline engine
-│   │   └── mind-stone.ts      # Persistent semantic memory
-│   ├── providers/        # LLM provider adapters
-│   │   ├── claude-code.ts
-│   │   ├── gemini.ts
-│   │   ├── openai.ts
-│   │   ├── grok.ts
-│   │   ├── ollama.ts
-│   │   └── mock-provider.ts   # Zero-setup simulator
-│   ├── cli/              # Terminal CLI commands (assemble, hud, status)
-│   ├── server/           # WebSocket + Express HUD server
-│   └── types.ts          # TypeScript strict interfaces
-├── docs/                 # Live GitHub Pages Website & HUD
-│   ├── index.html        # Marketing landing page (Cursive + Quantum theme)
-│   ├── selector.html     # 3D Character Selector UI (Dribbble style)
-│   ├── selector.css      # Holographic HUD stylesheet
-│   ├── selector.js       # Character engine, canvas radar & SFX
-│   ├── hud.html          # Stark Tower Mission Control HUD
-│   ├── hud.css           # Cyberpunk Stark Tech styles
-│   └── hud.js            # WebSocket client + SFX synthesizer
-├── test/                 # Automated test suites
-├── bin/stark.js          # Executable CLI entrypoint
-└── stark.config.example.json
-```
-
----
-
-## 🤝 Contributing
-
-We welcome all contributions from the community! See [**CONTRIBUTING.md**](CONTRIBUTING.md) for full guidelines.
-
-- 🦸 Add a new hero agent (Ant-Man, Wanda, Falcon, Black Panther)
-- 🔌 Add a new LLM provider adapter (Mistral, Cohere, Bedrock, Groq)
-- 🎨 Improve the 3D Character Selector or Stark Tower HUD
-- 📝 Improve documentation & tutorials
-- 🐛 [Report bugs via Issues](https://github.com/shubhransh-gupta/scavengers-assemble/issues)
-
----
-
-## 🛡️ License
-
-Built with ❤️ by the open-source community under the **MIT License**.  
-Character names and themes are homage inspirations used under Fair Use for open-source educational purposes.
+* **Architect & Developer**: **[Shubhransh Gupta](https://shubhransh.com)**
+* **Portfolio / CV**: **[https://shubhransh.com](https://shubhransh.com)**
+* **GitHub**: **[@shubhransh-gupta](https://github.com/shubhransh-gupta)**
 
 ---
 
 <p align="center">
-  <strong>⭐ Star this repo if you're ready to assemble Earth's Mightiest Coding Agents! ⭐</strong><br/><br/>
-  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/stargazers">
-    <img src="https://img.shields.io/github/stars/shubhransh-gupta/scavengers-assemble?style=social&label=⭐%20Star%20Scavengers%20Assemble" />
-  </a>
-  &nbsp;&nbsp;
-  <a href="https://github.com/shubhransh-gupta/scavengers-assemble/network/members">
-    <img src="https://img.shields.io/github/forks/shubhransh-gupta/scavengers-assemble?style=social&label=🍴%20Fork%20It" />
-  </a>
+  <strong>⭐ Star this repo if you love multi-agent AI coding! ⭐</strong><br/>
+  <em>Built with ⚡ Arc Reactor energy for the developer multiverse.</em>
 </p>
