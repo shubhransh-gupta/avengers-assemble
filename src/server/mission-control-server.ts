@@ -92,6 +92,30 @@ export function createMissionControlServer(
     }
   });
 
+  app.post('/api/connect', (req, res) => {
+    const { provider, apiKey, model } = req.body;
+    const providerName = provider || 'antigravity';
+    
+    // Save to runtime config
+    if (apiKey) {
+      if (provider === 'claude-code') process.env.ANTHROPIC_API_KEY = apiKey;
+      else if (provider === 'gemini') process.env.GEMINI_API_KEY = apiKey;
+      else if (provider === 'openai' || provider === 'codex') process.env.OPENAI_API_KEY = apiKey;
+      else if (provider === 'kimi') process.env.KIMI_API_KEY = apiKey;
+    }
+    if (model) {
+      process.env.STARK_MODEL = model;
+    }
+
+    res.json({
+      success: true,
+      provider: providerName,
+      status: 'connected',
+      timestamp: Date.now(),
+      message: `Successfully connected to ${providerName} bridge.`,
+    });
+  });
+
   const broadcast = (type: string, data: any) => {
     const payload = JSON.stringify({ type, data, timestamp: Date.now() });
     for (const client of wss.clients) {

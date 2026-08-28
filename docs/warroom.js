@@ -1,11 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — MARVEL MULTIVERSE BATTLEGROUND ENGINE
-   Chambers:
-     1. 💎 Infinity Gauntlet Vault (6 Glowing Infinity Stones)
-     2. 👑 Dr Doom's Latverian Throne (Doom crushing everything with green flame)
-     3. ⏳ Kang's Quantum Citadel (Kang with rotating timeline rings)
-     4. 🦾 Stark Tower Helicarrier Bridge (Tony's Command Pod)
-     5. 🔴 Chaos Magic Incursion (Scarlet Witch reality tear)
+   SCAVENGERS WAR ROOM — MULTIVERSE BATTLEGROUND ENGINE
+   Theme: Scavengers Core · Powered by Shubhransh Gupta · Live Antigravity Bridge
    ══════════════════════════════════════════════════════════════════════ */
 
 let canvas, ctx;
@@ -14,8 +9,9 @@ let soundEnabled = true;
 let simSpeed = 1;
 let selectedHeroId = 'tony-stark';
 let audioCtx = null;
+let challengeTimer = 3000;
 
-// Available Pre-Configured Avengers
+// Available Pre-Configured Scavengers
 const PRESET_HEROES = {
   'tony-stark': {
     id: 'tony-stark',
@@ -23,15 +19,15 @@ const PRESET_HEROES = {
     shortName: 'TONY STARK',
     tag: 'GOD',
     role: 'Lead GOD Orchestrator',
-    chamber: 'Stark Helicarrier Bridge',
+    chamber: 'Scavengers Bridge',
     harness: 'claudeTerminalHarness',
-    model: 'Claude Code',
+    model: 'Antigravity / Claude',
     color: '#00F0FF',
     archetype: 'iron',
-    officeX: 130, officeY: 480,
+    officeX: 139, officeY: 480,
     dialogs: [
       "JARVIS, deconstruct the master prompt into DAG directives.",
-      "Arc Reactor load balancing: 99.8% optimal. Directives streaming.",
+      "Scavengers Core load balancing: 100% optimal. Directives streaming.",
       "Cap, your strict types look solid. Approved.",
       "Hulk, smash that memory bottleneck now."
     ]
@@ -42,12 +38,12 @@ const PRESET_HEROES = {
     shortName: 'CAPTAIN AMERICA',
     tag: 'QA',
     role: 'QA Commander & Standards',
-    chamber: 'Stark Helicarrier Bridge',
+    chamber: 'Scavengers Bridge',
     harness: 'geminiProHarness',
     model: 'Gemini',
     color: '#38BDF8',
     archetype: 'cap',
-    officeX: 130, officeY: 340,
+    officeX: 139, officeY: 350,
     dialogs: [
       "I can do this all day. No unhandled promise rejections on my watch.",
       "Vibranium Shield QA stamp applied: 100% strict TypeScript types verified.",
@@ -61,12 +57,12 @@ const PRESET_HEROES = {
     shortName: 'THE HULK',
     tag: 'AST',
     role: 'Deep AST Refactorer',
-    chamber: 'Stark Helicarrier Bridge',
+    chamber: 'Scavengers Bridge',
     harness: 'ollamaDeepSeekHarness',
     model: 'Ollama (Local)',
     color: '#00FF87',
     archetype: 'hulk',
-    officeX: 130, officeY: 600,
+    officeX: 139, officeY: 610,
     dialogs: [
       "HULK SMASH O(N^2) BOTTLENECK! REFACTOR WITH GAMMA SPEED!!",
       "Banner mode: Profiling heap memory snapshot...",
@@ -79,7 +75,7 @@ const PRESET_HEROES = {
     shortName: 'BLACK WIDOW',
     tag: 'SEC',
     role: 'Security Recon & CVE Audit',
-    chamber: 'Doom Counter-Recon Vault',
+    chamber: 'Doom Arena',
     harness: 'openaiGpt4oHarness',
     model: 'OpenAI Codex',
     color: '#A855F7',
@@ -97,12 +93,12 @@ const PRESET_HEROES = {
     shortName: 'THOR',
     tag: 'OPS',
     role: 'DevOps & Lightning Builds',
-    chamber: 'Infinity Gauntlet Vault',
+    chamber: 'Infinity Vault',
     harness: 'xaiGrokHarness',
     model: 'xAI Grok',
     color: '#00E5FF',
     archetype: 'thor',
-    officeX: 180, officeY: 160,
+    officeX: 190, officeY: 160,
     dialogs: [
       "BY THE POWER OF MJOLNIR, SUMMONING THE DOCKER BIFROST!",
       "Kubernetes ingress struck by lightning! Multi-stage build forged in 4.2s.",
@@ -115,12 +111,12 @@ const PRESET_HEROES = {
     shortName: 'HAWKEYE',
     tag: 'TEST',
     role: 'Precision Unit Testing',
-    chamber: 'Infinity Gauntlet Vault',
+    chamber: 'Infinity Vault',
     harness: 'geminiFlashHarness',
     model: 'Gemini',
     color: '#FFD700',
     archetype: 'hawkeye',
-    officeX: 80, officeY: 160,
+    officeX: 85, officeY: 160,
     dialogs: [
       "I played 18 test suites, I shot 18 passing assertions. Can't seem to miss.",
       "Locking on boundary conditions: null, undefined, NaN, Infinity. Bullseye!"
@@ -132,9 +128,9 @@ const PRESET_HEROES = {
     shortName: 'SPIDER-MAN',
     tag: 'UI',
     role: 'Frontend Hero & UI/UX',
-    chamber: 'Stark Helicarrier Bridge',
+    chamber: 'Scavengers Bridge',
     harness: 'claudeFrontendHarness',
-    model: 'Claude Code',
+    model: 'Antigravity / UI',
     color: '#38BDF8',
     archetype: 'spidey',
     officeX: 80, officeY: 480,
@@ -150,12 +146,12 @@ const PRESET_HEROES = {
     shortName: 'DOCTOR STRANGE',
     tag: 'SIM',
     role: 'Multiverse Simulator',
-    chamber: 'Chaos Magic Incursion',
+    chamber: 'Chaos Incursion',
     harness: 'timeStoneEngine',
     model: 'Antigravity / Reasoning',
     color: '#FF9900',
     archetype: 'strange',
-    officeX: 840, officeY: 480,
+    officeX: 845, officeY: 480,
     dialogs: [
       "Opening the Eye of Agamotto. Simulating 14,000,605 timelines...",
       "Reality-616 selected: Incursions averted with 98.4% success.",
@@ -168,12 +164,12 @@ const PRESET_HEROES = {
     shortName: 'VISION',
     tag: 'MEM',
     role: 'Mind Stone Memory',
-    chamber: 'Kang Quantum Citadel',
+    chamber: 'Kang Citadel',
     harness: 'mindStoneMemory',
     model: 'Gemini',
     color: '#FFD700',
     archetype: 'vision',
-    officeX: 840, officeY: 150,
+    officeX: 845, officeY: 150,
     dialogs: [
       "Accessing Mind Stone semantic knowledge matrix...",
       "Indexed 42 architecture conventions into persistent org memory.",
@@ -187,7 +183,7 @@ let quantumDataPackets = [];
 let speechBubbles = [];
 let spawnParticles = [];
 
-// Audio Synthesizer
+// Stark Web Audio Synthesizer
 function getAudio() {
   if (!audioCtx) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -531,7 +527,7 @@ function createSpeechBubble(character, text) {
   speechBubbles.push({
     element: bubble,
     character: character,
-    timer: 3.5
+    timer: 4.0
   });
 }
 
@@ -550,14 +546,13 @@ function updateSpeechBubbles(dt, scaleX, scaleY) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// DRAW THE EPIC MARVEL MULTIVERSE BATTLEGROUND FLOOR
+// DRAW MULTIVERSE BATTLEGROUND WITH CLEAN CENTERED LABELS
 // ══════════════════════════════════════════════════════════════════════
 function drawMultiverseBattleground(ctx, w, h) {
   const sx = w / 1000;
   const sy = h / 720;
   const now = performance.now() * 0.001;
 
-  // 1. Deep Space Cosmic Background
   ctx.fillStyle = '#02040A';
   ctx.fillRect(0, 0, w, h);
 
@@ -578,16 +573,17 @@ function drawMultiverseBattleground(ctx, w, h) {
   ctx.fillRect(c1x, c1y, c1w, c1h);
   ctx.strokeStyle = '#FFD700'; ctx.lineWidth = 1.5; ctx.strokeRect(c1x, c1y, c1w, c1h);
 
-  // Room Header Badge
+  // Centered Header Badge
   ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
   ctx.fillRect(c1x, c1y, c1w, 24*sy);
-  ctx.font = `bold ${10*sx}px "Space Grotesk", sans-serif`;
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#FFD700';
-  ctx.fillText('💎 1. INFINITY GAUNTLET VAULT', c1x + 10*sx, c1y + 16*sy);
+  ctx.textAlign = 'center';
+  ctx.fillText('💎 1. INFINITY GAUNTLET VAULT', c1x + c1w / 2, c1y + 16*sy);
 
-  // Pedestal & Glowing Infinity Gauntlet in Center of Room 1
+  // Pedestal & Glowing Infinity Gauntlet
   const gx = c1x + 115 * sx;
-  const gy = c1y + 110 * sy;
+  const gy = c1y + 115 * sy;
 
   // Cosmic shockwave rings
   ctx.beginPath();
@@ -606,40 +602,38 @@ function drawMultiverseBattleground(ctx, w, h) {
   ctx.beginPath(); ctx.roundRect(gx - 12*sx, gy - 16*sy, 24*sx, 28*sy, 4); ctx.fill();
   ctx.strokeStyle = '#FFD700'; ctx.lineWidth = 1.5; ctx.stroke();
 
-  // 6 Infinity Stones glowing with real MCU colors
+  // 6 Infinity Stones
   const stones = [
-    { x: -7, y: -10, color: '#A855F7', name: 'Power' },   // Purple
-    { x: -2, y: -12, color: '#38BDF8', name: 'Space' },   // Blue
-    { x: 3,  y: -10, color: '#EF4444', name: 'Reality' }, // Red
-    { x: 8,  y: -6,  color: '#F97316', name: 'Soul' },    // Orange
-    { x: -8, y: -4,  color: '#00FF87', name: 'Time' },    // Green
-    { x: 0,  y: -2,  color: '#FFD700', name: 'Mind' }     // Yellow Center
+    { x: -7, y: -10, color: '#A855F7' }, // Purple Power
+    { x: -2, y: -12, color: '#38BDF8' }, // Blue Space
+    { x: 3,  y: -10, color: '#EF4444' }, // Red Reality
+    { x: 8,  y: -6,  color: '#F97316' }, // Orange Soul
+    { x: -8, y: -4,  color: '#00FF87' }, // Green Time
+    { x: 0,  y: -2,  color: '#FFD700' }  // Yellow Mind
   ];
 
   stones.forEach(s => {
     ctx.beginPath();
     ctx.arc(gx + s.x*sx, gy + s.y*sy, 2.5*sx, 0, Math.PI * 2);
     ctx.fillStyle = s.color;
-    ctx.shadowColor = s.color;
-    ctx.shadowBlur = 8;
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.shadowColor = s.color; ctx.shadowBlur = 8; ctx.fill(); ctx.shadowBlur = 0;
   });
 
-  // ── CHAMBER 2: 👑 DR DOOM'S LATVERIAN THRONE & ARENA (Top-Center) ──
+  // ── CHAMBER 2: 👑 DR DOOM'S LATVERIAN THRONE (Top-Center) ──
   const c2x = 270 * sx, c2y = 20 * sy, c2w = 420 * sx, c2h = 160 * sy;
   ctx.fillStyle = 'rgba(0, 255, 135, 0.04)';
   ctx.fillRect(c2x, c2y, c2w, c2h);
   ctx.strokeStyle = '#00FF87'; ctx.lineWidth = 1.5; ctx.strokeRect(c2x, c2y, c2w, c2h);
 
-  // Header Badge
+  // Centered Header Badge
   ctx.fillStyle = 'rgba(0, 255, 135, 0.2)';
   ctx.fillRect(c2x, c2y, c2w, 24*sy);
-  ctx.font = `bold ${10*sx}px "Space Grotesk", sans-serif`;
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#00FF87';
-  ctx.fillText('👑 2. DR DOOM // LATVERIAN CRUSHING ARENA', c2x + 12*sx, c2y + 16*sy);
+  ctx.textAlign = 'center';
+  ctx.fillText('👑 2. DR DOOM // LATVERIAN CRUSHING ARENA', c2x + c2w / 2, c2y + 16*sy);
 
-  // Dr Doom Character Sprite & Green Sorcery Fire
+  // Dr Doom Character Sprite
   const dx = c2x + 210 * sx;
   const dy = c2y + 90 * sy;
 
@@ -669,16 +663,16 @@ function drawMultiverseBattleground(ctx, w, h) {
   ctx.fillStyle = '#FFD700'; // Gold chain clasp
   ctx.fillRect(-4*sx + dx, dy - 10*sy, 8*sx, 2*sy);
 
-  // Doom Titanium Mask & Hood
+  // Mask & Hood
   ctx.fillStyle = '#15803D'; // Green Hood
   ctx.beginPath(); ctx.arc(dx, dy - 20*sy, 8*sx, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#94A3B8'; // Iron Face Mask
   ctx.beginPath(); ctx.arc(dx, dy - 19*sy, 6*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#0F172A'; // Eye slits
+  ctx.fillStyle = '#0F172A';
   ctx.fillRect(dx - 4*sx, dy - 20*sy, 2*sx, 2*sy);
   ctx.fillRect(dx + 2*sx, dy - 20*sy, 2*sx, 2*sy);
 
-  // Green Latverian Sorcery Flames in Doom's Hands
+  // Green Latverian Sorcery Flames
   const flamePulse = (Math.sin(now * 6) + 1) * 3;
   ctx.fillStyle = '#00FF87';
   ctx.shadowColor = '#00FF87'; ctx.shadowBlur = 12;
@@ -686,132 +680,110 @@ function drawMultiverseBattleground(ctx, w, h) {
   ctx.beginPath(); ctx.arc(dx + 14*sx, dy - 4*sy, (4 + flamePulse)*sx, 0, Math.PI * 2); ctx.fill();
   ctx.shadowBlur = 0;
 
-  // ── CHAMBER 3: ⏳ KANG THE CONQUEROR'S QUANTUM CITADEL (Top-Right) ──
-  const c3x = 710 * sx, c3y = 20 * sy, c3w = 270 * sx, c3h = 220 * sy;
+  // ── CHAMBER 3: ⏳ KANG'S QUANTUM CITADEL (Top-Right) ──
+  const c3x = 710 * sx, c3y = 20 * sy, c3w = 265 * sx, c3h = 220 * sy;
   ctx.fillStyle = 'rgba(168, 85, 247, 0.04)';
   ctx.fillRect(c3x, c3y, c3w, c3h);
   ctx.strokeStyle = '#A855F7'; ctx.lineWidth = 1.5; ctx.strokeRect(c3x, c3y, c3w, c3h);
 
-  // Header Badge
+  // Centered Header Badge
   ctx.fillStyle = 'rgba(168, 85, 247, 0.2)';
   ctx.fillRect(c3x, c3y, c3w, 24*sy);
-  ctx.font = `bold ${10*sx}px "Space Grotesk", sans-serif`;
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#A855F7';
-  ctx.fillText('⏳ 3. KANG // QUANTUM CITADEL', c3x + 10*sx, c3y + 16*sy);
+  ctx.textAlign = 'center';
+  ctx.fillText('⏳ 3. KANG // QUANTUM CITADEL', c3x + c3w / 2, c3y + 16*sy);
 
-  // Kang on Floating Time Throne & Rotating Time Rings
-  const kx = c3x + 135 * sx;
+  // Kang on Floating Time Throne
+  const kx = c3x + 132 * sx;
   const ky = c3y + 115 * sy;
 
   // Rotating Timeline Rings
   ctx.save();
   ctx.translate(kx, ky);
   ctx.rotate(now * 0.7);
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 42*sx, 20*sy, 0, 0, Math.PI * 2);
-  ctx.strokeStyle = '#38BDF8';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
+  ctx.beginPath(); ctx.ellipse(0, 0, 42*sx, 20*sy, 0, 0, Math.PI * 2);
+  ctx.strokeStyle = '#38BDF8'; ctx.lineWidth = 1.5; ctx.stroke();
   ctx.rotate(-now * 1.4);
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 30*sx, 14*sy, 0.5, 0, Math.PI * 2);
-  ctx.strokeStyle = '#A855F7';
-  ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(0, 0, 30*sx, 14*sy, 0.5, 0, Math.PI * 2);
+  ctx.strokeStyle = '#A855F7'; ctx.stroke();
   ctx.restore();
 
-  // Kang Body (Purple suit & Green conqueror cape)
-  ctx.fillStyle = '#15803D'; // Green cape
-  ctx.fillRect(kx - 12*sx, ky - 14*sy, 24*sx, 24*sy);
-  ctx.fillStyle = '#6B21A8'; // Purple body
-  ctx.fillRect(kx - 8*sx, ky - 10*sy, 16*sx, 18*sy);
-
-  // Blue Glowing Neuro-Kinetic Mask
+  // Kang Body
+  ctx.fillStyle = '#15803D'; ctx.fillRect(kx - 12*sx, ky - 14*sy, 24*sx, 24*sy);
+  ctx.fillStyle = '#6B21A8'; ctx.fillRect(kx - 8*sx, ky - 10*sy, 16*sx, 18*sy);
   ctx.fillStyle = '#0284C7';
   ctx.beginPath(); ctx.arc(kx, ky - 18*sy, 7*sx, 0, Math.PI * 2);
   ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
 
-  // ── CHAMBER 4: 🦾 STARK TOWER HELICARRIER BRIDGE (Bottom-Left) ──
+  // ── CHAMBER 4: 🦾 SCAVENGERS HELICARRIER BRIDGE (Bottom-Left) ──
   const c4x = 24 * sx, c4y = 260 * sy, c4w = 230 * sx, c4h = 430 * sy;
   ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
   ctx.fillRect(c4x, c4y, c4w, c4h);
   ctx.strokeStyle = '#00F0FF'; ctx.lineWidth = 1.5; ctx.strokeRect(c4x, c4y, c4w, c4h);
 
-  // Header Badge
+  // Centered Header Badge
   ctx.fillStyle = 'rgba(0, 240, 255, 0.18)';
   ctx.fillRect(c4x, c4y, c4w, 24*sy);
-  ctx.font = `bold ${10*sx}px "Space Grotesk", sans-serif`;
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#00F0FF';
-  ctx.fillText('🦾 4. STARK HELICARRIER BRIDGE', c4x + 10*sx, c4y + 16*sy);
+  ctx.textAlign = 'center';
+  ctx.fillText('🦾 4. SCAVENGERS BRIDGE', c4x + c4w / 2, c4y + 16*sy);
 
-  // Hologram CAD Screen in Bridge
+  // Hologram CAD Screen
   ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
   ctx.fillRect(c4x + 20*sx, c4y + 40*sy, 70*sx, 35*sy);
   ctx.strokeStyle = '#00F0FF'; ctx.strokeRect(c4x + 20*sx, c4y + 40*sy, 70*sx, 35*sy);
 
-  // ── CHAMBER 5: 🔴 CHAOS MAGIC INCURSION & SCARLET WITCH (Bottom-Right) ──
-  const c5x = 710 * sx, c5y = 260 * sy, c5w = 270 * sx, c5h = 430 * sy;
+  // ── CHAMBER 5: 🔴 CHAOS MAGIC INCURSIONS (Bottom-Right) ──
+  const c5x = 710 * sx, c5y = 260 * sy, c5w = 265 * sx, c5h = 430 * sy;
   ctx.fillStyle = 'rgba(239, 68, 68, 0.04)';
   ctx.fillRect(c5x, c5y, c5w, c5h);
   ctx.strokeStyle = '#EF4444'; ctx.lineWidth = 1.5; ctx.strokeRect(c5x, c5y, c5w, c5h);
 
-  // Header Badge
+  // Centered Header Badge
   ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
   ctx.fillRect(c5x, c5y, c5w, 24*sy);
-  ctx.font = `bold ${10*sx}px "Space Grotesk", sans-serif`;
+  ctx.font = `bold ${10.5*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#EF4444';
-  ctx.fillText('🔴 5. CHAOS MAGIC // INCURSIONS', c5x + 10*sx, c5y + 16*sy);
+  ctx.textAlign = 'center';
+  ctx.fillText('🔴 5. CHAOS MAGIC // INCURSIONS', c5x + c5w / 2, c5y + 16*sy);
 
-  // Floating Scarlet Witch & Chaos Magic Vortex
-  const wx = c5x + 135 * sx;
+  // Floating Scarlet Witch & Chaos Hex Mandalas
+  const wx = c5x + 132 * sx;
   const wy = c5y + 130 * sy;
 
-  // Swirling Red Chaos Magic Hex Mandalas
+  // Swirling Red Chaos Hex
   ctx.save();
   ctx.translate(wx, wy);
   ctx.rotate(now * 1.2);
-  ctx.beginPath();
-  ctx.arc(0, 0, 36*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#EF4444';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([8, 8]);
-  ctx.stroke();
-
+  ctx.beginPath(); ctx.arc(0, 0, 36*sx, 0, Math.PI * 2);
+  ctx.strokeStyle = '#EF4444'; ctx.lineWidth = 2; ctx.setLineDash([8, 8]); ctx.stroke();
   ctx.rotate(-now * 2.4);
-  ctx.beginPath();
-  ctx.arc(0, 0, 22*sx, 0, Math.PI * 2);
-  ctx.strokeStyle = '#DC2626';
-  ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(0, 0, 22*sx, 0, Math.PI * 2);
+  ctx.strokeStyle = '#DC2626'; ctx.stroke(); ctx.setLineDash([]);
   ctx.restore();
 
-  // Scarlet Witch Body (Floating bob)
+  // Wanda Body
   const wBob = Math.sin(now * 3) * 4;
-  ctx.fillStyle = '#7F1D1D'; // Dark red robe
-  ctx.fillRect(wx - 9*sx, wy - 12*sy + wBob, 18*sx, 22*sy);
-  ctx.fillStyle = '#DC2626'; // Red corset
-  ctx.fillRect(wx - 7*sx, wy - 8*sy + wBob, 14*sx, 10*sy);
-
-  // Head & Scarlet Tiara
-  ctx.fillStyle = '#FED7AA';
-  ctx.beginPath(); ctx.arc(wx, wy - 18*sy + wBob, 7*sx, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#78350F'; // Auburn hair
-  ctx.fillRect(wx - 9*sx, wy - 22*sy + wBob, 18*sx, 6*sy);
-  ctx.fillStyle = '#DC2626'; // Scarlet Crown / Tiara
+  ctx.fillStyle = '#7F1D1D'; ctx.fillRect(wx - 9*sx, wy - 12*sy + wBob, 18*sx, 22*sy);
+  ctx.fillStyle = '#DC2626'; ctx.fillRect(wx - 7*sx, wy - 8*sy + wBob, 14*sx, 10*sy);
+  ctx.fillStyle = '#FED7AA'; ctx.beginPath(); ctx.arc(wx, wy - 18*sy + wBob, 7*sx, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#78350F'; ctx.fillRect(wx - 9*sx, wy - 22*sy + wBob, 18*sx, 6*sy);
+  // Scarlet Crown
+  ctx.fillStyle = '#DC2626';
   ctx.beginPath();
   ctx.moveTo(wx - 8*sx, wy - 24*sy + wBob);
   ctx.lineTo(wx, wy - 19*sy + wBob);
   ctx.lineTo(wx + 8*sx, wy - 24*sy + wBob);
   ctx.lineWidth = 2; ctx.strokeStyle = '#EF4444'; ctx.stroke();
-
-  // Floating Chaos Magic in Wanda's Hands
-  ctx.fillStyle = '#EF4444';
-  ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 14;
+  // Chaos Magic Glow in Hands
+  ctx.fillStyle = '#EF4444'; ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 14;
   ctx.beginPath(); ctx.arc(wx - 14*sx, wy + wBob, 4*sx, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.arc(wx + 14*sx, wy + wBob, 4*sx, 0, Math.PI * 2); ctx.fill();
   ctx.shadowBlur = 0;
 
-  // ── 6. CENTER: MASSIVE PULSING ARC REACTOR CORE ──
+  // ── 6. CENTER: MASSIVE PULSING SCAVENGERS CORE GRID ──
   const ax = 480 * sx;
   const ay = 390 * sy;
 
@@ -835,7 +807,7 @@ function drawMultiverseBattleground(ctx, w, h) {
   ctx.strokeStyle = '#00F0FF'; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
   ctx.restore();
 
-  // Giant Glowing Avengers "A"
+  // Giant Glowing Scavengers "A" Logo
   ctx.font = `bold ${44*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#00F0FF'; ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 20;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('A', ax, ay);
@@ -843,7 +815,8 @@ function drawMultiverseBattleground(ctx, w, h) {
 
   ctx.font = `700 ${10*sx}px "Space Grotesk", sans-serif`;
   ctx.fillStyle = '#00F0FF';
-  ctx.fillText('ARC REACTOR POWER GRID', ax, ay + 105*sy);
+  ctx.textAlign = 'center';
+  ctx.fillText('SCAVENGERS POWER GRID: 100% ONLINE', ax, ay + 105*sy);
 
   // Conduits Radiating from Core to All 5 Chambers
   ctx.strokeStyle = 'rgba(0, 240, 255, 0.14)';
@@ -877,7 +850,6 @@ function spawnHeroAgent(heroKey) {
 
   updateActiveDock();
   updateTopAvatarStack();
-  updateArcLoadMeter();
   selectHero(entity.id);
   updateDagPipeline();
 }
@@ -935,18 +907,6 @@ function updateActiveDock() {
     card.addEventListener('click', () => selectHero(h.id));
     dock.appendChild(card);
   });
-}
-
-// Update Arc Reactor Load Meter
-function updateArcLoadMeter() {
-  const count = activeHeroes.length;
-  const loadPct = Math.min(count * 11 + 14, 100);
-
-  const pctLabel = document.getElementById('arcReactorPctLabel');
-  if (pctLabel) pctLabel.textContent = `${loadPct}%`;
-
-  const barFill = document.getElementById('arcReactorBarFill');
-  if (barFill) barFill.style.width = `${loadPct}%`;
 }
 
 // Switch Hero Focus
@@ -1034,16 +994,16 @@ function forgeCustomHero(e) {
   const archetype = document.querySelector('.arch-tile.selected')?.dataset.archetype || 'iron';
   const color = document.querySelector('.color-circle.selected')?.dataset.color || '#00F0FF';
 
-  let chamber = 'Stark Helicarrier Bridge';
-  let coords = { officeX: 130, officeY: 480 };
+  let chamber = 'Scavengers Bridge';
+  let coords = { officeX: 139, officeY: 480 };
   if (archetype === 'widow') {
-    chamber = 'Doom Counter-Recon Vault'; coords = { officeX: 360, officeY: 110 };
+    chamber = 'Doom Arena'; coords = { officeX: 360, officeY: 110 };
   } else if (archetype === 'thor' || archetype === 'hawkeye') {
-    chamber = 'Infinity Gauntlet Vault'; coords = { officeX: 130, officeY: 160 };
+    chamber = 'Infinity Vault'; coords = { officeX: 139, officeY: 160 };
   } else if (archetype === 'strange') {
-    chamber = 'Chaos Magic Incursion'; coords = { officeX: 840, officeY: 480 };
+    chamber = 'Chaos Incursion'; coords = { officeX: 845, officeY: 480 };
   } else if (archetype === 'vision') {
-    chamber = 'Kang Quantum Citadel'; coords = { officeX: 840, officeY: 150 };
+    chamber = 'Kang Citadel'; coords = { officeX: 845, officeY: 150 };
   }
 
   const customId = 'custom_' + Date.now();
@@ -1069,14 +1029,13 @@ function forgeCustomHero(e) {
 
   updateActiveDock();
   updateTopAvatarStack();
-  updateArcLoadMeter();
   selectHero(customId);
   updateDagPipeline();
 
   document.getElementById('customHeroModalBackdrop')?.classList.remove('open');
 }
 
-// 60 FPS Loop
+// 60 FPS Loop with Periodic Battle Invitations
 function loop(now) {
   const dt = Math.min((now - lastTime) / 1000, 0.1);
   lastTime = now;
@@ -1087,6 +1046,20 @@ function loop(now) {
   const sy = h / 720;
 
   drawMultiverseBattleground(ctx, w, h);
+
+  // Periodic Villain Challenge Speech Bubbles
+  challengeTimer -= dt * 1000 * simSpeed;
+  if (challengeTimer <= 0) {
+    challengeTimer = 5000 + Math.random() * 4000;
+    const challenges = [
+      { x: 480, y: 110, color: '#00FF87', shortName: 'DR DOOM', text: "Kneel before DOOM! Come fight if you dare, Scavengers!" },
+      { x: 845, y: 135, color: '#A855F7', shortName: 'KANG THE CONQUEROR', text: "I conquer timelines! Challenge the Conqueror if you dare!" },
+      { x: 845, y: 390, color: '#EF4444', shortName: 'SCARLET WITCH', text: "Chaos magic will rewrite your reality! Step forward, Scavengers!" },
+      { x: 139, y: 130, color: '#FFD700', shortName: 'INFINITY GAUNTLET', text: "All 6 Cosmic stones pulse with power! Dare you wield it?" }
+    ];
+    const picked = challenges[Math.floor(Math.random() * challenges.length)];
+    createSpeechBubble(picked, picked.text);
+  }
 
   for (let i = spawnParticles.length - 1; i >= 0; i--) {
     const p = spawnParticles[i];
@@ -1144,9 +1117,40 @@ function handleCanvasClick(e) {
   }
 }
 
+// Connect Real-Time Bridge
+async function connectProviderRealTime(providerKey) {
+  const connectBtn = document.getElementById('obConnectBtn');
+  const badgeAuth = document.getElementById('obBadgeAuth');
+
+  if (connectBtn) connectBtn.innerHTML = `<span>⚡ CONNECTING BRIDGE...</span>`;
+  if (badgeAuth) badgeAuth.textContent = `Connecting to ${providerKey}...`;
+
+  try {
+    const res = await fetch('/api/connect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: providerKey })
+    });
+    const data = await res.json();
+    console.log('[Scavengers] Real-time connection response:', data);
+  } catch (err) {
+    console.warn('[Scavengers] API connect warning (proceeding):', err);
+  }
+
+  localStorage.setItem('scavengers_provider', providerKey);
+
+  setTimeout(() => {
+    const onboardingScreen = document.getElementById('onboardingScreen');
+    if (onboardingScreen) onboardingScreen.classList.add('hidden');
+    playSfx('repulsor');
+    const tony = activeHeroes.find(h => h.id === 'tony-stark') || activeHeroes[0];
+    if (tony) tony.speak(`${providerKey.toUpperCase()} Bridge Connected! Scavengers Assemble!`);
+  }, 400);
+}
+
 // Initialize
 function init() {
-  const savedProvider = localStorage.getItem('stark_provider');
+  const savedProvider = localStorage.getItem('scavengers_provider');
   const onboardingScreen = document.getElementById('onboardingScreen');
 
   if (savedProvider && onboardingScreen) {
@@ -1170,7 +1174,6 @@ function init() {
   activeHeroes = [tony];
   updateActiveDock();
   updateTopAvatarStack();
-  updateArcLoadMeter();
   updateDagPipeline();
 
   // Provider Selection Logic
@@ -1191,10 +1194,7 @@ function init() {
   const obConnectBtn = document.getElementById('obConnectBtn');
   if (obConnectBtn) {
     obConnectBtn.addEventListener('click', () => {
-      localStorage.setItem('stark_provider', selectedProvider);
-      onboardingScreen?.classList.add('hidden');
-      playSfx('repulsor');
-      tony.speak("Arc Reactor online. Multiverse defenses active!");
+      connectProviderRealTime(selectedProvider);
     });
   }
 

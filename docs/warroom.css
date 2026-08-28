@@ -1,9 +1,9 @@
 /* ══════════════════════════════════════════════════════════════════════
-   STARK TOWER WAR ROOM — MARVEL MULTIVERSE BATTLEGROUND HUD
-   Theme: Infinity Gauntlet · Dr Doom Arena · Kang Citadel · Chaos Incursion
+   SCAVENGERS WAR ROOM — MARVEL MULTIVERSE BATTLEGROUND HUD
+   Theme: Scavengers Core · Powered by Shubhransh Gupta · Live Antigravity Bridge
    ══════════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@600;700;800&display=swap');
 
 :root {
   color-scheme: dark;
@@ -104,14 +104,14 @@ html, body {
 .ob-arc-reactor-logo {
   width: 52px;
   height: 52px;
-  border-radius: 50%;
-  border: 2px solid var(--arc-cyan);
-  background: radial-gradient(circle, var(--arc-cyan) 15%, #6366f1 70%, #040711 100%);
-  box-shadow: 0 0 25px var(--arc-cyan);
+  filter: drop-shadow(0 0 12px var(--arc-cyan));
+  animation: reactorPulse 2.5s infinite;
+}
+
+.ob-title-wrap {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .ob-title-wrap h1 {
@@ -120,10 +120,34 @@ html, body {
   font-weight: 800;
   color: #FFFFFF;
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .ob-title-wrap h1 span { color: var(--arc-cyan); }
 
+.scavengers-sub-credit {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.cv-link {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 1px dashed var(--gold);
+  transition: all 120ms ease;
+}
+
+.cv-link:hover {
+  color: #FFFFFF;
+  border-bottom-style: solid;
+  text-shadow: 0 0 8px var(--gold);
+}
+
+/* Provider Visual Grid */
 .provider-visual-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -239,7 +263,7 @@ html, body {
 
 /* Top App Header */
 .warroom-top-bar {
-  height: 52px;
+  height: 54px;
   background: #050813;
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -259,53 +283,49 @@ html, body {
 .top-reactor-dial {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  border: 1.5px solid var(--arc-cyan);
-  background: radial-gradient(circle, var(--arc-cyan) 10%, #6366f1 70%, #03060F 100%);
-  box-shadow: 0 0 12px var(--arc-cyan);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
+  filter: drop-shadow(0 0 8px var(--arc-cyan));
+  cursor: pointer;
 }
 
-.top-reactor-meter {
+.top-brand-titles {
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
-.top-meter-label {
+.top-main-title {
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   color: #FFFFFF;
-  display: flex;
+  line-height: 1.2;
+}
+
+.top-main-title span { color: var(--arc-cyan); }
+
+.top-sub-credit {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--text-muted);
+}
+
+.top-power-badge {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.top-power-bar {
-  width: 110px;
-  height: 6px;
-  background: #0A1122;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.top-power-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--arc-cyan), var(--gamma-green));
-  width: 25%;
-  box-shadow: 0 0 8px var(--arc-cyan);
-  transition: width 0.3s ease;
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--arc-cyan);
 }
 
 .top-avatar-stack {
   display: flex;
   align-items: center;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 .stack-avatar {
@@ -430,7 +450,7 @@ html, body {
   backdrop-filter: blur(10px);
   border: 1.5px solid var(--bubble-border, var(--arc-cyan));
   color: #FFFFFF;
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 11.5px;
@@ -438,10 +458,11 @@ html, body {
   line-height: 1.4;
   pointer-events: none;
   z-index: 35;
-  max-width: 230px;
+  max-width: 240px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(0,240,255,0.25);
   transform: translate(-50%, -100%);
   margin-top: -36px;
+  animation: heroPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .speech-bubble .bubble-prefix {
@@ -721,137 +742,12 @@ html, body {
   color: var(--card-color, var(--arc-cyan));
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   3. CUSTOM HERO MODAL
-   ══════════════════════════════════════════════════════════════════════ */
-.custom-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(2, 4, 10, 0.85);
-  backdrop-filter: blur(10px);
-  z-index: 150;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+@keyframes reactorPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px var(--arc-cyan)); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 22px var(--arc-cyan)); }
 }
 
-.custom-modal-backdrop.open { display: flex; }
-
-.custom-modal {
-  width: 660px;
-  max-width: 100%;
-  background: #070B1A;
-  border: 1px solid var(--arc-cyan);
-  border-radius: 16px;
-  box-shadow: 0 25px 80px rgba(0,0,0,0.9), 0 0 35px rgba(0, 240, 255, 0.25);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.modal-header-bar {
-  padding: 14px 20px;
-  background: #0A1128;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.modal-title {
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--arc-cyan);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.modal-close-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.modal-visual-body {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.color-swatch-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.color-circle {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: transform 140ms ease;
-}
-
-.color-circle:hover { transform: scale(1.15); }
-.color-circle.selected {
-  border-color: #FFFFFF;
-  box-shadow: 0 0 12px currentColor;
-  transform: scale(1.18);
-}
-
-.archetype-tiles-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.arch-tile {
-  background: #03050F;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  transition: all 140ms ease;
-}
-
-.arch-tile:hover {
-  border-color: var(--arc-cyan);
-  background: var(--bg-card);
-}
-
-.arch-tile.selected {
-  border-color: var(--arc-cyan);
-  background: rgba(0, 240, 255, 0.15);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
-}
-
-.arch-tile .a-icon { font-size: 20px; }
-.arch-tile .a-name {
-  font-family: var(--font-display);
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #FFFFFF;
-}
-
-.form-input {
-  background: #03050F;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: #FFFFFF;
-  outline: none;
-  width: 100%;
+@keyframes heroPop {
+  from { opacity: 0; transform: translate(-50%, -85%) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
 }

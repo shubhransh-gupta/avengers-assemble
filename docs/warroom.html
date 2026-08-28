@@ -3,33 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stark Tower // Agentic AI War Room</title>
-  <meta name="description" content="Visual-first multi-agent AI coding war room with 1-click OAuth, DAG pipeline visualization, and interactive superhero chambers." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦾</text></svg>" />
+  <title>SCAVENGERS // Agentic AI War Room &bull; Powered by Shubhransh Gupta</title>
+  <meta name="description" content="SCAVENGERS — High-performance multi-agent AI coding war room with live Antigravity, Cursor, Codex, and Claude Code integrations. Powered by Shubhransh Gupta." />
+  
+  <!-- Glowing Arc Reactor SVG Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23040814' stroke='%2300F0FF' stroke-width='4'/><circle cx='50' cy='50' r='34' fill='none' stroke='%23A855F7' stroke-width='3' stroke-dasharray='8 6'/><circle cx='50' cy='50' r='22' fill='none' stroke='%2300F0FF' stroke-width='3' stroke-dasharray='4 4'/><circle cx='50' cy='50' r='10' fill='%2300F0FF'/><text x='50' y='57' font-size='18' font-weight='900' fill='%23040814' text-anchor='middle'>A</text></svg>" />
 
-  <!-- High-Precision Fonts: Space Grotesk, Inter, JetBrains Mono -->
+  <!-- High-Precision Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="warroom.css" />
 </head>
 <body>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       1. VISUAL ONBOARDING GATEWAY (Iconic Holographic Hub)
+       1. VISUAL ONBOARDING GATEWAY
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="onboarding-screen" id="onboardingScreen">
     <div class="onboarding-card">
       
       <div class="ob-visual-header">
-        <div class="ob-arc-reactor-logo">⚡</div>
+        <svg class="ob-arc-reactor-logo" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="#040814" stroke="#00F0FF" stroke-width="4"/>
+          <circle cx="50" cy="50" r="34" fill="none" stroke="#A855F7" stroke-width="3" stroke-dasharray="8 6"/>
+          <circle cx="50" cy="50" r="22" fill="none" stroke="#00F0FF" stroke-width="3" stroke-dasharray="4 4"/>
+          <circle cx="50" cy="50" r="11" fill="#00F0FF"/>
+          <text x="50" y="57" font-size="18" font-weight="900" fill="#040814" text-anchor="middle">A</text>
+        </svg>
+
         <div class="ob-title-wrap">
-          <h1>STARK TOWER // <span>AGENTIC AI GATEWAY</span></h1>
+          <h1>SCAVENGERS // <span>AGENTIC GATEWAY</span></h1>
+          <div class="scavengers-sub-credit">
+            Powered by <a href="https://shubhransh.com" target="_blank" class="cv-link" title="Open Shubhransh Gupta CV">Shubhransh Gupta</a>
+          </div>
         </div>
       </div>
 
-      <!-- Provider Visual Grid (8 Real Integrations) -->
+      <!-- Provider Visual Grid -->
       <div class="provider-visual-grid">
         <div class="prov-tile selected" data-provider="antigravity" data-name="Google Antigravity" data-icon="🚀">
           <span class="p-icon">🚀</span>
@@ -79,7 +91,7 @@
           <span class="ob-selected-icon" id="obSelectedIcon">🚀</span>
           <div>
             <div class="ob-selected-name" id="obSelectedName">Google Antigravity</div>
-            <span class="ob-badge-auth">● 1-Click Direct Bridge</span>
+            <span class="ob-badge-auth" id="obBadgeAuth">● 1-Click Live Bridge</span>
           </div>
         </div>
 
@@ -93,22 +105,30 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       2. MAIN WAR ROOM PLATFORM (Visual First)
+       2. MAIN WAR ROOM PLATFORM
        ══════════════════════════════════════════════════════════════════════ -->
   <div class="app-container">
     
-    <!-- Top Bar with Visual Gauges -->
+    <!-- Top Bar -->
     <header class="warroom-top-bar">
       <div class="top-brand-hud">
-        <div class="top-reactor-dial">⚡</div>
-        <div class="top-reactor-meter">
-          <div class="top-meter-label">
-            <span>ARC REACTOR</span>
-            <span style="color:var(--arc-cyan);" id="arcReactorPctLabel">25%</span>
+        <svg class="top-reactor-dial" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="#040814" stroke="#00F0FF" stroke-width="4"/>
+          <circle cx="50" cy="50" r="34" fill="none" stroke="#A855F7" stroke-width="3" stroke-dasharray="8 6"/>
+          <circle cx="50" cy="50" r="22" fill="none" stroke="#00F0FF" stroke-width="3" stroke-dasharray="4 4"/>
+          <circle cx="50" cy="50" r="11" fill="#00F0FF"/>
+          <text x="50" y="57" font-size="18" font-weight="900" fill="#040814" text-anchor="middle">A</text>
+        </svg>
+
+        <div class="top-brand-titles">
+          <div class="top-main-title">SCAVENGERS // <span>WAR ROOM</span></div>
+          <div class="top-sub-credit">
+            Powered by <a href="https://shubhransh.com" target="_blank" class="cv-link" title="Open Shubhransh Gupta CV">Shubhransh Gupta</a>
           </div>
-          <div class="top-power-bar">
-            <div class="top-power-fill" id="arcReactorBarFill"></div>
-          </div>
+        </div>
+
+        <div class="top-power-badge">
+          <span>⚡ SCAVENGERS CORE: 100% ONLINE</span>
         </div>
 
         <!-- Live Avatar Stack -->
@@ -134,39 +154,39 @@
       <span style="font-family:var(--font-mono);font-size:10px;color:var(--arc-cyan);font-weight:700;margin-right:4px;">
         ⚡ SPAWN:
       </span>
-      <div class="v-spawn-pill" data-hero="captain-america" style="--pill-color:#38BDF8;--pill-glow:rgba(56,189,248,0.4);">
+      <div class="v-spawn-pill" data-hero="captain-america" style="--pill-color:#38BDF8;">
         <span class="v-avatar">🛡️</span>
         <span class="v-label">Cap (QA)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="hulk" style="--pill-color:#00FF87;--pill-glow:rgba(0,255,135,0.4);">
+      <div class="v-spawn-pill" data-hero="hulk" style="--pill-color:#00FF87;">
         <span class="v-avatar">🟢</span>
         <span class="v-label">Hulk (AST)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="black-widow" style="--pill-color:#A855F7;--pill-glow:rgba(168,85,247,0.4);">
+      <div class="v-spawn-pill" data-hero="black-widow" style="--pill-color:#A855F7;">
         <span class="v-avatar">🕷️</span>
         <span class="v-label">Widow (Security)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="thor" style="--pill-color:#00E5FF;--pill-glow:rgba(0,229,255,0.4);">
+      <div class="v-spawn-pill" data-hero="thor" style="--pill-color:#00E5FF;">
         <span class="v-avatar">⚡</span>
         <span class="v-label">Thor (DevOps)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="hawkeye" style="--pill-color:#FFD700;--pill-glow:rgba(255,215,0,0.4);">
+      <div class="v-spawn-pill" data-hero="hawkeye" style="--pill-color:#FFD700;">
         <span class="v-avatar">🏹</span>
         <span class="v-label">Hawkeye (Tests)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="spider-man" style="--pill-color:#38BDF8;--pill-glow:rgba(56,189,248,0.4);">
+      <div class="v-spawn-pill" data-hero="spider-man" style="--pill-color:#38BDF8;">
         <span class="v-avatar">🕸️</span>
         <span class="v-label">Spidey (UI)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="doctor-strange" style="--pill-color:#FF9900;--pill-glow:rgba(255,153,0,0.4);">
+      <div class="v-spawn-pill" data-hero="doctor-strange" style="--pill-color:#FF9900;">
         <span class="v-avatar">🔮</span>
         <span class="v-label">Strange (Multiverse)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="vision" style="--pill-color:#FFD700;--pill-glow:rgba(255,215,0,0.4);">
+      <div class="v-spawn-pill" data-hero="vision" style="--pill-color:#FFD700;">
         <span class="v-avatar">💎</span>
         <span class="v-label">Vision (Memory)</span>
       </div>
-      <div class="v-spawn-pill" data-hero="all" style="--pill-color:#FFD700;--pill-glow:rgba(255,215,0,0.5);border-color:var(--gold);">
+      <div class="v-spawn-pill" data-hero="all" style="--pill-color:#FFD700;border-color:var(--gold);">
         <span class="v-avatar">⚡</span>
         <span class="v-label" style="color:var(--gold);">ASSEMBLE ALL</span>
       </div>
@@ -187,10 +207,10 @@
         <div class="hud-panel-header">
           <div class="hud-title">
             <span>📡</span>
-            <span id="activeHeroHudLabel">TONY STARK // GOD ORCHESTRATOR</span>
+            <span id="activeHeroHudLabel">TONY STARK // LEAD ORCHESTRATOR</span>
           </div>
           <span style="font-family:var(--font-mono);font-size:10px;color:var(--gamma-green);font-weight:700;">
-            ● 99.8% OPTIMAL
+            ● 100% READY
           </span>
         </div>
 
@@ -233,7 +253,7 @@
             <span>ACTIVE TASK DAG PIPELINE</span>
           </div>
 
-          <!-- Dynamic Node 1: Master Orchestration -->
+          <!-- Dynamic Node 1 -->
           <div class="dag-node-card" style="--node-color:#00F0FF;">
             <div class="dag-node-left">
               <div class="dag-node-avatar">🦾</div>
@@ -245,7 +265,7 @@
             <div class="dag-progress-ring">● ACTIVE</div>
           </div>
 
-          <!-- Dynamic Node 2: QA Standards -->
+          <!-- Dynamic Node 2 -->
           <div class="dag-node-card" style="--node-color:#38BDF8;">
             <div class="dag-node-left">
               <div class="dag-node-avatar">🛡️</div>
@@ -264,7 +284,7 @@
             type="text" 
             class="hud-prompt-input" 
             id="hudPromptInput" 
-            placeholder="Assign directive to active hero strike team..." 
+            placeholder="Assign directive to Scavengers strike team..." 
             value="Build secure JWT auth microservice with unit tests"
           />
           <button class="hud-dispatch-btn" id="hudDispatchBtn">
