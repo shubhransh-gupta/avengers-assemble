@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS // MARVEL BATTLEWORLD CHAMBERS & MULTIVERSE INCURSIONS
+   SCAVENGERS // MARVEL BATTLEWORLD REAL-TIME MULTIVERSE SIMULATION
    ══════════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -7,8 +7,8 @@
   --bg-void: #030008;
   --bg-surface: #070214;
   --bg-panel: #0C0520;
-  --bg-card: rgba(18, 9, 44, 0.88);
-  --bg-card-hover: rgba(32, 18, 75, 0.95);
+  --bg-card: rgba(18, 9, 44, 0.9);
+  --bg-card-hover: rgba(34, 18, 80, 0.98);
   --bg-input: #04010A;
 
   --border: #231445;
@@ -17,6 +17,7 @@
   --border-crimson: #FF0055;
   --border-gold: #FFD700;
   --border-emerald: #10B981;
+  --border-purple: #A855F7;
 
   --ink: #FFFFFF;
   --ink-secondary: #C4B5FD;
@@ -24,12 +25,13 @@
   --ink-faint: #564875;
 
   --arc-cyan: #00F0FF;
-  --arc-glow: rgba(0, 240, 255, 0.45);
+  --arc-glow: rgba(0, 240, 255, 0.55);
   --doom-green: #10B981;
-  --doom-glow: rgba(16, 185, 129, 0.45);
+  --doom-glow: rgba(16, 185, 129, 0.55);
   --kang-blue: #38BDF8;
-  --kang-glow: rgba(56, 189, 248, 0.45);
+  --kang-glow: rgba(56, 189, 248, 0.55);
   --thanos-gold: #FFC83B;
+  --thanos-glow: rgba(255, 200, 59, 0.55);
   --incursion-red: #FF0055;
 
   --font-display: "Space Grotesk", -apple-system, sans-serif;
@@ -63,7 +65,7 @@ html, body {
   border: 2px solid var(--border);
 }
 
-/* ── Split Stage (Left Valley Viewport + Right Command Console) ── */
+/* ── Split Stage (Left Simulation Viewport + Right Command Console) ── */
 .battleworld-split {
   display: flex;
   flex: 1;
@@ -71,7 +73,7 @@ html, body {
   position: relative;
 }
 
-/* ── Left: Cosmic Incursions Valley Viewport ───────────────── */
+/* ── Left: Cosmic Incursions Simulation Viewport ───────────── */
 .valley-viewport {
   flex: 1.55;
   position: relative;
@@ -88,13 +90,29 @@ html, body {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: brightness(0.9) contrast(1.1);
+  filter: brightness(0.88) contrast(1.12);
   pointer-events: none;
   z-index: 1;
 }
 
-/* Canvas Overlay for Incursion Lightning, Lake Waves & Respawn Pillars */
-#valleyEffectsCanvas {
+/* 3D Holographic Cyber Grid Overlay */
+.simulation-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  perspective: 600px;
+  transform: rotateX(15deg) scale(1.1);
+  transform-origin: center bottom;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.65;
+}
+
+/* Canvas Overlay for Mesh DAG Data Streams, Quantum Respawn Beams & Incursion Lightning */
+#simulationCanvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -124,19 +142,19 @@ html, body {
 }
 
 .battleworld-chamber:hover {
-  transform: translate(-50%, -54%) scale(1.06);
+  transform: translate(-50%, -54%) scale(1.08);
   z-index: 30;
 }
 
-/* Chamber Frame (Glassmorphic Hologram & Portrait) */
+/* Chamber Frame (Glassmorphic Hologram & Photorealistic Portrait) */
 .chamber-pod-frame {
-  width: 76px;
-  height: 76px;
-  border-radius: 12px;
-  background: rgba(13, 6, 32, 0.85);
-  backdrop-filter: blur(10px);
+  width: 82px;
+  height: 82px;
+  border-radius: 14px;
+  background: rgba(13, 6, 32, 0.9);
+  backdrop-filter: blur(12px);
   border: 2px solid var(--chamber-accent, var(--arc-cyan));
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 20px var(--chamber-glow, var(--arc-glow));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 22px var(--chamber-glow, var(--arc-glow));
   position: relative;
   overflow: hidden;
   display: flex;
@@ -144,23 +162,29 @@ html, body {
   justify-content: center;
 }
 
+/* Holographic Scanline Sweep across Portrait */
+.chamber-pod-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 240, 255, 0.2) 50%, transparent 100%);
+  transform: translateY(-100%);
+  animation: scanlineSweep 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
 .chamber-portrait-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  object-position: center 20%;
+  filter: contrast(1.08) brightness(0.95);
 }
 
-.chamber-emoji-icon {
-  font-size: 34px;
-  filter: drop-shadow(0 0 10px var(--chamber-accent, var(--arc-cyan)));
-}
-
-/* Rotating Energy Pulse Ring */
 .chamber-pulse-ring {
   position: absolute;
-  inset: -6px;
-  border-radius: 16px;
+  inset: -7px;
+  border-radius: 18px;
   border: 1.5px dashed var(--chamber-accent, var(--arc-cyan));
   animation: rotateRing 14s linear infinite;
   pointer-events: none;
@@ -168,35 +192,36 @@ html, body {
 
 /* Respawn Beam Effect on Chamber */
 .chamber-respawn-active {
-  animation: respawnFlash 1.2s ease-out;
+  animation: respawnFlash 1.4s ease-out;
 }
 
 /* Chamber Meta Tag & Status Label */
 .chamber-meta-pill {
   margin-top: 6px;
-  background: rgba(13, 6, 32, 0.92);
-  backdrop-filter: blur(10px);
+  background: rgba(13, 6, 32, 0.94);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--chamber-accent, var(--border));
   border-radius: 6px;
-  padding: 4px 9px;
+  padding: 4px 10px;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 800;
   color: var(--ink);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85);
   white-space: nowrap;
   letter-spacing: 0.04em;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .chamber-status-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--chamber-accent, var(--arc-cyan));
-  box-shadow: 0 0 6px var(--chamber-accent, var(--arc-cyan));
+  box-shadow: 0 0 8px var(--chamber-accent, var(--arc-cyan));
+  animation: pulseDot 2s ease-in-out infinite;
 }
 
 /* Floating Status Pills */
@@ -248,7 +273,7 @@ html, body {
 }
 
 .valley-action-pill-btn {
-  background: rgba(18, 9, 44, 0.9);
+  background: rgba(18, 9, 44, 0.92);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-bright);
   border-radius: 8px;
@@ -294,7 +319,7 @@ html, body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px var(--bubble-glow, rgba(0, 240, 255, 0.3));
   max-width: 260px;
   transform: translate(-50%, -100%);
-  margin-top: -48px;
+  margin-top: -52px;
   pointer-events: none;
   animation: popUp 0.18s ease-out;
 }
@@ -695,17 +720,18 @@ html, body {
   box-shadow: 0 0 12px var(--card-glow, rgba(0, 240, 255, 0.3));
 }
 
-.stronghold-icon {
-  width: 32px;
-  height: 32px;
+.stronghold-thumb-frame {
+  width: 34px;
+  height: 34px;
   border-radius: 6px;
-  background: var(--card-bg, rgba(255, 255, 255, 0.05));
   border: 1px solid var(--card-accent, var(--border));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
+  overflow: hidden;
   flex-shrink: 0;
+}
+.stronghold-thumb-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .stronghold-info { display: flex; flex-direction: column; overflow: hidden; }
@@ -795,7 +821,7 @@ html, body {
 /* Spawn Character Grid */
 .spawn-roster-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 10px;
   max-height: 340px;
   overflow-y: auto;
@@ -821,7 +847,14 @@ html, body {
   box-shadow: 0 0 10px var(--arc-glow);
 }
 
-.roster-avatar { font-size: 24px; }
+.roster-avatar-frame {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid var(--arc-cyan);
+}
+.roster-avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
 .roster-name { font-family: var(--font-display); font-size: 11.5px; font-weight: 800; color: var(--ink); }
 .roster-callsign { font-family: var(--font-mono); font-size: 9px; color: var(--arc-cyan); }
 
@@ -859,14 +892,24 @@ html, body {
   background: #080318;
 }
 
+@keyframes scanlineSweep {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
 @keyframes rotateRing {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
 @keyframes respawnFlash {
-  0% { transform: translate(-50%, -50%) scale(0.6); filter: brightness(3) drop-shadow(0 0 30px #00F0FF); }
-  50% { transform: translate(-50%, -50%) scale(1.15); filter: brightness(1.8) drop-shadow(0 0 20px #FF0055); }
+  0% { transform: translate(-50%, -50%) scale(0.6); filter: brightness(3.5) drop-shadow(0 0 35px #00F0FF); }
+  50% { transform: translate(-50%, -50%) scale(1.18); filter: brightness(2) drop-shadow(0 0 25px #FF0055); }
   100% { transform: translate(-50%, -50%) scale(1.0); filter: brightness(1.0); }
 }
 
