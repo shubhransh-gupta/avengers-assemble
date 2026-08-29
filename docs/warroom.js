@@ -1,7 +1,7 @@
 /**
  * ══════════════════════════════════════════════════════════════════════
- * SCAVENGERS // 100% EDGE-TO-EDGE 3D MINECRAFT AVENGERS SIMULATION
- * AUTHENTIC TEXTURES, CRAFTING, ENCHANTING & DIAMOND SWORD COMBAT
+ * SCAVENGERS // 100% 3D MINECRAFT AVENGERS & VALYRIAN LAVA SIMULATION
+ * REAL 3D VOXEL TREES, BOILING LAVA LAKE & ALL SUPERHERO POWERS
  * ══════════════════════════════════════════════════════════════════════
  */
 
@@ -11,12 +11,14 @@ const state = {
   consoleMode: 'verbose', // 'verbose' | 'result'
   particles: [],          // Rain / cosmic sparks
   portalParticles: [],    // Nether portal particles
+  lavaBubbles: [],        // Boiling lava bubbles & embers
+  superpowerFx: [],       // Active Marvel superpower spells & beams
   xpOrbs: [],             // Minecraft XP Orbs
   dagPulses: [],          // Redstone energy blocks
-  activeAttacks: [],
   selectedAgentId: 'tony-stark',
   roamingAgents: {},
   thunderboltTimer: 0,
+  powerShowcaseTimer: 0,
   time: 0,
   activeHotbarItem: 'diamond_sword',
 
@@ -63,9 +65,19 @@ function getBlockData(gx, gy) {
     return { h: 3, type: 'iron' };
   }
 
-  // 3. DOCTOR DOOM CASTLE (gx: 24..29, gy: 24..29)
-  if (gx >= 24 && gx <= 29 && gy >= 24 && gy <= 29) {
-    return { h: 3, type: 'cobblestone' };
+  // 3. VALYRIAN / DOOM NETHER LAVA BIOME (gx: 22..30, gy: 22..30)
+  if (gx >= 22 && gy >= 22) {
+    // Castle keep
+    if (gx >= 25 && gx <= 28 && gy >= 25 && gy <= 28) {
+      return { h: 3, type: 'cobblestone' };
+    }
+    // Boiling Lava Lake & Falls surrounding Valyrian keep
+    if ((gx >= 22 && gx <= 24 && gy >= 23 && gy <= 29) || (gy >= 22 && gy <= 24 && gx >= 23 && gx <= 29)) {
+      return { h: 0, type: 'lava' };
+    }
+    // Magma / Obsidian crust
+    if ((gx + gy) % 2 === 0) return { h: 2, type: 'magma' };
+    return { h: 2, type: 'obsidian' };
   }
 
   // 4. THOR THUNDER HILL (gx: 24..29, gy: 1..6)
@@ -83,41 +95,47 @@ function getBlockData(gx, gy) {
     return { h: 3, type: 'obsidian' };
   }
 
-  // 7. Natural Continuous Minecraft Rolling Hills
+  // 7. Natural Continuous Minecraft Green Meadows & Water Channels
   const wave = Math.sin(gx * 0.35) * Math.cos(gy * 0.35);
   let h = 1;
   if (wave > 0.45) h = 2;
   if (wave > 0.85) h = 3;
 
-  // Diagonal streams
-  if (Math.abs(gx - gy - 8) <= 1 && !(gx >= 12 && gx <= 18 && gy >= 12 && gy <= 18)) {
+  // Diagonal Water Canal
+  if (Math.abs(gx - gy - 8) <= 1 && !(gx >= 12 && gx <= 18 && gy >= 12 && gy <= 18) && !(gx >= 22 && gy >= 22)) {
     return { h: 0, type: 'water' };
   }
 
   return { h, type: 'grass' };
 }
 
-// Tree map for procedural foliage
-function hasTree(gx, gy) {
-  if (gx >= 11 && gx <= 19 && gy >= 3 && gy <= 21) return null;
-  if (gx <= 7 && gy <= 7) return null;
-  if (gx >= 23 && gy >= 23) return null;
-  if (gx >= 23 && gy <= 7) return null;
-  if (gx <= 7 && gy >= 23) return null;
+// ── Multi-Block 3D Voxel Minecraft Trees Generator ──────────────────
+const VOXEL_TREES = [
+  // Forest Cluster (West of Taj Mahal)
+  { gx: 8, gy: 6, type: 'oak', height: 4 },
+  { gx: 9, gy: 4, type: 'oak', height: 3 },
+  { gx: 7, gy: 9, type: 'spruce', height: 5 },
+  { gx: 10, gy: 10, type: 'oak', height: 4 },
+  { gx: 6, gy: 12, type: 'birch', height: 4 },
+  { gx: 8, gy: 14, type: 'oak', height: 3 },
 
-  const data = getBlockData(gx, gy);
-  if (data.type !== 'grass') return null;
+  // Forest Cluster (East of Taj Mahal)
+  { gx: 20, gy: 6, type: 'spruce', height: 5 },
+  { gx: 22, gy: 8, type: 'spruce', height: 4 },
+  { gx: 21, gy: 11, type: 'oak', height: 4 },
+  { gx: 20, gy: 14, type: 'oak', height: 3 },
+  { gx: 22, gy: 16, type: 'birch', height: 4 },
 
-  const hash = Math.sin(gx * 12.9898 + gy * 78.233) * 43758.5453;
-  const rand = hash - Math.floor(hash);
+  // South Forest Cluster (Near Wakanda & Meadow)
+  { gx: 8, gy: 20, type: 'oak', height: 4 },
+  { gx: 10, gy: 22, type: 'spruce', height: 5 },
+  { gx: 11, gy: 25, type: 'oak', height: 3 },
+  { gx: 7, gy: 25, type: 'birch', height: 4 },
 
-  if (rand < 0.12) {
-    if (rand < 0.04) return 'cherry'; // Pink Cherry Blossom with authentic pixel leaves
-    if (rand < 0.08) return 'spruce'; // Dark Pine Spruce
-    return 'oak';                     // Classic Green Oak
-  }
-  return null;
-}
+  // Spider-Man Web Treehouse Grove
+  { gx: 10, gy: 7, type: 'giant_oak', height: 6 },
+  { gx: 12, gy: 8, type: 'oak', height: 3 },
+];
 
 // ── Coordinate Conversion (Screen <-> Grid with Pan & Zoom) ─────────
 function gridToScreen(gx, gy, gz = 0) {
@@ -145,7 +163,7 @@ function getElevation(gx, gy) {
   return getBlockData(Math.round(gx), Math.round(gy)).h;
 }
 
-// ── Minecraft Avengers Characters Catalog ───────────────────────────
+// ── Minecraft Avengers Characters Catalog with Unique Powers ────────
 const MINECRAFT_HEROES = {
   'tony-stark': {
     id: 'tony-stark',
@@ -158,98 +176,14 @@ const MINECRAFT_HEROES = {
     themeColor: '#00F0FF',
     glowColor: 'rgba(0, 240, 255, 0.75)',
     skinType: 'iron-man',
-    power: 'laser',
+    power: 'repulsor_unibeam',
     gx: 4, gy: 4,
     targetGx: 4, targetGy: 4,
     walkTimer: 0,
     isWalking: false,
     speed: 0.08,
-    weapon: 'laser_hands',
-    quote: 'JARVIS, compile master DAG into redstone repeaters.',
-    spawned: true,
-  },
-  'doctor-doom': {
-    id: 'doctor-doom',
-    name: 'Doctor Doom',
-    callsign: 'DOOM',
-    role: 'Latverian AST & Compiler',
-    station: 'Latverian 3D Castle',
-    image: './assets/doctor_doom.jpg',
-    avatar: '👑',
-    themeColor: '#10B981',
-    glowColor: 'rgba(168, 85, 247, 0.75)',
-    skinType: 'doctor-doom',
-    power: 'runes',
-    gx: 26, gy: 26,
-    targetGx: 26, targetGy: 26,
-    walkTimer: 0,
-    isWalking: false,
-    speed: 0.065,
-    weapon: 'magic_runes',
-    quote: 'Doom commands the syntax trees. Imperfect code shall burn in the Nether.',
-    spawned: true,
-  },
-  'thor': {
-    id: 'thor',
-    name: 'Thor Odinson',
-    callsign: 'THOR',
-    role: 'DevOps & Package Manifest',
-    station: 'Thunder Altar Spire',
-    image: './assets/thor.jpg',
-    avatar: '⚡',
-    themeColor: '#00D5E8',
-    glowColor: 'rgba(0, 213, 232, 0.75)',
-    skinType: 'thor',
-    power: 'thunder',
-    gx: 26, gy: 4,
-    targetGx: 26, targetGy: 4,
-    walkTimer: 0,
-    isWalking: false,
-    speed: 0.075,
-    weapon: 'mjolnir',
-    quote: 'By Mjolnir, summoned thunderstorm CI/CD and Swift packages!',
-    spawned: true,
-  },
-  'thanos': {
-    id: 'thanos',
-    name: 'Thanos',
-    callsign: 'MAD TITAN',
-    role: 'Power & Rate Balancer',
-    station: '3D Obsidian Altar',
-    image: './assets/thanos.jpg',
-    avatar: '🪐',
-    themeColor: '#FFC83B',
-    glowColor: 'rgba(255, 200, 59, 0.75)',
-    skinType: 'thanos',
-    power: 'cosmic',
-    gx: 15, gy: 26,
-    targetGx: 15, targetGy: 26,
-    walkTimer: 0,
-    isWalking: false,
-    speed: 0.055,
-    weapon: 'infinity_gauntlet',
-    quote: 'Rate limits, memory, and tokens in perfect equilibrium.',
-    spawned: true,
-  },
-  'captain-america': {
-    id: 'captain-america',
-    name: 'Steve Rogers',
-    callsign: 'CAP',
-    role: 'Vibranium QA Auditor',
-    station: 'Wakandan Vibranium Bunker',
-    image: './assets/captain_america.jpg',
-    avatar: '🛡️',
-    themeColor: '#3B82F6',
-    glowColor: 'rgba(59, 130, 246, 0.75)',
-    skinType: 'captain-america',
-    power: 'shield',
-    gx: 4, gy: 26,
-    targetGx: 4, targetGy: 26,
-    walkTimer: 0,
-    isWalking: false,
-    speed: 0.075,
-    weapon: 'shield',
-    quote: 'Standards inspection ready. Sound off, soldiers.',
+    weapon: 'repulsors',
+    quote: 'Repulsors primed at 100% capacity! JARVIS, target the DAG.',
     spawned: true,
   },
   'spider-man': {
@@ -263,14 +197,98 @@ const MINECRAFT_HEROES = {
     themeColor: '#EF4444',
     glowColor: 'rgba(239, 68, 68, 0.75)',
     skinType: 'spider-man',
-    power: 'web',
+    power: 'web_stream',
     gx: 10, gy: 7,
     targetGx: 10, targetGy: 7,
     walkTimer: 0,
     isWalking: false,
     speed: 0.09,
     weapon: 'web_shooters',
-    quote: 'Spun up reactive components with buttery 60 FPS animations!',
+    quote: 'THWIP! Spun up high-speed web nets across the voxel canopy!',
+    spawned: true,
+  },
+  'doctor-doom': {
+    id: 'doctor-doom',
+    name: 'Doctor Doom',
+    callsign: 'DOOM',
+    role: 'Latverian AST & Compiler',
+    station: 'Valyrian Lava Keep',
+    image: './assets/doctor_doom.jpg',
+    avatar: '👑',
+    themeColor: '#10B981',
+    glowColor: 'rgba(16, 185, 129, 0.75)',
+    skinType: 'doctor-doom',
+    power: 'valyrian_dragonflame',
+    gx: 26, gy: 26,
+    targetGx: 26, targetGy: 26,
+    walkTimer: 0,
+    isWalking: false,
+    speed: 0.065,
+    weapon: 'dragonflame',
+    quote: 'Doom commands the Valyrian dragonflame and Nether lava pits!',
+    spawned: true,
+  },
+  'thor': {
+    id: 'thor',
+    name: 'Thor Odinson',
+    callsign: 'THOR',
+    role: 'DevOps & Package Manifest',
+    station: 'Thunder Altar Spire',
+    image: './assets/thor.jpg',
+    avatar: '⚡',
+    themeColor: '#00D5E8',
+    glowColor: 'rgba(0, 213, 232, 0.75)',
+    skinType: 'thor',
+    power: 'mjolnir_lightning',
+    gx: 26, gy: 4,
+    targetGx: 26, targetGy: 4,
+    walkTimer: 0,
+    isWalking: false,
+    speed: 0.075,
+    weapon: 'mjolnir',
+    quote: 'FEEL THE WRATH OF ASGARDIAN THUNDER AND MJOLNIR STRIKES!',
+    spawned: true,
+  },
+  'doctor-strange': {
+    id: 'doctor-strange',
+    name: 'Stephen Strange',
+    callsign: 'STRANGE',
+    role: 'Temporal Memory',
+    station: 'Taj Mahal Astral Spire',
+    image: './assets/doctor_strange.jpg',
+    avatar: '🔮',
+    themeColor: '#F59E0B',
+    glowColor: 'rgba(245, 158, 11, 0.75)',
+    skinType: 'doctor-strange',
+    power: 'eldritch_mandala',
+    gx: 15, gy: 15,
+    targetGx: 15, targetGy: 15,
+    walkTimer: 0,
+    isWalking: false,
+    speed: 0.07,
+    weapon: 'eldritch_magic',
+    quote: 'By the Vishanti, casting fiery Eldritch portal shields!',
+    spawned: true,
+  },
+  'thanos': {
+    id: 'thanos',
+    name: 'Thanos',
+    callsign: 'MAD TITAN',
+    role: 'Power & Rate Balancer',
+    station: '3D Obsidian Altar',
+    image: './assets/thanos.jpg',
+    avatar: '🪐',
+    themeColor: '#FFC83B',
+    glowColor: 'rgba(255, 200, 59, 0.75)',
+    skinType: 'thanos',
+    power: 'infinity_beam',
+    gx: 15, gy: 26,
+    targetGx: 15, targetGy: 26,
+    walkTimer: 0,
+    isWalking: false,
+    speed: 0.055,
+    weapon: 'infinity_gauntlet',
+    quote: 'All six Infinity Stones unleashed. Reality bends to my will.',
     spawned: true,
   },
   'hulk': {
@@ -284,35 +302,35 @@ const MINECRAFT_HEROES = {
     themeColor: '#22C55E',
     glowColor: 'rgba(34, 197, 94, 0.75)',
     skinType: 'hulk',
-    power: 'gamma',
+    power: 'gamma_smash',
     gx: 8, gy: 16,
     targetGx: 8, targetGy: 16,
     walkTimer: 0,
     isWalking: false,
     speed: 0.06,
     weapon: 'fists',
-    quote: 'HULK SMASH 3D VOXEL BLOCKS AND MINE DIAMOND ORES!',
+    quote: 'HULK SMASH 3D VOXEL EARTH WITH GAMMA SHOCKWAVES!',
     spawned: true,
   },
-  'doctor-strange': {
-    id: 'doctor-strange',
-    name: 'Stephen Strange',
-    callsign: 'STRANGE',
-    role: 'Temporal Memory',
-    station: 'Taj Mahal Astral Spire',
-    image: './assets/doctor_strange.jpg',
-    avatar: '🔮',
-    themeColor: '#A855F7',
-    glowColor: 'rgba(168, 85, 247, 0.75)',
-    skinType: 'doctor-strange',
-    power: 'mandala',
-    gx: 15, gy: 15,
-    targetGx: 15, targetGy: 15,
+  'captain-america': {
+    id: 'captain-america',
+    name: 'Steve Rogers',
+    callsign: 'CAP',
+    role: 'Vibranium QA Auditor',
+    station: 'Wakandan Vibranium Bunker',
+    image: './assets/captain_america.jpg',
+    avatar: '🛡️',
+    themeColor: '#3B82F6',
+    glowColor: 'rgba(59, 130, 246, 0.75)',
+    skinType: 'captain-america',
+    power: 'vibranium_shield_throw',
+    gx: 4, gy: 26,
+    targetGx: 4, targetGy: 26,
     walkTimer: 0,
     isWalking: false,
-    speed: 0.07,
-    weapon: 'spellbook',
-    quote: 'Temporal snapshots preserved in the Taj Mahal mystic matrix.',
+    speed: 0.075,
+    weapon: 'shield',
+    quote: 'Vibranium shield bouncing with precision trajectory!',
     spawned: true,
   },
   'kang': {
@@ -326,14 +344,14 @@ const MINECRAFT_HEROES = {
     themeColor: '#38BDF8',
     glowColor: 'rgba(56, 189, 248, 0.75)',
     skinType: 'kang',
-    power: 'chrono',
+    power: 'chrono_portal',
     gx: 20, gy: 12,
     targetGx: 20, targetGy: 12,
     walkTimer: 0,
     isWalking: false,
     speed: 0.07,
     weapon: 'chrono_device',
-    quote: 'Simulated 14 billion voxel timelines. Reality-616 targeted.',
+    quote: 'Opening temporal rifts across 14 billion Minecraft branches.',
     spawned: true,
   },
   'black-widow': {
@@ -347,14 +365,14 @@ const MINECRAFT_HEROES = {
     themeColor: '#C084FC',
     glowColor: 'rgba(192, 132, 252, 0.75)',
     skinType: 'black-widow',
-    power: 'laser',
+    power: 'widow_bite_shock',
     gx: 8, gy: 11,
     targetGx: 8, targetGy: 11,
     walkTimer: 0,
     isWalking: false,
     speed: 0.085,
     weapon: 'batons',
-    quote: 'Perimeter secure. API bearer keys sanitized in the enclave.',
+    quote: 'Widow bites charged. Neutralizing perimeter security threats.',
     spawned: false,
   }
 };
@@ -388,11 +406,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initWeatherParticles();
 
   setTimeout(() => {
-    showCosmicSpeechBubble('tony-stark', '3D Minecraft World active! Crafting tables, lanterns & Diamond Swords ready.');
+    showCosmicSpeechBubble('tony-stark', '3D Voxel Trees & Valyrian Lava Biome loaded! All Marvel superpowers active.');
   }, 1000);
 
   setInterval(triggerAutonomousHeroMovement, 5000);
   setInterval(triggerDAGSimulationPulse, 6000);
+  setInterval(triggerRandomHeroSuperpower, 3500);
 });
 
 // ── Canvas Setup & Event Handling (Pan, Zoom & Click) ────────────────
@@ -456,7 +475,7 @@ function handleCanvasClick(e) {
     }
   }
 
-  // 2. Check if clicked on a hero
+  // 2. Check if clicked on a hero -> trigger their superpower!
   let clickedHero = null;
   for (const hero of Object.values(state.roamingAgents)) {
     const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy) + 0.5);
@@ -468,9 +487,9 @@ function handleCanvasClick(e) {
 
   if (clickedHero) {
     state.selectedAgentId = clickedHero.id;
-    triggerHeroAttack(clickedHero);
+    executeHeroSuperpower(clickedHero);
     showCosmicSpeechBubble(clickedHero.id, clickedHero.quote);
-    appendVerboseStream(`● [${clickedHero.callsign}] Selected at grid (${Math.round(clickedHero.gx)}, ${Math.round(clickedHero.gy)}).`);
+    appendVerboseStream(`⚡ [${clickedHero.callsign} SUPERPOWER] Unleashed ${clickedHero.power}!`);
   } else {
     const grid = screenToGrid(clickX, clickY);
     const hero = state.roamingAgents[state.selectedAgentId] || Object.values(state.roamingAgents)[0];
@@ -482,7 +501,6 @@ function handleCanvasClick(e) {
       spawnPortalParticles(targetScreen.x, targetScreen.y, hero.themeColor);
       showCosmicSpeechBubble(hero.id, `Moving to (${grid.gx}, ${grid.gy})`);
 
-      // Check if walking close to Diamond Sword
       for (const sword of state.swords) {
         if (Math.hypot(grid.gx - sword.gx, grid.gy - sword.gy) <= 1) {
           setTimeout(() => equipSwordOnSelectedHero(sword), 1500);
@@ -503,7 +521,7 @@ function equipSwordOnSelectedHero(sword) {
 
   const swordName = sword.type === 'diamond' ? '💎 DIAMOND SWORD' : '🔮 ENCHANTED NETHERITE SWORD';
   showCosmicSpeechBubble(hero.id, `⚔️ ${swordName} EQUIPPED! Attack Damage +12!`);
-  appendVerboseStream(`⚔️ [WEAPON EQUIPPED] ${hero.name} drew the ${swordName}! Sharpness V & Unbreaking III activated!`);
+  appendVerboseStream(`⚔️ [WEAPON EQUIPPED] ${hero.name} drew the ${swordName}! Sharpness V activated!`);
 }
 
 window.spawnDiamondSwordPedestal = function () {
@@ -569,7 +587,7 @@ function initWeatherParticles() {
   }
 }
 
-// ── Master Render Loop (Edge-to-Edge Screen Filling) ────────────────
+// ── Master Render Loop ──────────────────────────────────────────────
 function simulationLoop(time) {
   state.time = time;
   const w = canvas.width;
@@ -591,7 +609,7 @@ function simulationLoop(time) {
   const minGy = Math.min(pTL.gy, pTR.gy, pBL.gy, pBR.gy) - 4;
   const maxGy = Math.max(pTL.gy, pTR.gy, pBL.gy, pBR.gy) + 4;
 
-  // 3. Render 100% Screen-Filling Isometric Block Terrain
+  // 3. Render 100% Screen-Filling Isometric Block Terrain (With Lava & Magma)
   for (let sum = minGx + minGy; sum <= maxGx + maxGy; sum++) {
     for (let gx = minGx; gx <= maxGx; gx++) {
       const gy = sum - gx;
@@ -601,48 +619,48 @@ function simulationLoop(time) {
       for (let z = 0; z <= data.h; z++) {
         drawIsometricBlock(gx, gy, z, data.type, time);
       }
-
-      // Draw Tree on this tile if present
-      const treeType = hasTree(gx, gy);
-      if (treeType) {
-        drawVoxelTree(gx, gy, data.h, treeType, time);
-      }
     }
   }
 
-  // 4. Draw 3D Minecraft Taj Mahal of India & Avengers Monuments
+  // 4. Draw Real Multi-Block 3D Voxel Minecraft Trees (Oak, Spruce & Birch)
+  drawRealVoxelTrees(time);
+
+  // 5. Draw 3D Minecraft Taj Mahal of India & Avengers Monuments
   drawTajMahalAndMonuments(time);
 
-  // 5. Draw Decorative Minecraft Game World Objects (Crafting Tables, Furnaces, Chests, Lanterns)
+  // 6. Draw Valyrian Lava Falls & Dragonfire Pits
+  drawValyrianLavaAndFire(time);
+
+  // 7. Draw Decorative Minecraft Game Objects (Crafting Tables, Furnaces, Chests, Lanterns)
   drawDecorativeMinecraftObjects(time);
 
-  // 6. Draw 3D Floating Diamond Swords on Pedestals
+  // 8. Draw 3D Floating Diamond Swords on Pedestals
   drawFloatingMinecraftSwords(time);
 
-  // 7. Draw Redstone DAG Mesh Links & Traveling Energy Packets
+  // 9. Draw Redstone DAG Mesh Links & Traveling Energy Packets
   drawRedstoneDAGMesh(time);
 
-  // 8. Draw Thunderstorm Lightning Strikes to Thor Altar
+  // 10. Draw Thor Lightning Strikes
   state.thunderboltTimer++;
   if (state.thunderboltTimer % 180 === 0 || Math.random() < 0.012) {
     const thorAltarPos = gridToScreen(26, 4, 5);
     drawVoxelLightning(thorAltarPos.x, 10, thorAltarPos.x, thorAltarPos.y);
   }
 
-  // 9. Update Character Physics & Walking Cycles
+  // 11. Update Character Physics & Walking Cycles
   updateHeroPhysics();
 
-  // 10. Draw All 3D Isometric Minecraft Walking Characters (Depth sorted)
+  // 12. Draw All 3D Isometric Minecraft Walking Characters (Depth sorted)
   const sortedHeroes = Object.values(state.roamingAgents).sort((a, b) => (a.gx + a.gy) - (b.gx + b.gy));
   for (const hero of sortedHeroes) {
     drawMinecraftIsometricHero(hero, time);
   }
 
-  // 11. Draw XP Orbs, Weather Rain & Portal Particles
-  drawWeatherAndParticles(w, h);
+  // 13. Draw All Marvel Superpowers (Webs, Repulsors, Dragonflame, Mandalas, Beams)
+  drawAllSuperpowerEffects(time);
 
-  // 12. Draw Active Attack Beams
-  drawActiveAttacks();
+  // 14. Draw Lava Bubbles, XP Orbs & Rain Particles
+  drawWeatherAndParticles(w, h, time);
 
   requestAnimationFrame(simulationLoop);
 }
@@ -665,16 +683,16 @@ function drawSpaceSky(w, h, time) {
   }
 }
 
-// ── 2. 3D Isometric Block Renderer with Authentic Minecraft Textures ─
+// ── 2. 3D Isometric Block Renderer ──────────────────────────────────
 function drawIsometricBlock(gx, gy, gz, type, time) {
   const p = gridToScreen(gx, gy, gz);
   const hw = (BASE_TILE_WIDTH * state.camera.zoom) / 2;
   const hh = (BASE_TILE_HEIGHT * state.camera.zoom) / 2;
   const d = BASE_BLOCK_DEPTH * state.camera.zoom;
 
-  let topColor = '#5B8C32';   // Grass green
-  let leftColor = '#866043';  // Dirt left
-  let rightColor = '#6E4D34'; // Dirt right
+  let topColor = '#4D8C28';   // Vibrant Grass green
+  let leftColor = '#79553A';  // Dirt left
+  let rightColor = '#5D402A'; // Dirt right
 
   if (type === 'quartz') {
     topColor = '#FFFFFF'; leftColor = '#E2E8F0'; rightColor = '#CBD5E1';
@@ -682,6 +700,14 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
     topColor = '#FDE68A'; leftColor = '#F59E0B'; rightColor = '#D97706';
   } else if (type === 'water') {
     topColor = '#00B4D8'; leftColor = '#0077B6'; rightColor = '#03045E';
+  } else if (type === 'lava') {
+    // 🌋 Boiling Valyrian Lava
+    const pulse = Math.sin(time * 0.006 + gx + gy) * 0.15;
+    topColor = pulse > 0 ? '#FF5722' : '#FF9800';
+    leftColor = '#E65100';
+    rightColor = '#BF360C';
+  } else if (type === 'magma') {
+    topColor = '#BF360C'; leftColor = '#870000'; rightColor = '#4A0000';
   } else if (type === 'iron') {
     topColor = '#E2E8F0'; leftColor = '#CBD5E1'; rightColor = '#94A3B8';
   } else if (type === 'cobblestone') {
@@ -692,6 +718,14 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
     topColor = '#312E81'; leftColor = '#1E1B4B'; rightColor = '#0F172A';
   } else if (type === 'blackstone') {
     topColor = '#1E293B'; leftColor = '#0F172A'; rightColor = '#020617';
+  } else if (type === 'wood_log') {
+    topColor = '#8D6E63'; leftColor = '#5D4037'; rightColor = '#3E2723';
+  } else if (type === 'oak_leaf') {
+    topColor = '#2E6F22'; leftColor = '#225519'; rightColor = '#183D12';
+  } else if (type === 'spruce_leaf') {
+    topColor = '#1E4D2B'; leftColor = '#153920'; rightColor = '#0F2916';
+  } else if (type === 'birch_log') {
+    topColor = '#E0E0D1'; leftColor = '#C5C5B5'; rightColor = '#2A2A2A';
   }
 
   // 1. TOP FACE (Rhombus)
@@ -704,7 +738,7 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   ctx.closePath();
   ctx.fill();
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
   ctx.lineWidth = 0.6;
   ctx.stroke();
 
@@ -728,69 +762,45 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   ctx.closePath();
   ctx.fill();
 
-  // Minecraft Ore Veins inside Stone
-  if (type === 'stone' && (gx * 11 + gy * 7 + gz) % 7 === 0) {
-    const isDiamond = (gx + gy) % 2 === 0;
-    ctx.fillStyle = isDiamond ? '#4AEDD9' : '#FF2200'; // Diamond ore / Redstone ore
+  // Magma Glowing Cracks & Lava Glow
+  if (type === 'lava' || type === 'magma') {
+    ctx.fillStyle = '#FFD700';
     ctx.fillRect(p.x - 2, p.y - 2, 4, 3);
   }
 }
 
-// ── 3. Voxel Trees (Authentic Oak, Spruce & Cherry Blossom) ─────────
-function drawVoxelTree(gx, gy, gz, treeType, time) {
-  const p = gridToScreen(gx, gy, gz);
-  const zoom = state.camera.zoom;
+// ── 3. Real Multi-Block 3D Voxel Minecraft Trees ────────────────────
+function drawRealVoxelTrees(time) {
+  for (const tree of VOXEL_TREES) {
+    const baseElev = getElevation(tree.gx, tree.gy);
+    const logType = tree.type === 'birch' ? 'birch_log' : 'wood_log';
+    const leafType = tree.type === 'spruce' ? 'spruce_leaf' : 'oak_leaf';
 
-  // Wood Trunk (Brown Oak / Birch / Dark Spruce)
-  ctx.fillStyle = treeType === 'spruce' ? '#3E2723' : '#5C4033';
-  ctx.fillRect(p.x - 3 * zoom, p.y - 28 * zoom, 6 * zoom, 28 * zoom);
+    // 1. Trunk (Stacked 3D wood log blocks)
+    for (let z = 1; z <= tree.height; z++) {
+      drawIsometricBlock(tree.gx, tree.gy, baseElev + z, logType, time);
+    }
 
-  // Leaf Canopy
-  let leafTop = '#2E6F22';  // Authentic Oak Leaf Green
-  let leafLeft = '#225519';
-  let leafRight = '#183D12';
+    // 2. Layer 1 Leaf Canopy (3x3 ring of leaf blocks)
+    const leafZ1 = baseElev + tree.height;
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        if (dx === 0 && dy === 0) continue; // center has trunk
+        drawIsometricBlock(tree.gx + dx, tree.gy + dy, leafZ1, leafType, time);
+      }
+    }
 
-  if (treeType === 'cherry') {
-    leafTop = '#E6749D'; leafLeft = '#D85A85'; leafRight = '#B83B65'; // Soft Pink Cherry Blossom
-  } else if (treeType === 'spruce') {
-    leafTop = '#1E4D2B'; leafLeft = '#153920'; leafRight = '#0F2916'; // Deep Pine
+    // 3. Layer 2 Leaf Canopy (Cross / Top cluster)
+    const leafZ2 = leafZ1 + 1;
+    drawIsometricBlock(tree.gx, tree.gy, leafZ2, leafType, time);
+    drawIsometricBlock(tree.gx + 1, tree.gy, leafZ2, leafType, time);
+    drawIsometricBlock(tree.gx - 1, tree.gy, leafZ2, leafType, time);
+    drawIsometricBlock(tree.gx, tree.gy + 1, leafZ2, leafType, time);
+    drawIsometricBlock(tree.gx, tree.gy - 1, leafZ2, leafType, time);
+
+    // 4. Cap Leaf Block
+    drawIsometricBlock(tree.gx, tree.gy, leafZ2 + 1, leafType, time);
   }
-
-  const lp = { x: p.x, y: p.y - 32 * zoom };
-  const lw = (BASE_TILE_WIDTH * 0.75) * zoom;
-  const lh = (BASE_TILE_HEIGHT * 0.75) * zoom;
-  const ld = 14 * zoom;
-
-  ctx.fillStyle = leafTop;
-  ctx.beginPath();
-  ctx.moveTo(lp.x, lp.y - lh);
-  ctx.lineTo(lp.x + lw, lp.y);
-  ctx.lineTo(lp.x, lp.y + lh);
-  ctx.lineTo(lp.x - lw, lp.y);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle = leafLeft;
-  ctx.beginPath();
-  ctx.moveTo(lp.x - lw, lp.y);
-  ctx.lineTo(lp.x, lp.y + lh);
-  ctx.lineTo(lp.x, lp.y + lh + ld);
-  ctx.lineTo(lp.x - lw, lp.y + ld);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle = leafRight;
-  ctx.beginPath();
-  ctx.moveTo(lp.x, lp.y + lh);
-  ctx.lineTo(lp.x + lw, lp.y);
-  ctx.lineTo(lp.x + lw, lp.y + ld);
-  ctx.lineTo(lp.x, lp.y + lh + ld);
-  ctx.closePath();
-  ctx.fill();
-
-  // Subtle leaf pixel detail
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-  ctx.fillRect(lp.x - 4 * zoom, lp.y - 4 * zoom, 8 * zoom, 6 * zoom);
 }
 
 // ── 4. 3D Minecraft Taj Mahal of India & Avengers Monuments ─────────
@@ -868,7 +878,7 @@ function drawTajMahalAndMonuments(time) {
   ctx.fillRect(beaconPos.x - 6 * zoom, 0, 12 * zoom, beaconPos.y - 22 * zoom);
   ctx.shadowBlur = 0;
 
-  // Doctor Doom Latverian 3D Castle
+  // Doctor Doom Latverian / Valyrian 3D Castle Keep
   for (let z = 4; z <= 7; z++) {
     for (let x = 25; x <= 28; x++) {
       for (let y = 25; y <= 28; y++) {
@@ -900,25 +910,68 @@ function drawTajMahalAndMonuments(time) {
   ctx.fillStyle = '#A855F7'; ctx.fillRect(bunkerPos.x - 7 * zoom, bunkerPos.y - 12 * zoom, 14 * zoom, 12 * zoom);
 }
 
-// ── 5. Decorative Minecraft Game Objects ─────────────────────────────
+// ── 5. Valyrian Lava Falls & Roaring Dragonfire Pits ─────────────────
+function drawValyrianLavaAndFire(time) {
+  const zoom = state.camera.zoom;
+
+  // 1. Dragonfire Brazier Pit at Doom Castle (24, 24)
+  const brazierPos = gridToScreen(24, 24, 3);
+  ctx.fillStyle = '#1E293B';
+  ctx.fillRect(brazierPos.x - 6 * zoom, brazierPos.y - 8 * zoom, 12 * zoom, 8 * zoom);
+  // Roaring Green / Orange Valyrian Flame
+  const flameH = (14 + Math.sin(time * 0.02) * 4) * zoom;
+  const flameGrad = ctx.createLinearGradient(0, brazierPos.y - 8 * zoom, 0, brazierPos.y - 8 * zoom - flameH);
+  flameGrad.addColorStop(0, '#10B981');
+  flameGrad.addColorStop(0.5, '#34D399');
+  flameGrad.addColorStop(1, 'rgba(52, 211, 153, 0)');
+  ctx.fillStyle = flameGrad;
+  ctx.shadowColor = '#10B981'; ctx.shadowBlur = 16;
+  ctx.fillRect(brazierPos.x - 5 * zoom, brazierPos.y - 8 * zoom - flameH, 10 * zoom, flameH);
+  ctx.shadowBlur = 0;
+
+  // 2. Roaring Fire Pit at (28, 24)
+  const firePos = gridToScreen(28, 24, 3);
+  ctx.fillStyle = '#1E293B';
+  ctx.fillRect(firePos.x - 6 * zoom, firePos.y - 8 * zoom, 12 * zoom, 8 * zoom);
+  const orangeFlameH = (14 + Math.cos(time * 0.025) * 4) * zoom;
+  ctx.fillStyle = '#F97316';
+  ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 14;
+  ctx.fillRect(firePos.x - 5 * zoom, firePos.y - 8 * zoom - orangeFlameH, 10 * zoom, orangeFlameH);
+  ctx.shadowBlur = 0;
+
+  // Spawn periodic lava bubbles
+  if (Math.random() < 0.25) {
+    const lPos = gridToScreen(22 + Math.random() * 6, 22 + Math.random() * 6, 0.5);
+    state.lavaBubbles.push({
+      x: lPos.x,
+      y: lPos.y,
+      vx: (Math.random() - 0.5) * 2,
+      vy: -Math.random() * 2 - 1,
+      size: Math.random() * 3 + 2,
+      life: 1.0,
+    });
+  }
+}
+
+// ── 6. Decorative Minecraft Game Objects ─────────────────────────────
 function drawDecorativeMinecraftObjects(time) {
   const zoom = state.camera.zoom;
 
-  // 1. CRAFTING TABLE (Oak Top with Tools) at (10, 14)
+  // Crafting Tables
   drawCraftingTable(10, 14, 1, zoom);
   drawCraftingTable(21, 14, 1, zoom);
 
-  // 2. FURNACE (With active fire glow) at (10, 15)
+  // Furnaces
   drawFurnace(10, 15, 1, zoom, time);
   drawFurnace(21, 15, 1, zoom, time);
 
-  // 3. CHEST (With gold latch) at (11, 15)
+  // Chest
   drawChest(11, 15, 1, zoom);
 
-  // 4. ENCHANTING TABLE (Obsidian + Floating Spinning Spellbook) at (15, 13)
+  // Enchanting Table
   drawEnchantingTable(15, 13, 2, zoom, time);
 
-  // 5. LANTERNS & TORCHES (Flickering warm flame)
+  // Lanterns & Torches
   drawMinecraftLantern(13, 5, 2, zoom, time);
   drawMinecraftLantern(17, 5, 2, zoom, time);
   drawMinecraftLantern(13, 11, 2, zoom, time);
@@ -931,16 +984,14 @@ function drawCraftingTable(gx, gy, gz, zoom) {
   const p = gridToScreen(gx, gy, gz);
   ctx.fillStyle = '#A16207'; // Oak Wood
   ctx.fillRect(p.x - 8 * zoom, p.y - 14 * zoom, 16 * zoom, 14 * zoom);
-  // Grid Top
   ctx.fillStyle = '#78350F';
   ctx.fillRect(p.x - 6 * zoom, p.y - 13 * zoom, 12 * zoom, 4 * zoom);
 }
 
 function drawFurnace(gx, gy, gz, zoom, time) {
   const p = gridToScreen(gx, gy, gz);
-  ctx.fillStyle = '#475569'; // Cobblestone
+  ctx.fillStyle = '#475569';
   ctx.fillRect(p.x - 8 * zoom, p.y - 14 * zoom, 16 * zoom, 14 * zoom);
-  // Fire Opening
   const flicker = Math.sin(time * 0.02) * 0.3 + 0.7;
   ctx.fillStyle = `rgba(249, 115, 22, ${flicker})`;
   ctx.fillRect(p.x - 4 * zoom, p.y - 8 * zoom, 8 * zoom, 6 * zoom);
@@ -948,41 +999,35 @@ function drawFurnace(gx, gy, gz, zoom, time) {
 
 function drawChest(gx, gy, gz, zoom) {
   const p = gridToScreen(gx, gy, gz);
-  ctx.fillStyle = '#92400E'; // Chest Brown
+  ctx.fillStyle = '#92400E';
   ctx.fillRect(p.x - 7 * zoom, p.y - 12 * zoom, 14 * zoom, 12 * zoom);
-  // Gold Latch
   ctx.fillStyle = '#FBBF24';
   ctx.fillRect(p.x - 2 * zoom, p.y - 8 * zoom, 4 * zoom, 4 * zoom);
 }
 
 function drawEnchantingTable(gx, gy, gz, zoom, time) {
   const p = gridToScreen(gx, gy, gz);
-  // Obsidian Base
   ctx.fillStyle = '#1E1B4B';
   ctx.fillRect(p.x - 9 * zoom, p.y - 10 * zoom, 18 * zoom, 10 * zoom);
-  // Red Cloth Top
   ctx.fillStyle = '#DC2626';
   ctx.fillRect(p.x - 8 * zoom, p.y - 12 * zoom, 16 * zoom, 3 * zoom);
 
-  // Floating Spinning Purple Spellbook
   const floatY = Math.sin(time * 0.005) * 4 * zoom;
   const rot = time * 0.003;
   ctx.save();
   ctx.translate(p.x, p.y - 20 * zoom + floatY);
   ctx.rotate(Math.sin(rot) * 0.3);
-  ctx.fillStyle = '#9333EA'; // Purple Spellbook
+  ctx.fillStyle = '#9333EA';
   ctx.fillRect(-6 * zoom, -4 * zoom, 12 * zoom, 8 * zoom);
-  ctx.fillStyle = '#FDE047'; // Golden pages
+  ctx.fillStyle = '#FDE047';
   ctx.fillRect(-4 * zoom, -3 * zoom, 8 * zoom, 6 * zoom);
   ctx.restore();
 }
 
 function drawMinecraftLantern(gx, gy, gz, zoom, time) {
   const p = gridToScreen(gx, gy, gz);
-  // Iron Post
   ctx.fillStyle = '#334155';
   ctx.fillRect(p.x - 1.5 * zoom, p.y - 16 * zoom, 3 * zoom, 16 * zoom);
-  // Warm Lantern Lamp
   const flicker = Math.sin(time * 0.015 + gx) * 0.2 + 0.8;
   ctx.fillStyle = `rgba(251, 191, 36, ${flicker})`;
   ctx.shadowColor = '#F59E0B'; ctx.shadowBlur = 10;
@@ -994,14 +1039,13 @@ function drawMinecraftTorch(gx, gy, gz, zoom, time) {
   const p = gridToScreen(gx, gy, gz);
   ctx.fillStyle = '#78350F';
   ctx.fillRect(p.x - 1.5 * zoom, p.y - 12 * zoom, 3 * zoom, 12 * zoom);
-  // Flame
   ctx.fillStyle = '#F97316';
   ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 8;
   ctx.fillRect(p.x - 2 * zoom, p.y - 15 * zoom, 4 * zoom, 4 * zoom);
   ctx.shadowBlur = 0;
 }
 
-// ── 6. 3D Floating Diamond & Netherite Swords on Pedestals ──────────
+// ── 7. 3D Floating Diamond & Netherite Swords on Pedestals ──────────
 function drawFloatingMinecraftSwords(time) {
   const zoom = state.camera.zoom;
 
@@ -1010,31 +1054,26 @@ function drawFloatingMinecraftSwords(time) {
     const floatY = Math.sin(time * 0.005 + sword.gx) * (5 * zoom);
     const rot = time * 0.004;
 
-    // Pedestal Stone Base
     ctx.fillStyle = '#334155';
     ctx.fillRect(p.x - 6 * zoom, p.y - 6 * zoom, 12 * zoom, 6 * zoom);
 
-    // Glowing Spire Beacon on Sword
     ctx.save();
     ctx.translate(p.x, p.y - 24 * zoom + floatY);
     ctx.rotate(rot);
 
-    // Sword Blade (Diamond or Netherite)
     ctx.fillStyle = sword.color;
     ctx.shadowColor = sword.color;
     ctx.shadowBlur = 14;
     ctx.fillRect(-2 * zoom, -14 * zoom, 4 * zoom, 16 * zoom);
 
-    // Crossguard & Hilt
-    ctx.fillStyle = '#FBBF24'; // Gold guard
+    ctx.fillStyle = '#FBBF24';
     ctx.fillRect(-6 * zoom, 2 * zoom, 12 * zoom, 2.5 * zoom);
-    ctx.fillStyle = '#78350F'; // Wood handle
+    ctx.fillStyle = '#78350F';
     ctx.fillRect(-1.5 * zoom, 4.5 * zoom, 3 * zoom, 6 * zoom);
     ctx.shadowBlur = 0;
 
     ctx.restore();
 
-    // Floating Label
     ctx.font = `${Math.max(6, 7 * zoom)}px "Press Start 2P", monospace`;
     ctx.fillStyle = sword.color;
     ctx.textAlign = 'center';
@@ -1043,7 +1082,163 @@ function drawFloatingMinecraftSwords(time) {
   }
 }
 
-// ── 7. Character Physics & Walk Cycles ──────────────────────────────
+// ── 8. Superpower Showcase Engine for ALL Marvel Heroes ─────────────
+function triggerRandomHeroSuperpower() {
+  const heroes = Object.values(state.roamingAgents);
+  if (heroes.length === 0) return;
+  const hero = heroes[Math.floor(Math.random() * heroes.length)];
+  executeHeroSuperpower(hero);
+}
+
+function executeHeroSuperpower(hero) {
+  const startPos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy) + 1);
+
+  // Pick target or landmark
+  let targetPos;
+  const others = Object.values(state.roamingAgents).filter(a => a.id !== hero.id);
+  if (others.length > 0) {
+    const target = others[Math.floor(Math.random() * others.length)];
+    targetPos = gridToScreen(target.gx, target.gy, getElevation(target.gx, target.gy) + 1);
+  } else {
+    targetPos = gridToScreen(15, 15, 3);
+  }
+
+  state.superpowerFx.push({
+    heroId: hero.id,
+    power: hero.power,
+    from: startPos,
+    to: targetPos,
+    color: hero.themeColor,
+    life: 1.0,
+    maxLife: 1.0,
+  });
+
+  // Spawn visual celebration
+  spawnPortalParticles(startPos.x, startPos.y, hero.themeColor);
+  spawnXpOrbs(startPos.x, startPos.y, 4);
+}
+
+function drawAllSuperpowerEffects(time) {
+  const zoom = state.camera.zoom;
+
+  state.superpowerFx = state.superpowerFx.filter(fx => {
+    fx.life -= 0.025;
+    const alpha = Math.max(0, fx.life);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    if (fx.power === 'repulsor_unibeam') {
+      // 🦾 IRON MAN: Cyan Repulsor Laser & Chest Beam
+      ctx.strokeStyle = '#00F0FF';
+      ctx.shadowColor = '#00F0FF';
+      ctx.shadowBlur = 18;
+      ctx.lineWidth = 4 * zoom;
+      ctx.beginPath();
+      ctx.moveTo(fx.from.x, fx.from.y);
+      ctx.lineTo(fx.to.x, fx.to.y);
+      ctx.stroke();
+    } else if (fx.power === 'web_stream') {
+      // 🕸️ SPIDER-MAN: White Web Lines with Cross Webbing
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.shadowColor = '#EF4444';
+      ctx.shadowBlur = 10;
+      ctx.lineWidth = 2 * zoom;
+      ctx.beginPath();
+      ctx.moveTo(fx.from.x, fx.from.y);
+      const midX = (fx.from.x + fx.to.x) / 2;
+      const midY = (fx.from.y + fx.to.y) / 2 - 20 * zoom;
+      ctx.quadraticCurveTo(midX, midY, fx.to.x, fx.to.y);
+      ctx.stroke();
+      // Web net circle at target
+      ctx.beginPath();
+      ctx.arc(fx.to.x, fx.to.y, 16 * zoom, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (fx.power === 'valyrian_dragonflame') {
+      // 👑 DOCTOR DOOM: Emerald Valyrian Dragonfire Stream
+      ctx.strokeStyle = '#10B981';
+      ctx.shadowColor = '#10B981';
+      ctx.shadowBlur = 20;
+      ctx.lineWidth = 5 * zoom;
+      ctx.beginPath();
+      ctx.moveTo(fx.from.x, fx.from.y);
+      ctx.lineTo(fx.to.x, fx.to.y);
+      ctx.stroke();
+    } else if (fx.power === 'mjolnir_lightning') {
+      // ⚡ THOR: Lightning Arc to Target
+      drawVoxelLightning(fx.from.x, fx.from.y, fx.to.x, fx.to.y);
+    } else if (fx.power === 'eldritch_mandala') {
+      // 🔮 DOCTOR STRANGE: Spinning Fiery Orange Eldritch Mandala Shield
+      ctx.strokeStyle = '#F59E0B';
+      ctx.shadowColor = '#F59E0B';
+      ctx.shadowBlur = 18;
+      ctx.lineWidth = 3 * zoom;
+      ctx.beginPath();
+      ctx.arc(fx.from.x, fx.from.y - 12 * zoom, 22 * zoom, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeRect(fx.from.x - 14 * zoom, fx.from.y - 26 * zoom, 28 * zoom, 28 * zoom);
+    } else if (fx.power === 'infinity_beam') {
+      // 🪐 THANOS: Rainbow 6-Gem Infinity Gauntlet Cosmic Beam
+      const colors = ['#38BDF8', '#DC2626', '#10B981', '#A855F7', '#F59E0B', '#FBBF24'];
+      for (let c = 0; c < colors.length; c++) {
+        ctx.strokeStyle = colors[c];
+        ctx.lineWidth = 2 * zoom;
+        ctx.beginPath();
+        ctx.moveTo(fx.from.x, fx.from.y - 6 + c * 2);
+        ctx.lineTo(fx.to.x, fx.to.y - 6 + c * 2);
+        ctx.stroke();
+      }
+    } else if (fx.power === 'gamma_smash') {
+      // 🟢 HULK: Green Ground Shockwave Rings
+      ctx.strokeStyle = '#22C55E';
+      ctx.shadowColor = '#22C55E';
+      ctx.shadowBlur = 20;
+      ctx.lineWidth = 4 * zoom;
+      const radius = (1.0 - fx.life) * 45 * zoom;
+      ctx.beginPath();
+      ctx.arc(fx.from.x, fx.from.y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (fx.power === 'vibranium_shield_throw') {
+      // 🛡️ CAPTAIN AMERICA: Bouncing Vibranium Shield
+      const curX = fx.from.x + (fx.to.x - fx.from.x) * (1 - fx.life);
+      const curY = fx.from.y + (fx.to.y - fx.from.y) * (1 - fx.life);
+      ctx.fillStyle = '#DC2626';
+      ctx.beginPath();
+      ctx.arc(curX, curY, 8 * zoom, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(curX, curY, 5 * zoom, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2563EB';
+      ctx.beginPath();
+      ctx.arc(curX, curY, 2.5 * zoom, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (fx.power === 'chrono_portal') {
+      // ⏳ KANG: Blue Chrono-Warp Ring
+      ctx.strokeStyle = '#38BDF8';
+      ctx.shadowColor = '#38BDF8';
+      ctx.shadowBlur = 16;
+      ctx.lineWidth = 3 * zoom;
+      ctx.beginPath();
+      ctx.ellipse(fx.from.x, fx.from.y, 24 * zoom, 12 * zoom, Math.PI / 4, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      // Default Energy Line
+      ctx.strokeStyle = fx.color || '#00F0FF';
+      ctx.lineWidth = 2 * zoom;
+      ctx.beginPath();
+      ctx.moveTo(fx.from.x, fx.from.y);
+      ctx.lineTo(fx.to.x, fx.to.y);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+    return fx.life > 0;
+  });
+}
+
+// ── 9. Character Physics & Walk Cycles ──────────────────────────────
 function updateHeroPhysics() {
   for (const hero of Object.values(state.roamingAgents)) {
     const dx = hero.targetGx - hero.gx;
@@ -1073,7 +1268,7 @@ function triggerAutonomousHeroMovement() {
     { gx: 10, gy: 14 }, // Crafting Table
     { gx: 15, gy: 7 },  // Reflecting Pool Front
     { gx: 4, gy: 4 },   // Stark Tower
-    { gx: 26, gy: 26 }, // Doom Castle
+    { gx: 26, gy: 26 }, // Doom Castle / Valyrian Lava Keep
     { gx: 26, gy: 4 },  // Thor Altar
     { gx: 4, gy: 26 },  // Wakanda Bunker
     { gx: 15, gy: 26 }, // Thanos Altar
@@ -1086,7 +1281,7 @@ function triggerAutonomousHeroMovement() {
   lucky.isWalking = true;
 }
 
-// ── 8. 3D Isometric Minecraft Hero Skin Renderer ────────────────────
+// ── 10. 3D Isometric Minecraft Hero Skin Renderer ───────────────────
 function drawMinecraftIsometricHero(hero, time) {
   const gz = getElevation(hero.gx, hero.gy);
   const pos = gridToScreen(hero.gx, hero.gy, gz);
@@ -1128,7 +1323,7 @@ function drawMinecraftIsometricHero(hero, time) {
   renderTorsoDetails(hero);
   ctx.restore();
 
-  // 3. ARMS & WEAPONS (Diamond Sword, Mjolnir, Shield)
+  // 3. ARMS & WEAPONS
   ctx.save();
   ctx.translate(-7, -22);
   ctx.rotate(-swing);
@@ -1245,21 +1440,19 @@ function renderFaceDetails(hero) {
 
 function renderHeldItem(hero, swing) {
   if (hero.weapon === 'diamond_sword') {
-    // 🗡️ Glowing Diamond Sword in Hand
     ctx.save();
     ctx.translate(2, 6);
     ctx.rotate(0.6 + swing);
-    ctx.fillStyle = '#4AEDD9'; // Diamond Cyan
+    ctx.fillStyle = '#4AEDD9';
     ctx.shadowColor = '#4AEDD9'; ctx.shadowBlur = 8;
     ctx.fillRect(0, -12, 3, 14);
-    ctx.fillStyle = '#FBBF24'; // Guard
+    ctx.fillStyle = '#FBBF24';
     ctx.fillRect(-2, 2, 7, 2);
-    ctx.fillStyle = '#78350F'; // Hilt
+    ctx.fillStyle = '#78350F';
     ctx.fillRect(0, 4, 3, 4);
     ctx.shadowBlur = 0;
     ctx.restore();
   } else if (hero.weapon === 'netherite_sword') {
-    // 🔮 Netherite Sword
     ctx.save();
     ctx.translate(2, 6);
     ctx.rotate(0.6 + swing);
@@ -1303,7 +1496,7 @@ function renderMinecraftNameTag(hero, x, y) {
   ctx.restore();
 }
 
-// ── 9. Redstone DAG Mesh & Energy Packets ───────────────────────────
+// ── 11. Redstone DAG Mesh & Energy Packets ──────────────────────────
 function drawRedstoneDAGMesh(time) {
   const stark = state.roamingAgents['tony-stark'];
   if (!stark) return;
@@ -1370,7 +1563,7 @@ function triggerDAGSimulationPulse() {
   }
 }
 
-// ── 10. Attacks & Lightning Strikes ─────────────────────────────────
+// ── 12. Lightning & Particles ───────────────────────────────────────
 function drawVoxelLightning(x1, y1, x2, y2) {
   ctx.save();
   ctx.strokeStyle = '#FFFFFF';
@@ -1389,41 +1582,6 @@ function drawVoxelLightning(x1, y1, x2, y2) {
   }
   ctx.stroke();
   ctx.restore();
-}
-
-function triggerHeroAttack(hero) {
-  const others = Object.values(state.roamingAgents).filter(a => a.id !== hero.id);
-  if (others.length > 0) {
-    const target = others[Math.floor(Math.random() * others.length)];
-    const hPos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy) + 1);
-    const tPos = gridToScreen(target.gx, target.gy, getElevation(target.gx, target.gy) + 1);
-
-    state.activeAttacks.push({
-      from: hPos,
-      to: tPos,
-      color: hero.themeColor,
-      life: 1.0,
-    });
-  }
-}
-
-function drawActiveAttacks() {
-  state.activeAttacks = state.activeAttacks.filter(attack => {
-    attack.life -= 0.04;
-    ctx.save();
-    ctx.globalAlpha = attack.life;
-    ctx.strokeStyle = attack.color;
-    ctx.shadowColor = attack.color;
-    ctx.shadowBlur = 14;
-    ctx.lineWidth = 3 * state.camera.zoom;
-
-    ctx.beginPath();
-    ctx.moveTo(attack.from.x, attack.from.y);
-    ctx.lineTo(attack.to.x, attack.to.y);
-    ctx.stroke();
-    ctx.restore();
-    return attack.life > 0;
-  });
 }
 
 function spawnPortalParticles(x, y, color) {
@@ -1452,13 +1610,30 @@ function spawnXpOrbs(x, y, count = 6) {
   }
 }
 
-function drawWeatherAndParticles(w, h) {
+function drawWeatherAndParticles(w, h, time) {
   for (const p of state.particles) {
     p.y += p.speedY;
     if (p.y > h) { p.y = 0; p.x = Math.random() * w; }
     ctx.fillStyle = p.color;
     ctx.fillRect(p.x, p.y, p.size, p.size);
   }
+
+  // Boiling Lava Bubbles
+  state.lavaBubbles = state.lavaBubbles.filter(b => {
+    b.x += b.vx;
+    b.y += b.vy;
+    b.life -= 0.03;
+
+    ctx.save();
+    ctx.globalAlpha = b.life;
+    ctx.fillStyle = '#FF9800';
+    ctx.shadowColor = '#FF5722';
+    ctx.shadowBlur = 8;
+    ctx.fillRect(b.x, b.y, b.size * state.camera.zoom, b.size * state.camera.zoom);
+    ctx.restore();
+
+    return b.life > 0;
+  });
 
   // Portal particles
   state.portalParticles = state.portalParticles.filter(p => {
@@ -1475,11 +1650,11 @@ function drawWeatherAndParticles(w, h) {
     return p.life > 0;
   });
 
-  // XP Orbs (Bouncing glowing green spheres)
+  // XP Orbs
   state.xpOrbs = state.xpOrbs.filter(orb => {
     orb.x += orb.vx;
     orb.y += orb.vy;
-    orb.vy += 0.12; // Gravity
+    orb.vy += 0.12;
     orb.life -= 0.02;
 
     ctx.save();
@@ -1499,11 +1674,11 @@ function drawWeatherAndParticles(w, h) {
 // ── Multiverse Clash ────────────────────────────────────────────────
 window.triggerMultiverseClash = function () {
   appendVerboseStream(`⚔️ [VOXEL BATTLE CLASH] All Minecraft Avengers drawing Diamond Swords & launching combat grid!`);
-  showCosmicSpeechBubble('tony-stark', 'Avengers Assemble! Defend the Taj Mahal & Isometric World!');
+  showCosmicSpeechBubble('tony-stark', 'Avengers Assemble! Defend the Taj Mahal & Valyrian Grid!');
 
   for (const hero of Object.values(state.roamingAgents)) {
     hero.weapon = 'diamond_sword';
-    triggerHeroAttack(hero);
+    executeHeroSuperpower(hero);
     const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy));
     spawnPortalParticles(pos.x, pos.y, hero.themeColor);
     spawnXpOrbs(pos.x, pos.y, 4);
@@ -1694,7 +1869,7 @@ function renderStrongholdDock() {
 
     card.addEventListener('click', () => {
       state.selectedAgentId = entity.id;
-      triggerHeroAttack(entity);
+      executeHeroSuperpower(entity);
       showCosmicSpeechBubble(entity.id, entity.quote);
       appendVerboseStream(`● [${entity.callsign}] Focus locked on ${entity.station}.`);
     });
@@ -1863,7 +2038,7 @@ function initWebSocket() {
         if (state.roamingAgents[speaker] || MINECRAFT_HEROES[speaker]) {
           const hero = state.roamingAgents[speaker];
           if (hero) {
-            triggerHeroAttack(hero);
+            executeHeroSuperpower(hero);
             const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy));
             spawnPortalParticles(pos.x, pos.y, hero.themeColor);
           }
