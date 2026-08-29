@@ -20,30 +20,23 @@
         <!-- Pure Edge-to-Edge Isometric Canvas -->
         <canvas id="minecraftCanvas"></canvas>
 
-        <!-- UNIFIED TOP NAVIGATION BAR (Clean Non-Overlapping Architecture) -->
+        <!-- UNIFIED TOP NAVIGATION BAR (Clean, Non-Overlapping & Viewport Contained) -->
         <div class="valley-unified-top-bar">
           <div class="top-bar-left">
-            <div class="hud-pill">
-              <span class="pill-glow-dot diamond"></span>
-              <span class="pill-txt" id="hudStatusText">3D MINECRAFT</span>
-            </div>
             <div class="hud-pill clickable" onclick="openSpawnModal()" title="Manage Multiverse Hero Roster (Spawn & Despawn)">
-              <span class="pill-glow-dot cyan"></span>
-              <span class="pill-txt" id="rosterCountBadge">👥 TEAM: 5/10 ACTIVE</span>
-            </div>
-            <div class="hud-pill clickable" onclick="openSettingsModal('theme')" title="Change Theme (Daylight / Light / Dark)">
-              <span class="pill-txt" id="currentThemeBadge">☀️ DAYLIGHT</span>
+              <span class="pill-glow-dot cyan" style="width:6px; height:6px;"></span>
+              <span class="pill-txt" id="rosterCountBadge" style="font-size:10.5px; font-weight:600; text-transform:lowercase;">5/10 active</span>
             </div>
             <div class="hud-pill" id="buildModeIndicator" style="display:none;">
-              <span class="pill-glow-dot build"></span>
-              <span class="pill-txt" style="color:#D97706; font-weight:700;">🔨 BUILD MODE</span>
+              <span class="pill-glow-dot build" style="width:6px; height:6px;"></span>
+              <span class="pill-txt" style="color:#D97706; font-size:10.5px; font-weight:700;">🔨 build mode</span>
             </div>
           </div>
 
           <div class="top-bar-right">
             <button class="valley-action-pill-btn" id="buildModeToggleBtn" onclick="toggleBuildMode()">🔨 Build Mode</button>
-            <button class="valley-action-pill-btn sword" onclick="spawnDiamondSwordPedestal()">🗡️ Diamond Sword</button>
-            <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Voxel Battle</button>
+            <button class="valley-action-pill-btn sword" onclick="spawnDiamondSwordPedestal()">🗡️ Sword</button>
+            <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Battle</button>
             <button class="ellipsis-menu-btn" id="ellipsisMenuBtn" onclick="toggleEllipsisMenu()" title="Settings & Simulation Actions">•••</button>
           </div>
         </div>
@@ -117,13 +110,12 @@
           <div class="mission-progress-bar"></div>
         </div>
 
-        <!-- Console Header -->
+        <!-- Console Header (Clean & Uncluttered) -->
         <div class="console-header">
           <div class="god-stark-badge">
             <div class="stark-reactor-avatar">🦾</div>
             <div class="stark-badge-text">
               <div class="stark-badge-title">TONY STARK <span class="stark-tag-god">GOD ORCHESTRATOR</span></div>
-              <div class="stark-badge-sub"><span class="pill-glow-dot cyan" style="width:6px;height:6px;"></span> Model: <strong id="headerActiveModelText">gemini-3.5-flash-lite</strong> &bull; Player 1 Ready</div>
             </div>
           </div>
           <div class="console-hdr-actions">
@@ -189,6 +181,12 @@
               <button class="console-action-btn" id="voiceBtn" onclick="toggleVoiceComms()">🎙️ Comms</button>
             </div>
             <button class="dispatch-infinity-btn" id="dispatchMissionBtn">⚡ DISPATCH MISSION &rarr;</button>
+          </div>
+
+          <!-- Model Indicator Line Below Clear & Comms Buttons -->
+          <div class="console-model-indicator" style="display:flex; align-items:center; justify-content:space-between; margin-top:2px; padding:0 2px;">
+            <span style="font-family:var(--font-mono); font-size:10px; color:var(--ink-muted);">Model: <strong id="footerModelName" style="color:var(--primary-blue); font-weight:600;">gemini-3.5-flash-lite</strong></span>
+            <span style="font-family:var(--font-mono); font-size:9px; color:var(--ink-faint);">⚡ Stark Mesh Engine</span>
           </div>
         </div>
 

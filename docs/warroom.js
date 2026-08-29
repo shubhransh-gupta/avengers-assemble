@@ -497,7 +497,7 @@ function updateRosterBadge() {
   const badge = document.getElementById('rosterCountBadge');
   const count = Object.keys(state.roamingAgents).length;
   if (badge) {
-    badge.innerText = `👥 TEAM: ${count}/10 ACTIVE`;
+    badge.innerText = `${count}/10 active`;
   }
 }
 
@@ -2677,9 +2677,9 @@ window.loadApiKeysStatus = async function () {
       modelSelect.value = data.activeModel;
     }
 
-    const headerModelText = document.getElementById('headerActiveModelText');
-    if (headerModelText && data.activeModel) {
-      headerModelText.innerText = data.activeModel;
+    const footerModelText = document.getElementById('footerModelName');
+    if (footerModelText && data.activeModel) {
+      footerModelText.innerText = data.activeModel;
     }
 
     // Update Gemini Badge
@@ -2769,8 +2769,8 @@ window.saveApiKeysAndModel = async function () {
     });
 
     if (res.ok) {
-      const headerModelText = document.getElementById('headerActiveModelText');
-      if (headerModelText) headerModelText.innerText = selectedModel;
+      const footerModelText = document.getElementById('footerModelName');
+      if (footerModelText) footerModelText.innerText = selectedModel;
 
       showCompletionToast(`Configuration updated: ${selectedModel} is now ACTIVE.`);
       appendVerboseStream(`⚡ [SYSTEM CONFIGURATION] Active model set to [${selectedModel.toUpperCase()}]. Providers synced.`, 'code');
