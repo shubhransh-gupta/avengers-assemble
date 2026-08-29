@@ -132,11 +132,22 @@
     }
 
     .brand-title {
-      font-family: "Monotype Corsiva", "Apple Chancery", "Brush Script MT", cursive, serif;
-      font-weight: 600;
-      font-size: 21px;
-      letter-spacing: 0.02em;
-      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #FFFFFF 30%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      transition: all 0.25s ease;
+    }
+    .brand:hover .brand-title {
+      background: linear-gradient(180deg, #FFFFFF 0%, #00F0FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.45));
     }
 
     .nav-links {
@@ -695,7 +706,7 @@
           </svg>
         </div>
         <div>
-          <div class="brand-title">Scavengers Assemble</div>
+          <div class="brand-title">SCAVENGERS ASSEMBLE</div>
         </div>
       </a>
 
