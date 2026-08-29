@@ -33,9 +33,9 @@ const state = {
     { id: 'netherite_sword', name: 'Enchanted Netherite Sword', type: 'netherite', gx: 15, gy: 20, gz: 1, color: '#7C3AED', holder: null },
   ],
 
-  // Camera Pan & Zoom
+  // Camera Pan & Zoom (Optimized for expansive 48x48 world)
   camera: {
-    zoom: 1.0,
+    zoom: 0.72,
     panX: 0,
     panY: 0,
     isDragging: false,
@@ -68,137 +68,133 @@ function isBridgeTile(gx, gy) {
   return BRIDGE_LOCATIONS.some(b => b.gx === gx && b.gy === gy);
 }
 
-// ── Procedural World Generator (Calculates Terrain for ANY (gx, gy)) ─
+// ── Procedural World Generator (Calculates Terrain for Expansive Spaced World) ─
 function getBlockData(gx, gy) {
-  // Check user placed blocks at height 1 or 2 first
+  // User-placed block priority
   if (state.placedBlocks[`${gx},${gy},1`]) {
     return { h: 1, type: state.placedBlocks[`${gx},${gy},1`] };
   }
 
-  // 1. TAJ MAHAL OF INDIA (Center: gx 12..18, gy 12..18)
-  if (gx >= 12 && gx <= 18 && gy >= 12 && gy <= 18) {
+  // 1. TAJ MAHAL OF INDIA (Center Plaza: gx 20..28, gy 20..28)
+  if (gx >= 20 && gx <= 28 && gy >= 20 && gy <= 28) {
     return { h: 2, type: 'quartz' };
   }
-  // Reflecting Water Pool in front of Taj Mahal (gx: 14..16, gy: 4..11)
-  if (gx >= 14 && gx <= 16 && gy >= 4 && gy <= 11) {
+  // Reflecting Water Pool in front of Taj Mahal (gx: 23..25, gy: 13..19)
+  if (gx >= 23 && gx <= 25 && gy >= 13 && gy <= 19) {
     return { h: 0, type: 'water' };
   }
   // Sandstone Promenade flanking reflecting pool
-  if ((gx === 13 || gx === 17) && gy >= 4 && gy <= 11) {
+  if ((gx === 22 || gx === 26) && gy >= 13 && gy <= 19) {
     return { h: 1, type: 'sandstone' };
   }
 
-  // 2. STARK VOXEL TOWER (gx: 1..6, gy: 1..6)
-  if (gx >= 1 && gx <= 6 && gy >= 1 && gy <= 6) {
+  // 2. STARK VOXEL TOWER ISLAND (Far North-West: gx 2..8, gy 2..8)
+  if (gx >= 2 && gx <= 8 && gy >= 2 && gy <= 8) {
     return { h: 3, type: 'iron' };
   }
 
-  // 3. VOLCANO MOUNTAIN & LAVA RIVER BIOME (gx: 20..30, gy: 20..30)
-  if (gx >= 20 && gy >= 20) {
-    const dx = gx - 26;
-    const dy = gy - 26;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    // Winding Lava River flowing down the mountain slope
-    const isLavaRiver = (
-      (gx === 24 && gy === 25) || (gx === 23 && gy === 24) ||
-      (gx === 22 && gy === 24) || (gx === 21 && gy === 25) ||
-      (gx === 20 && gy === 26) || (gx === 19 && gy === 27) ||
-      (gx === 18 && gy === 27) || (gx === 25 && gy === 24)
-    );
-    if (isLavaRiver) {
-      return { h: 1, type: 'lava' };
-    }
-
-    // Sunken Volcano Caldera Crater (Peak Summit)
-    if (dist <= 1.4) {
-      return { h: 4, type: 'lava' };
-    }
-    // Crater Rim
-    if (dist <= 2.2) {
-      return { h: 5, type: 'obsidian' };
-    }
-    // Upper Volcano Cone
-    if (dist <= 3.5) {
-      return { h: 4, type: (gx + gy) % 2 === 0 ? 'magma' : 'obsidian' };
-    }
-    // Mid Volcano Slope
-    if (dist <= 5.0) {
-      return { h: 3, type: (gx + gy) % 3 === 0 ? 'magma' : 'blackstone' };
-    }
-    // Outer Mountain Base
-    if (dist <= 6.8) {
-      return { h: 2, type: (gx + gy) % 2 === 0 ? 'cobblestone' : 'blackstone' };
-    }
-    return { h: 1, type: 'blackstone' };
+  // 3. STATUE OF LIBERTY HARBOR ISLAND (North Center: gx 20..25, gy: 2..7)
+  if (gx >= 20 && gx <= 25 && gy >= 2 && gy <= 7) {
+    return { h: 2, type: 'stone' };
   }
 
-  // 4. DESERT ISLAND & THE GREAT PYRAMID OF GIZA (gx: 23..30, gy: 1..8)
-  if (gx >= 23 && gx <= 30 && gy >= 1 && gy <= 8) {
-    // Concentric Pyramid Tiers
-    if (gx >= 25 && gx <= 28 && gy >= 3 && gy <= 6) {
-      if (gx >= 26 && gx <= 27 && gy >= 4 && gy <= 5) {
-        return { h: 5, type: 'gold_block' }; // Golden Pyramidion
+  // 4. DESERT ISLAND & THE GREAT PYRAMID OF GIZA (Far North-East: gx 36..46, gy: 2..11)
+  if (gx >= 36 && gx <= 46 && gy >= 2 && gy <= 11) {
+    if (gx >= 38 && gx <= 44 && gy >= 4 && gy <= 9) {
+      if (gx >= 40 && gx <= 42 && gy >= 6 && gy <= 7) {
+        return { h: 5, type: 'gold_block' }; // Golden Pyramidion Peak
       }
       return { h: 4, type: 'sandstone' };
     }
-    if (gx >= 24 && gx <= 29 && gy >= 2 && gy <= 7) {
+    if (gx >= 37 && gx <= 45 && gy >= 3 && gy <= 10) {
       return { h: 3, type: 'sandstone' };
     }
     return { h: 2, type: 'sand' };
   }
 
-  // 5. STATUE OF LIBERTY HARBOR ISLAND (gx: 8..11, gy: 1..4)
-  if (gx >= 8 && gx <= 11 && gy >= 1 && gy <= 4) {
-    return { h: 2, type: 'stone' };
+  // 5. HIMALAYAN SNOWY GLACIERS & PEAKS (North: gx: 11..18, gy: 2..7)
+  if (gx >= 11 && gx <= 18 && gy >= 2 && gy <= 7) {
+    const peakWave = Math.sin((gx - 11) * 0.8) * Math.cos((gy - 2) * 0.8);
+    if (peakWave > 0.4) return { h: 6, type: 'snow_block' };
+    if (peakWave > 0.1) return { h: 5, type: 'ice' };
+    return { h: 4, type: 'snow_block' };
   }
 
-  // 6. RASHTRAPATI BHAVAN & INDIA GATE PLAZA (gx: 1..9, gy: 18..24)
-  if (gx >= 1 && gx <= 9 && gy >= 18 && gy <= 24) {
-    if (gx >= 1 && gx <= 5 && gy >= 19 && gy <= 23) {
+  // 6. PISA WATER-MOATED ISLAND (Far West: gx 2..9, gy: 20..28)
+  if (gx >= 2 && gx <= 9 && gy >= 20 && gy <= 28) {
+    const isMoat = (gx === 2 || gx === 9 || gy === 20 || gy === 28);
+    if (isMoat) return { h: 0, type: 'water' };
+    if (gx >= 4 && gx <= 6 && gy >= 22 && gy <= 25) return { h: 2, type: 'quartz' };
+    return { h: 1, type: 'grass' };
+  }
+
+  // 7. RASHTRAPATI BHAVAN & INDIA GATE PLAZA (Far South-West: gx 4..16, gy: 34..44)
+  if (gx >= 4 && gx <= 16 && gy >= 34 && gy <= 44) {
+    // Rashtrapati Bhavan Base
+    if (gx >= 4 && gx <= 9 && gy >= 36 && gy <= 42) {
       return { h: 3, type: 'sandstone' };
     }
-    if (gx >= 7 && gx <= 9 && gy >= 20 && gy <= 22) {
+    // India Gate Arch Base
+    if (gx >= 12 && gx <= 15 && gy >= 37 && gy <= 41) {
       return { h: 2, type: 'sandstone' };
     }
     return { h: 1, type: 'sandstone' };
   }
 
-  // 7. PISA ISLAND SURROUNDED BY WATER (gx: 1..6, gy: 8..14)
-  if (gx >= 1 && gx <= 6 && gy >= 8 && gy <= 14) {
-    const isWaterMoat = (gx === 1 || gx === 6 || gy === 8 || gy === 14);
-    if (isWaterMoat) return { h: 0, type: 'water' };
-    if (gx >= 3 && gx <= 4 && gy >= 10 && gy <= 12) return { h: 2, type: 'quartz' };
-    return { h: 1, type: 'grass' };
+  // 8. TOWERING CURVY VOLCANO MOUNTAIN & LAVA RIVER (Far South-East: gx 32..46, gy: 32..46)
+  if (gx >= 32 && gy >= 32) {
+    const dx = gx - 39;
+    const dy = gy - 39;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Curvy, winding Lava River cascading into the blue channels behind the mountain
+    const isLavaRiver = (
+      (gx === 37 && gy === 38) || (gx === 36 && gy === 37) ||
+      (gx === 35 && gy === 37) || (gx === 34 && gy === 38) ||
+      (gx === 33 && gy === 39) || (gx === 32 && gy === 40) ||
+      (gx === 31 && gy === 40) || (gx === 38 && gy === 37) ||
+      (gx >= 41 && gx <= 45 && gy >= 41 && gy <= 43)
+    );
+    if (isLavaRiver) {
+      return { h: 1, type: 'lava' };
+    }
+
+    // Sunken Volcano Caldera Crater Summit (Peak at z=7)
+    if (dist <= 1.8) {
+      return { h: 5, type: 'lava' };
+    }
+    // Crater Rim
+    if (dist <= 2.8) {
+      return { h: 6, type: 'obsidian' };
+    }
+    // Upper Volcano Cone (Curvy non-plain slopes)
+    if (dist <= 4.2) {
+      return { h: 5, type: (gx + gy) % 2 === 0 ? 'magma' : 'obsidian' };
+    }
+    // Mid Volcano Slope
+    if (dist <= 6.0) {
+      return { h: 4, type: (gx + gy) % 3 === 0 ? 'magma' : 'blackstone' };
+    }
+    // Outer Mountain Base
+    if (dist <= 8.0) {
+      return { h: 3, type: (gx + gy) % 2 === 0 ? 'cobblestone' : 'blackstone' };
+    }
+    return { h: 2, type: 'blackstone' };
   }
 
-  // 8. HIMALAYAN GLACIER & SNOW PEAKS (gx: 12..19, gy: 0..4)
-  if (gx >= 12 && gx <= 19 && gy >= 0 && gy <= 4) {
-    if (gx >= 14 && gx <= 17 && gy <= 2) return { h: 5, type: 'snow_block' };
-    if (gx >= 13 && gx <= 18 && gy <= 3) return { h: 4, type: 'ice' };
-    return { h: 3, type: 'ice' };
-  }
-
-  // 9. THANOS OBSIDIAN PEAK (gx: 13..17, gy: 24..28)
-  if (gx >= 13 && gx <= 17 && gy >= 24 && gy <= 28) {
-    return { h: 3, type: 'obsidian' };
-  }
-
-  // 10. OAK WOODEN BRIDGES ACROSS RIVER
-  if (isBridgeTile(gx, gy)) {
-    return { h: 1, type: 'oak_plank' };
-  }
-
-  // 8. Natural River Channel (Diagonal)
-  if (Math.abs(gx - gy - 8) <= 1 && !(gx >= 12 && gx <= 18 && gy >= 12 && gy <= 18) && !(gx >= 22 && gy >= 22)) {
+  // 9. Natural River Channels & Water Networks
+  if (
+    (Math.abs(gx - gy - 12) <= 1 && !(gx >= 20 && gx <= 28 && gy >= 20 && gy <= 28) && !(gx >= 32 && gy >= 32)) ||
+    (gx >= 18 && gx <= 20 && gy >= 0 && gy <= 10)
+  ) {
     return { h: 0, type: 'water' };
   }
 
-  // 9. Natural Continuous Minecraft Green Meadows
-  const wave = Math.sin(gx * 0.35) * Math.cos(gy * 0.35);
+  // 10. Natural Rolling Curvy Minecraft Green Meadows
+  const wave = Math.sin(gx * 0.25) * Math.cos(gy * 0.25);
   let h = 1;
-  if (wave > 0.45) h = 2;
-  if (wave > 0.85) h = 3;
+  if (wave > 0.4) h = 2;
+  if (wave > 0.8) h = 3;
 
   return { h, type: 'grass' };
 }
@@ -811,11 +807,11 @@ window.selectHotbarItem = function (itemKey) {
 };
 
 window.zoomCamera = function (factor) {
-  state.camera.zoom = Math.max(0.6, Math.min(2.5, state.camera.zoom * factor));
+  state.camera.zoom = Math.max(0.35, Math.min(2.5, state.camera.zoom * factor));
 };
 
 window.resetCamera = function () {
-  state.camera.zoom = 1.0;
+  state.camera.zoom = 0.72;
   state.camera.panX = 0;
   state.camera.panY = 0;
 };
@@ -1105,25 +1101,21 @@ function drawTajMahalAndMonuments(time) {
 
   // A. Four Corner Minarets with Balconies & Chhatri Cupolas
   const minaretCorners = [
-    { gx: 12, gy: 12 },
-    { gx: 18, gy: 12 },
-    { gx: 12, gy: 18 },
-    { gx: 18, gy: 18 },
+    { gx: 20, gy: 20 },
+    { gx: 28, gy: 20 },
+    { gx: 20, gy: 28 },
+    { gx: 28, gy: 28 },
   ];
 
   for (const mc of minaretCorners) {
-    // Slender white marble shaft
     for (let z = 3; z <= 7; z++) {
       drawIsometricBlock(mc.gx, mc.gy, z, 'quartz', time);
     }
-    // Mid Balcony Ring at z=5
     const bPos = gridToScreen(mc.gx, mc.gy, 5);
     ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 2 * zoom;
     ctx.strokeRect(bPos.x - 8 * zoom, bPos.y - 6 * zoom, 16 * zoom, 4 * zoom);
 
-    // Top Cupola (Chhatri) at z=8 with Golden Finial
     const mp = gridToScreen(mc.gx, mc.gy, 8);
-    // Delicate pillared dome
     ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
     ctx.arc(mp.x, mp.y - 8 * zoom, 5 * zoom, Math.PI, 0);
@@ -1131,7 +1123,6 @@ function drawTajMahalAndMonuments(time) {
     ctx.strokeStyle = '#E2E8F0'; ctx.lineWidth = 1;
     ctx.stroke();
 
-    // Golden Spire / Kalash
     ctx.fillStyle = '#F59E0B';
     ctx.fillRect(mp.x - 1 * zoom, mp.y - 14 * zoom, 2 * zoom, 6 * zoom);
     ctx.beginPath();
@@ -1141,10 +1132,9 @@ function drawTajMahalAndMonuments(time) {
 
   // B. Main Mausoleum Body (Symmetrical White Marble with Chamfers)
   for (let z = 3; z <= 5; z++) {
-    for (let x = 13; x <= 17; x++) {
-      for (let y = 13; y <= 17; y++) {
-        // Chamfered 4 corners for octagonal Mughal layout
-        const isCorner = (x === 13 && y === 13) || (x === 17 && y === 13) || (x === 13 && y === 17) || (x === 17 && y === 17);
+    for (let x = 22; x <= 26; x++) {
+      for (let y = 22; y <= 26; y++) {
+        const isCorner = (x === 22 && y === 22) || (x === 26 && y === 22) || (x === 22 && y === 26) || (x === 26 && y === 26);
         if (!isCorner) {
           drawIsometricBlock(x, y, z, 'quartz', time);
         }
@@ -1153,8 +1143,7 @@ function drawTajMahalAndMonuments(time) {
   }
 
   // C. Grand Recessed Arched Portal (Pishtaq / Grand Iwan) on Front Facade
-  const portalPos = gridToScreen(15, 13, 3);
-  // Recessed dark marble chamber arch
+  const portalPos = gridToScreen(24, 22, 3);
   ctx.fillStyle = '#0F172A';
   ctx.beginPath();
   ctx.moveTo(portalPos.x - 10 * zoom, portalPos.y);
@@ -1164,26 +1153,16 @@ function drawTajMahalAndMonuments(time) {
   ctx.closePath();
   ctx.fill();
 
-  // White marble pointed arch frame
   ctx.strokeStyle = '#F8FAFC';
   ctx.lineWidth = 3 * zoom;
   ctx.stroke();
 
-  // Side Niches (Double-Decker Iwans on flanking bays)
-  const leftNiche = gridToScreen(14, 13, 3);
-  const rightNiche = gridToScreen(16, 13, 3);
-  [leftNiche, rightNiche].forEach(n => {
-    ctx.fillStyle = '#1E293B';
-    ctx.fillRect(n.x - 4 * zoom, n.y - 8 * zoom, 8 * zoom, 8 * zoom);
-    ctx.fillRect(n.x - 4 * zoom, n.y - 20 * zoom, 8 * zoom, 8 * zoom);
-  });
-
   // D. Four Subsidiary Domed Chhatris surrounding central dome
   const chhatriSpots = [
-    { gx: 13.5, gy: 14.5 },
-    { gx: 16.5, gy: 14.5 },
-    { gx: 13.5, gy: 16.5 },
-    { gx: 16.5, gy: 16.5 },
+    { gx: 22.5, gy: 23.5 },
+    { gx: 25.5, gy: 23.5 },
+    { gx: 22.5, gy: 25.5 },
+    { gx: 25.5, gy: 25.5 },
   ];
   chhatriSpots.forEach(cp => {
     const p = gridToScreen(cp.gx, cp.gy, 6);
@@ -1198,18 +1177,16 @@ function drawTajMahalAndMonuments(time) {
   });
 
   // E. Main Bulbous Lotus Onion Dome (Amrud / Gumbad)
-  for (let x = 14; x <= 16; x++) {
-    for (let y = 14; y <= 16; y++) {
+  for (let x = 23; x <= 25; x++) {
+    for (let y = 23; y <= 25; y++) {
       drawIsometricBlock(x, y, 6, 'quartz', time);
     }
   }
 
-  const domePos = gridToScreen(15, 15, 7);
-  // High cylindrical marble drum
+  const domePos = gridToScreen(24, 24, 7);
   ctx.fillStyle = '#F1F5F9';
   ctx.fillRect(domePos.x - 14 * zoom, domePos.y - 10 * zoom, 28 * zoom, 10 * zoom);
 
-  // Bulbous Onion Dome Curve
   ctx.fillStyle = '#FFFFFF';
   ctx.beginPath();
   ctx.moveTo(domePos.x - 16 * zoom, domePos.y - 10 * zoom);
@@ -1230,7 +1207,6 @@ function drawTajMahalAndMonuments(time) {
   ctx.lineWidth = 1.5 * zoom;
   ctx.stroke();
 
-  // Majestic Golden Spire / Kalash Finial with Sunbeam Bloom
   const apexY = domePos.y - 48 * zoom;
   ctx.fillStyle = '#F59E0B';
   ctx.shadowColor = '#F59E0B'; ctx.shadowBlur = 18;
@@ -1240,7 +1216,7 @@ function drawTajMahalAndMonuments(time) {
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // Stark 3D Voxel Tower
+  // Stark 3D Voxel Tower (Far North-West: gx 4, gy 4)
   for (let z = 4; z <= 10; z++) {
     for (let x = 3; x <= 5; x++) {
       for (let y = 3; y <= 5; y++) {
@@ -1253,44 +1229,26 @@ function drawTajMahalAndMonuments(time) {
   ctx.shadowColor = '#3B82F6'; ctx.shadowBlur = 22;
   ctx.fillRect(beaconPos.x - 4 * zoom, beaconPos.y - 22 * zoom, 8 * zoom, 22 * zoom);
   ctx.shadowBlur = 0;
-
-  // Thor Thunder Altar Spire
-  for (let z = 3; z <= 5; z++) {
-    drawIsometricBlock(26, 4, z, 'stone', time);
-  }
-  const spirePos = gridToScreen(26, 4, 5);
-  ctx.fillStyle = '#F59E0B'; ctx.fillRect(spirePos.x - 5 * zoom, spirePos.y - 12 * zoom, 10 * zoom, 6 * zoom);
-  ctx.fillStyle = '#94A3B8'; ctx.fillRect(spirePos.x - 2 * zoom, spirePos.y - 30 * zoom, 4 * zoom, 18 * zoom);
-
-  // Wakandan Vibranium Bunker
-  for (let z = 3; z <= 4; z++) {
-    for (let x = 3; x <= 5; x++) {
-      drawIsometricBlock(x, 26, z, 'blackstone', time);
-    }
-  }
 }
 
 // ── 4B. The Great Pyramid of Giza & Desert Island ────────────────────
 function drawPyramidOfGizaAndSphinx(time) {
   const zoom = state.camera.zoom;
 
-  // 1. Concentric Stepped Sandstone Pyramid
-  // Base Tier (z=2): gx 24..29, gy 2..7
-  // Tier 2 (z=3): gx 25..28, gy 3..6
-  for (let x = 25; x <= 28; x++) {
-    for (let y = 3; y <= 6; y++) {
+  // Stepped Sandstone Pyramid in Far North-East Desert Island
+  for (let x = 38; x <= 44; x++) {
+    for (let y = 4; y <= 9; y++) {
       drawIsometricBlock(x, y, 3, 'sandstone', time);
     }
   }
-  // Tier 3 (z=4): gx 26..27, gy 4..5
-  for (let x = 26; x <= 27; x++) {
-    for (let y = 4; y <= 5; y++) {
+  for (let x = 39; x <= 43; x++) {
+    for (let y = 5; y <= 8; y++) {
       drawIsometricBlock(x, y, 4, 'sandstone', time);
     }
   }
 
-  // 2. Shining Golden Pyramidion Capstone at Peak (z=5..6)
-  const peakPos = gridToScreen(26.5, 4.5, 5);
+  // Golden Pyramidion Capstone Peak
+  const peakPos = gridToScreen(41, 6.5, 5);
   ctx.fillStyle = '#F59E0B';
   ctx.shadowColor = '#FBBF24';
   ctx.shadowBlur = 16;
@@ -1302,36 +1260,32 @@ function drawPyramidOfGizaAndSphinx(time) {
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // 3. Sandstone Great Sphinx of Giza facing East
-  const sphinxPos = gridToScreen(23.5, 4.5, 2.5);
-  // Lion Body
+  // Great Sphinx of Giza facing East
+  const sphinxPos = gridToScreen(35.5, 6.5, 2.5);
   ctx.fillStyle = '#D97706';
   ctx.fillRect(sphinxPos.x - 12 * zoom, sphinxPos.y - 6 * zoom, 24 * zoom, 12 * zoom);
-  // Pharaoh Head with Nemes Headdress
   ctx.fillStyle = '#FBBF24';
   ctx.fillRect(sphinxPos.x + 4 * zoom, sphinxPos.y - 18 * zoom, 10 * zoom, 12 * zoom);
-  // Golden Uraeus Crown
   ctx.fillStyle = '#EF4444';
   ctx.fillRect(sphinxPos.x + 8 * zoom, sphinxPos.y - 22 * zoom, 4 * zoom, 4 * zoom);
 
-  // 4. Desert Palm Trees
-  const palmPos = gridToScreen(24, 7.5, 2);
+  // Desert Palms
+  const palmPos = gridToScreen(36, 9.5, 2);
   ctx.fillStyle = '#78350F';
   ctx.fillRect(palmPos.x - 2 * zoom, palmPos.y - 24 * zoom, 4 * zoom, 24 * zoom);
   ctx.fillStyle = '#16A34A';
-  // Drooping Palm Fronds
   ctx.beginPath();
   ctx.ellipse(palmPos.x, palmPos.y - 26 * zoom, 14 * zoom, 6 * zoom, Math.PI / 6, 0, Math.PI * 2);
   ctx.ellipse(palmPos.x, palmPos.y - 26 * zoom, 14 * zoom, 6 * zoom, -Math.PI / 6, 0, Math.PI * 2);
   ctx.fill();
 }
 
-// ── 4C. Statue of Liberty (New York Harbor) ──────────────────────────
+// ── 4C. Statue of Liberty (New York Harbor Island) ───────────────────
 function drawStatueOfLiberty(time) {
   const zoom = state.camera.zoom;
-  const basePos = gridToScreen(9.5, 2.5, 2);
+  const basePos = gridToScreen(22.5, 4.5, 2);
 
-  // 1. Star-Shaped Fort Wood Granite Pedestal Base (z=2..4)
+  // Star-Shaped Pedestal Base
   ctx.fillStyle = '#64748B';
   ctx.beginPath();
   ctx.moveTo(basePos.x, basePos.y - 12 * zoom);
@@ -1341,18 +1295,14 @@ function drawStatueOfLiberty(time) {
   ctx.closePath();
   ctx.fill();
 
-  // Granite Pedestal Shaft
   ctx.fillStyle = '#94A3B8';
   ctx.fillRect(basePos.x - 8 * zoom, basePos.y - 28 * zoom, 16 * zoom, 22 * zoom);
   ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 1.5 * zoom;
   ctx.strokeRect(basePos.x - 8 * zoom, basePos.y - 28 * zoom, 16 * zoom, 22 * zoom);
 
-  // 2. Patina Copper-Green Lady Liberty Body (z=5..8)
   const statueY = basePos.y - 28 * zoom;
-  // Draped Copper Robes
   ctx.fillStyle = '#10B981';
   ctx.beginPath();
-  ctx.moveTo(statueY, statueY);
   ctx.moveTo(basePos.x - 6 * zoom, statueY);
   ctx.lineTo(basePos.x - 8 * zoom, statueY - 32 * zoom);
   ctx.lineTo(basePos.x + 8 * zoom, statueY - 32 * zoom);
@@ -1360,14 +1310,12 @@ function drawStatueOfLiberty(time) {
   ctx.closePath();
   ctx.fill();
 
-  // Head with 7-Spike Radiant Solar Crown
   const headY = statueY - 36 * zoom;
   ctx.fillStyle = '#34D399';
   ctx.beginPath();
   ctx.arc(basePos.x, headY, 5 * zoom, 0, Math.PI * 2);
   ctx.fill();
 
-  // 7 Crown Spikes
   ctx.strokeStyle = '#34D399';
   ctx.lineWidth = 1.5 * zoom;
   for (let i = -3; i <= 3; i++) {
@@ -1378,7 +1326,6 @@ function drawStatueOfLiberty(time) {
     ctx.stroke();
   }
 
-  // 3. Raised Right Arm with Golden Torch of Liberty
   const torchArmX = basePos.x + 8 * zoom;
   const torchArmY = statueY - 26 * zoom;
   ctx.strokeStyle = '#10B981'; ctx.lineWidth = 2.5 * zoom;
@@ -1387,7 +1334,6 @@ function drawStatueOfLiberty(time) {
   ctx.lineTo(torchArmX + 4 * zoom, torchArmY - 20 * zoom);
   ctx.stroke();
 
-  // Glowing Golden Torch Beacon with Dynamic Light
   const flameY = torchArmY - 24 * zoom;
   ctx.fillStyle = '#F59E0B';
   ctx.shadowColor = '#FBBF24';
@@ -1397,7 +1343,6 @@ function drawStatueOfLiberty(time) {
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // 4. Left Arm holding Tablet of Declaration
   ctx.fillStyle = '#1E293B';
   ctx.fillRect(basePos.x - 10 * zoom, statueY - 22 * zoom, 5 * zoom, 8 * zoom);
 }
@@ -1406,13 +1351,11 @@ function drawStatueOfLiberty(time) {
 function drawIndiaGateAndRashtrapatiBhavan(time) {
   const zoom = state.camera.zoom;
 
-  // 1. INDIA GATE (gx: 8, gy: 21, z: 2..6)
-  const gatePos = gridToScreen(8, 21, 2);
-  // Red & Yellow Sandstone Arch Pillars
+  // 1. INDIA GATE in Far South-West
+  const gatePos = gridToScreen(13.5, 39, 2);
   ctx.fillStyle = '#B45309';
   ctx.fillRect(gatePos.x - 18 * zoom, gatePos.y - 44 * zoom, 36 * zoom, 44 * zoom);
 
-  // Grand Open Vaulted Central Arch
   ctx.fillStyle = '#0F172A';
   ctx.beginPath();
   ctx.moveTo(gatePos.x - 8 * zoom, gatePos.y);
@@ -1422,21 +1365,10 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
   ctx.closePath();
   ctx.fill();
 
-  // Yellow Sandstone Trim & Inscription Band
   ctx.fillStyle = '#F59E0B';
   ctx.fillRect(gatePos.x - 20 * zoom, gatePos.y - 48 * zoom, 40 * zoom, 6 * zoom);
   ctx.fillRect(gatePos.x - 14 * zoom, gatePos.y - 54 * zoom, 28 * zoom, 6 * zoom);
 
-  // Amar Jawan Jyoti Eternal Flame under the Arch
-  ctx.fillStyle = '#1E293B';
-  ctx.fillRect(gatePos.x - 3 * zoom, gatePos.y - 4 * zoom, 6 * zoom, 4 * zoom);
-  // Inverted Rifle & Helmet
-  ctx.fillStyle = '#0F172A';
-  ctx.fillRect(gatePos.x - 0.5 * zoom, gatePos.y - 10 * zoom, 1 * zoom, 6 * zoom);
-  ctx.beginPath();
-  ctx.arc(gatePos.x, gatePos.y - 11 * zoom, 2 * zoom, 0, Math.PI * 2);
-  ctx.fill();
-  // Eternal Flame
   ctx.fillStyle = '#F97316';
   ctx.shadowColor = '#EF4444';
   ctx.shadowBlur = 10;
@@ -1445,17 +1377,14 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // 2. RASHTRAPATI BHAVAN (gx: 3, gy: 21, z: 2..5)
-  const bhavanPos = gridToScreen(3, 21, 2);
-  // Colonnaded Sandstone Facade
+  // 2. RASHTRAPATI BHAVAN
+  const bhavanPos = gridToScreen(6.5, 39, 3);
   ctx.fillStyle = '#B45309';
   ctx.fillRect(bhavanPos.x - 24 * zoom, bhavanPos.y - 26 * zoom, 48 * zoom, 26 * zoom);
-  // Jaipur Colonnade Pillars
   ctx.fillStyle = '#FBBF24';
   for (let c = -18; c <= 18; c += 6) {
     ctx.fillRect(bhavanPos.x + c * zoom, bhavanPos.y - 26 * zoom, 2 * zoom, 26 * zoom);
   }
-  // Massive Buddhist Stupa-Inspired Copper Dome
   const domeBhavanY = bhavanPos.y - 26 * zoom;
   ctx.fillStyle = '#0284C7';
   ctx.beginPath();
@@ -1464,23 +1393,19 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
   ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 1.5 * zoom;
   ctx.stroke();
 
-  // Dome Spire
   ctx.fillStyle = '#F59E0B';
   ctx.fillRect(bhavanPos.x - 1.5 * zoom, domeBhavanY - 20 * zoom, 3 * zoom, 8 * zoom);
 
   // 3. INDIAN NATIONAL TRICOLOR FLAG (TIRANGA)
-  const flagPolePos = gridToScreen(6, 19, 2);
-  // White High-Mast Flagpole (z=2..9)
+  const flagPolePos = gridToScreen(10, 36, 2);
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(flagPolePos.x - 1.5 * zoom, flagPolePos.y - 56 * zoom, 3 * zoom, 56 * zoom);
 
-  // Fluttering Tiranga Flag Banner with Sine Wave Wind
   const flagY = flagPolePos.y - 54 * zoom;
   const flagW = 28 * zoom;
   const flagH = 6 * zoom;
   const waveOffset = Math.sin(time * 0.08) * 3 * zoom;
 
-  // Top Band: Saffron (Kesari)
   ctx.fillStyle = '#FF9933';
   ctx.beginPath();
   ctx.moveTo(flagPolePos.x + 1.5 * zoom, flagY);
@@ -1490,7 +1415,6 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
   ctx.closePath();
   ctx.fill();
 
-  // Middle Band: White
   ctx.fillStyle = '#FFFFFF';
   ctx.beginPath();
   ctx.moveTo(flagPolePos.x + 1.5 * zoom, flagY + flagH);
@@ -1500,7 +1424,6 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
   ctx.closePath();
   ctx.fill();
 
-  // Ashoka Chakra (Navy Blue 24-spoke wheel in center of white band)
   const chakraX = flagPolePos.x + 1.5 * zoom + flagW / 2;
   const chakraY = flagY + flagH * 1.5 + waveOffset / 2;
   ctx.strokeStyle = '#000080';
@@ -1509,7 +1432,6 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
   ctx.arc(chakraX, chakraY, 2.5 * zoom, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Bottom Band: India Green
   ctx.fillStyle = '#138808';
   ctx.beginPath();
   ctx.moveTo(flagPolePos.x + 1.5 * zoom, flagY + flagH * 2);
@@ -1523,67 +1445,53 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
 // ── 4E. Leaning Tower of Pisa on Water-Surrounded Island (Italy) ──────
 function drawLeaningTowerOfPisa(time) {
   const zoom = state.camera.zoom;
-  const islandCenter = gridToScreen(3.5, 11, 2);
+  const islandCenter = gridToScreen(5.5, 23.5, 2);
 
   ctx.save();
   ctx.translate(islandCenter.x, islandCenter.y);
-  // Realistic 8.5° Lean Angle (Tilt to the South-West)
-  ctx.rotate(-0.14);
+  ctx.rotate(-0.14); // 8.5° Tilt
 
-  // 1. Marble Cylindrical Base (Tier 1)
   ctx.fillStyle = '#F8FAFC';
   ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 1.5 * zoom;
   ctx.fillRect(-12 * zoom, -16 * zoom, 24 * zoom, 16 * zoom);
   ctx.strokeRect(-12 * zoom, -16 * zoom, 24 * zoom, 16 * zoom);
 
-  // 2. Six Tiers of Romanesque Open Column Arcades (Tiers 2 to 7)
   const tierH = 10 * zoom;
   for (let t = 1; t <= 6; t++) {
     const tierY = -16 * zoom - t * tierH;
-    // Core marble cylinder
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(-10 * zoom, tierY, 20 * zoom, tierH);
     ctx.strokeStyle = '#E2E8F0'; ctx.strokeRect(-10 * zoom, tierY, 20 * zoom, tierH);
 
-    // Romanesque Open Column Arcades
     ctx.fillStyle = '#1E293B';
     for (let col = -8; col <= 8; col += 4) {
       ctx.fillRect(col * zoom, tierY + 2 * zoom, 2 * zoom, tierH - 3 * zoom);
     }
   }
 
-  // 3. Top Belfry Chamber with Bronze Bells (Tier 8)
   const belfryY = -16 * zoom - 7 * tierH;
   ctx.fillStyle = '#F1F5F9';
   ctx.fillRect(-8 * zoom, belfryY, 16 * zoom, 12 * zoom);
   ctx.strokeStyle = '#CBD5E1'; ctx.strokeRect(-8 * zoom, belfryY, 16 * zoom, 12 * zoom);
 
-  // Bronze Bells in open arches
   ctx.fillStyle = '#D97706';
   ctx.beginPath();
   ctx.arc(-2 * zoom, belfryY + 6 * zoom, 2.5 * zoom, 0, Math.PI * 2);
   ctx.arc(3 * zoom, belfryY + 6 * zoom, 2.5 * zoom, 0, Math.PI * 2);
   ctx.fill();
 
-  // 4. ITALIAN NATIONAL TRICOLOR FLAG (IL TRICOLORE)
   const poleTopY = belfryY - 18 * zoom;
   ctx.fillStyle = '#94A3B8';
   ctx.fillRect(-1 * zoom, poleTopY, 2 * zoom, 18 * zoom);
 
-  // Fluttering Italian Flag: Green, White, Red Vertical Bands
   const flagW = 6 * zoom;
   const flagH = 12 * zoom;
   const wave = Math.sin(time * 0.09) * 2.5 * zoom;
 
-  // Stripe 1: Green (Verde)
   ctx.fillStyle = '#009246';
   ctx.fillRect(1 * zoom, poleTopY, flagW, flagH + wave);
-
-  // Stripe 2: White (Bianco)
   ctx.fillStyle = '#F1F5F9';
   ctx.fillRect(1 * zoom + flagW, poleTopY, flagW, flagH + wave);
-
-  // Stripe 3: Red (Rosso)
   ctx.fillStyle = '#CE2B37';
   ctx.fillRect(1 * zoom + flagW * 2, poleTopY, flagW, flagH + wave);
 
@@ -1593,11 +1501,8 @@ function drawLeaningTowerOfPisa(time) {
 // ── 4F. Himalayan Snowy Glaciers, Polar Bear & Mythical Yeti ──────────
 function drawHimalayanGlacierCreatures(time) {
   const zoom = state.camera.zoom;
+  const glacierPos = gridToScreen(14.5, 4.5, 5);
 
-  // 1. Himalayan Glacial Ice Crag at (gx: 15.5, gy: 2, z: 5)
-  const glacierPos = gridToScreen(15.5, 2, 5);
-
-  // Translucent Blue Glacial Ice Shimmer
   ctx.fillStyle = 'rgba(56, 189, 248, 0.85)';
   ctx.shadowColor = '#38BDF8';
   ctx.shadowBlur = 12;
@@ -1609,7 +1514,6 @@ function drawHimalayanGlacierCreatures(time) {
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // Pure White Snow Cap Ridge
   ctx.fillStyle = '#FFFFFF';
   ctx.beginPath();
   ctx.moveTo(glacierPos.x, glacierPos.y - 32 * zoom);
@@ -1618,35 +1522,27 @@ function drawHimalayanGlacierCreatures(time) {
   ctx.closePath();
   ctx.fill();
 
-  // 2. VOXEL POLAR BEAR roaming near ice edge (gx: 13.5, gy: 2.5, z: 4)
-  const bearPos = gridToScreen(13.5, 2.5, 4);
+  // Polar Bear
+  const bearPos = gridToScreen(12.5, 5, 4);
   const bearWalk = Math.sin(time * 0.05) * 4 * zoom;
-  // White Bear Body
   ctx.fillStyle = '#F8FAFC';
   ctx.fillRect(bearPos.x - 10 * zoom + bearWalk, bearPos.y - 14 * zoom, 20 * zoom, 10 * zoom);
-  // 4 Legs
   ctx.fillRect(bearPos.x - 9 * zoom + bearWalk, bearPos.y - 5 * zoom, 4 * zoom, 6 * zoom);
   ctx.fillRect(bearPos.x + 5 * zoom + bearWalk, bearPos.y - 5 * zoom, 4 * zoom, 6 * zoom);
-  // Polar Bear Head with Black Snout & Ears
   ctx.fillRect(bearPos.x + 9 * zoom + bearWalk, bearPos.y - 17 * zoom, 7 * zoom, 7 * zoom);
   ctx.fillStyle = '#0F172A';
-  ctx.fillRect(bearPos.x + 15 * zoom + bearWalk, bearPos.y - 14 * zoom, 2 * zoom, 2 * zoom); // Black Snout
-  ctx.fillRect(bearPos.x + 12 * zoom + bearWalk, bearPos.y - 16 * zoom, 1.5 * zoom, 1.5 * zoom); // Eye
+  ctx.fillRect(bearPos.x + 15 * zoom + bearWalk, bearPos.y - 14 * zoom, 2 * zoom, 2 * zoom);
+  ctx.fillRect(bearPos.x + 12 * zoom + bearWalk, bearPos.y - 16 * zoom, 1.5 * zoom, 1.5 * zoom);
 
-  // 3. MYTHICAL HIMALAYAN YETI (Abominable Snowman) on peak (gx: 16.5, gy: 1.5, z: 5)
-  const yetiPos = gridToScreen(16.5, 1.5, 5);
+  // Yeti
+  const yetiPos = gridToScreen(16.5, 3.5, 6);
   const yetiBreath = Math.sin(time * 0.04) * 2 * zoom;
 
-  // Massive Yeti White-Furred Body
   ctx.fillStyle = '#E2E8F0';
   ctx.fillRect(yetiPos.x - 8 * zoom, yetiPos.y - 28 * zoom - yetiBreath, 16 * zoom, 20 * zoom);
-
-  // Powerful Yeti Arms
   ctx.fillStyle = '#CBD5E1';
   ctx.fillRect(yetiPos.x - 13 * zoom, yetiPos.y - 26 * zoom - yetiBreath, 5 * zoom, 16 * zoom);
   ctx.fillRect(yetiPos.x + 8 * zoom, yetiPos.y - 26 * zoom - yetiBreath, 5 * zoom, 16 * zoom);
-
-  // Yeti Head with Mythical Glowing Cyan Eyes
   ctx.fillStyle = '#94A3B8';
   ctx.fillRect(yetiPos.x - 6 * zoom, yetiPos.y - 38 * zoom - yetiBreath, 12 * zoom, 11 * zoom);
   ctx.fillStyle = '#00F0FF';
@@ -1655,7 +1551,6 @@ function drawHimalayanGlacierCreatures(time) {
   ctx.fillRect(yetiPos.x + 1 * zoom, yetiPos.y - 34 * zoom - yetiBreath, 2.5 * zoom, 2.5 * zoom);
   ctx.shadowBlur = 0;
 
-  // Yeti Horns / Frozen Fur Tufts
   ctx.fillStyle = '#F8FAFC';
   ctx.fillRect(yetiPos.x - 5 * zoom, yetiPos.y - 41 * zoom - yetiBreath, 3 * zoom, 4 * zoom);
   ctx.fillRect(yetiPos.x + 2 * zoom, yetiPos.y - 41 * zoom - yetiBreath, 3 * zoom, 4 * zoom);
@@ -1665,30 +1560,29 @@ function drawHimalayanGlacierCreatures(time) {
 function drawValyrianLavaAndFire(time) {
   const zoom = state.camera.zoom;
 
-  // 1. Volcano Summit Caldera Crater (gx: 26, gy: 26, z: 5)
-  const calderaPos = gridToScreen(26, 26, 5);
+  // Volcano Summit Caldera Crater in Far South-East (gx: 39, gy: 39, z: 5)
+  const calderaPos = gridToScreen(39, 39, 5);
 
-  // Pulsating Volcanic Core Glow
-  const glowPulse = 16 + Math.sin(time * 0.05) * 8;
+  const glowPulse = 18 + Math.sin(time * 0.05) * 8;
   ctx.fillStyle = '#FF5722';
   ctx.shadowColor = '#EF4444';
   ctx.shadowBlur = glowPulse;
   ctx.beginPath();
-  ctx.ellipse(calderaPos.x, calderaPos.y - 6 * zoom, 24 * zoom, 14 * zoom, 0, 0, Math.PI * 2);
+  ctx.ellipse(calderaPos.x, calderaPos.y - 6 * zoom, 26 * zoom, 15 * zoom, 0, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.fillStyle = '#FBBF24';
   ctx.beginPath();
-  ctx.ellipse(calderaPos.x, calderaPos.y - 6 * zoom, 14 * zoom, 8 * zoom, 0, 0, Math.PI * 2);
+  ctx.ellipse(calderaPos.x, calderaPos.y - 6 * zoom, 16 * zoom, 9 * zoom, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // 2. Active Volcanic Eruptions (Shooting Lava Bombs & Fiery Embers)
+  // Active Volcanic Eruptions
   if (Math.random() < 0.6) {
     const angle = (Math.random() - 0.5) * 1.8;
     const speed = Math.random() * 5 + 4;
     state.lavaBubbles.push({
-      x: calderaPos.x + (Math.random() - 0.5) * 12 * zoom,
+      x: calderaPos.x + (Math.random() - 0.5) * 14 * zoom,
       y: calderaPos.y - 8 * zoom,
       vx: Math.sin(angle) * speed,
       vy: -Math.cos(angle) * speed - 3,
@@ -1700,10 +1594,10 @@ function drawValyrianLavaAndFire(time) {
     });
   }
 
-  // 3. Volcanic Smoke Voxels
+  // Volcanic Smoke
   if (Math.random() < 0.35) {
     state.lavaBubbles.push({
-      x: calderaPos.x + (Math.random() - 0.5) * 16 * zoom,
+      x: calderaPos.x + (Math.random() - 0.5) * 18 * zoom,
       y: calderaPos.y - 12 * zoom,
       vx: (Math.random() - 0.5) * 1.2,
       vy: -Math.random() * 2 - 1.5,
@@ -1715,14 +1609,16 @@ function drawValyrianLavaAndFire(time) {
     });
   }
 
-  // 4. Cascading Lava River Bubbles
+  // Cascading Lava River flowing over the blue channels
   const riverPoints = [
-    { gx: 24, gy: 25 },
-    { gx: 23, gy: 24 },
-    { gx: 22, gy: 24 },
-    { gx: 21, gy: 25 },
-    { gx: 20, gy: 26 },
-    { gx: 19, gy: 27 },
+    { gx: 37, gy: 38 },
+    { gx: 36, gy: 37 },
+    { gx: 35, gy: 37 },
+    { gx: 34, gy: 38 },
+    { gx: 33, gy: 39 },
+    { gx: 32, gy: 40 },
+    { gx: 31, gy: 40 },
+    { gx: 42, gy: 42 },
   ];
   if (Math.random() < 0.4) {
     const pt = riverPoints[Math.floor(Math.random() * riverPoints.length)];
@@ -1740,6 +1636,8 @@ function drawValyrianLavaAndFire(time) {
     });
   }
 }
+
+
 
 // ── 6. Decorative Minecraft Game Objects ─────────────────────────────
 function drawDecorativeMinecraftObjects(time) {
