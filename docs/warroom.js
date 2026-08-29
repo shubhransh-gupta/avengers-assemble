@@ -1894,23 +1894,39 @@ function renderStrongholdDock() {
 // ── Console Mode Toggle (VERBOSE vs RESULT) ─────────────────────────
 window.setConsoleMode = function (mode) {
   state.consoleMode = mode;
-  const btnVerbose = document.getElementById('btnModeVerbose');
+  const btnChat   = document.getElementById('btnModeChat');
+  const btnCode   = document.getElementById('btnModeCode');
   const btnResult = document.getElementById('btnModeResult');
   const descLabel = document.getElementById('modeDescriptionLabel');
-  const badge = document.getElementById('resultBadgeReady');
+  const badge     = document.getElementById('resultBadgeReady');
 
-  if (mode === 'verbose') {
-    btnVerbose.classList.add('active');
-    btnResult.classList.remove('active');
+  // Reset all
+  [btnChat, btnCode, btnResult].forEach(b => b && b.classList.remove('active'));
+
+  if (mode === 'chat') {
+    if (btnChat) btnChat.classList.add('active');
     verboseStreamFeed.style.display = 'flex';
     resultDeliverableView.style.display = 'none';
-    descLabel.innerText = 'Real-time inter-agent thoughts & DAG directives';
+    descLabel.innerText = '💬 All inter-agent thoughts, deliberations & DAG communications';
+    // Show ONLY chat-kind entries, hide code-kind
+    verboseStreamFeed.querySelectorAll('.stream-entry').forEach(el => {
+      el.style.display = (el.dataset.kind === 'code') ? 'none' : 'flex';
+    });
+  } else if (mode === 'code') {
+    if (btnCode) btnCode.classList.add('active');
+    verboseStreamFeed.style.display = 'flex';
+    resultDeliverableView.style.display = 'none';
+    descLabel.innerText = '🖥️ Code output only: file writes, workspace paths & directive results';
+    // Show ONLY code-kind entries, hide chat-kind
+    verboseStreamFeed.querySelectorAll('.stream-entry').forEach(el => {
+      el.style.display = (el.dataset.kind === 'chat') ? 'none' : 'flex';
+    });
   } else {
-    btnResult.classList.add('active');
-    btnVerbose.classList.remove('active');
+    // result mode
+    if (btnResult) btnResult.classList.add('active');
     resultDeliverableView.style.display = 'flex';
     verboseStreamFeed.style.display = 'none';
-    descLabel.innerText = 'Only final code deliverables & project workspace paths';
+    descLabel.innerText = '🏆 Final deliverable files and project run instructions';
     if (badge) badge.style.display = 'none';
   }
 };
@@ -1922,18 +1938,97 @@ window.fillPrompt = function (text) {
 
 window.clearTerminal = function () {
   verboseStreamFeed.innerHTML = '';
-  appendVerboseStream(`● [TONY STARK] Terminal cleared. Ready for next master directive.`);
+  appendVerboseStream(`● [TONY STARK] Terminal cleared. Ready for next master directive.`, 'code');
 };
 
+// ── Message Kind Classifier ──────────────────────────────────────────
+// Returns 'chat' for inter-agent thoughts/comms, 'code' for code/workspace output
+function classifyStreamKind(text) {
+  const t = text.toUpperCase();
+
+  // ── CHAT indicators: agent deliberation, thought, action, comms verbs ──
+  const CHAT_PATTERNS = [
+    /\[THOUGHT\s*\/\//,
+    /\[ACTION\s*\/\//,
+    /\[COMPLETED\s*\/\//,
+    /\[VERIFIED\s*\/\//,
+    /\[ERROR\s*\/\//,
+    /AVENGERS ASSEMBLE/,
+    /DEPLOYING STRIKE TEAM/,
+    /DECOMPOSED.*PARALLEL DIRECTIVES/,
+    /DEPLOYING.*DIRECTIVE/,
+    /MULTI.*VERSE TIMELINE/,
+    /MIND STONE SEMANTIC/,
+    /VIBRANIUM.*QA/,
+    /REVIEWING ARCHITECTURE/,
+    /SUPERPOWER/,
+    /VOXEL BATTLE CLASH/,
+    /NETHER PORTAL/,
+    /SPAWNED.*BATTLEWORLD/,
+    /FOCUS LOCKED/,
+    /SPEECH BUBBLE/,
+    /TERMINAL CLEARED/,
+    /MOVING TO \(/,
+    /MINECRAFT ITEM/,
+    /WEAPON EQUIPPED/,
+    /HOTBAR/,
+    /HERO MATERIALIZED/,
+    /HERO DESPAWNED/,
+    /CUSTOM.*VOXEL.*HERO/,
+  ];
+
+  for (const pat of CHAT_PATTERNS) {
+    if (pat.test(text)) return 'chat';
+  }
+
+  // ── CODE indicators: workspace, files, directives, errors, user input ──
+  const CODE_PATTERNS = [
+    /WORKSPACE SAVED/i,
+    /WORKSPACE LOCATION/i,
+    /PROJECT WRITTEN/i,
+    /GENERATED PROJECT FILES/i,
+    /WRITING SOURCE CODE FOR/i,
+    /USER DIRECTIVE/i,
+    /MISSION DIRECTIVE/i,
+    /DECONSTRUCTING DIRECTIVE/i,
+    /STARK ERROR/i,
+    /NETWORK ERROR/i,
+    /MISSION EXECUTION FAILED/i,
+    /DIRECTIVE.*COMPLETED/i,
+    /FILES.*WRITTEN.*DISK/i,
+    /TOKENS:/i,
+    /READY FOR NEXT MASTER DIRECTIVE/i,
+  ];
+
+  for (const pat of CODE_PATTERNS) {
+    if (pat.test(text)) return 'code';
+  }
+
+  // Default: anything without strong code markers goes to chat
+  return 'chat';
+}
+
 // ── Feed Updaters ───────────────────────────────────────────────────
-function appendVerboseStream(text) {
+// kind: 'chat' | 'code' | 'auto' (auto = classify by content)
+function appendVerboseStream(text, kind = 'auto') {
+  const resolvedKind = (kind === 'auto') ? classifyStreamKind(text) : kind;
+
   const entry = document.createElement('div');
   entry.className = 'stream-entry';
+  entry.dataset.kind = resolvedKind;  // ← key for filtering
 
-  const tagMatch = text.match(/^●?\s*\[([a-zA-Z0-9_\-\s]+)\]/);
+  // Apply dimmer style to chat entries in code mode and vice versa
+  const currentMode = state.consoleMode;
+  if (currentMode === 'code' && resolvedKind === 'chat') {
+    entry.style.display = 'none';
+  } else if (currentMode === 'chat' && resolvedKind === 'code') {
+    entry.style.display = 'none';
+  }
+
+  const tagMatch = text.match(/^●?\s*\[([a-zA-Z0-9_\-\s\/]+)\]/);
   if (tagMatch) {
     const tagName = tagMatch[1];
-    const rest = text.replace(/^●?\s*\[([a-zA-Z0-9_\-\s]+)\]\s*/, '');
+    const rest = text.replace(/^●?\s*\[([a-zA-Z0-9_\-\s\/]+)\]\s*/, '');
     let color = '#00F0FF';
     if (tagName.includes('HULK')) color = '#22C55E';
     else if (tagName.includes('DOOM')) color = '#10B981';
@@ -1942,7 +2037,13 @@ function appendVerboseStream(text) {
     else if (tagName.includes('STRANGE') || tagName.includes('WIDOW')) color = '#A855F7';
     else if (tagName.includes('THOR')) color = '#00D5E8';
     else if (tagName.includes('CAP')) color = '#3B82F6';
-    else if (tagName.includes('MINECRAFT')) color = '#4AEDD9';
+    else if (tagName.includes('MINECRAFT') || tagName.includes('WEAPON') || tagName.includes('WORKSPACE')) color = '#4AEDD9';
+    else if (tagName.includes('USER DIRECTIVE')) color = '#FBBF24';
+    else if (tagName.includes('ERROR') || tagName.includes('NETWORK')) color = '#F87171';
+
+    // Code entries get a subtle left-border indicator
+    const borderStyle = resolvedKind === 'code' ? 'border-left: 2px solid #4AEDD9; padding-left: 6px;' : '';
+    entry.style.cssText += borderStyle;
 
     entry.innerHTML = `<span class="stream-bullet" style="color:${color}">●</span> <span class="stream-hero-tag" style="color:${color}">[${escapeHtml(tagName)}]</span> ${escapeHtml(rest)}`;
   } else {
@@ -2041,10 +2142,10 @@ async function dispatchMasterMission() {
   if (!prompt) return;
 
   quantumPromptInput.value = '';
-  setConsoleMode('verbose');
+  setConsoleMode('code'); // Start in code mode so the user sees task-related output
 
-  appendVerboseStream(`● [USER DIRECTIVE] ${prompt}`);
-  appendVerboseStream(`● [TONY STARK] Deconstructing directive across the Minecraft world...`);
+  appendVerboseStream(`● [USER DIRECTIVE] ${prompt}`, 'code');
+  appendVerboseStream(`● [TONY STARK] Deconstructing directive across the Minecraft world...`, 'chat');
 
   showCosmicSpeechBubble('tony-stark', `Analyzing directive: "${prompt.slice(0, 35)}..."`);
   triggerDAGSimulationPulse();
@@ -2058,18 +2159,18 @@ async function dispatchMasterMission() {
 
     if (!res.ok) {
       const err = await res.text();
-      appendVerboseStream(`● [STARK ERROR] Mission execution failed: ${err}`);
+      appendVerboseStream(`● [STARK ERROR] Mission execution failed: ${err}`, 'code');
       return;
     }
 
     const data = await res.json();
     if (data.success) {
       const wPath = data.workspacePath || data.workspace?.workspacePath || './workspace';
-      appendVerboseStream(`● [WORKSPACE SAVED] Project written to: ${wPath}`);
+      appendVerboseStream(`● [WORKSPACE SAVED] Project written to: ${wPath}`, 'code');
       updateResultDeliverable(data.summary || data.result, data.workspace, wPath);
     }
   } catch (err) {
-    appendVerboseStream(`● [NETWORK ERROR] ${err.message}`);
+    appendVerboseStream(`● [NETWORK ERROR] ${err.message}`, 'code');
   }
 }
 
@@ -2088,7 +2189,11 @@ function initWebSocket() {
     try {
       const msg = JSON.parse(event.data);
       if (msg.type === 'comms_message' && msg.data?.content) {
-        appendVerboseStream(msg.data.content);
+        // comms_message = agent-to-agent thoughts → classify by content but bias 'chat'
+        const content = msg.data.content;
+        const kind = classifyStreamKind(content);
+        appendVerboseStream(content, kind);
+
         const speaker = msg.data.from;
         if (state.roamingAgents[speaker] || MINECRAFT_HEROES[speaker]) {
           const hero = state.roamingAgents[speaker];
@@ -2097,7 +2202,7 @@ function initWebSocket() {
             const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy));
             spawnPortalParticles(pos.x, pos.y, hero.themeColor);
           }
-          showCosmicSpeechBubble(speaker, msg.data.content.replace(/^\[[^\]]+\]\s*/, '').slice(0, 70));
+          showCosmicSpeechBubble(speaker, content.replace(/^\[[^\]]+\]\s*/, '').slice(0, 70));
         }
       } else if (msg.type === 'directive_started') {
         const heroId = msg.data?.assignedHero;
@@ -2110,13 +2215,23 @@ function initWebSocket() {
           const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy));
           spawnPortalParticles(pos.x, pos.y, hero.themeColor);
         }
-        appendVerboseStream(`● [${(heroId || 'HERO').toUpperCase()}] Writing source code for "${msg.data?.title}"...`);
+        // "Writing source code for X" is code output
+        appendVerboseStream(`● [${(heroId || 'HERO').toUpperCase()}] Writing source code for "${msg.data?.title}"...`, 'code');
       } else if (msg.type === 'directive_completed') {
         const heroId = msg.data?.assignedHero;
         const hero = state.roamingAgents[heroId];
         if (hero) hero.isWorking = false;
+        // Directive completion with token count = code output
+        if (msg.data?.title) {
+          appendVerboseStream(`● [${(heroId || 'HERO').toUpperCase()}] ✅ Completed: "${msg.data.title}"`, 'code');
+        }
+      } else if (msg.type === 'mission_started') {
+        appendVerboseStream(`● [MISSION STARTED] ${msg.data?.name || 'New Mission'}`, 'chat');
+      } else if (msg.type === 'mission_updated') {
+        appendVerboseStream(`● [MISSION UPDATE] Status: ${msg.data?.status || 'updated'}`, 'chat');
       } else if (msg.type === 'mission_completed') {
         for (const h of Object.values(state.roamingAgents)) h.isWorking = false;
+        appendVerboseStream(`● [MISSION COMPLETED] All directives executed. Workspace ready.`, 'code');
         if (msg.data?.workspace || msg.data?.finalSummary) {
           updateResultDeliverable(msg.data.finalSummary || msg.data.result, msg.data.workspace, msg.data.workspace?.workspacePath);
         }
