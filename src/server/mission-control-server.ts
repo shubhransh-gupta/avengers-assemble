@@ -118,6 +118,28 @@ export function createMissionControlServer(
     });
   });
 
+  app.post('/api/heroes/custom', (req, res) => {
+    const { name, callsign, role, avatar, harness, superpower, systemPrompt } = req.body;
+    if (!name || !callsign) {
+      return res.status(400).json({ error: 'Missing name or callsign' });
+    }
+
+    const heroId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    comms.send('orchestrator', 'all', 'war-room', `⚡ NEW AGENT SPAWNED! ${name} (${callsign}) has entered the Battleworld!`);
+
+    res.json({
+      success: true,
+      heroId,
+      name,
+      callsign,
+      role: role || 'Custom Agent Specialist',
+      avatar: avatar || '🦸',
+      harness: harness || 'gemini',
+      superpower: superpower || 'Quantum Laser',
+      message: `Hero ${name} (${callsign}) successfully spawned into Battleworld!`
+    });
+  });
+
   const broadcast = (type: string, data: any) => {
     const payload = JSON.stringify({ type, data, timestamp: Date.now() });
     for (const client of wss.clients) {
