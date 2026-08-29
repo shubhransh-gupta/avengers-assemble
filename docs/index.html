@@ -24,8 +24,8 @@
         <!-- High-Resolution Cinematic Valley Backdrop -->
         <img src="./assets/battleworld_valley.jpg" alt="Battleworld Incursions Valley" class="valley-backdrop-image" />
         
-        <!-- Canvas FX Layer (Incursion Lightning, Lake Ripples & Energy Particles) -->
-        <canvas id="valleyEffectsCanvas"></canvas>
+        <!-- Canvas for Roaming Characters, Combat Lasers, Lightning & Effects -->
+        <canvas id="battleworldCanvas"></canvas>
 
         <!-- Top HUD Badges -->
         <div class="valley-top-hud">
@@ -39,63 +39,11 @@
           </div>
         </div>
 
-        <!-- Strongholds & Multiverse Portals Layer -->
-        <div class="valley-strongholds-layer" id="strongholdsLayer">
-          
-          <!-- Doctor Doom Incursion Portal (Right Lake Shore) -->
-          <div class="stronghold-portal-node" style="top: 60%; left: 78%;" onclick="triggerEntityComms('doctor-doom')" title="Doctor Doom - Latverian AST Compiler">
-            <div class="portal-avatar-frame" style="--portal-color:#10B981; --portal-glow:rgba(16,185,129,0.5);">
-              <div class="portal-pulse-ring"></div>
-              <img src="./assets/doctor_doom.jpg" alt="Doctor Doom" />
-            </div>
-            <span class="portal-label-tag" style="--portal-color:#10B981;">👑 DOCTOR DOOM // AST SPIRE</span>
-          </div>
-
-          <!-- Kang the Conqueror Chrono-Nexus (Left Lake Shore) -->
-          <div class="stronghold-portal-node" style="top: 55%; left: 22%;" onclick="triggerEntityComms('kang')" title="Kang the Conqueror - Quantum Timeline Branching">
-            <div class="portal-avatar-frame" style="--portal-color:#38BDF8; --portal-glow:rgba(56,189,248,0.5);">
-              <div class="portal-pulse-ring"></div>
-              <img src="./assets/kang_conqueror.jpg" alt="Kang the Conqueror" />
-            </div>
-            <span class="portal-label-tag" style="--portal-color:#38BDF8;">⏳ KANG // CHRONO-NEXUS</span>
-          </div>
-
-          <!-- Stark Holographic War Citadel (Floating Over Lake Center) -->
-          <div class="stronghold-portal-node" style="top: 38%; left: 50%;" onclick="triggerEntityComms('tony-stark')" title="Tony Stark - God Orchestrator">
-            <div class="portal-avatar-frame" style="--portal-color:#00F0FF; --portal-glow:rgba(0,240,255,0.6);">
-              <div class="portal-pulse-ring"></div>
-              <div class="portal-emoji-fallback">🦾</div>
-            </div>
-            <span class="portal-label-tag" style="--portal-color:#00F0FF;">⚡ TONY STARK [GOD]</span>
-          </div>
-
-          <!-- Thanos Titan Sanctuary (Top Ridge) -->
-          <div class="stronghold-portal-node" style="top: 25%; left: 72%;" onclick="triggerEntityComms('thanos')" title="Thanos - Infinity Gauntlet Rate Limiter">
-            <div class="portal-avatar-frame" style="--portal-color:#FFC83B; --portal-glow:rgba(255,200,59,0.5);">
-              <div class="portal-pulse-ring"></div>
-              <div class="portal-emoji-fallback">🪐</div>
-            </div>
-            <span class="portal-label-tag" style="--portal-color:#FFC83B;">🪐 THANOS // GAUNTLET GRID</span>
-          </div>
-
-          <!-- Captain America Wakandan Bastion (Bottom Left) -->
-          <div class="stronghold-portal-node" style="top: 80%; left: 32%;" onclick="triggerEntityComms('captain-america')" title="Captain America - Vibranium QA Auditor">
-            <div class="portal-avatar-frame" style="--portal-color:#3B82F6; --portal-glow:rgba(59,130,246,0.5);">
-              <div class="portal-pulse-ring"></div>
-              <div class="portal-emoji-fallback">🛡️</div>
-            </div>
-            <span class="portal-label-tag" style="--portal-color:#3B82F6;">🛡️ CAPTAIN AMERICA // QA</span>
-          </div>
-
-          <!-- Spider-Man Web Vanguard (Bottom Right) -->
-          <div class="stronghold-portal-node" style="top: 82%; left: 65%;" onclick="triggerEntityComms('spider-man')" title="Spider-Man - Frontend UI Architect">
-            <div class="portal-avatar-frame" style="--portal-color:#EF4444; --portal-glow:rgba(239,68,68,0.5);">
-              <div class="portal-pulse-ring"></div>
-              <div class="portal-emoji-fallback">🕸️</div>
-            </div>
-            <span class="portal-label-tag" style="--portal-color:#EF4444;">🕸️ SPIDER-MAN // UI</span>
-          </div>
-
+        <!-- Floating Valley Action Toolbar (Top Right) -->
+        <div class="valley-actions-toolbar">
+          <button class="valley-action-pill-btn" onclick="openSpawnModal()">➕ Spawn Agent</button>
+          <button class="valley-action-pill-btn" onclick="openCustomHeroModal()">🛠️ Custom Agent</button>
+          <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Multiverse Clash</button>
         </div>
 
         <!-- Speech Bubbles Layer -->
@@ -137,12 +85,12 @@
           <div class="verbose-stream-feed" id="verboseStreamFeed">
             <div class="stream-entry"><span class="stream-bullet" style="color:#00F0FF;">●</span> <span class="stream-hero-tag" style="color:#00F0FF;">[TONY STARK]</span> Multiverse incursion telemetry online. DAG compiler standing by.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#10B981;">●</span> <span class="stream-hero-tag" style="color:#10B981;">[DOCTOR DOOM]</span> Latverian AST engine calibrating. Foolish bugs shall be banished from this timeline.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#00D5E8;">●</span> <span class="stream-hero-tag" style="color:#00D5E8;">[THOR]</span> Forged deployment manifests with lightning-fast CI/CD and Swift Packages!</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#FFC83B;">●</span> <span class="stream-hero-tag" style="color:#FFC83B;">[THANOS]</span> Rate limits balanced. All token power across the grid in perfect equilibrium.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#38BDF8;">●</span> <span class="stream-hero-tag" style="color:#38BDF8;">[KANG]</span> Quantum timelines branch calculated. Reality-616 targeted.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#A855F7;">●</span> <span class="stream-hero-tag" style="color:#A855F7;">[DOCTOR STRANGE]</span> Eye of Agamotto synchronized with Mind Stone memory matrix.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#60A5FA;">●</span> <span class="stream-hero-tag" style="color:#60A5FA;">[SPIDER-MAN]</span> Web components & modern frontend UI ready to deploy.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#22C55E;">●</span> <span class="stream-hero-tag" style="color:#22C55E;">[HULK]</span> HULK READY TO SMASH BOTTLENECKS AND REFACTOR WITH GAMMA POWER!</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#00D5E8;">●</span> <span class="stream-hero-tag" style="color:#00D5E8;">[THOR]</span> Forged deployment manifests with lightning-fast CI/CD.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#C084FC;">●</span> <span class="stream-hero-tag" style="color:#C084FC;">[BLACK WIDOW]</span> Perimeter secure. API bearer tokens sanitized.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#3B82F6;">●</span> <span class="stream-hero-tag" style="color:#3B82F6;">[CAPTAIN AMERICA]</span> Vibranium standards inspection ready for battle.</div>
           </div>
@@ -189,6 +137,88 @@
       <!-- Stronghold cards dynamically rendered -->
     </div>
 
+  </div>
+
+  <!-- ── MODAL 1: Spawn Character Roster Modal ────────────────── -->
+  <div class="battleworld-modal-backdrop" id="spawnRosterModal">
+    <div class="battleworld-modal">
+      <div class="modal-header">
+        <div class="modal-title">⚡ SPAWN AGENT INTO BATTLEWORLD</div>
+        <button class="modal-close-btn" onclick="closeModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-family:var(--font-mono); font-size:11px; color:var(--ink-secondary);">
+          Select a Marvel Hero or Villain to spawn directly onto the Battleworld landscape:
+        </p>
+        <div class="spawn-roster-grid" id="spawnRosterGrid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL 2: Create Custom Character Modal ────────────────── -->
+  <div class="battleworld-modal-backdrop" id="customHeroModal">
+    <div class="battleworld-modal">
+      <div class="modal-header">
+        <div class="modal-title">🛠️ CREATE CUSTOM AGENT / HERO</div>
+        <button class="modal-close-btn" onclick="closeModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Character Name</label>
+          <input type="text" id="customHeroName" class="form-input" placeholder="e.g. Wolverine, Silver Surfer, Deadpool" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Callsign / Title</label>
+          <input type="text" id="customHeroCallsign" class="form-input" placeholder="e.g. WEAPON_X, SURFER, MERC_WITH_MOUTH" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Specialist Role</label>
+          <select id="customHeroRole" class="form-select">
+            <option value="Frontend & UI/UX">Frontend & UI/UX Specialist</option>
+            <option value="Core Logic & Algorithms">Core Logic & Algorithms</option>
+            <option value="DevOps & Package Manifest">DevOps & Package Manifest</option>
+            <option value="Security & CVE Recon">Security & CVE Recon</option>
+            <option value="Unit Testing & QA">Unit Testing & QA</option>
+            <option value="Temporal Knowledge Memory">Temporal Knowledge Memory</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Avatar Icon / Emoji</label>
+          <input type="text" id="customHeroAvatar" class="form-input" placeholder="e.g. ⚔️, 🏄‍♂️, 💀, 🌙, 🤖" value="🦸" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">AI Model Provider</label>
+          <select id="customHeroHarness" class="form-select">
+            <option value="gemini">Google Gemini 3.5 Flash (Ultra-Fast)</option>
+            <option value="gemini-pro">Google Gemini 3.1 Pro (Deep Reasoning)</option>
+            <option value="claude-code">Claude 3.7 Sonnet (Architecture)</option>
+            <option value="openai">OpenAI GPT-4o</option>
+            <option value="ollama">Ollama Local DeepSeek R1</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Combat Superpower Attack</label>
+          <select id="customHeroPower" class="form-select">
+            <option value="laser">Arc Reactor Laser Beam</option>
+            <option value="thunder">Mjolnir Thunder Strike</option>
+            <option value="runes">Latverian Arcane Runes</option>
+            <option value="chrono">Chrono-Warp Temporal Ring</option>
+            <option value="gamma">Gamma Shockwave Smash</option>
+            <option value="web">Web-Shooter Stream</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Personality / System Directive</label>
+          <input type="text" id="customHeroDirective" class="form-input" placeholder="e.g. I am the best at what I do, and what I do is write clean Rust code." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="console-action-btn" onclick="closeModals()">Cancel</button>
+        <button class="dispatch-infinity-btn" onclick="submitCustomHero()">🚀 FORGE & SPAWN HERO</button>
+      </div>
+    </div>
   </div>
 
   <script src="./warroom.js"></script>
