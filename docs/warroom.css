@@ -1226,3 +1226,284 @@ html, body {
   0% { opacity: 0.4; transform: scale(0.8); }
   100% { opacity: 1; transform: scale(1.2); }
 }
+
+/* ── MULTI-THEME ENGINE (DAYLIGHT, LIGHT, DARK) ───────────── */
+body.theme-daylight {
+  --bg-void: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-panel: #F1F5F9;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --border: #E2E8F0;
+  --border-bright: #CBD5E1;
+  --border-accent: #0284C7;
+  --ink: #0F172A;
+  --ink-secondary: #334155;
+  --ink-muted: #64748B;
+  --primary-blue: #0284C7;
+}
+
+body.theme-light {
+  --bg-void: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-panel: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --border: #E2E8F0;
+  --border-bright: #CBD5E1;
+  --border-accent: #3B82F6;
+  --ink: #0F172A;
+  --ink-secondary: #334155;
+  --ink-muted: #64748B;
+  --primary-blue: #2563EB;
+}
+
+body.theme-dark {
+  --bg-void: #0B0F17;
+  --bg-surface: #111827;
+  --bg-panel: #1F2937;
+  --bg-card: #1E293B;
+  --bg-card-hover: #334155;
+  --border: #374151;
+  --border-bright: #4B5563;
+  --border-accent: #38BDF8;
+  --ink: #F9FAFB;
+  --ink-secondary: #E5E7EB;
+  --ink-muted: #9CA3AF;
+  --primary-blue: #38BDF8;
+  --primary-indigo: #818CF8;
+}
+
+body.theme-dark .valley-viewport {
+  background: #060814;
+}
+
+body.theme-dark .hud-pill,
+body.theme-dark .valley-action-pill-btn,
+body.theme-dark .ellipsis-menu-btn,
+body.theme-dark .ellipsis-dropdown-overlay,
+body.theme-dark .minecraft-hotbar,
+body.theme-dark .camera-btn,
+body.theme-dark .console-header,
+body.theme-dark .stream-mode-selector,
+body.theme-dark .console-body,
+body.theme-dark .quantum-console-input-area,
+body.theme-dark .multiverse-stronghold-dock,
+body.theme-dark .battleworld-modal,
+body.theme-dark .modal-header,
+body.theme-dark .modal-footer,
+body.theme-dark .roster-spawn-card,
+body.theme-dark .stronghold-card {
+  background: #111827;
+  border-color: #374151;
+  color: #F9FAFB;
+}
+
+body.theme-dark .stronghold-card.add-specialist-card {
+  background: #1E293B;
+  border-color: #38BDF8;
+}
+
+body.theme-dark .quick-prompt-chip,
+body.theme-dark .console-action-btn,
+body.theme-dark .hdr-action-btn,
+body.theme-dark .form-input,
+body.theme-dark .form-select,
+body.theme-dark .quantum-textarea {
+  background: #1F2937;
+  border-color: #374151;
+  color: #F9FAFB;
+}
+
+body.theme-dark .segmented-toggle {
+  background: #1F2937;
+}
+body.theme-dark .toggle-segment.active {
+  background: #374151;
+  color: #38BDF8;
+}
+body.theme-dark .workspace-file-sidebar {
+  background: #111827;
+  border-color: #374151;
+}
+body.theme-dark .workspace-file-item {
+  color: #E5E7EB;
+  border-color: #1F2937;
+}
+
+/* ── Settings Dialog Tabs ──────────────────────────────────── */
+.settings-nav-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+
+.settings-tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.settings-tab-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--ink);
+}
+.settings-tab-btn.active {
+  background: var(--bg-card);
+  border-color: var(--border);
+  color: var(--primary-blue);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-tab-panel {
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+}
+.settings-tab-panel.active {
+  display: flex;
+}
+
+/* Theme Selection Cards */
+.theme-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.theme-preview-card {
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  background: var(--bg-card);
+}
+.theme-preview-card:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.theme-preview-card.active {
+  border-color: var(--primary-blue);
+  background: #EFF6FF;
+}
+body.theme-dark .theme-preview-card.active {
+  background: #1E293B;
+}
+
+.theme-card-icon {
+  font-size: 26px;
+}
+.theme-card-name {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.theme-card-desc {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+/* Provider Key Cards */
+.provider-key-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.provider-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.provider-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.provider-status-badge {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+.provider-status-badge.live {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+.provider-status-badge.off {
+  background: #F1F5F9;
+  color: #94A3B8;
+  border: 1px solid #E2E8F0;
+}
+
+/* Personal Skill Cards */
+.skills-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.personal-skill-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.12s ease;
+}
+.personal-skill-card:hover {
+  border-color: var(--border-bright);
+}
+
+.skill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.skill-name {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.skill-desc {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--ink-muted);
+  line-height: 1.4;
+}

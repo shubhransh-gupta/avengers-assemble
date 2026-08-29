@@ -1873,8 +1873,12 @@ window.openCustomHeroModal = function () {
 };
 
 window.closeModals = function () {
-  document.getElementById('spawnRosterModal').style.display = 'none';
-  document.getElementById('customHeroModal').style.display = 'none';
+  document.querySelectorAll('.battleworld-modal-backdrop').forEach(modal => {
+    modal.style.display = 'none';
+  });
+  if (typeof isRecordingVoice !== 'undefined' && isRecordingVoice) {
+    stopVoiceComms();
+  }
 };
 
 window.submitCustomHero = async function () {
@@ -2606,4 +2610,252 @@ window.dispatchVoiceDirective = async function () {
 
   quantumPromptInput.value = text;
   dispatchMasterMission();
+};
+
+// ── Settings Dialog, Themes & AI Key Controllers ─────────────────────
+window.applyAppTheme = function (themeName) {
+  document.body.className = `theme-${themeName}`;
+  localStorage.setItem('stark_theme', themeName);
+
+  ['Daylight', 'Light', 'Dark'].forEach(t => {
+    const card = document.getElementById(`themeCard${t}`);
+    if (card) card.classList.remove('active');
+  });
+
+  const capName = themeName.charAt(0).toUpperCase() + themeName.slice(1);
+  const activeCard = document.getElementById(`themeCard${capName}`);
+  if (activeCard) activeCard.classList.add('active');
+
+  const badge = document.getElementById('currentThemeBadge');
+  if (badge) {
+    if (themeName === 'daylight') badge.innerText = '☀️ DAYLIGHT';
+    else if (themeName === 'light') badge.innerText = '⛅ LIGHT';
+    else badge.innerText = '🌙 DARK';
+  }
+};
+
+// Initialize Theme from localStorage
+(function initTheme() {
+  const saved = localStorage.getItem('stark_theme') || 'daylight';
+  applyAppTheme(saved);
+})();
+
+window.openSettingsModal = function (defaultTab = 'theme') {
+  const modal = document.getElementById('settingsModal');
+  if (modal) modal.style.display = 'flex';
+  switchSettingsTab(defaultTab);
+  loadApiKeysStatus();
+  loadPersonalSkillsList();
+};
+
+window.switchSettingsTab = function (tabKey) {
+  const tabs = ['theme', 'keys', 'skills', 'sim'];
+  tabs.forEach(t => {
+    const cap = t.charAt(0).toUpperCase() + t.slice(1);
+    const btn = document.getElementById(`tabBtn${cap}`);
+    const panel = document.getElementById(`tabPanel${cap}`);
+    if (btn) btn.classList.remove('active');
+    if (panel) panel.classList.remove('active');
+  });
+
+  const cap = tabKey.charAt(0).toUpperCase() + tabKey.slice(1);
+  const targetBtn = document.getElementById(`tabBtn${cap}`);
+  const targetPanel = document.getElementById(`tabPanel${cap}`);
+  if (targetBtn) targetBtn.classList.add('active');
+  if (targetPanel) targetPanel.classList.add('active');
+};
+
+// Load API Keys Status & Configured Providers
+window.loadApiKeysStatus = async function () {
+  try {
+    const res = await fetch('/api/keys/status');
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const modelSelect = document.getElementById('settingsActiveModelSelect');
+    if (modelSelect && data.activeModel) {
+      modelSelect.value = data.activeModel;
+    }
+
+    const headerModelText = document.getElementById('headerActiveModelText');
+    if (headerModelText && data.activeModel) {
+      headerModelText.innerText = data.activeModel;
+    }
+
+    // Update Gemini Badge
+    const geminiBadge = document.getElementById('badgeGeminiStatus');
+    if (geminiBadge) {
+      const isLive = data.providers?.gemini?.configured;
+      geminiBadge.className = `provider-status-badge ${isLive ? 'live' : 'off'}`;
+      geminiBadge.innerText = isLive ? '● CONNECTED' : '○ NOT CONFIGURED';
+    }
+
+    // Update Claude Badge
+    const claudeBadge = document.getElementById('badgeClaudeStatus');
+    if (claudeBadge) {
+      const isLive = data.providers?.claude?.configured;
+      claudeBadge.className = `provider-status-badge ${isLive ? 'live' : 'off'}`;
+      claudeBadge.innerText = isLive ? '● CONNECTED' : '○ NOT CONFIGURED';
+    }
+
+    // Update OpenAI Badge
+    const openaiBadge = document.getElementById('badgeOpenaiStatus');
+    if (openaiBadge) {
+      const isLive = data.providers?.openai?.configured;
+      openaiBadge.className = `provider-status-badge ${isLive ? 'live' : 'off'}`;
+      openaiBadge.innerText = isLive ? '● CONNECTED' : '○ NOT CONFIGURED';
+    }
+  } catch {}
+};
+
+window.verifyProviderKey = async function (provider) {
+  const cap = provider.charAt(0).toUpperCase() + provider.slice(1);
+  const input = document.getElementById(`input${cap}Key`);
+  const statusBox = document.getElementById(`statusResult${cap}`);
+  const apiKey = input ? input.value.trim() : '';
+
+  if (statusBox) statusBox.innerHTML = '<span style="color:var(--primary-blue);">⚡ Testing connection & checking live health...</span>';
+
+  try {
+    const res = await fetch('/api/keys/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider, apiKey }),
+    });
+    const data = await res.json();
+    if (data.valid) {
+      if (statusBox) statusBox.innerHTML = `<span style="color:#059669; font-weight:700;">✅ Key is LIVE & Verified! Latency: ${data.latencyMs}ms</span>`;
+      const badge = document.getElementById(`badge${cap}Status`);
+      if (badge) {
+        badge.className = 'provider-status-badge live';
+        badge.innerText = '● CONNECTED';
+      }
+      showCompletionToast(`${provider.toUpperCase()} API Key Verified & Active!`);
+    } else {
+      if (statusBox) statusBox.innerHTML = `<span style="color:#DC2626;">❌ ${data.message}</span>`;
+    }
+  } catch (err) {
+    if (statusBox) statusBox.innerHTML = `<span style="color:#DC2626;">❌ Verification error: ${err.message}</span>`;
+  }
+};
+
+window.saveApiKeysAndModel = async function () {
+  const modelSelect = document.getElementById('settingsActiveModelSelect');
+  const selectedModel = modelSelect ? modelSelect.value : 'gemini-3.5-flash-lite';
+
+  const geminiKey = document.getElementById('inputGeminiKey')?.value.trim();
+  const claudeKey = document.getElementById('inputClaudeKey')?.value.trim();
+  const openaiKey = document.getElementById('inputOpenaiKey')?.value.trim();
+
+  let activeProvider = 'gemini';
+  let activeKey = geminiKey;
+  if (selectedModel.includes('claude')) {
+    activeProvider = 'claude';
+    activeKey = claudeKey;
+  } else if (selectedModel.includes('gpt') || selectedModel.includes('o3')) {
+    activeProvider = 'openai';
+    activeKey = openaiKey;
+  }
+
+  try {
+    const res = await fetch('/api/connect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider: activeProvider,
+        apiKey: activeKey,
+        model: selectedModel,
+      }),
+    });
+
+    if (res.ok) {
+      const headerModelText = document.getElementById('headerActiveModelText');
+      if (headerModelText) headerModelText.innerText = selectedModel;
+
+      showCompletionToast(`Configuration updated: ${selectedModel} is now ACTIVE.`);
+      appendVerboseStream(`⚡ [SYSTEM CONFIGURATION] Active model set to [${selectedModel.toUpperCase()}]. Providers synced.`, 'code');
+      loadApiKeysStatus();
+      closeModals();
+    }
+  } catch (err) {
+    alert(`Could not save configuration: ${err.message}`);
+  }
+};
+
+// ── Custom Personal Skills Controller ────────────────────────────────
+window.loadPersonalSkillsList = async function () {
+  const container = document.getElementById('personalSkillsListContainer');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/skills');
+    if (!res.ok) return;
+    const data = await res.json();
+    const skills = data.skills || [];
+
+    if (skills.length === 0) {
+      container.innerHTML = '<div style="font-size:11px; color:var(--ink-muted); padding:10px;">No custom personal skills loaded yet. Add your first skill below!</div>';
+      return;
+    }
+
+    container.innerHTML = '';
+    skills.forEach(skill => {
+      const card = document.createElement('div');
+      card.className = 'personal-skill-card';
+      card.innerHTML = `
+        <div class="skill-info">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="skill-name">${escapeHtml(skill.name)}</span>
+            <span style="font-size:8.5px; font-weight:700; background:#EFF6FF; color:#2563EB; padding:1px 5px; border-radius:4px;">${escapeHtml(skill.category)}</span>
+          </div>
+          <div class="skill-desc">${escapeHtml(skill.prompt)}</div>
+        </div>
+        <button class="roster-action-btn despawn" style="width:auto; padding:4px 8px; margin:0;" onclick="deletePersonalSkill('${skill.id}')">🗑️ Remove</button>
+      `;
+      container.appendChild(card);
+    });
+  } catch {}
+};
+
+window.submitNewPersonalSkill = async function () {
+  const nameInput = document.getElementById('newSkillName');
+  const catInput = document.getElementById('newSkillCategory');
+  const promptInput = document.getElementById('newSkillPrompt');
+
+  const name = nameInput?.value.trim();
+  const category = catInput?.value.trim() || 'Custom Skill';
+  const prompt = promptInput?.value.trim();
+
+  if (!name || !prompt) {
+    alert('Please enter both Skill Name and System Instructions!');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/skills', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, category, prompt }),
+    });
+
+    if (res.ok) {
+      if (nameInput) nameInput.value = '';
+      if (catInput) catInput.value = '';
+      if (promptInput) promptInput.value = '';
+
+      showCompletionToast(`Personal Skill "${name}" registered successfully!`);
+      appendVerboseStream(`🧠 [NEW PERSONAL SKILL LOADED] "${name}" capabilities activated across all Avengers!`, 'code');
+      loadPersonalSkillsList();
+    }
+  } catch (err) {
+    alert(`Could not load skill: ${err.message}`);
+  }
+};
+
+window.deletePersonalSkill = async function (skillId) {
+  try {
+    await fetch(`/api/skills/${skillId}`, { method: 'DELETE' });
+    showCompletionToast('Personal skill removed.');
+    loadPersonalSkillsList();
+  } catch {}
 };

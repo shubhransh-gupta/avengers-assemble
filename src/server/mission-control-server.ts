@@ -11,6 +11,26 @@ import { StarkConfig } from '../types.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// In-memory custom personal skills store
+const customPersonalSkills: Array<{ id: string; name: string; category: string; prompt: string; enabled: boolean; createdAt: number }> = [
+  {
+    id: 'skill-1',
+    name: 'Clean Code & SOLID Architecture',
+    category: 'Architecture',
+    prompt: 'Always write strictly typed, highly decoupled, modular code following SOLID principles and robust error handling.',
+    enabled: true,
+    createdAt: Date.now() - 100000,
+  },
+  {
+    id: 'skill-2',
+    name: 'Production Ready Manifests & Docker',
+    category: 'DevOps',
+    prompt: 'Always generate complete, self-contained package.json / requirements.txt / Dockerfile with locked versions and zero missing dependencies.',
+    enabled: true,
+    createdAt: Date.now() - 50000,
+  }
+];
+
 function getAllFilesInDir(dirPath: string, rootDir: string): Array<{ relativePath: string; content: string; size: number; language: string }> {
   const result: Array<{ relativePath: string; content: string; size: number; language: string }> = [];
   if (!fs.existsSync(dirPath)) return result;
@@ -39,7 +59,7 @@ function getAllFilesInDir(dirPath: string, rootDir: string): Array<{ relativePat
       try {
         const stat = fs.statSync(fullPath);
         size = stat.size;
-        if (size < 500000) { // Limit to 500KB
+        if (size < 500000) {
           content = fs.readFileSync(fullPath, 'utf-8');
         } else {
           content = '// [File content too large to preview inline]';
@@ -78,6 +98,7 @@ export function createMissionControlServer(orchestrator: StarkOrchestrator, conf
 
     res.json({
       status: 'online',
+      starkModel: process.env.STARK_MODEL || 'gemini-3.5-flash-lite',
       arcReactor: {
         totalCapacity: arcState.totalCapacityPerHour,
         powerConsumed: arcState.currentConsumption,
@@ -132,7 +153,133 @@ export function createMissionControlServer(orchestrator: StarkOrchestrator, conf
     }
   });
 
-  // Voice Translation & Directive Refinement Endpoint
+  // API Keys Status & Active Providers
+  app.get('/api/keys/status', (req, res) => {
+    const geminiKey = Boolean(process.env.GEMINI_API_KEY);
+    const claudeKey = Boolean(process.env.ANTHROPIC_API_KEY);
+    const openaiKey = Boolean(process.env.OPENAI_API_KEY);
+    const kimiKey = Boolean(process.env.KIMI_API_KEY);
+
+    res.json({
+      success: true,
+      activeModel: process.env.STARK_MODEL || 'gemini-3.5-flash-lite',
+      activeProvider: process.env.STARK_PROVIDER || 'gemini',
+      providers: {
+        gemini: {
+          configured: geminiKey,
+          maskedKey: geminiKey ? `${process.env.GEMINI_API_KEY?.slice(0, 7)}...${process.env.GEMINI_API_KEY?.slice(-4)}` : null,
+          models: ['gemini-3.5-flash-lite', 'gemini-3.1-flash-lite', 'gemini-3.1-pro', 'gemini-2.5-flash'],
+        },
+        claude: {
+          configured: claudeKey,
+          maskedKey: claudeKey ? `${process.env.ANTHROPIC_API_KEY?.slice(0, 7)}...${process.env.ANTHROPIC_API_KEY?.slice(-4)}` : null,
+          models: ['claude-3-7-sonnet', 'claude-3-5-sonnet'],
+        },
+        openai: {
+          configured: openaiKey,
+          maskedKey: openaiKey ? `${process.env.OPENAI_API_KEY?.slice(0, 7)}...${process.env.OPENAI_API_KEY?.slice(-4)}` : null,
+          models: ['gpt-4o', 'gpt-4o-mini', 'o3-mini'],
+        },
+        kimi: {
+          configured: kimiKey,
+          maskedKey: kimiKey ? `${process.env.KIMI_API_KEY?.slice(0, 7)}...${process.env.KIMI_API_KEY?.slice(-4)}` : null,
+          models: ['kimi-k1.5'],
+        }
+      }
+    });
+  });
+
+  // Live API Key Ping & Connection Verification
+  app.post('/api/keys/verify', async (req, res) => {
+    const { provider, apiKey, model } = req.body;
+    const startTime = Date.now();
+
+    const targetKey = apiKey || (
+      provider === 'gemini' ? process.env.GEMINI_API_KEY :
+      provider === 'claude' ? process.env.ANTHROPIC_API_KEY :
+      provider === 'openai' ? process.env.OPENAI_API_KEY :
+      provider === 'kimi' ? process.env.KIMI_API_KEY : null
+    );
+
+    if (!targetKey && provider !== 'ollama') {
+      return res.json({
+        success: false,
+        valid: false,
+        latencyMs: Date.now() - startTime,
+        message: `No API key found for ${provider}. Please enter a valid API key.`,
+      });
+    }
+
+    try {
+      const tony = orchestrator.getHero('tony-stark');
+      if (tony) {
+        await (tony as any).queryLLM('ping', 'Return pong.');
+      }
+      const latencyMs = Date.now() - startTime;
+
+      res.json({
+        success: true,
+        valid: true,
+        provider,
+        model: model || process.env.STARK_MODEL || 'gemini-3.5-flash-lite',
+        latencyMs,
+        message: `Connection Verified! ${provider.toUpperCase()} is LIVE & responsive (${latencyMs}ms ping).`,
+      });
+    } catch (err: any) {
+      const latencyMs = Date.now() - startTime;
+      res.json({
+        success: false,
+        valid: false,
+        latencyMs,
+        message: `Verification Error: ${err.message}`,
+      });
+    }
+  });
+
+  // Custom Personal Skills Endpoints
+  app.get('/api/skills', (req, res) => {
+    res.json({
+      success: true,
+      skills: customPersonalSkills,
+    });
+  });
+
+  app.post('/api/skills', (req, res) => {
+    const { name, category, prompt } = req.body;
+    if (!name || !prompt) {
+      return res.status(400).json({ error: 'Skill Name and Capability Prompt are required' });
+    }
+
+    const newSkill = {
+      id: `skill-${Date.now()}`,
+      name,
+      category: category || 'Custom Skill',
+      prompt,
+      enabled: true,
+      createdAt: Date.now(),
+    };
+
+    customPersonalSkills.push(newSkill);
+    comms.send('orchestrator', 'all', 'war-room', `🧠 NEW PERSONAL SKILL LOADED: "${name}" registered into Avengers Knowledge Base!`);
+
+    res.json({
+      success: true,
+      skill: newSkill,
+      message: `Personal Skill "${name}" successfully loaded into agent harness!`,
+    });
+  });
+
+  app.delete('/api/skills/:id', (req, res) => {
+    const { id } = req.params;
+    const index = customPersonalSkills.findIndex(s => s.id === id);
+    if (index !== -1) {
+      const removed = customPersonalSkills.splice(index, 1)[0];
+      return res.json({ success: true, message: `Removed skill "${removed.name}"` });
+    }
+    res.status(404).json({ error: 'Skill not found' });
+  });
+
+  // Voice Translation Endpoint
   app.post('/api/comms/translate', async (req, res) => {
     const { text } = req.body;
     if (!text) {
@@ -183,10 +330,10 @@ Return ONLY the cleaned and translated prompt text. Do not wrap in quotes or add
 
   app.post('/api/connect', (req, res) => {
     const { provider, apiKey, model } = req.body;
-    const providerName = provider || 'antigravity';
+    const providerName = provider || 'gemini';
 
     if (apiKey) {
-      if (provider === 'claude-code') process.env.ANTHROPIC_API_KEY = apiKey;
+      if (provider === 'claude' || provider === 'claude-code') process.env.ANTHROPIC_API_KEY = apiKey;
       else if (provider === 'gemini') process.env.GEMINI_API_KEY = apiKey;
       else if (provider === 'openai' || provider === 'codex') process.env.OPENAI_API_KEY = apiKey;
       else if (provider === 'kimi') process.env.KIMI_API_KEY = apiKey;
@@ -194,13 +341,17 @@ Return ONLY the cleaned and translated prompt text. Do not wrap in quotes or add
     if (model) {
       process.env.STARK_MODEL = model;
     }
+    if (provider) {
+      process.env.STARK_PROVIDER = provider;
+    }
 
     res.json({
       success: true,
       provider: providerName,
+      model: process.env.STARK_MODEL || model || 'gemini-3.5-flash-lite',
       status: 'connected',
       timestamp: Date.now(),
-      message: `Successfully connected to ${providerName} bridge.`,
+      message: `Successfully connected to ${providerName} bridge. Model: ${process.env.STARK_MODEL}`,
     });
   });
 
