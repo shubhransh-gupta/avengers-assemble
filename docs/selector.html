@@ -12,6 +12,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
+  <script>
+    // Localhost-only guard: prevent access when deployed on production or GitHub Pages
+    (function() {
+      var host = window.location.hostname;
+      var isLocal = host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.') || host.endsWith('.local');
+      if (!isLocal) {
+        document.documentElement.style.display = 'none';
+        window.location.replace('./index.html');
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="selector.css" />
 </head>
 <body class="selector-body">

@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SCAVENGERS // Earth's Mightiest Agentic AI Coding War Room · Powered by Shubhransh Gupta</title>
-  <meta name="description" content="Turn your AI models into an autonomous superhero strike team with a 100% 3D Minecraft isometric engine, DAG orchestration, and multi-agent code generation." />
+  <title>SCAVENGERS // Earth's Mightiest Multi-Agent AI Coding Harness · Powered by Shubhransh Gupta</title>
+  <meta name="description" content="Turn your AI models into an autonomous superhero strike team with 3D isometric simulation, DAG orchestration, and multi-agent code generation." />
 
   <!-- Glowing Arc Reactor Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23040814' stroke='%2300F0FF' stroke-width='4'/><circle cx='50' cy='50' r='34' fill='none' stroke='%23A855F7' stroke-width='3' stroke-dasharray='8 6'/><circle cx='50' cy='50' r='22' fill='none' stroke='%2300F0FF' stroke-width='3' stroke-dasharray='4 4'/><circle cx='50' cy='50' r='10' fill='%2300F0FF'/><text x='50' y='57' font-size='18' font-weight='900' fill='%23040814' text-anchor='middle'>A</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23040814' stroke='%2300F0FF' stroke-width='4'/><circle cx='50' cy='50' r='34' fill='none' stroke='%23A855F7' stroke-width='3' stroke-dasharray='8 6'/><circle cx='50' cy='50' r='22' fill='none' stroke='%2300F0FF' stroke-width='3' stroke-dasharray='4 4'/><circle cx='50' cy='50' r='10' fill='%2300F0FF'/><polygon points='50,30 64,65 36,65' fill='%23040814'/></svg>" />
 
   <!-- Typography: Space Grotesk, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -81,7 +81,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient Liquid Orb Glows in Background */
+    /* Ambient Liquid Orb Glows */
     .ambient-glow-1 {
       position: fixed; top: 5%; left: 15%; width: 500px; height: 500px;
       background: radial-gradient(circle, rgba(0, 240, 255, 0.04) 0%, transparent 70%);
@@ -110,13 +110,27 @@
     .brand {
       display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff;
     }
+    
+    /* Glowing Arc Reactor Logo Box */
     .brand-logo-box {
-      width: 38px; height: 38px; border-radius: 10px;
-      background: linear-gradient(135deg, rgba(0, 240, 255, 0.9), rgba(168, 85, 247, 0.9));
+      width: 40px; height: 40px; border-radius: 12px;
+      background: rgba(14, 19, 31, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.35);
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-display); font-weight: 900; font-size: 18px; color: #07090e;
-      box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.3), inset 0 0 10px rgba(0, 240, 255, 0.15);
+      position: relative; overflow: hidden;
     }
+    .brand-logo-box svg {
+      width: 28px; height: 28px;
+      filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.7));
+      animation: reactorRotatePulse 8s linear infinite;
+    }
+    @keyframes reactorRotatePulse {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
     .brand-title { font-family: var(--font-display); font-weight: 800; font-size: 16px; letter-spacing: -0.02em; }
     .brand-by { font-size: 11px; color: var(--ink-muted); }
     .brand-by a { color: var(--arc-cyan); text-decoration: none; font-weight: 600; }
@@ -229,7 +243,7 @@
     .screenshot-inner img { width: 100%; height: auto; display: block; }
 
     /* ==========================================================================
-       LIQUID MORPHISM TABBED SYSTEM (Core User Request)
+       LIQUID MORPHISM TABBED SYSTEM WITH SLIDING GLIDER
        ========================================================================== */
     .liquid-tab-hub {
       background: var(--glass-bg);
@@ -258,38 +272,50 @@
       font-size: 14.5px; color: var(--ink-muted); max-width: 650px; margin: 0 auto;
     }
 
-    /* Tab Bar Navigation */
+    /* Tab Bar Navigation with Liquid Slider */
     .tab-nav-wrapper {
       display: flex; justify-content: center; margin-bottom: 30px;
     }
     .liquid-tab-nav {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(8, 12, 20, 0.85);
+      position: relative;
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(8, 12, 20, 0.88);
       border: 1px solid var(--glass-border-bright);
       padding: 6px; border-radius: 999px;
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       overflow-x: auto; max-width: 100%; scrollbar-width: none;
     }
     .liquid-tab-nav::-webkit-scrollbar { display: none; }
 
+    /* The Sliding Liquid Pill Glider */
+    .liquid-tab-glider {
+      position: absolute;
+      top: 6px; bottom: 6px; left: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 18px rgba(0, 240, 255, 0.25);
+      transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), width 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 1;
+    }
+
     .liquid-tab-btn {
+      position: relative; z-index: 2;
       display: inline-flex; align-items: center; gap: 8px;
       padding: 10px 20px; border-radius: 999px;
       background: transparent; border: none;
       font-family: var(--font-display); font-size: 13.5px; font-weight: 700;
       color: var(--ink-muted); cursor: pointer;
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: color 0.2s ease, transform 0.2s ease;
       white-space: nowrap; outline: none;
     }
     .liquid-tab-btn:hover {
-      color: var(--ink-primary); background: rgba(255, 255, 255, 0.04);
+      color: var(--ink-primary);
     }
     .liquid-tab-btn.active {
       color: #fff;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 16px rgba(0, 240, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     .liquid-tab-btn .tab-badge {
       font-size: 10px; font-family: var(--font-mono); font-weight: 700;
@@ -297,15 +323,25 @@
       background: rgba(0, 240, 255, 0.15); color: var(--arc-cyan);
     }
 
-    /* Tab Panes */
+    /* Top-to-Bottom Smooth Tab Pane Animation */
+    @keyframes liquidSlideDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-22px) scale(0.99);
+        filter: blur(4px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
     .liquid-tab-pane {
       display: none;
-      animation: fadeInTab 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .liquid-tab-pane.active { display: block; }
-    @keyframes fadeInTab {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+    .liquid-tab-pane.active {
+      display: block;
+      animation: liquidSlideDown 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     /* Liquid Glass Cards */
@@ -483,7 +519,7 @@
     .dag-node-title { font-family: var(--font-display); font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 4px; }
     .dag-node-desc { font-size: 11.5px; color: var(--ink-muted); }
 
-    /* Features Grid (Bottom Section) */
+    /* Features Grid */
     .features-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;
     }
@@ -530,30 +566,63 @@
       font-size: 13.5px; outline: none; cursor: pointer;
     }
 
-    /* FAQ Accordion */
+    /* ==========================================================================
+       FAQ BUBBLE SMOOTH OPEN ANIMATION
+       ========================================================================== */
     .faq-item {
       background: var(--glass-bg-card);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius-md);
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       overflow: hidden;
-      transition: all 0.2s ease;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .faq-item.open {
+      background: rgba(18, 26, 42, 0.75);
+      border-color: rgba(0, 240, 255, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.08);
+      transform: scale(1.008);
     }
     .faq-question {
       padding: 18px 22px; cursor: pointer;
       display: flex; align-items: center; justify-content: space-between;
       font-family: var(--font-display); font-size: 15px; font-weight: 700; color: #fff;
+      user-select: none;
     }
     .faq-question:hover { color: var(--arc-cyan); }
-    .faq-arrow { transition: transform 0.2s ease; color: var(--ink-muted); font-size: 12px; }
-    .faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--arc-cyan); }
-    .faq-answer {
-      display: none; padding: 0 22px 18px;
-      font-size: 13.5px; color: var(--ink-secondary); line-height: 1.6;
+    .faq-arrow {
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+      color: var(--ink-muted); font-size: 11px;
+    }
+    .faq-item.open .faq-arrow {
+      transform: rotate(180deg); color: var(--arc-cyan);
+    }
+
+    /* Smooth Grid Height & Bubble Content */
+    .faq-bubble-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.42s cubic-bezier(0.16, 1, 0.3, 1.15);
+    }
+    .faq-item.open .faq-bubble-wrapper {
+      grid-template-rows: 1fr;
+    }
+    .faq-bubble-content {
+      overflow: hidden;
+    }
+    .faq-bubble-card {
+      padding: 0 22px 18px;
+      font-size: 13.5px; color: var(--ink-secondary); line-height: 1.65;
       border-top: 1px solid rgba(255, 255, 255, 0.04);
       padding-top: 14px;
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      transition: opacity 0.32s ease 0.06s, transform 0.38s cubic-bezier(0.16, 1, 0.3, 1.15) 0.06s;
     }
-    .faq-item.open .faq-answer { display: block; }
+    .faq-item.open .faq-bubble-card {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
 
     /* Footer */
     footer {
@@ -598,7 +667,17 @@
   <header>
     <div class="wrap nav-row">
       <a href="./index.html" class="brand">
-        <div class="brand-logo-box">A</div>
+        <!-- Glowing Arc Reactor Logo -->
+        <div class="brand-logo-box" title="Arc Reactor Online">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" fill="#040814" stroke="#00F0FF" stroke-width="3" />
+            <circle cx="50" cy="50" r="36" fill="none" stroke="#A855F7" stroke-width="4" stroke-dasharray="14 8" />
+            <circle cx="50" cy="50" r="26" fill="none" stroke="#00F0FF" stroke-width="2.5" stroke-dasharray="6 4" />
+            <circle cx="50" cy="50" r="16" fill="rgba(0, 240, 255, 0.25)" stroke="#00F0FF" stroke-width="2" />
+            <circle cx="50" cy="50" r="8" fill="#FFFFFF" />
+            <polygon points="50,22 68,62 32,62" fill="none" stroke="#00F0FF" stroke-width="1.5" />
+          </svg>
+        </div>
         <div>
           <div class="brand-title">SCAVENGERS ASSEMBLE</div>
           <div class="brand-by">Crafted by <a href="https://shubhransh-gupta.github.io/cv/" target="_blank">Shubhransh Gupta</a></div>
@@ -609,7 +688,7 @@
         <a href="#quickstart" class="nav-link">Setup</a>
         <a href="#tab-hub" onclick="switchMainTab('tab-diff')" class="nav-link">Why Scavengers?</a>
         <a href="#tab-hub" onclick="switchMainTab('tab-architecture')" class="nav-link">Architecture</a>
-        <a href="#tab-hub" onclick="switchMainTab('tab-roster')" class="nav-link">Heroes</a>
+        <a href="#tab-hub" onclick="switchMainTab('tab-roster')" class="nav-link">Agents</a>
         <a href="#tab-hub" onclick="switchMainTab('tab-providers')" class="nav-link">LLM Providers</a>
         <a href="#faq" class="nav-link">FAQ</a>
       </nav>
@@ -618,8 +697,8 @@
         <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="btn btn-ghost">
           <span>⭐</span> Star GitHub
         </a>
-        <a href="./warroom.html" class="btn btn-primary">
-          <span>⚡</span> Enter 3D War Room
+        <a href="#quickstart" class="btn btn-primary">
+          <span>⚡</span> Quickstart
         </a>
       </div>
     </div>
@@ -629,7 +708,7 @@
   <section class="hero wrap">
     <div class="badge-pill">
       <span class="badge-pill-dot"></span>
-      <span>100% 3D MINECRAFT VOXEL MULTI-AGENT CODING HARNESS</span>
+      <span>NEXT-GEN AGENTIC AI CODING HARNESS</span>
     </div>
 
     <h1>
@@ -639,15 +718,15 @@
 
     <p class="lead">
       Scavengers Assemble orchestrates your favorite LLMs (Gemini, Claude, GPT, Ollama) in an asynchronous 
-      Directed Acyclic Graph (DAG) with a 100% 3D Minecraft isometric engine, JARVIS voice comms, and direct disk code synthesis.
+      Directed Acyclic Graph (DAG) with full interactive simulation, JARVIS voice comms, and direct disk code synthesis.
     </p>
 
     <div class="hero-cta-group">
-      <a href="./warroom.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 15px;">
-        <span>🎮</span> Launch Interactive 3D War Room
+      <a href="#quickstart" class="btn btn-primary" style="padding: 12px 24px; font-size: 15px;">
+        <span>⚡</span> Quickstart Setup Guide
       </a>
-      <a href="#quickstart" class="btn btn-ghost" style="padding: 12px 24px; font-size: 15px;">
-        <span>⚡</span> Quick Setup Guide
+      <a href="#tab-hub" class="btn btn-ghost" style="padding: 12px 24px; font-size: 15px;" onclick="switchMainTab('tab-diff')">
+        <span>⚔️</span> See Why We're Different
       </a>
       <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="btn btn-purple" style="padding: 12px 20px; font-size: 15px;">
         <span>🚀</span> View Source (MIT)
@@ -678,10 +757,10 @@
             <span class="screenshot-dot dot-yellow"></span>
             <span class="screenshot-dot dot-green"></span>
           </div>
-          <div class="screenshot-title">scavengers-mission-control · 3D Isometric Minecraft Engine · Taj Mahal &amp; Stark Tower</div>
+          <div class="screenshot-title">scavengers-mission-control · 3D Simulation Engine · Taj Mahal &amp; Stark Spire</div>
           <div style="font-size:11px; color:#00F0FF; font-family:var(--font-mono);">ONLINE: 5 AGENTS</div>
         </div>
-        <img src="./assets/app_screenshot.png?v=2" alt="Scavengers Assemble 3D Minecraft Mission Control HUD" loading="eager" decoding="async" />
+        <img src="./assets/app_screenshot.png?v=2" alt="Scavengers Assemble Mission Control Simulation HUD" loading="eager" decoding="async" />
       </div>
     </div>
   </section>
@@ -696,9 +775,11 @@
         <p>Everything you need to configure your superhero harness, understand our DAG architecture, and see why we outperform single-agent chatbots.</p>
       </div>
 
-      <!-- Navigation Pill Tabs -->
+      <!-- Navigation Pill Tabs with Liquid Glider -->
       <div class="tab-nav-wrapper">
-        <div class="liquid-tab-nav" role="tablist">
+        <div class="liquid-tab-nav" id="mainTabNav" role="tablist">
+          <div class="liquid-tab-glider" id="liquidGlider"></div>
+
           <button class="liquid-tab-btn active" onclick="switchMainTab('tab-setup')" id="btn-tab-setup" role="tab">
             <span>🚀</span> Setup &amp; Quickstart
           </button>
@@ -709,7 +790,7 @@
             <span>🧠</span> GOD DAG Architecture
           </button>
           <button class="liquid-tab-btn" onclick="switchMainTab('tab-roster')" id="btn-tab-roster" role="tab">
-            <span>🦸</span> Superhero Roster <span class="tab-badge">10 Heroes</span>
+            <span>🦸</span> Superhero Strike Team <span class="tab-badge">10 Heroes</span>
           </button>
           <button class="liquid-tab-btn" onclick="switchMainTab('tab-providers')" id="btn-tab-providers" role="tab">
             <span>🔌</span> Multi-LLM Routing
@@ -743,8 +824,8 @@
           <div class="glass-card" style="margin-bottom: 16px;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
               <div>
-                <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff;">Option A: 1-Step Instant HUD Launch</h4>
-                <p style="font-size:13px; color:var(--ink-muted);">Directly spins up the local Mission Control server and launches the 3D Minecraft interface.</p>
+                <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff;">Option A: 1-Step Instant Launch</h4>
+                <p style="font-size:13px; color:var(--ink-muted);">Spins up the local Mission Control server and launches the interactive visual interface.</p>
               </div>
               <span class="hero-pill" style="background:rgba(0,240,255,0.15); color:var(--arc-cyan); border-color:var(--arc-cyan);">Recommended</span>
             </div>
@@ -761,7 +842,7 @@
             </div>
 
             <p style="font-size:12.5px; color:var(--ink-secondary); margin-top:8px;">
-              💡 <strong>Next Step:</strong> Open your web browser at <code>http://localhost:3000/</code> to enter the 3D Voxel Minecraft War Room, enter your prompt or speak via voice comms!
+              💡 <strong>Next Step:</strong> Open your local browser at <code>http://localhost:3000/</code> to enter Mission Control, type your prompt, or speak via voice comms!
             </p>
           </div>
         </div>
@@ -770,7 +851,7 @@
         <div id="setup-git" class="setup-subpane" style="display:none;">
           <div class="glass-card">
             <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Option B: Clone &amp; Compile TypeScript from Source</h4>
-            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Ideal for contributors, customizing hero prompts, adding new superhero agents, or offline hacking.</p>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Ideal for contributors, customizing hero prompts, adding new superhero agents, or offline development.</p>
 
             <div class="code-terminal">
               <div class="code-header">
@@ -784,7 +865,7 @@
                 <span class="cmd-comment"># 2. Install dependencies &amp; compile TypeScript</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">npm install</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">npm run build</span><br/><br/>
-                <span class="cmd-comment"># 3. Launch Mission Control HUD</span><br/>
+                <span class="cmd-comment"># 3. Launch Mission Control</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">node</span> bin/stark.js hud --port 3000
               </div>
             </div>
@@ -795,7 +876,7 @@
         <div id="setup-cli" class="setup-subpane" style="display:none;">
           <div class="glass-card">
             <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Option C: Autonomous Terminal Mission Runner</h4>
-            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Run full multi-agent missions without opening a web browser. Code is saved directly to disk.</p>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Run full multi-agent missions directly in your terminal. Code is generated straight to disk.</p>
 
             <div class="code-terminal">
               <div class="code-header">
@@ -803,7 +884,7 @@
                 <button class="copy-chip" onclick="copySnippet('node bin/stark.js mission \"Create a fullstack Next.js and Tailwind SaaS boilerplate with auth\"', this)">📋 Copy</button>
               </div>
               <div class="code-body">
-                <span class="cmd-comment"># Run a full autonomous mission with the 5 Core Avengers</span><br/>
+                <span class="cmd-comment"># Run a full autonomous mission with the 5 Core Heroes</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">node</span> bin/stark.js mission <span class="cmd-val">"Create a fullstack Next.js and Tailwind SaaS boilerplate with auth"</span><br/><br/>
                 <span class="cmd-comment"># Check system status and registered hero subagents</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">node</span> bin/stark.js status
@@ -816,7 +897,7 @@
         <div id="setup-env" class="setup-subpane" style="display:none;">
           <div class="glass-card">
             <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Configuring API Keys (Zero Vendor Lock-In)</h4>
-            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">You can provide API keys via environment variables or directly inside the browser Settings dialog with live ping testing.</p>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Provide API keys via environment variables or in the settings dialog with live latency check.</p>
 
             <div class="code-terminal">
               <div class="code-header">
@@ -846,8 +927,8 @@
           </div>
           <div class="glass-card" style="padding:16px;">
             <div style="font-family:var(--font-mono); font-size:11px; color:var(--purple);">PREREQUISITE 2</div>
-            <div style="font-weight:700; color:#fff; margin:4px 0;">Web Browser (Canvas 2D)</div>
-            <div style="font-size:12px; color:var(--ink-muted);">Chrome, Safari, Firefox, Edge or Brave with WebGL/Canvas support.</div>
+            <div style="font-weight:700; color:#fff; margin:4px 0;">Modern Web Browser</div>
+            <div style="font-size:12px; color:var(--ink-muted);">Chrome, Safari, Firefox, Edge or Brave with Canvas 2D support.</div>
           </div>
           <div class="glass-card" style="padding:16px;">
             <div style="font-family:var(--font-mono); font-size:11px; color:var(--gold);">PREREQUISITE 3</div>
@@ -864,7 +945,7 @@
             How Scavengers Assemble is Radically Different
           </h3>
           <p style="font-size:14px; color:var(--ink-muted);">
-            Most AI tools force you into a single text chatbox or charge \$20-\$500/mo for a sequential single-agent loop. Scavengers turns your models into an asynchronous superhero war room with zero vendor lock-in.
+            Most AI tools force you into a single text chatbox or charge \$20-\$500/mo for a sequential single-agent loop. Scavengers turns your models into an asynchronous strike team with zero vendor lock-in.
           </p>
         </div>
 
@@ -872,7 +953,7 @@
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:24px;">
           <div class="glass-card">
             <div style="font-size:24px; margin-bottom:8px;">🦾</div>
-            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">Parallel DAG vs. Sequential Bottleneck</div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">Parallel DAG vs. Sequential Bottlenecks</div>
             <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
               Tools like Devin or Copilot run single-threaded loops that stall on errors. Tony Stark deconstructs your goal into an asynchronous DAG where Spider-Man (UI), Hulk (Logic), and Thor (DevOps) build concurrently in parallel.
             </p>
@@ -880,9 +961,9 @@
 
           <div class="glass-card">
             <div style="font-size:24px; margin-bottom:8px;">🌍</div>
-            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">100% 3D Minecraft Isometric Engine</div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">Full Visual Simulation &amp; Comms</div>
             <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
-              Instead of watching a boring CLI spinner or plain text logs, watch your agents walk across Taj Mahal, Stark Voxel Tower, and Nether Bridges with real-time thought bubbles, speech synthesis, and live creative building.
+              Watch your agents execute tasks with real-time thought logs, multi-lingual audio synthesis, and interactive visual feedback instead of watching a blank spinner.
             </p>
           </div>
 
@@ -928,7 +1009,7 @@
               </tr>
               <tr>
                 <td><strong>Visual Interface</strong></td>
-                <td class="highlight-col"><span class="status-check">✓</span> 100% 3D Minecraft Isometric Engine</td>
+                <td class="highlight-col"><span class="status-check">✓</span> 3D Isometric Simulation Engine</td>
                 <td><span class="status-cross">✗</span> Code Editor Sidebar</td>
                 <td><span class="status-cross">✗</span> Web Terminal Log</td>
                 <td><span class="status-cross">✗</span> Plain Text Markdown</td>
@@ -1022,11 +1103,11 @@
         </div>
       </div>
 
-      <!-- TAB 4: SUPERHERO ROSTER (10 HEROES) -->
+      <!-- TAB 4: SUPERHERO STRIKE TEAM (10 HEROES) -->
       <div class="liquid-tab-pane" id="tab-roster" role="tabpanel">
         <div style="margin-bottom: 24px;">
           <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
-            Earth's Mightiest Agent Roster: 5 Core + 5 Multiverse Specialists
+            Earth's Mightiest Agent Strike Team: 5 Core + 5 Multiverse Specialists
           </h3>
           <p style="font-size:14px; color:var(--ink-muted);">
             Each superhero agent is backed by specialized system prompts, tailored tools, and distinct cognitive tasks.
@@ -1324,7 +1405,7 @@
             <div class="control-group">
               <label for="pg-mode">Execution Mode</label>
               <select id="pg-mode" class="select-input" onchange="updateGeneratedCommand()">
-                <option value="hud">3D Minecraft War Room HUD (Browser)</option>
+                <option value="hud">Visual Interactive HUD (Localhost)</option>
                 <option value="cli">Headless Terminal One-Shot</option>
               </select>
             </div>
@@ -1355,8 +1436,8 @@
     <div class="features-grid">
       <div class="feat-card">
         <div class="feat-icon-box">🌍</div>
-        <div class="feat-title">100% 3D Minecraft Engine</div>
-        <div class="feat-desc">Pure HTML5 Canvas isometric world rendering Taj Mahal, Valyrian Nether Lava Keep, Stark Tower, and mountain bridges with zero third-party 3D bundle bloat.</div>
+        <div class="feat-title">3D Simulation Engine</div>
+        <div class="feat-desc">Pure HTML5 Canvas isometric world rendering landmarks, monuments, and bridges with zero third-party 3D bundle bloat.</div>
       </div>
 
       <div class="feat-card">
@@ -1373,8 +1454,8 @@
 
       <div class="feat-card">
         <div class="feat-icon-box">🔨</div>
-        <div class="feat-title">Creative Build Mode</div>
-        <div class="feat-desc">Place and mine 3D voxel blocks in real time with ghost preview cursors, particle destruction FX, and custom block palettes.</div>
+        <div class="feat-title">Interactive Simulation</div>
+        <div class="feat-desc">Inspect real-time agent execution with interactive ghost preview cursors, particle FX, and multi-threaded agent status.</div>
       </div>
 
       <div class="feat-card">
@@ -1391,7 +1472,7 @@
     </div>
   </section>
 
-  <!-- FAQ Section -->
+  <!-- FAQ Section with Smooth Bubble Animation -->
   <section class="wrap" id="faq">
     <div style="text-align:center; margin-bottom:36px;">
       <h2 style="font-family:var(--font-display); font-size:28px; font-weight:800; color:#fff;">Frequently Asked Questions</h2>
@@ -1404,8 +1485,12 @@
           <span>Is Scavengers Assemble completely free to use?</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-answer">
-          Yes! Scavengers Assemble is 100% free and open-source under the permissive MIT License. There are no monthly paywalls or subscription tiers. You can use free Google Gemini API tiers, bring your own API keys, or run entirely offline with Ollama models.
+        <div class="faq-bubble-wrapper">
+          <div class="faq-bubble-content">
+            <div class="faq-bubble-card">
+              Yes! Scavengers Assemble is 100% free and open-source under the permissive MIT License. There are no monthly paywalls or subscription tiers. You can use free Google Gemini API tiers, bring your own API keys, or run entirely offline with Ollama models.
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1414,8 +1499,12 @@
           <span>Where does Scavengers Assemble save the generated code?</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-answer">
-          Generated projects are written directly to your local filesystem inside the <code>./workspace/&lt;project-slug&gt;/</code> directory. Each workspace includes full source files, package manifests, and copyable terminal execution scripts (e.g. <code>npm install &amp;&amp; npm start</code>).
+        <div class="faq-bubble-wrapper">
+          <div class="faq-bubble-content">
+            <div class="faq-bubble-card">
+              Generated projects are written directly to your local filesystem inside the <code>./workspace/&lt;project-slug&gt;/</code> directory. Each workspace includes full source files, package manifests, and copyable terminal execution scripts (e.g. <code>npm install &amp;&amp; npm start</code>).
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1424,8 +1513,12 @@
           <span>Can I run Scavengers Assemble without an internet connection?</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-answer">
-          Yes! With our local Ollama integration, you can connect models such as DeepSeek-R1, Llama 3.3, or Qwen 2.5 Coder running on <code>http://localhost:11434</code>. All multi-agent orchestration will run entirely locally on your machine.
+        <div class="faq-bubble-wrapper">
+          <div class="faq-bubble-content">
+            <div class="faq-bubble-card">
+              Yes! With our local Ollama integration, you can connect models such as DeepSeek-R1, Llama 3.3, or Qwen 2.5 Coder running on <code>http://localhost:11434</code>. All multi-agent orchestration will run entirely locally on your machine.
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1434,8 +1527,12 @@
           <span>How does JARVIS voice comms translate multilingual audio?</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-answer">
-          When you speak into the microphone (in Hindi, English, Spanish, etc.), the audio is transcribed and synthesized via our language model pipeline to distill the spoken intent into a formal engineering task graph before Tony Stark initiates decomposition.
+        <div class="faq-bubble-wrapper">
+          <div class="faq-bubble-content">
+            <div class="faq-bubble-card">
+              When you speak into the microphone (in Hindi, English, Spanish, etc.), the audio is transcribed and synthesized via our language model pipeline to distill the spoken intent into a formal engineering task graph before Tony Stark initiates decomposition.
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1444,8 +1541,12 @@
           <span>How do I add my own custom personal skills or hero agents?</span>
           <span class="faq-arrow">▼</span>
         </div>
-        <div class="faq-answer">
-          You can add custom hero classes in <code>src/heroes/</code> extending <code>BaseHero</code> or drop prompt skill files into the registered skills directory. The orchestrator automatically discovers registered agents and delegates tasks matched to their declared competencies.
+        <div class="faq-bubble-wrapper">
+          <div class="faq-bubble-content">
+            <div class="faq-bubble-card">
+              You can add custom hero classes in <code>src/heroes/</code> extending <code>BaseHero</code> or drop prompt skill files into the registered skills directory. The orchestrator automatically discovers registered agents and delegates tasks matched to their declared competencies.
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1457,11 +1558,17 @@
       <div class="footer-grid">
         <div class="footer-col">
           <div class="brand" style="margin-bottom: 12px;">
-            <div class="brand-logo-box" style="width:30px; height:30px; font-size:14px;">A</div>
+            <div class="brand-logo-box" style="width:32px; height:32px;">
+              <svg viewBox="0 0 100 100" style="width:20px; height:20px;">
+                <circle cx="50" cy="50" r="46" fill="#040814" stroke="#00F0FF" stroke-width="4"/>
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#A855F7" stroke-width="4" stroke-dasharray="10 6"/>
+                <circle cx="50" cy="50" r="14" fill="#00F0FF"/>
+              </svg>
+            </div>
             <div class="brand-title" style="font-size:14px;">SCAVENGERS ASSEMBLE</div>
           </div>
           <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
-            Earth's Mightiest Agentic AI Coding War Room &amp; 3D Minecraft isometric engine.
+            Earth's Mightiest Agentic AI Coding Harness &amp; Multi-Agent Strike Team.
           </p>
         </div>
         <div class="footer-col">
@@ -1470,13 +1577,13 @@
             <li><a href="#quickstart">Setup Guide</a></li>
             <li><a href="#tab-hub" onclick="switchMainTab('tab-diff')">Scavengers vs Market</a></li>
             <li><a href="#tab-hub" onclick="switchMainTab('tab-architecture')">DAG Architecture</a></li>
-            <li><a href="#tab-hub" onclick="switchMainTab('tab-roster')">Superhero Roster</a></li>
+            <li><a href="#tab-hub" onclick="switchMainTab('tab-roster')">Superhero Squad</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Interactive Apps</h4>
+          <h4>Resources</h4>
           <ul>
-            <li><a href="./warroom.html">3D Mission Control War Room</a></li>
+            <li><a href="#quickstart">Terminal Quickstart</a></li>
             <li><a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank">GitHub Repository</a></li>
             <li><a href="https://github.com/shubhransh-gupta/scavengers-assemble/issues" target="_blank">Issue Tracker</a></li>
           </ul>
@@ -1504,6 +1611,20 @@
 
   <!-- Interactive Tab & UI Controller Scripts -->
   <script>
+    // Liquid Tab Glider Positioning
+    function updateGliderPosition(activeBtn) {
+      const glider = document.getElementById('liquidGlider');
+      const nav = document.getElementById('mainTabNav');
+      if (!glider || !nav || !activeBtn) return;
+
+      const navRect = nav.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+      const leftOffset = btnRect.left - navRect.left + nav.scrollLeft;
+
+      glider.style.transform = `translateX(${leftOffset}px)`;
+      glider.style.width = `${btnRect.width}px`;
+    }
+
     // Main Liquid Morphism Tab Switcher
     function switchMainTab(tabId) {
       // Hide all panes
@@ -1518,8 +1639,24 @@
       const targetPane = document.getElementById(tabId);
       const targetBtn = document.getElementById('btn-' + tabId);
       if (targetPane) targetPane.classList.add('active');
-      if (targetBtn) targetBtn.classList.add('active');
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+        updateGliderPosition(targetBtn);
+      }
     }
+
+    // Initialize Glider on Page Load & Window Resize
+    window.addEventListener('DOMContentLoaded', () => {
+      const activeBtn = document.querySelector('.liquid-tab-btn.active');
+      if (activeBtn) {
+        // Small delay to ensure styles and fonts have calculated
+        setTimeout(() => updateGliderPosition(activeBtn), 50);
+      }
+    });
+    window.addEventListener('resize', () => {
+      const activeBtn = document.querySelector('.liquid-tab-btn.active');
+      if (activeBtn) updateGliderPosition(activeBtn);
+    });
 
     // Sub-tab switcher inside Setup pane
     function switchSubTab(subTabId, clickedBtn) {
@@ -1534,10 +1671,21 @@
       clickedBtn.classList.add('active');
     }
 
-    // FAQ Accordion Toggle
-    function toggleFaq(el) {
-      const item = el.parentElement;
-      item.classList.toggle('open');
+    // FAQ Accordion Toggle with Smooth Bubble Animation
+    function toggleFaq(questionEl) {
+      const item = questionEl.closest('.faq-item');
+      if (!item) return;
+
+      const isOpen = item.classList.contains('open');
+
+      // Optional: Close other FAQs for clean single-open accordion feel
+      // document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
+
+      if (isOpen) {
+        item.classList.remove('open');
+      } else {
+        item.classList.add('open');
+      }
     }
 
     // Copy snippet helper
