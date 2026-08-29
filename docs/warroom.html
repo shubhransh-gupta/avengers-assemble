@@ -47,8 +47,14 @@
 
         <!-- Ellipsis Dropdown Overlay Menu -->
         <div class="ellipsis-dropdown-overlay" id="ellipsisDropdownMenu">
+          <div class="ellipsis-menu-item" onclick="openWorkspaceExplorer(); closeEllipsisMenu();">
+            <span>📁</span> Open Workspace Explorer
+          </div>
           <div class="ellipsis-menu-item" onclick="openSpawnModal(); closeEllipsisMenu();">
             <span>👥</span> Spawn &amp; Despawn Roster
+          </div>
+          <div class="ellipsis-menu-item" onclick="toggleVoiceComms(); closeEllipsisMenu();">
+            <span>🎙️</span> Voice Comms Input
           </div>
           <div class="ellipsis-menu-item" onclick="toggleBuildMode(); closeEllipsisMenu();">
             <span>🔨</span> Toggle Minecraft Build Mode
@@ -115,8 +121,8 @@
             </div>
           </div>
           <div class="console-hdr-actions">
+            <button class="hdr-action-btn" id="workspaceBtn" onclick="openWorkspaceExplorer()" title="Open Interactive Project Workspace Explorer">📁 Workspace</button>
             <button class="hdr-action-btn active" id="incursionsBtn">⚡ Incursions</button>
-            <button class="hdr-action-btn" id="workspaceBtn" onclick="window.open('/api/status','_blank')">📁 Workspace</button>
             <button class="hdr-action-btn" id="reloadBtn" onclick="window.location.reload()">🔄 Reset</button>
           </div>
         </div>
@@ -169,12 +175,12 @@
             </div>
           </div>
 
-          <textarea id="quantumPromptInput" class="quantum-textarea" rows="2" placeholder="Tony Stark is listening — enter your mission directive... (Enter to Dispatch)"></textarea>
+          <textarea id="quantumPromptInput" class="quantum-textarea" rows="2" placeholder="Tony Stark is listening — enter your mission directive or tap 🎙️ Comms... (Enter to Dispatch)"></textarea>
 
           <div class="console-actions-bar">
             <div class="console-left-buttons">
               <button class="console-action-btn" onclick="clearTerminal()">🧹 Clear</button>
-              <button class="console-action-btn" id="voiceBtn">🎙️ Comms</button>
+              <button class="console-action-btn" id="voiceBtn" onclick="toggleVoiceComms()">🎙️ Comms</button>
             </div>
             <button class="dispatch-infinity-btn" id="dispatchMissionBtn">⚡ DISPATCH MISSION &rarr;</button>
           </div>
@@ -190,7 +196,96 @@
 
   </div>
 
-  <!-- ── MODAL 1: Spawn & Despawn Character Roster Modal ────────── -->
+  <!-- ── MODAL 1: Interactive Workspace File Explorer Modal ─────── -->
+  <div class="battleworld-modal-backdrop" id="workspaceExplorerModal">
+    <div class="battleworld-modal" style="max-width:820px;">
+      <div class="modal-header">
+        <div class="modal-title">📁 PROJECT WORKSPACE EXPLORER</div>
+        <button class="modal-close-btn" onclick="closeModals()">&times;</button>
+      </div>
+      <div class="modal-body" style="gap:10px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px; flex:1;">
+            <label style="font-family:var(--font-body); font-size:12px; font-weight:600; color:var(--ink-secondary);">Workspace:</label>
+            <select id="workspaceSelectorDropdown" class="form-select" style="flex:1;" onchange="loadSelectedWorkspace(this.value)"></select>
+          </div>
+          <button class="console-action-btn" onclick="copyActiveWorkspacePath()">📋 Copy Disk Path</button>
+        </div>
+
+        <div class="workspace-path-banner" style="margin:4px 0 0;">
+          <span>📁 <strong>Local Disk Location:</strong> <code id="modalWorkspacePathText">./workspace</code></span>
+        </div>
+
+        <div class="workspace-modal-layout">
+          <!-- Left: File List Sidebar -->
+          <div class="workspace-file-sidebar" id="modalWorkspaceFileList">
+            <div class="workspace-sidebar-header">REPOSITORY FILES</div>
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Right: File Code Previewer -->
+          <div class="workspace-file-viewer">
+            <div class="workspace-viewer-header">
+              <span class="workspace-viewer-title" id="modalActiveFileName">select a file...</span>
+              <button class="code-copy-btn" id="modalCopyFileContentBtn" onclick="copyCurrentFileContent()">Copy File</button>
+            </div>
+            <pre class="workspace-code-pre"><code id="modalCodePreviewContent">// Select a file from the sidebar to inspect source code</code></pre>
+          </div>
+        </div>
+
+        <!-- Terminal Run Script -->
+        <div style="background:#0F172A; border-radius:6px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
+          <div>
+            <span style="font-family:var(--font-display); font-size:10.5px; font-weight:700; color:#34D399;">🚀 TERMINAL RUN SCRIPT:</span>
+            <code style="font-family:var(--font-mono); font-size:11px; color:#4ADE80; margin-left:8px;" id="modalRunScriptText">npm install && npm start</code>
+          </div>
+          <button class="code-copy-btn" style="position:static;" onclick="copyModalRunScript()">Copy Run Script</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL 2: Voice Comms Recording & Translation Modal ─────── -->
+  <div class="battleworld-modal-backdrop" id="voiceCommsModal">
+    <div class="battleworld-modal" style="max-width:520px;">
+      <div class="modal-header">
+        <div class="modal-title">🎙️ JARVIS VOICE COMMS & TRANSLATOR</div>
+        <button class="modal-close-btn" onclick="stopVoiceComms()">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align:center; gap:16px;">
+        <div style="display:flex; justify-content:center;">
+          <div class="voice-recording-pill" id="voiceStatusPill">
+            <span class="recording-pulse-dot"></span>
+            <span id="voiceStatusText">RECORDING COMMS... SPEAK NOW</span>
+          </div>
+        </div>
+
+        <div class="voice-comms-visualizer" id="voiceVisualizerBars">
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+          <div class="voice-wave-bar"></div>
+        </div>
+
+        <div class="form-group" style="text-align:left;">
+          <label class="form-label" style="display:flex; justify-content:space-between;">
+            <span>Recorded &amp; Translated Directive</span>
+            <span style="font-size:10px; color:var(--primary-blue);" id="voiceLangIndicator">Supports Hindi, English &amp; Multilingual</span>
+          </label>
+          <textarea id="voiceTranscriptBox" class="quantum-textarea" rows="3" placeholder="Speak into your microphone... (Listening for your voice)"></textarea>
+        </div>
+
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button class="console-action-btn" onclick="stopVoiceComms()">Cancel</button>
+          <button class="console-action-btn" onclick="insertVoiceTranscriptIntoInput()">✏️ Insert into Input</button>
+          <button class="dispatch-infinity-btn" onclick="dispatchVoiceDirective()">⚡ DISPATCH TO AVENGERS</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL 3: Spawn & Despawn Character Roster Modal ────────── -->
   <div class="battleworld-modal-backdrop" id="spawnRosterModal">
     <div class="battleworld-modal">
       <div class="modal-header">
@@ -208,7 +303,7 @@
     </div>
   </div>
 
-  <!-- ── MODAL 2: Create Custom Character Modal ────────────────── -->
+  <!-- ── MODAL 4: Create Custom Character Modal ────────────────── -->
   <div class="battleworld-modal-backdrop" id="customHeroModal">
     <div class="battleworld-modal">
       <div class="modal-header">

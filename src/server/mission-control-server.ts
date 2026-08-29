@@ -1,6 +1,7 @@
 import express from 'express';
 import http from 'node:http';
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { StarkOrchestrator } from '../core/stark-orchestrator.js';
@@ -9,6 +10,52 @@ import { StarkConfig } from '../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+function getAllFilesInDir(dirPath: string, rootDir: string): Array<{ relativePath: string; content: string; size: number; language: string }> {
+  const result: Array<{ relativePath: string; content: string; size: number; language: string }> = [];
+  if (!fs.existsSync(dirPath)) return result;
+
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name !== 'node_modules' && entry.name !== '.git' && entry.name !== 'dist' && entry.name !== '.build') {
+        result.push(...getAllFilesInDir(fullPath, rootDir));
+      }
+    } else {
+      const ext = path.extname(entry.name).toLowerCase();
+      let language = 'text';
+      if (['.ts', '.tsx'].includes(ext)) language = 'typescript';
+      else if (['.js', '.jsx'].includes(ext)) language = 'javascript';
+      else if (['.swift'].includes(ext)) language = 'swift';
+      else if (['.py'].includes(ext)) language = 'python';
+      else if (['.json'].includes(ext)) language = 'json';
+      else if (['.md'].includes(ext)) language = 'markdown';
+      else if (['.html'].includes(ext)) language = 'html';
+      else if (['.css'].includes(ext)) language = 'css';
+
+      let content = '';
+      let size = 0;
+      try {
+        const stat = fs.statSync(fullPath);
+        size = stat.size;
+        if (size < 500000) { // Limit to 500KB
+          content = fs.readFileSync(fullPath, 'utf-8');
+        } else {
+          content = '// [File content too large to preview inline]';
+        }
+      } catch {}
+
+      result.push({
+        relativePath: path.relative(rootDir, fullPath),
+        content,
+        size,
+        language,
+      });
+    }
+  }
+  return result;
+}
 
 export function createMissionControlServer(orchestrator: StarkOrchestrator, config: StarkConfig) {
   const app = express();
@@ -47,6 +94,66 @@ export function createMissionControlServer(orchestrator: StarkOrchestrator, conf
       })),
       activeMission: mission || null,
     });
+  });
+
+  // Dedicated Structured Workspace Endpoint
+  app.get('/api/workspace', (req, res) => {
+    try {
+      const workspaceBase = path.resolve(process.cwd(), 'workspace');
+      if (!fs.existsSync(workspaceBase)) {
+        return res.json({ workspaces: [], active: null });
+      }
+
+      const dirs = fs.readdirSync(workspaceBase, { withFileTypes: true })
+        .filter(d => d.isDirectory())
+        .map(d => d.name);
+
+      const allWorkspaces: any[] = [];
+      for (const dir of dirs) {
+        const dirPath = path.join(workspaceBase, dir);
+        const files = getAllFilesInDir(dirPath, dirPath);
+        allWorkspaces.push({
+          slug: dir,
+          path: dirPath,
+          files,
+        });
+      }
+
+      const activeMission = orchestrator.getActiveMission();
+      const activeWorkspace = (activeMission as any)?.workspace || (allWorkspaces.length > 0 ? allWorkspaces[allWorkspaces.length - 1] : null);
+
+      res.json({
+        success: true,
+        workspaces: allWorkspaces,
+        active: activeWorkspace,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Voice Translation & Directive Refinement Endpoint
+  app.post('/api/comms/translate', async (req, res) => {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: 'Text is required' });
+    }
+
+    try {
+      const tony = orchestrator.getHero('tony-stark');
+      let translated = text;
+      if (tony) {
+        const prompt = `You are JARVIS. The user spoke this voice audio directive: "${text}".
+If this voice directive is in Hindi, Spanish, or any non-English language, accurately translate it into clear English.
+Clean it up into a concise, professional engineering prompt ready for the Avengers agentic strike team.
+Return ONLY the cleaned and translated prompt text. Do not wrap in quotes or add conversational filler.`;
+        const result = await (tony as any).queryLLM(prompt, 'You are an AI translator. Return only the translated directive.');
+        translated = result?.text?.trim() || text;
+      }
+      res.json({ success: true, original: text, translated });
+    } catch (err: any) {
+      res.json({ success: true, original: text, translated: text });
+    }
   });
 
   app.post('/api/mission/launch', async (req, res) => {
