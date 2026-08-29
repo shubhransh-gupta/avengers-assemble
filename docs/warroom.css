@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS // FULL-VIEWPORT 45° ISOMETRIC 3D MINECRAFT WORLD
+   SCAVENGERS // 100% EDGE-TO-EDGE ISOMETRIC 3D MINECRAFT SIMULATION
    ══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -68,7 +68,7 @@ html, body {
   border: 3px solid #381A6E;
 }
 
-/* ── Split Stage (Left Full-Viewport Isometric Canvas + Right Command Console) ── */
+/* ── Split Stage (Left Edge-to-Edge Canvas + Right Command Console) ── */
 .battleworld-split {
   display: flex;
   flex: 1;
@@ -76,15 +76,16 @@ html, body {
   position: relative;
 }
 
-/* ── Left: Full-Viewport 45° Isometric Minecraft World ─────── */
+/* ── Left: Edge-to-Edge Minecraft Viewport ─────────────────── */
 .valley-viewport {
   flex: 1.65;
   position: relative;
   overflow: hidden;
-  background: #060114;
+  background: #090318;
   border-right: 3px solid #381A6E;
-  cursor: crosshair;
+  cursor: grab;
 }
+.valley-viewport:active { cursor: grabbing; }
 
 #minecraftCanvas {
   position: absolute;
@@ -164,6 +165,38 @@ html, body {
 .valley-action-pill-btn.clash {
   background: linear-gradient(135deg, #DC2626 0%, #7E22CE 100%);
   border-color: #EF4444;
+}
+
+/* Zoom / Pan Controls (Bottom Left of Canvas) */
+.canvas-camera-controls {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 20;
+}
+
+.camera-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(19, 9, 44, 0.94);
+  border: 2px solid var(--border-bright);
+  border-radius: 6px;
+  font-family: var(--font-arcade);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--arc-cyan);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.7);
+}
+.camera-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--arc-cyan);
+  box-shadow: 0 0 10px var(--arc-glow);
 }
 
 /* Speech Bubbles */
