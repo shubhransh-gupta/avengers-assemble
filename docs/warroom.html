@@ -107,15 +107,16 @@
           </div>
         </div>
 
-        <!-- Segregated Output Mode Selector (VERBOSE vs RESULT) -->
+        <!-- 3-Mode Stream Selector: Agent Chat | Code Verbose | Result -->
         <div class="stream-mode-selector">
           <div class="segmented-toggle">
-            <button class="toggle-segment active" id="btnModeVerbose" onclick="setConsoleMode('verbose')">⚡ VERBOSE STREAM</button>
-            <button class="toggle-segment" id="btnModeResult" onclick="setConsoleMode('result')">
-              🏆 RESULT ONLY <span class="result-badge-ready" id="resultBadgeReady"></span>
+            <button class="toggle-segment" id="btnModeChat" onclick="setConsoleMode('chat')" title="All inter-agent thoughts &amp; conversations">💬 AGENT CHAT</button>
+            <button class="toggle-segment active" id="btnModeCode" onclick="setConsoleMode('code')" title="Code output only: files, workspace paths, directive results">🖥️ CODE VERBOSE</button>
+            <button class="toggle-segment" id="btnModeResult" onclick="setConsoleMode('result')" title="Final deliverable files and run instructions">
+              🏆 RESULT <span class="result-badge-ready" id="resultBadgeReady"></span>
             </button>
           </div>
-          <div class="mode-description" id="modeDescriptionLabel">Real-time inter-agent thoughts & DAG directives</div>
+          <div class="mode-description" id="modeDescriptionLabel">Code-related logs only: file writes, workspace paths &amp; directive outputs</div>
         </div>
 
         <!-- Console Body Feeds -->
@@ -123,17 +124,17 @@
           
           <!-- View 1: Verbose Thought Stream -->
           <div class="verbose-stream-feed" id="verboseStreamFeed">
-            <div class="stream-entry"><span class="stream-bullet" style="color:#4AEDD9;">●</span> <span class="stream-hero-tag" style="color:#4AEDD9;">[MINECRAFT WORLD]</span> 3D Minecraft landscape rendered. Multi-block trees, Valyrian lava lake, and Diamond Swords active.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#00F0FF;">●</span> <span class="stream-hero-tag" style="color:#00F0FF;">[TONY STARK]</span> Edge-to-edge 3D Minecraft world generated. Redstone repeaters active.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#10B981;">●</span> <span class="stream-hero-tag" style="color:#10B981;">[DOCTOR DOOM]</span> Valyrian Lava Keep online. Roaring dragonfire braziers burning.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#00D5E8;">●</span> <span class="stream-hero-tag" style="color:#00D5E8;">[THOR]</span> Thunderstorm vortex summoned! Mjolnir lightning forged Swift packages!</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#FFC83B;">●</span> <span class="stream-hero-tag" style="color:#FFC83B;">[THANOS]</span> 3D Obsidian Altar balanced. Infinity Gauntlet tokens in equilibrium.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#38BDF8;">●</span> <span class="stream-hero-tag" style="color:#38BDF8;">[KANG]</span> Chrono-bridge calculating parallel reality branches across the full world.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#A855F7;">●</span> <span class="stream-hero-tag" style="color:#A855F7;">[DOCTOR STRANGE]</span> Taj Mahal astral nexus synchronized with memory matrix.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#EF4444;">●</span> <span class="stream-hero-tag" style="color:#EF4444;">[SPIDER-MAN]</span> Web nets spun across the forest canopy! Frontend architecture ready.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#22C55E;">●</span> <span class="stream-hero-tag" style="color:#22C55E;">[HULK]</span> HULK SMASH 3D VOXEL BLOCKS AND MINE DIAMOND ORES!</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#C084FC;">●</span> <span class="stream-hero-tag" style="color:#C084FC;">[BLACK WIDOW]</span> Perimeter secure. API bearer tokens sanitized in enclave.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#3B82F6;">●</span> <span class="stream-hero-tag" style="color:#3B82F6;">[CAPTAIN AMERICA]</span> Vibranium standards inspection ready for battle.</div>
+            <div class="stream-entry" data-kind="code"><span class="stream-bullet" style="color:#4AEDD9;">●</span> <span class="stream-hero-tag" style="color:#4AEDD9;">[MINECRAFT WORLD]</span> 3D Minecraft landscape rendered. Multi-block trees, Valyrian lava lake, and Diamond Swords active.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#00F0FF;">●</span> <span class="stream-hero-tag" style="color:#00F0FF;">[TONY STARK]</span> Edge-to-edge 3D Minecraft world generated. Redstone repeaters active.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#10B981;">●</span> <span class="stream-hero-tag" style="color:#10B981;">[DOCTOR DOOM]</span> Valyrian Lava Keep online. Roaring dragonfire braziers burning.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#00D5E8;">●</span> <span class="stream-hero-tag" style="color:#00D5E8;">[THOR]</span> Thunderstorm vortex summoned! Mjolnir lightning forged Swift packages!</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#FFC83B;">●</span> <span class="stream-hero-tag" style="color:#FFC83B;">[THANOS]</span> 3D Obsidian Altar balanced. Infinity Gauntlet tokens in equilibrium.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#38BDF8;">●</span> <span class="stream-hero-tag" style="color:#38BDF8;">[KANG]</span> Chrono-bridge calculating parallel reality branches across the full world.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#A855F7;">●</span> <span class="stream-hero-tag" style="color:#A855F7;">[DOCTOR STRANGE]</span> Taj Mahal astral nexus synchronized with memory matrix.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#EF4444;">●</span> <span class="stream-hero-tag" style="color:#EF4444;">[SPIDER-MAN]</span> Web nets spun across the forest canopy! Frontend architecture ready.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#22C55E;">●</span> <span class="stream-hero-tag" style="color:#22C55E;">[HULK]</span> HULK SMASH 3D VOXEL BLOCKS AND MINE DIAMOND ORES!</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#C084FC;">●</span> <span class="stream-hero-tag" style="color:#C084FC;">[BLACK WIDOW]</span> Perimeter secure. API bearer tokens sanitized in enclave.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#3B82F6;">●</span> <span class="stream-hero-tag" style="color:#3B82F6;">[CAPTAIN AMERICA]</span> Vibranium standards inspection ready for battle.</div>
           </div>
 
           <!-- View 2: Result Deliverable View (Only Final Deliverables & Project Files) -->
