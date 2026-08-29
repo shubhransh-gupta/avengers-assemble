@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS // PURE CODE 2D MINECRAFT AVENGERS ARCADE SIMULATION
+   SCAVENGERS // 45° ISOMETRIC 3D MINECRAFT AVENGERS SIMULATION ENGINE
    ══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -68,7 +68,7 @@ html, body {
   border: 3px solid #381A6E;
 }
 
-/* ── Split Stage (Left 2D Minecraft Canvas + Right Command Console) ── */
+/* ── Split Stage (Left 45° Isometric Canvas + Right Command Console) ── */
 .battleworld-split {
   display: flex;
   flex: 1;
@@ -76,17 +76,16 @@ html, body {
   position: relative;
 }
 
-/* ── Left: Pure Code 2D Minecraft Simulation Viewport ──────── */
+/* ── Left: 45° Isometric Minecraft Viewport ────────────────── */
 .valley-viewport {
   flex: 1.55;
   position: relative;
   overflow: hidden;
-  background: #0B0618;
+  background: #090318;
   border-right: 3px solid #381A6E;
   cursor: crosshair;
 }
 
-/* Pure Canvas for Landscape Blocks, Buildings, Weather & Heroes */
 #minecraftCanvas {
   position: absolute;
   inset: 0;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SCAVENGERS // 2D Minecraft Avengers Pure Code Simulation · Powered by Shubhransh Gupta</title>
+  <title>SCAVENGERS // 45° Isometric 3D Minecraft Avengers Simulation · Powered by Shubhransh Gupta</title>
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23060210' stroke='%2300F0FF' stroke-width='4'/><text x='50' y='65' font-size='42' font-family='monospace' font-weight='900' fill='%2300F0FF' text-anchor='middle'>A</text></svg>" />
 
@@ -12,19 +12,19 @@
 <body>
   <div class="battleworld-layout">
     
-    <!-- TOP STAGE (Pure 2D Minecraft Canvas Simulation + Stark Command Console) -->
+    <!-- TOP STAGE (45° Isometric 3D Minecraft Canvas + Stark Command Console) -->
     <div class="battleworld-split">
       
-      <!-- LEFT: PURE 2D MINECRAFT PROCEDURAL SIMULATION -->
+      <!-- LEFT: 45° ISOMETRIC MINECRAFT SIMULATION VIEWPORT -->
       <div class="valley-viewport">
-        <!-- 100% Code-Driven 2D Lateral Minecraft Canvas -->
+        <!-- Pure 45° Isometric Canvas (Covers Top Depth & Lateral Elevation) -->
         <canvas id="minecraftCanvas"></canvas>
 
         <!-- Top Arcade HUD Badges -->
         <div class="valley-top-hud">
           <div class="hud-pill">
             <span class="pill-glow-dot cyan"></span>
-            <span class="pill-txt" id="incursionStatusPill">🕹️ 2D MINECRAFT SIMULATION // CLICK GROUND TO WALK</span>
+            <span class="pill-txt" id="incursionStatusPill">🕹️ 45° ISOMETRIC 3D MINECRAFT // CLICK BLOCK TO WALK</span>
           </div>
           <div class="hud-pill">
             <span class="pill-glow-dot gold"></span>
@@ -53,7 +53,7 @@
             <div class="stark-reactor-avatar">🦾</div>
             <div class="stark-badge-text">
               <div class="stark-badge-title">TONY STARK <span class="stark-tag-god">[GOD ORCHESTRATOR]</span></div>
-              <div class="stark-badge-sub"><span class="pill-glow-dot cyan" style="width:5px;height:5px;"></span> Stark Voxel Tower Online &bull; Player 1 Ready</div>
+              <div class="stark-badge-sub"><span class="pill-glow-dot cyan" style="width:5px;height:5px;"></span> Stark Isometric Spire Online &bull; Player 1 Ready</div>
             </div>
           </div>
           <div class="console-hdr-actions">
@@ -77,14 +77,14 @@
           
           <!-- View 1: Verbose Thought Stream -->
           <div class="verbose-stream-feed" id="verboseStreamFeed">
-            <div class="stream-entry"><span class="stream-bullet" style="color:#00F0FF;">●</span> <span class="stream-hero-tag" style="color:#00F0FF;">[TONY STARK]</span> Pure procedural 2D Minecraft lateral world generated. Redstone repeaters active.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#10B981;">●</span> <span class="stream-hero-tag" style="color:#10B981;">[DOCTOR DOOM]</span> Latverian Cobblestone Keep calibrating. Nether portal syntax trees online.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#00F0FF;">●</span> <span class="stream-hero-tag" style="color:#00F0FF;">[TONY STARK]</span> 45-degree isometric 3D Minecraft world generated. Redstone repeaters active.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#10B981;">●</span> <span class="stream-hero-tag" style="color:#10B981;">[DOCTOR DOOM]</span> Latverian 3D Cobblestone Castle standing by. Nether portal matrix active.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#00D5E8;">●</span> <span class="stream-hero-tag" style="color:#00D5E8;">[THOR]</span> Thunderstorm vortex summoned! Mjolnir lightning forged Swift packages!</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#FFC83B;">●</span> <span class="stream-hero-tag" style="color:#FFC83B;">[THANOS]</span> Voxel beacon power balanced. Infinity Gauntlet tokens in equilibrium.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#38BDF8;">●</span> <span class="stream-hero-tag" style="color:#38BDF8;">[KANG]</span> Chrono-bridge calculating parallel reality branches across the horizontal world.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#FFC83B;">●</span> <span class="stream-hero-tag" style="color:#FFC83B;">[THANOS]</span> 3D Obsidian Altar balanced. Infinity Gauntlet tokens in equilibrium.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#38BDF8;">●</span> <span class="stream-hero-tag" style="color:#38BDF8;">[KANG]</span> Chrono-bridge calculating parallel reality branches across the isometric grid.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#A855F7;">●</span> <span class="stream-hero-tag" style="color:#A855F7;">[DOCTOR STRANGE]</span> Ender portal mystic nexus synchronized with memory matrix.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#60A5FA;">●</span> <span class="stream-hero-tag" style="color:#60A5FA;">[SPIDER-MAN]</span> Voxel web components & modern frontend UI ready to deploy.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#22C55E;">●</span> <span class="stream-hero-tag" style="color:#22C55E;">[HULK]</span> HULK SMASH VOXEL BLOCKS AND REFACTOR FOR MAX PERFORMANCE!</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#22C55E;">●</span> <span class="stream-hero-tag" style="color:#22C55E;">[HULK]</span> HULK SMASH 3D VOXEL BLOCKS AND REFACTOR FOR MAX PERFORMANCE!</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#C084FC;">●</span> <span class="stream-hero-tag" style="color:#C084FC;">[BLACK WIDOW]</span> Perimeter secure. API bearer tokens sanitized in enclave.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#3B82F6;">●</span> <span class="stream-hero-tag" style="color:#3B82F6;">[CAPTAIN AMERICA]</span> Vibranium standards inspection ready for battle.</div>
           </div>
@@ -137,12 +137,12 @@
   <div class="battleworld-modal-backdrop" id="spawnRosterModal">
     <div class="battleworld-modal">
       <div class="modal-header">
-        <div class="modal-title">⚡ SPAWN VOXEL HERO INTO MINECRAFT WORLD</div>
+        <div class="modal-title">⚡ SPAWN VOXEL HERO INTO ISOMETRIC WORLD</div>
         <button class="modal-close-btn" onclick="closeModals()">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-family:var(--font-arcade); font-size:10px; color:var(--ink-secondary);">
-          Select a Marvel Hero or Villain to spawn into the lateral block world:
+          Select a Marvel Hero or Villain to materialize into the 45° isometric world:
         </p>
         <div class="spawn-roster-grid" id="spawnRosterGrid">
           <!-- Populated dynamically -->
@@ -155,7 +155,7 @@
   <div class="battleworld-modal-backdrop" id="customHeroModal">
     <div class="battleworld-modal">
       <div class="modal-header">
-        <div class="modal-title">🛠️ FORGE CUSTOM VOXEL HERO</div>
+        <div class="modal-title">🛠️ FORGE CUSTOM ISOMETRIC VOXEL HERO</div>
         <button class="modal-close-btn" onclick="closeModals()">&times;</button>
       </div>
       <div class="modal-body">
