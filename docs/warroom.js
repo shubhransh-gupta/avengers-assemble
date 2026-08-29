@@ -93,16 +93,44 @@ function getBlockData(gx, gy) {
     return { h: 3, type: 'iron' };
   }
 
-  // 3. VALYRIAN / DOOM NETHER LAVA BIOME (gx: 22..30, gy: 22..30)
-  if (gx >= 22 && gy >= 22) {
-    if (gx >= 25 && gx <= 28 && gy >= 25 && gy <= 28) {
-      return { h: 3, type: 'cobblestone' };
+  // 3. VOLCANO MOUNTAIN & LAVA RIVER BIOME (gx: 20..30, gy: 20..30)
+  if (gx >= 20 && gy >= 20) {
+    const dx = gx - 26;
+    const dy = gy - 26;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Winding Lava River flowing down the mountain slope
+    const isLavaRiver = (
+      (gx === 24 && gy === 25) || (gx === 23 && gy === 24) ||
+      (gx === 22 && gy === 24) || (gx === 21 && gy === 25) ||
+      (gx === 20 && gy === 26) || (gx === 19 && gy === 27) ||
+      (gx === 18 && gy === 27) || (gx === 25 && gy === 24)
+    );
+    if (isLavaRiver) {
+      return { h: 1, type: 'lava' };
     }
-    if ((gx >= 22 && gx <= 24 && gy >= 23 && gy <= 29) || (gy >= 22 && gy <= 24 && gx >= 23 && gx <= 29)) {
-      return { h: 0, type: 'lava' };
+
+    // Sunken Volcano Caldera Crater (Peak Summit)
+    if (dist <= 1.4) {
+      return { h: 4, type: 'lava' };
     }
-    if ((gx + gy) % 2 === 0) return { h: 2, type: 'magma' };
-    return { h: 2, type: 'obsidian' };
+    // Crater Rim
+    if (dist <= 2.2) {
+      return { h: 5, type: 'obsidian' };
+    }
+    // Upper Volcano Cone
+    if (dist <= 3.5) {
+      return { h: 4, type: (gx + gy) % 2 === 0 ? 'magma' : 'obsidian' };
+    }
+    // Mid Volcano Slope
+    if (dist <= 5.0) {
+      return { h: 3, type: (gx + gy) % 3 === 0 ? 'magma' : 'blackstone' };
+    }
+    // Outer Mountain Base
+    if (dist <= 6.8) {
+      return { h: 2, type: (gx + gy) % 2 === 0 ? 'cobblestone' : 'blackstone' };
+    }
+    return { h: 1, type: 'blackstone' };
   }
 
   // 4. THOR THUNDER HILL (gx: 24..29, gy: 1..6)
@@ -1034,6 +1062,7 @@ function drawRealVoxelTrees(time) {
 function drawTajMahalAndMonuments(time) {
   const zoom = state.camera.zoom;
 
+  // A. Four Corner Minarets with Balconies & Chhatri Cupolas
   const minaretCorners = [
     { gx: 12, gy: 12 },
     { gx: 18, gy: 12 },
@@ -1042,44 +1071,131 @@ function drawTajMahalAndMonuments(time) {
   ];
 
   for (const mc of minaretCorners) {
-    for (let z = 3; z <= 8; z++) {
+    // Slender white marble shaft
+    for (let z = 3; z <= 7; z++) {
       drawIsometricBlock(mc.gx, mc.gy, z, 'quartz', time);
     }
-    const mp = gridToScreen(mc.gx, mc.gy, 9);
+    // Mid Balcony Ring at z=5
+    const bPos = gridToScreen(mc.gx, mc.gy, 5);
+    ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 2 * zoom;
+    ctx.strokeRect(bPos.x - 8 * zoom, bPos.y - 6 * zoom, 16 * zoom, 4 * zoom);
+
+    // Top Cupola (Chhatri) at z=8 with Golden Finial
+    const mp = gridToScreen(mc.gx, mc.gy, 8);
+    // Delicate pillared dome
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(mp.x, mp.y - 8 * zoom, 5 * zoom, Math.PI, 0);
+    ctx.fill();
+    ctx.strokeStyle = '#E2E8F0'; ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Golden Spire / Kalash
     ctx.fillStyle = '#F59E0B';
-    ctx.shadowColor = '#F59E0B'; ctx.shadowBlur = 8;
-    ctx.fillRect(mp.x - 2 * zoom, mp.y - 12 * zoom, 4 * zoom, 12 * zoom);
-    ctx.shadowBlur = 0;
+    ctx.fillRect(mp.x - 1 * zoom, mp.y - 14 * zoom, 2 * zoom, 6 * zoom);
+    ctx.beginPath();
+    ctx.arc(mp.x, mp.y - 15 * zoom, 2 * zoom, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  for (let z = 3; z <= 6; z++) {
+  // B. Main Mausoleum Body (Symmetrical White Marble with Chamfers)
+  for (let z = 3; z <= 5; z++) {
     for (let x = 13; x <= 17; x++) {
       for (let y = 13; y <= 17; y++) {
-        const isPortal = (x === 15 && y === 13 && z <= 5);
-        if (!isPortal) {
+        // Chamfered 4 corners for octagonal Mughal layout
+        const isCorner = (x === 13 && y === 13) || (x === 17 && y === 13) || (x === 13 && y === 17) || (x === 17 && y === 17);
+        if (!isCorner) {
           drawIsometricBlock(x, y, z, 'quartz', time);
-        } else {
-          const pp = gridToScreen(x, y, z);
-          ctx.fillStyle = '#0F172A';
-          ctx.fillRect(pp.x - 6 * zoom, pp.y - 10 * zoom, 12 * zoom, 16 * zoom);
         }
       }
     }
   }
 
+  // C. Grand Recessed Arched Portal (Pishtaq / Grand Iwan) on Front Facade
+  const portalPos = gridToScreen(15, 13, 3);
+  // Recessed dark marble chamber arch
+  ctx.fillStyle = '#0F172A';
+  ctx.beginPath();
+  ctx.moveTo(portalPos.x - 10 * zoom, portalPos.y);
+  ctx.lineTo(portalPos.x - 10 * zoom, portalPos.y - 18 * zoom);
+  ctx.quadraticCurveTo(portalPos.x, portalPos.y - 28 * zoom, portalPos.x + 10 * zoom, portalPos.y - 18 * zoom);
+  ctx.lineTo(portalPos.x + 10 * zoom, portalPos.y);
+  ctx.closePath();
+  ctx.fill();
+
+  // White marble pointed arch frame
+  ctx.strokeStyle = '#F8FAFC';
+  ctx.lineWidth = 3 * zoom;
+  ctx.stroke();
+
+  // Side Niches (Double-Decker Iwans on flanking bays)
+  const leftNiche = gridToScreen(14, 13, 3);
+  const rightNiche = gridToScreen(16, 13, 3);
+  [leftNiche, rightNiche].forEach(n => {
+    ctx.fillStyle = '#1E293B';
+    ctx.fillRect(n.x - 4 * zoom, n.y - 8 * zoom, 8 * zoom, 8 * zoom);
+    ctx.fillRect(n.x - 4 * zoom, n.y - 20 * zoom, 8 * zoom, 8 * zoom);
+  });
+
+  // D. Four Subsidiary Domed Chhatris surrounding central dome
+  const chhatriSpots = [
+    { gx: 13.5, gy: 14.5 },
+    { gx: 16.5, gy: 14.5 },
+    { gx: 13.5, gy: 16.5 },
+    { gx: 16.5, gy: 16.5 },
+  ];
+  chhatriSpots.forEach(cp => {
+    const p = gridToScreen(cp.gx, cp.gy, 6);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y - 6 * zoom, 4.5 * zoom, Math.PI, 0);
+    ctx.fill();
+    ctx.strokeStyle = '#E2E8F0'; ctx.stroke();
+
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillRect(p.x - 1 * zoom, p.y - 11 * zoom, 2 * zoom, 5 * zoom);
+  });
+
+  // E. Main Bulbous Lotus Onion Dome (Amrud / Gumbad)
   for (let x = 14; x <= 16; x++) {
     for (let y = 14; y <= 16; y++) {
-      drawIsometricBlock(x, y, 7, 'quartz', time);
+      drawIsometricBlock(x, y, 6, 'quartz', time);
     }
   }
-  drawIsometricBlock(15, 15, 8, 'quartz', time);
 
-  const domeSpirePos = gridToScreen(15, 15, 9);
+  const domePos = gridToScreen(15, 15, 7);
+  // High cylindrical marble drum
+  ctx.fillStyle = '#F1F5F9';
+  ctx.fillRect(domePos.x - 14 * zoom, domePos.y - 10 * zoom, 28 * zoom, 10 * zoom);
+
+  // Bulbous Onion Dome Curve
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath();
+  ctx.moveTo(domePos.x - 16 * zoom, domePos.y - 10 * zoom);
+  ctx.bezierCurveTo(
+    domePos.x - 22 * zoom, domePos.y - 26 * zoom,
+    domePos.x - 8 * zoom, domePos.y - 42 * zoom,
+    domePos.x, domePos.y - 48 * zoom
+  );
+  ctx.bezierCurveTo(
+    domePos.x + 8 * zoom, domePos.y - 42 * zoom,
+    domePos.x + 22 * zoom, domePos.y - 26 * zoom,
+    domePos.x + 16 * zoom, domePos.y - 10 * zoom
+  );
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = '#E2E8F0';
+  ctx.lineWidth = 1.5 * zoom;
+  ctx.stroke();
+
+  // Majestic Golden Spire / Kalash Finial with Sunbeam Bloom
+  const apexY = domePos.y - 48 * zoom;
   ctx.fillStyle = '#F59E0B';
   ctx.shadowColor = '#F59E0B'; ctx.shadowBlur = 18;
-  ctx.fillRect(domeSpirePos.x - 3 * zoom, domeSpirePos.y - 24 * zoom, 6 * zoom, 24 * zoom);
+  ctx.fillRect(domePos.x - 2 * zoom, apexY - 22 * zoom, 4 * zoom, 22 * zoom);
   ctx.beginPath();
-  ctx.arc(domeSpirePos.x, domeSpirePos.y - 26 * zoom, 5 * zoom, 0, Math.PI * 2);
+  ctx.arc(domePos.x, apexY - 24 * zoom, 4.5 * zoom, 0, Math.PI * 2);
   ctx.fill();
   ctx.shadowBlur = 0;
 
@@ -1095,20 +1211,6 @@ function drawTajMahalAndMonuments(time) {
   ctx.fillStyle = '#2563EB';
   ctx.shadowColor = '#3B82F6'; ctx.shadowBlur = 22;
   ctx.fillRect(beaconPos.x - 4 * zoom, beaconPos.y - 22 * zoom, 8 * zoom, 22 * zoom);
-  ctx.shadowBlur = 0;
-
-  // Doctor Doom Latverian / Valyrian 3D Castle Keep
-  for (let z = 4; z <= 7; z++) {
-    for (let x = 25; x <= 28; x++) {
-      for (let y = 25; y <= 28; y++) {
-        drawIsometricBlock(x, y, z, 'cobblestone', time);
-      }
-    }
-  }
-  const portalPos = gridToScreen(26, 25, 4);
-  ctx.fillStyle = 'rgba(124, 58, 237, 0.9)';
-  ctx.shadowColor = '#7C3AED'; ctx.shadowBlur = 16;
-  ctx.fillRect(portalPos.x - 12 * zoom, portalPos.y - 26 * zoom, 24 * zoom, 26 * zoom);
   ctx.shadowBlur = 0;
 
   // Thor Thunder Altar Spire
@@ -1127,37 +1229,82 @@ function drawTajMahalAndMonuments(time) {
   }
 }
 
-// ── 5. Valyrian Lava Falls & Roaring Dragonfire Pits ─────────────────
+// ── 5. Volcano Mountain Eruptions & Cascading Lava River ─────────────
 function drawValyrianLavaAndFire(time) {
   const zoom = state.camera.zoom;
 
-  const brazierPos = gridToScreen(24, 24, 3);
-  ctx.fillStyle = '#1E293B';
-  ctx.fillRect(brazierPos.x - 6 * zoom, brazierPos.y - 8 * zoom, 12 * zoom, 8 * zoom);
-  const flameH = (14 + Math.sin(time * 0.02) * 4) * zoom;
-  ctx.fillStyle = '#10B981';
-  ctx.shadowColor = '#10B981'; ctx.shadowBlur = 16;
-  ctx.fillRect(brazierPos.x - 5 * zoom, brazierPos.y - 8 * zoom - flameH, 10 * zoom, flameH);
+  // 1. Volcano Summit Caldera Crater (gx: 26, gy: 26, z: 5)
+  const calderaPos = gridToScreen(26, 26, 5);
+
+  // Pulsating Volcanic Core Glow
+  const glowPulse = 16 + Math.sin(time * 0.05) * 8;
+  ctx.fillStyle = '#FF5722';
+  ctx.shadowColor = '#EF4444';
+  ctx.shadowBlur = glowPulse;
+  ctx.beginPath();
+  ctx.ellipse(calderaPos.x, calderaPos.y - 6 * zoom, 24 * zoom, 14 * zoom, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#FBBF24';
+  ctx.beginPath();
+  ctx.ellipse(calderaPos.x, calderaPos.y - 6 * zoom, 14 * zoom, 8 * zoom, 0, 0, Math.PI * 2);
+  ctx.fill();
   ctx.shadowBlur = 0;
 
-  const firePos = gridToScreen(28, 24, 3);
-  ctx.fillStyle = '#1E293B';
-  ctx.fillRect(firePos.x - 6 * zoom, firePos.y - 8 * zoom, 12 * zoom, 8 * zoom);
-  const orangeFlameH = (14 + Math.cos(time * 0.025) * 4) * zoom;
-  ctx.fillStyle = '#F97316';
-  ctx.shadowColor = '#EF4444'; ctx.shadowBlur = 14;
-  ctx.fillRect(firePos.x - 5 * zoom, firePos.y - 8 * zoom - orangeFlameH, 10 * zoom, orangeFlameH);
-  ctx.shadowBlur = 0;
-
-  if (Math.random() < 0.25) {
-    const lPos = gridToScreen(22 + Math.random() * 6, 22 + Math.random() * 6, 0.5);
+  // 2. Active Volcanic Eruptions (Shooting Lava Bombs & Fiery Embers)
+  if (Math.random() < 0.6) {
+    const angle = (Math.random() - 0.5) * 1.8;
+    const speed = Math.random() * 5 + 4;
     state.lavaBubbles.push({
-      x: lPos.x,
-      y: lPos.y,
-      vx: (Math.random() - 0.5) * 2,
-      vy: -Math.random() * 2 - 1,
-      size: Math.random() * 3 + 2,
+      x: calderaPos.x + (Math.random() - 0.5) * 12 * zoom,
+      y: calderaPos.y - 8 * zoom,
+      vx: Math.sin(angle) * speed,
+      vy: -Math.cos(angle) * speed - 3,
+      size: Math.random() * 5 + 3,
+      color: Math.random() < 0.5 ? '#F97316' : (Math.random() < 0.8 ? '#EF4444' : '#FBBF24'),
+      gravity: 0.18,
       life: 1.0,
+      decay: 0.015 + Math.random() * 0.01,
+    });
+  }
+
+  // 3. Volcanic Smoke Voxels
+  if (Math.random() < 0.35) {
+    state.lavaBubbles.push({
+      x: calderaPos.x + (Math.random() - 0.5) * 16 * zoom,
+      y: calderaPos.y - 12 * zoom,
+      vx: (Math.random() - 0.5) * 1.2,
+      vy: -Math.random() * 2 - 1.5,
+      size: Math.random() * 8 + 6,
+      color: 'rgba(51, 65, 85, 0.6)',
+      gravity: -0.02,
+      life: 1.0,
+      decay: 0.012,
+    });
+  }
+
+  // 4. Cascading Lava River Bubbles
+  const riverPoints = [
+    { gx: 24, gy: 25 },
+    { gx: 23, gy: 24 },
+    { gx: 22, gy: 24 },
+    { gx: 21, gy: 25 },
+    { gx: 20, gy: 26 },
+    { gx: 19, gy: 27 },
+  ];
+  if (Math.random() < 0.4) {
+    const pt = riverPoints[Math.floor(Math.random() * riverPoints.length)];
+    const rPos = gridToScreen(pt.gx + (Math.random() - 0.5) * 0.6, pt.gy + (Math.random() - 0.5) * 0.6, 1.2);
+    state.lavaBubbles.push({
+      x: rPos.x,
+      y: rPos.y,
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: -Math.random() * 1.5 - 0.5,
+      size: Math.random() * 3 + 2,
+      color: '#F97316',
+      gravity: 0.05,
+      life: 1.0,
+      decay: 0.03,
     });
   }
 }
