@@ -1,7 +1,7 @@
 /**
  * ══════════════════════════════════════════════════════════════════════
- * SCAVENGERS // FULL-VIEWPORT 45° ISOMETRIC 3D MINECRAFT SIMULATION
- * FEATURING PROCEDURAL TAJ MAHAL, MONUMENTS, TREES & LIVING HEROES
+ * SCAVENGERS // 100% EDGE-TO-EDGE 3D MINECRAFT AVENGERS WORLD
+ * INFINITE PROCEDURAL TERRAIN, TAJ MAHAL, TREES & FULL VIEWPORT
  * ══════════════════════════════════════════════════════════════════════
  */
 
@@ -9,113 +9,133 @@
 const state = {
   ws: null,
   consoleMode: 'verbose', // 'verbose' | 'result'
-  particles: [],          // Rain / sparks
-  portalParticles: [],    // Nether portal teleport particles
+  particles: [],          // Rain / cosmic sparks
+  portalParticles: [],    // Nether portal particles
   dagPulses: [],          // Redstone energy blocks
   activeAttacks: [],
   selectedAgentId: 'tony-stark',
   roamingAgents: {},
   thunderboltTimer: 0,
   time: 0,
+
+  // Camera Pan & Zoom
+  camera: {
+    zoom: 1.0,
+    panX: 0,
+    panY: 0,
+    isDragging: false,
+    dragStartX: 0,
+    dragStartY: 0,
+    hasDragged: false,
+  },
 };
 
-// ── Isometric World Grid Dimensions ─────────────────────────────────
-const GRID_X = 26;
-const GRID_Y = 26;
+// Base Isometric Tile Metrics
+const BASE_TILE_WIDTH = 48;
+const BASE_TILE_HEIGHT = 24;
+const BASE_BLOCK_DEPTH = 18;
 
-let TILE_WIDTH = 44;
-let TILE_HEIGHT = 22;
-let BLOCK_DEPTH = 18;
-let originX = 0;
-let originY = 0;
-
-// Elevation & Block Matrices
-const heightMap = Array.from({ length: GRID_X }, () => Array(GRID_Y).fill(1));
-const blockTypeMap = Array.from({ length: GRID_X }, () => Array(GRID_Y).fill('grass'));
-const treesMap = []; // Array of { gx, gy, type: 'oak' | 'cherry' | 'spruce' }
-
-function initIsometricWorld() {
-  treesMap.length = 0;
-
-  for (let x = 0; x < GRID_X; x++) {
-    for (let y = 0; y < GRID_Y; y++) {
-      let h = 1;
-      let type = 'grass';
-
-      // 1. Taj Mahal Grand Central Plinth (Center 11..17, 11..17)
-      if (x >= 11 && x <= 17 && y >= 11 && y <= 17) {
-        h = 2;
-        type = 'quartz';
-      }
-      // Reflecting Pool / Water Channel in front of Taj Mahal (x: 13..15, y: 5..10)
-      else if (x >= 13 && x <= 15 && y >= 5 && y <= 10) {
-        h = 0;
-        type = 'water';
-      }
-      // Sandstone Promenade flanking reflecting pool
-      else if ((x === 12 || x === 16) && y >= 5 && y <= 10) {
-        h = 1;
-        type = 'sandstone';
-      }
-      // 2. Stark Tower Plateau (Corner 0..5, 0..5)
-      else if (x <= 5 && y <= 5) {
-        h = 3;
-        type = 'iron';
-      }
-      // 3. Doctor Doom Castle Plateau (Corner 20..25, 20..25)
-      else if (x >= 20 && y >= 20) {
-        h = 3;
-        type = 'cobblestone';
-      }
-      // 4. Thor Thunder Hill (Corner 20..25, 0..5)
-      else if (x >= 20 && y <= 5) {
-        h = 2;
-        type = 'stone';
-      }
-      // 5. Wakanda Vibranium Hill (Corner 0..5, 20..25)
-      else if (x <= 5 && y >= 20) {
-        h = 2;
-        type = 'blackstone';
-      }
-      // 6. Natural Rolling Elevation for rest of world
-      else {
-        if ((x + y) % 7 === 0) h = 2;
-      }
-
-      heightMap[x][y] = h;
-      blockTypeMap[x][y] = type;
-
-      // Plant Trees in open green meadows
-      if (type === 'grass' && Math.random() < 0.11) {
-        if (x > 5 && x < 20 && (y < 10 || y > 18)) {
-          const treeType = Math.random() < 0.35 ? 'cherry' : (Math.random() < 0.5 ? 'spruce' : 'oak');
-          treesMap.push({ gx: x, gy: y, type: treeType });
-        }
-      }
-    }
+// ── Procedural World Generator (Calculates Terrain for ANY (gx, gy)) ─
+function getBlockData(gx, gy) {
+  // 1. TAJ MAHAL OF INDIA (Center: gx 12..18, gy 12..18)
+  if (gx >= 12 && gx <= 18 && gy >= 12 && gy <= 18) {
+    return { h: 2, type: 'quartz' };
   }
-}
-initIsometricWorld();
+  // Reflecting Water Pool in front of Taj Mahal (gx: 14..16, gy: 4..11)
+  if (gx >= 14 && gx <= 16 && gy >= 4 && gy <= 11) {
+    return { h: 0, type: 'water' };
+  }
+  // Sandstone Promenade flanking reflecting pool
+  if ((gx === 13 || gx === 17) && gy >= 4 && gy <= 11) {
+    return { h: 1, type: 'sandstone' };
+  }
 
-// ── Coordinate Conversion Math ──────────────────────────────────────
+  // 2. STARK VOXEL TOWER (gx: 1..6, gy: 1..6)
+  if (gx >= 1 && gx <= 6 && gy >= 1 && gy <= 6) {
+    return { h: 3, type: 'iron' };
+  }
+
+  // 3. DOCTOR DOOM CASTLE (gx: 24..29, gy: 24..29)
+  if (gx >= 24 && gx <= 29 && gy >= 24 && gy <= 29) {
+    return { h: 3, type: 'cobblestone' };
+  }
+
+  // 4. THOR THUNDER HILL (gx: 24..29, gy: 1..6)
+  if (gx >= 24 && gx <= 29 && gy >= 1 && gy <= 6) {
+    return { h: 2, type: 'stone' };
+  }
+
+  // 5. WAKANDA VIBRANIUM BUNKER (gx: 1..6, gy: 24..29)
+  if (gx >= 1 && gx <= 6 && gy >= 24 && gy <= 29) {
+    return { h: 2, type: 'blackstone' };
+  }
+
+  // 6. THANOS OBSIDIAN PEAK (gx: 13..17, gy: 24..28)
+  if (gx >= 13 && gx <= 17 && gy >= 24 && gy <= 28) {
+    return { h: 3, type: 'obsidian' };
+  }
+
+  // 7. Natural Continuous Minecraft Rolling Hills across the entire space
+  const wave = Math.sin(gx * 0.35) * Math.cos(gy * 0.35);
+  let h = 1;
+  if (wave > 0.4) h = 2;
+  if (wave > 0.8) h = 3;
+
+  // Diagonal streams
+  if (Math.abs(gx - gy - 8) <= 1 && !(gx >= 12 && gx <= 18 && gy >= 12 && gy <= 18)) {
+    return { h: 0, type: 'water' };
+  }
+
+  return { h, type: 'grass' };
+}
+
+// Tree map for procedural foliage
+function hasTree(gx, gy) {
+  // Keep monuments and water clear
+  if (gx >= 11 && gx <= 19 && gy >= 3 && gy <= 19) return null;
+  if (gx <= 7 && gy <= 7) return null;
+  if (gx >= 23 && gy >= 23) return null;
+  if (gx >= 23 && gy <= 7) return null;
+  if (gx <= 7 && gy >= 23) return null;
+
+  const data = getBlockData(gx, gy);
+  if (data.type !== 'grass') return null;
+
+  const hash = Math.sin(gx * 12.9898 + gy * 78.233) * 43758.5453;
+  const rand = hash - Math.floor(hash);
+
+  if (rand < 0.12) {
+    if (rand < 0.04) return 'cherry'; // Pink Cherry Blossom
+    if (rand < 0.08) return 'spruce'; // Dark Pine Spruce
+    return 'oak';                     // Green Oak
+  }
+  return null;
+}
+
+// ── Coordinate Conversion (Screen <-> Grid with Pan & Zoom) ─────────
 function gridToScreen(gx, gy, gz = 0) {
-  const sx = originX + (gx - gy) * (TILE_WIDTH / 2);
-  const sy = originY + (gx + gy) * (TILE_HEIGHT / 2) - (gz * BLOCK_DEPTH);
+  const tw = BASE_TILE_WIDTH * state.camera.zoom;
+  const th = BASE_TILE_HEIGHT * state.camera.zoom;
+  const bd = BASE_BLOCK_DEPTH * state.camera.zoom;
+
+  const sx = originX + state.camera.panX + (gx - gy) * (tw / 2);
+  const sy = originY + state.camera.panY + (gx + gy) * (th / 2) - (gz * bd);
   return { x: sx, y: sy };
 }
 
 function screenToGrid(sx, sy) {
-  const dx = sx - originX;
-  const dy = sy - originY;
-  const gx = (dx / (TILE_WIDTH / 2) + dy / (TILE_HEIGHT / 2)) / 2;
-  const gy = (dy / (TILE_HEIGHT / 2) - dx / (TILE_WIDTH / 2)) / 2;
-  return { gx: Math.max(0, Math.min(GRID_X - 1, Math.round(gx))), gy: Math.max(0, Math.min(GRID_Y - 1, Math.round(gy))) };
+  const tw = BASE_TILE_WIDTH * state.camera.zoom;
+  const th = BASE_TILE_HEIGHT * state.camera.zoom;
+
+  const dx = sx - (originX + state.camera.panX);
+  const dy = sy - (originY + state.camera.panY);
+  const gx = (dx / (tw / 2) + dy / (th / 2)) / 2;
+  const gy = (dy / (th / 2) - dx / (tw / 2)) / 2;
+  return { gx: Math.round(gx), gy: Math.round(gy) };
 }
 
 function getElevation(gx, gy) {
-  const rx = Math.max(0, Math.min(GRID_X - 1, Math.round(gx)));
-  const ry = Math.max(0, Math.min(GRID_Y - 1, Math.round(gy)));
-  return heightMap[rx][ry] || 1;
+  return getBlockData(Math.round(gx), Math.round(gy)).h;
 }
 
 // ── Minecraft Avengers Characters Catalog ───────────────────────────
@@ -132,8 +152,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(0, 240, 255, 0.75)',
     skinType: 'iron-man',
     power: 'laser',
-    gx: 3, gy: 3,
-    targetGx: 3, targetGy: 3,
+    gx: 4, gy: 4,
+    targetGx: 4, targetGy: 4,
     walkTimer: 0,
     isWalking: false,
     speed: 0.08,
@@ -149,11 +169,11 @@ const MINECRAFT_HEROES = {
     image: './assets/doctor_doom.jpg',
     avatar: '👑',
     themeColor: '#10B981',
-    glowColor: 'rgba(16, 185, 129, 0.75)',
+    glowColor: 'rgba(168, 85, 247, 0.75)',
     skinType: 'doctor-doom',
     power: 'runes',
-    gx: 22, gy: 22,
-    targetGx: 22, targetGy: 22,
+    gx: 26, gy: 26,
+    targetGx: 26, targetGy: 26,
     walkTimer: 0,
     isWalking: false,
     speed: 0.065,
@@ -172,8 +192,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(0, 213, 232, 0.75)',
     skinType: 'thor',
     power: 'thunder',
-    gx: 22, gy: 3,
-    targetGx: 22, targetGy: 3,
+    gx: 26, gy: 4,
+    targetGx: 26, targetGy: 4,
     walkTimer: 0,
     isWalking: false,
     speed: 0.075,
@@ -192,8 +212,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(255, 200, 59, 0.75)',
     skinType: 'thanos',
     power: 'cosmic',
-    gx: 14, gy: 22,
-    targetGx: 14, targetGy: 22,
+    gx: 15, gy: 26,
+    targetGx: 15, targetGy: 26,
     walkTimer: 0,
     isWalking: false,
     speed: 0.055,
@@ -212,8 +232,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(59, 130, 246, 0.75)',
     skinType: 'captain-america',
     power: 'shield',
-    gx: 3, gy: 22,
-    targetGx: 3, targetGy: 22,
+    gx: 4, gy: 26,
+    targetGx: 4, targetGy: 26,
     walkTimer: 0,
     isWalking: false,
     speed: 0.075,
@@ -232,8 +252,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(239, 68, 68, 0.75)',
     skinType: 'spider-man',
     power: 'web',
-    gx: 10, gy: 6,
-    targetGx: 10, targetGy: 6,
+    gx: 10, gy: 7,
+    targetGx: 10, targetGy: 7,
     walkTimer: 0,
     isWalking: false,
     speed: 0.09,
@@ -252,8 +272,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(34, 197, 94, 0.75)',
     skinType: 'hulk',
     power: 'gamma',
-    gx: 7, gy: 14,
-    targetGx: 7, targetGy: 14,
+    gx: 8, gy: 16,
+    targetGx: 8, targetGy: 16,
     walkTimer: 0,
     isWalking: false,
     speed: 0.06,
@@ -272,8 +292,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(168, 85, 247, 0.75)',
     skinType: 'doctor-strange',
     power: 'mandala',
-    gx: 14, gy: 14,
-    targetGx: 14, targetGy: 14,
+    gx: 15, gy: 15,
+    targetGx: 15, targetGy: 15,
     walkTimer: 0,
     isWalking: false,
     speed: 0.07,
@@ -292,8 +312,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(56, 189, 248, 0.75)',
     skinType: 'kang',
     power: 'chrono',
-    gx: 18, gy: 10,
-    targetGx: 18, targetGy: 10,
+    gx: 20, gy: 12,
+    targetGx: 20, targetGy: 12,
     walkTimer: 0,
     isWalking: false,
     speed: 0.07,
@@ -312,8 +332,8 @@ const MINECRAFT_HEROES = {
     glowColor: 'rgba(192, 132, 252, 0.75)',
     skinType: 'black-widow',
     power: 'laser',
-    gx: 6, gy: 10,
-    targetGx: 6, targetGy: 10,
+    gx: 8, gy: 11,
+    targetGx: 8, targetGy: 11,
     walkTimer: 0,
     isWalking: false,
     speed: 0.085,
@@ -351,70 +371,104 @@ document.addEventListener('DOMContentLoaded', () => {
   initWebSocket();
   initWeatherParticles();
 
-  // Opening dramatic line
   setTimeout(() => {
-    showCosmicSpeechBubble('tony-stark', 'Welcome to the Minecraft Avengers World! Taj Mahal & Monuments loaded.');
+    showCosmicSpeechBubble('tony-stark', '100% Edge-to-Edge Minecraft World online! Drag to pan, scroll to zoom.');
   }, 1000);
 
-  // Periodic autonomous movement & DAG pulses
   setInterval(triggerAutonomousHeroMovement, 5000);
   setInterval(triggerDAGSimulationPulse, 6000);
 });
 
-// ── Canvas Setup & Dynamic Viewport Scaling ─────────────────────────
+// ── Canvas Setup & Event Handling (Pan, Zoom & Click) ────────────────
 function initCanvas() {
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
-
-    // Calculate TILE_WIDTH to dynamically FILL the entire viewport
-    TILE_WIDTH = Math.max(38, Math.floor(canvas.width / (GRID_X * 0.92)));
-    TILE_HEIGHT = Math.floor(TILE_WIDTH / 2);
-    BLOCK_DEPTH = Math.floor(TILE_WIDTH * 0.42);
-
     originX = canvas.width / 2;
-    originY = canvas.height * 0.12; // Position 45° grid to fully expand across the view
+    originY = canvas.height * 0.15;
   }
   window.addEventListener('resize', resize);
   resize();
   requestAnimationFrame(simulationLoop);
 
-  // Click on 45° Isometric Grid to Move Selected Hero
-  canvas.addEventListener('click', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
-
-    // Check if clicked directly on a hero
-    let clickedHero = null;
-    for (const hero of Object.values(state.roamingAgents)) {
-      const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy) + 0.5);
-      if (Math.hypot(pos.x - clickX, pos.y - clickY) < 28) {
-        clickedHero = hero;
-        break;
-      }
-    }
-
-    if (clickedHero) {
-      state.selectedAgentId = clickedHero.id;
-      triggerHeroAttack(clickedHero);
-      showCosmicSpeechBubble(clickedHero.id, clickedHero.quote);
-      appendVerboseStream(`● [${clickedHero.callsign}] Selected at grid (${Math.round(clickedHero.gx)}, ${Math.round(clickedHero.gy)}).`);
-    } else {
-      const grid = screenToGrid(clickX, clickY);
-      const hero = state.roamingAgents[state.selectedAgentId] || Object.values(state.roamingAgents)[0];
-      if (hero) {
-        hero.targetGx = grid.gx;
-        hero.targetGy = grid.gy;
-        hero.isWalking = true;
-        const targetScreen = gridToScreen(grid.gx, grid.gy, getElevation(grid.gx, grid.gy));
-        spawnPortalParticles(targetScreen.x, targetScreen.y, hero.themeColor);
-        showCosmicSpeechBubble(hero.id, `Walking to block (${grid.gx}, ${grid.gy})`);
-      }
-    }
+  // Mouse Drag to Pan Camera
+  canvas.addEventListener('mousedown', (e) => {
+    state.camera.isDragging = true;
+    state.camera.dragStartX = e.clientX - state.camera.panX;
+    state.camera.dragStartY = e.clientY - state.camera.panY;
+    state.camera.hasDragged = false;
   });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!state.camera.isDragging) return;
+    const newPanX = e.clientX - state.camera.dragStartX;
+    const newPanY = e.clientY - state.camera.dragStartY;
+    if (Math.hypot(newPanX - state.camera.panX, newPanY - state.camera.panY) > 5) {
+      state.camera.hasDragged = true;
+    }
+    state.camera.panX = newPanX;
+    state.camera.panY = newPanY;
+  });
+
+  window.addEventListener('mouseup', (e) => {
+    if (state.camera.isDragging && !state.camera.hasDragged) {
+      handleCanvasClick(e);
+    }
+    state.camera.isDragging = false;
+  });
+
+  // Wheel to Zoom
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    zoomCamera(zoomFactor);
+  }, { passive: false });
 }
+
+function handleCanvasClick(e) {
+  const rect = canvas.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const clickY = e.clientY - rect.top;
+
+  // Check if clicked on a hero
+  let clickedHero = null;
+  for (const hero of Object.values(state.roamingAgents)) {
+    const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy) + 0.5);
+    if (Math.hypot(pos.x - clickX, pos.y - clickY) < 32 * state.camera.zoom) {
+      clickedHero = hero;
+      break;
+    }
+  }
+
+  if (clickedHero) {
+    state.selectedAgentId = clickedHero.id;
+    triggerHeroAttack(clickedHero);
+    showCosmicSpeechBubble(clickedHero.id, clickedHero.quote);
+    appendVerboseStream(`● [${clickedHero.callsign}] Selected at grid (${Math.round(clickedHero.gx)}, ${Math.round(clickedHero.gy)}).`);
+  } else {
+    const grid = screenToGrid(clickX, clickY);
+    const hero = state.roamingAgents[state.selectedAgentId] || Object.values(state.roamingAgents)[0];
+    if (hero) {
+      hero.targetGx = grid.gx;
+      hero.targetGy = grid.gy;
+      hero.isWalking = true;
+      const targetScreen = gridToScreen(grid.gx, grid.gy, getElevation(grid.gx, grid.gy));
+      spawnPortalParticles(targetScreen.x, targetScreen.y, hero.themeColor);
+      showCosmicSpeechBubble(hero.id, `Walking to block (${grid.gx}, ${grid.gy})`);
+    }
+  }
+}
+
+window.zoomCamera = function (factor) {
+  state.camera.zoom = Math.max(0.6, Math.min(2.5, state.camera.zoom * factor));
+};
+
+window.resetCamera = function () {
+  state.camera.zoom = 1.0;
+  state.camera.panX = 0;
+  state.camera.panY = 0;
+};
 
 function initWeatherParticles() {
   for (let i = 0; i < 45; i++) {
@@ -428,7 +482,7 @@ function initWeatherParticles() {
   }
 }
 
-// ── Master Render Loop ──────────────────────────────────────────────
+// ── Master Render Loop (Edge-to-Edge Screen Filling) ────────────────
 function simulationLoop(time) {
   state.time = time;
   const w = canvas.width;
@@ -436,14 +490,38 @@ function simulationLoop(time) {
 
   ctx.clearRect(0, 0, w, h);
 
-  // 1. Draw Space Gradient & Stars
+  // 1. Draw Space Sky
   drawSpaceSky(w, h, time);
 
-  // 2. Draw Full 45° Isometric Block Terrain
-  drawIsometricTerrain(time);
+  // 2. Compute Viewport Bounds to Tile 100% of Screen Edge-to-Edge
+  const pTL = screenToGrid(-60, -60);
+  const pTR = screenToGrid(w + 60, -60);
+  const pBL = screenToGrid(-60, h + 100);
+  const pBR = screenToGrid(w + 60, h + 100);
 
-  // 3. Draw 3D Voxel Trees (Oak, Spruce & Pink Cherry Blossom)
-  drawVoxelTrees(time);
+  const minGx = Math.min(pTL.gx, pTR.gx, pBL.gx, pBR.gx) - 4;
+  const maxGx = Math.max(pTL.gx, pTR.gx, pBL.gx, pBR.gx) + 4;
+  const minGy = Math.min(pTL.gy, pTR.gy, pBL.gy, pBR.gy) - 4;
+  const maxGy = Math.max(pTL.gy, pTR.gy, pBL.gy, pBR.gy) + 4;
+
+  // 3. Render 100% Screen-Filling Isometric Block Terrain
+  for (let sum = minGx + minGy; sum <= maxGx + maxGy; sum++) {
+    for (let gx = minGx; gx <= maxGx; gx++) {
+      const gy = sum - gx;
+      if (gy < minGy || gy > maxGy) continue;
+
+      const data = getBlockData(gx, gy);
+      for (let z = 0; z <= data.h; z++) {
+        drawIsometricBlock(gx, gy, z, data.type, time);
+      }
+
+      // Draw Tree on this tile if present
+      const treeType = hasTree(gx, gy);
+      if (treeType) {
+        drawVoxelTree(gx, gy, data.h, treeType, time);
+      }
+    }
+  }
 
   // 4. Draw 3D Minecraft Taj Mahal of India & Avengers Monuments
   drawTajMahalAndMonuments(time);
@@ -454,7 +532,7 @@ function simulationLoop(time) {
   // 6. Draw Thunderstorm Lightning Strikes to Thor Altar
   state.thunderboltTimer++;
   if (state.thunderboltTimer % 180 === 0 || Math.random() < 0.012) {
-    const thorAltarPos = gridToScreen(22, 3, 5);
+    const thorAltarPos = gridToScreen(26, 4, 5);
     drawVoxelLightning(thorAltarPos.x, 10, thorAltarPos.x, thorAltarPos.y);
   }
 
@@ -467,7 +545,7 @@ function simulationLoop(time) {
     drawMinecraftIsometricHero(hero, time);
   }
 
-  // 9. Draw Weather Rain & Portal Spawn Particles
+  // 9. Draw Weather Rain & Portal Particles
   drawWeatherAndParticles(w, h);
 
   // 10. Draw Active Attack Beams
@@ -485,36 +563,21 @@ function drawSpaceSky(w, h, time) {
   ctx.fillStyle = skyGrad;
   ctx.fillRect(0, 0, w, h);
 
-  // Stars
   ctx.fillStyle = '#FFFFFF';
   for (let i = 0; i < 50; i++) {
     const sx = (i * 47 + 13) % w;
-    const sy = (i * 29 + 7) % (h * 0.4);
+    const sy = (i * 29 + 7) % (h * 0.45);
     const blink = Math.sin(time * 0.003 + i) > 0 ? 2 : 1;
     ctx.fillRect(sx, sy, blink, blink);
   }
 }
 
-// ── 2. 45° Isometric Block Terrain Renderer ─────────────────────────
-function drawIsometricTerrain(time) {
-  for (let x = 0; x < GRID_X; x++) {
-    for (let y = 0; y < GRID_Y; y++) {
-      const h = heightMap[x][y];
-      const type = blockTypeMap[x][y];
-
-      // Draw vertical column stack
-      for (let z = 0; z <= h; z++) {
-        drawIsometricBlock(x, y, z, type, time);
-      }
-    }
-  }
-}
-
+// ── 2. 3D Isometric Block Renderer ──────────────────────────────────
 function drawIsometricBlock(gx, gy, gz, type, time) {
   const p = gridToScreen(gx, gy, gz);
-  const hw = TILE_WIDTH / 2;
-  const hh = TILE_HEIGHT / 2;
-  const d = BLOCK_DEPTH;
+  const hw = (BASE_TILE_WIDTH * state.camera.zoom) / 2;
+  const hh = (BASE_TILE_HEIGHT * state.camera.zoom) / 2;
+  const d = BASE_BLOCK_DEPTH * state.camera.zoom;
 
   let topColor = '#5B8C32';   // Grass green
   let leftColor = '#866043';  // Dirt left
@@ -525,7 +588,6 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   } else if (type === 'sandstone') {
     topColor = '#FDE68A'; leftColor = '#F59E0B'; rightColor = '#D97706';
   } else if (type === 'water') {
-    const wave = Math.sin(time * 0.006 + gx * 0.5 + gy * 0.5) * 0.15;
     topColor = '#00B4D8'; leftColor = '#0077B6'; rightColor = '#03045E';
   } else if (type === 'iron') {
     topColor = '#E2E8F0'; leftColor = '#CBD5E1'; rightColor = '#94A3B8';
@@ -549,8 +611,8 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   ctx.closePath();
   ctx.fill();
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-  ctx.lineWidth = 0.8;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.lineWidth = 0.6;
   ctx.stroke();
 
   // 2. LEFT FACE (Parallelogram)
@@ -572,194 +634,180 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   ctx.lineTo(p.x, p.y + hh + d);
   ctx.closePath();
   ctx.fill();
-
-  // Ores in stone
-  if (type === 'stone' && (gx * 7 + gy * 13 + gz) % 5 === 0) {
-    const oreColor = (gx + gy) % 2 === 0 ? '#00F0FF' : '#EF4444';
-    ctx.fillStyle = oreColor;
-    ctx.fillRect(p.x - 2, p.y - 2, 4, 3);
-  }
 }
 
 // ── 3. Voxel Trees (Oak, Spruce & Cherry Blossom) ───────────────────
-function drawVoxelTrees(time) {
-  for (const tree of treesMap) {
-    const gz = getElevation(tree.gx, tree.gy);
-    const p = gridToScreen(tree.gx, tree.gy, gz);
+function drawVoxelTree(gx, gy, gz, treeType, time) {
+  const p = gridToScreen(gx, gy, gz);
+  const zoom = state.camera.zoom;
 
-    // Wood Trunk (Brown 3D Voxel Pole)
-    ctx.fillStyle = '#78350F';
-    ctx.fillRect(p.x - 3, p.y - 28, 6, 28);
+  // Wood Trunk
+  ctx.fillStyle = '#78350F';
+  ctx.fillRect(p.x - 3 * zoom, p.y - 28 * zoom, 6 * zoom, 28 * zoom);
 
-    // Leaf Canopy (3D Voxel Cube)
-    let leafTop = '#22C55E';
-    let leafLeft = '#16A34A';
-    let leafRight = '#15803D';
+  // Leaf Canopy
+  let leafTop = '#22C55E';
+  let leafLeft = '#16A34A';
+  let leafRight = '#15803D';
 
-    if (tree.type === 'cherry') {
-      leafTop = '#F472B6'; leafLeft = '#EC4899'; leafRight = '#DB2777'; // Pink Cherry Blossom
-    } else if (tree.type === 'spruce') {
-      leafTop = '#065F46'; leafLeft = '#047857'; leafRight = '#064E3B'; // Dark Pine Spruce
-    }
-
-    // Draw top leaf cluster
-    const lp = { x: p.x, y: p.y - 32 };
-    const lw = TILE_WIDTH * 0.75;
-    const lh = TILE_HEIGHT * 0.75;
-    const ld = 14;
-
-    ctx.fillStyle = leafTop;
-    ctx.beginPath();
-    ctx.moveTo(lp.x, lp.y - lh);
-    ctx.lineTo(lp.x + lw, lp.y);
-    ctx.lineTo(lp.x, lp.y + lh);
-    ctx.lineTo(lp.x - lw, lp.y);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = leafLeft;
-    ctx.beginPath();
-    ctx.moveTo(lp.x - lw, lp.y);
-    ctx.lineTo(lp.x, lp.y + lh);
-    ctx.lineTo(lp.x, lp.y + lh + ld);
-    ctx.lineTo(lp.x - lw, lp.y + ld);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = leafRight;
-    ctx.beginPath();
-    ctx.moveTo(lp.x, lp.y + lh);
-    ctx.lineTo(lp.x + lw, lp.y);
-    ctx.lineTo(lp.x + lw, lp.y + ld);
-    ctx.lineTo(lp.x, lp.y + lh + ld);
-    ctx.closePath();
-    ctx.fill();
+  if (treeType === 'cherry') {
+    leafTop = '#F472B6'; leafLeft = '#EC4899'; leafRight = '#DB2777'; // Pink Cherry Blossom
+  } else if (treeType === 'spruce') {
+    leafTop = '#065F46'; leafLeft = '#047857'; leafRight = '#064E3B'; // Dark Pine Spruce
   }
+
+  const lp = { x: p.x, y: p.y - 32 * zoom };
+  const lw = (BASE_TILE_WIDTH * 0.75) * zoom;
+  const lh = (BASE_TILE_HEIGHT * 0.75) * zoom;
+  const ld = 14 * zoom;
+
+  ctx.fillStyle = leafTop;
+  ctx.beginPath();
+  ctx.moveTo(lp.x, lp.y - lh);
+  ctx.lineTo(lp.x + lw, lp.y);
+  ctx.lineTo(lp.x, lp.y + lh);
+  ctx.lineTo(lp.x - lw, lp.y);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = leafLeft;
+  ctx.beginPath();
+  ctx.moveTo(lp.x - lw, lp.y);
+  ctx.lineTo(lp.x, lp.y + lh);
+  ctx.lineTo(lp.x, lp.y + lh + ld);
+  ctx.lineTo(lp.x - lw, lp.y + ld);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = leafRight;
+  ctx.beginPath();
+  ctx.moveTo(lp.x, lp.y + lh);
+  ctx.lineTo(lp.x + lw, lp.y);
+  ctx.lineTo(lp.x + lw, lp.y + ld);
+  ctx.lineTo(lp.x, lp.y + lh + ld);
+  ctx.closePath();
+  ctx.fill();
 }
 
 // ── 4. 3D Minecraft Taj Mahal of India & Avengers Monuments ─────────
 function drawTajMahalAndMonuments(time) {
+  const zoom = state.camera.zoom;
+
   // ══════════════════════════════════════════════════════════════════
   // 🏛️ TAJ MAHAL OF INDIA (Built 100% in 3D Minecraft Quartz Blocks)
-  // Center grid: (12..16, 12..16)
+  // Center grid: (13..17, 13..17)
   // ══════════════════════════════════════════════════════════════════
   
   // 1. Four Corner Slender Minarets (White Quartz Pillars with Gold Finials)
   const minaretCorners = [
-    { gx: 11, gy: 11 },
-    { gx: 17, gy: 11 },
-    { gx: 11, gy: 17 },
-    { gx: 17, gy: 17 },
+    { gx: 12, gy: 12 },
+    { gx: 18, gy: 12 },
+    { gx: 12, gy: 18 },
+    { gx: 18, gy: 18 },
   ];
 
   for (const mc of minaretCorners) {
     for (let z = 3; z <= 8; z++) {
       drawIsometricBlock(mc.gx, mc.gy, z, 'quartz', time);
     }
-    // Golden Finial on top of each Minaret
     const mp = gridToScreen(mc.gx, mc.gy, 9);
     ctx.fillStyle = '#FFD700';
     ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 8;
-    ctx.fillRect(mp.x - 2, mp.y - 12, 4, 12);
+    ctx.fillRect(mp.x - 2 * zoom, mp.y - 12 * zoom, 4 * zoom, 12 * zoom);
     ctx.shadowBlur = 0;
   }
 
-  // 2. Main Mausoleum Body (White Marble Square with Grand Arched Iwans)
+  // 2. Main Mausoleum Body (White Quartz Cube with Grand Arched Portal)
   for (let z = 3; z <= 6; z++) {
-    for (let x = 12; x <= 16; x++) {
-      for (let y = 12; y <= 16; y++) {
-        // Leave central hollow or arched portal
-        const isPortal = (x === 14 && y === 12 && z <= 5);
+    for (let x = 13; x <= 17; x++) {
+      for (let y = 13; y <= 17; y++) {
+        const isPortal = (x === 15 && y === 13 && z <= 5);
         if (!isPortal) {
           drawIsometricBlock(x, y, z, 'quartz', time);
         } else {
-          // Dark Arched Iwan Portal entrance
           const pp = gridToScreen(x, y, z);
           ctx.fillStyle = '#0F172A';
-          ctx.fillRect(pp.x - 6, pp.y - 10, 12, 16);
+          ctx.fillRect(pp.x - 6 * zoom, pp.y - 10 * zoom, 12 * zoom, 16 * zoom);
         }
       }
     }
   }
 
   // 3. Central Grand Bulbous White Dome with Golden Spire
-  for (let x = 13; x <= 15; x++) {
-    for (let y = 13; y <= 15; y++) {
+  for (let x = 14; x <= 16; x++) {
+    for (let y = 14; y <= 16; y++) {
       drawIsometricBlock(x, y, 7, 'quartz', time);
     }
   }
-  drawIsometricBlock(14, 14, 8, 'quartz', time);
+  drawIsometricBlock(15, 15, 8, 'quartz', time);
 
   // Central Golden Spire on Taj Mahal Dome
-  const domeSpirePos = gridToScreen(14, 14, 9);
+  const domeSpirePos = gridToScreen(15, 15, 9);
   ctx.fillStyle = '#FFD700';
   ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 18;
-  ctx.fillRect(domeSpirePos.x - 3, domeSpirePos.y - 24, 6, 24);
-  // Crescent finial
+  ctx.fillRect(domeSpirePos.x - 3 * zoom, domeSpirePos.y - 24 * zoom, 6 * zoom, 24 * zoom);
   ctx.beginPath();
-  ctx.arc(domeSpirePos.x, domeSpirePos.y - 26, 5, 0, Math.PI * 2);
+  ctx.arc(domeSpirePos.x, domeSpirePos.y - 26 * zoom, 5 * zoom, 0, Math.PI * 2);
   ctx.fill();
   ctx.shadowBlur = 0;
 
   // ══════════════════════════════════════════════════════════════════
-  // 🦾 STARK 3D VOXEL TOWER (Grid 2..4, 2..4)
+  // 🦾 STARK 3D VOXEL TOWER (Grid 3..5, 3..5)
   // ══════════════════════════════════════════════════════════════════
   for (let z = 4; z <= 10; z++) {
-    for (let x = 2; x <= 4; x++) {
-      for (let y = 2; y <= 4; y++) {
+    for (let x = 3; x <= 5; x++) {
+      for (let y = 3; y <= 5; y++) {
         drawIsometricBlock(x, y, z, 'iron', time);
       }
     }
   }
-  const beaconPos = gridToScreen(3, 3, 11);
+  const beaconPos = gridToScreen(4, 4, 11);
   ctx.fillStyle = '#00F0FF';
   ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 22;
-  ctx.fillRect(beaconPos.x - 4, beaconPos.y - 22, 8, 22);
-  // Sky beam
-  const beamGrad = ctx.createLinearGradient(0, beaconPos.y - 22, 0, 0);
+  ctx.fillRect(beaconPos.x - 4 * zoom, beaconPos.y - 22 * zoom, 8 * zoom, 22 * zoom);
+  const beamGrad = ctx.createLinearGradient(0, beaconPos.y - 22 * zoom, 0, 0);
   beamGrad.addColorStop(0, 'rgba(0, 240, 255, 0.9)');
   beamGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
   ctx.fillStyle = beamGrad;
-  ctx.fillRect(beaconPos.x - 6, 0, 12, beaconPos.y - 22);
+  ctx.fillRect(beaconPos.x - 6 * zoom, 0, 12 * zoom, beaconPos.y - 22 * zoom);
   ctx.shadowBlur = 0;
 
   // ══════════════════════════════════════════════════════════════════
-  // 👑 DOCTOR DOOM LATVERIAN 3D CASTLE (Grid 21..24, 21..24)
+  // 👑 DOCTOR DOOM LATVERIAN 3D CASTLE (Grid 25..28, 25..28)
   // ══════════════════════════════════════════════════════════════════
   for (let z = 4; z <= 7; z++) {
-    for (let x = 21; x <= 24; x++) {
-      for (let y = 21; y <= 24; y++) {
+    for (let x = 25; x <= 28; x++) {
+      for (let y = 25; y <= 28; y++) {
         drawIsometricBlock(x, y, z, 'cobblestone', time);
       }
     }
   }
-  // Nether Portal on Castle Front
-  const portalPos = gridToScreen(22, 21, 4);
+  const portalPos = gridToScreen(26, 25, 4);
   ctx.fillStyle = 'rgba(168, 85, 247, 0.9)';
   ctx.shadowColor = '#A855F7'; ctx.shadowBlur = 16;
-  ctx.fillRect(portalPos.x - 12, portalPos.y - 26, 24, 26);
+  ctx.fillRect(portalPos.x - 12 * zoom, portalPos.y - 26 * zoom, 24 * zoom, 26 * zoom);
   ctx.shadowBlur = 0;
 
   // ══════════════════════════════════════════════════════════════════
-  // ⚡ THOR THUNDER ALTARE SPIRE (Grid 21..23, 2..4)
+  // ⚡ THOR THUNDER ALTARE SPIRE (Grid 25..27, 3..5)
   // ══════════════════════════════════════════════════════════════════
   for (let z = 3; z <= 5; z++) {
-    drawIsometricBlock(22, 3, z, 'stone', time);
+    drawIsometricBlock(26, 4, z, 'stone', time);
   }
-  const spirePos = gridToScreen(22, 3, 5);
-  ctx.fillStyle = '#FBBF24'; ctx.fillRect(spirePos.x - 5, spirePos.y - 12, 10, 6);
-  ctx.fillStyle = '#94A3B8'; ctx.fillRect(spirePos.x - 2, spirePos.y - 30, 4, 18);
+  const spirePos = gridToScreen(26, 4, 5);
+  ctx.fillStyle = '#FBBF24'; ctx.fillRect(spirePos.x - 5 * zoom, spirePos.y - 12 * zoom, 10 * zoom, 6 * zoom);
+  ctx.fillStyle = '#94A3B8'; ctx.fillRect(spirePos.x - 2 * zoom, spirePos.y - 30 * zoom, 4 * zoom, 18 * zoom);
 
   // ══════════════════════════════════════════════════════════════════
-  // 🛡️ WAKANDAN VIBRANIUM BUNKER (Grid 2..4, 21..23)
+  // 🛡️ WAKANDAN VIBRANIUM BUNKER (Grid 3..5, 25..27)
   // ══════════════════════════════════════════════════════════════════
   for (let z = 3; z <= 4; z++) {
-    for (let x = 2; x <= 4; x++) {
-      drawIsometricBlock(x, 22, z, 'blackstone', time);
+    for (let x = 3; x <= 5; x++) {
+      drawIsometricBlock(x, 26, z, 'blackstone', time);
     }
   }
-  const bunkerPos = gridToScreen(3, 22, 4);
-  ctx.fillStyle = '#A855F7'; ctx.fillRect(bunkerPos.x - 7, bunkerPos.y - 12, 14, 12);
+  const bunkerPos = gridToScreen(4, 26, 4);
+  ctx.fillStyle = '#A855F7'; ctx.fillRect(bunkerPos.x - 7 * zoom, bunkerPos.y - 12 * zoom, 14 * zoom, 12 * zoom);
 }
 
 // ── 5. Character Physics & Walk Cycles ──────────────────────────────
@@ -786,17 +834,16 @@ function triggerAutonomousHeroMovement() {
   if (heroes.length === 0) return;
   const lucky = heroes[Math.floor(Math.random() * heroes.length)];
 
-  // Pick landmark across the 45° world (including Taj Mahal!)
   const spots = [
-    { gx: 14, gy: 14 }, // Taj Mahal Center
-    { gx: 14, gy: 6 },  // Reflecting Pool Front
-    { gx: 3, gy: 3 },   // Stark Tower
-    { gx: 22, gy: 22 }, // Doom Castle
-    { gx: 22, gy: 3 },  // Thor Altar
-    { gx: 3, gy: 22 },  // Wakanda Bunker
-    { gx: 14, gy: 22 }, // Thanos Altar
-    { gx: 10, gy: 6 },  // Spider-Man Outpost
-    { gx: 7, gy: 14 },  // Gamma Meadow
+    { gx: 15, gy: 15 }, // Taj Mahal Center
+    { gx: 15, gy: 7 },  // Reflecting Pool Front
+    { gx: 4, gy: 4 },   // Stark Tower
+    { gx: 26, gy: 26 }, // Doom Castle
+    { gx: 26, gy: 4 },  // Thor Altar
+    { gx: 4, gy: 26 },  // Wakanda Bunker
+    { gx: 15, gy: 26 }, // Thanos Altar
+    { gx: 10, gy: 7 },  // Spider-Man Outpost
+    { gx: 8, gy: 16 },  // Gamma Meadow
   ];
   const target = spots[Math.floor(Math.random() * spots.length)];
   lucky.targetGx = target.gx;
@@ -811,10 +858,10 @@ function drawMinecraftIsometricHero(hero, time) {
   const isWalking = hero.isWalking;
   const swing = isWalking ? Math.sin(hero.walkTimer) * 0.6 : 0;
   const bobY = isWalking ? Math.abs(Math.sin(hero.walkTimer * 2)) * 2 : 0;
-  const scale = hero.id === 'hulk' ? 1.4 : 1.05;
+  const scale = (hero.id === 'hulk' ? 1.4 : 1.05) * state.camera.zoom;
 
   ctx.save();
-  ctx.translate(pos.x, pos.y - bobY);
+  ctx.translate(pos.x, pos.y - bobY * state.camera.zoom);
   ctx.scale(scale, scale);
 
   // Selection Indicator
@@ -873,7 +920,7 @@ function drawMinecraftIsometricHero(hero, time) {
   ctx.restore();
 
   // 5. MINECRAFT FLOATING NAME TAG
-  renderMinecraftNameTag(hero, pos.x, pos.y - 46 - bobY);
+  renderMinecraftNameTag(hero, pos.x, pos.y - (46 + bobY) * state.camera.zoom);
 }
 
 function getHeadColor(hero) {
@@ -978,19 +1025,19 @@ function renderHeldItem(hero) {
 function renderMinecraftNameTag(hero, x, y) {
   ctx.save();
   const label = hero.callsign;
-  ctx.font = '8px "Press Start 2P", monospace';
+  ctx.font = `${Math.max(7, 8 * state.camera.zoom)}px "Press Start 2P", monospace`;
   const textWidth = ctx.measureText(label).width;
 
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-  ctx.fillRect(x - (textWidth / 2) - 4, y - 9, textWidth + 8, 11);
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+  ctx.fillRect(x - (textWidth / 2) - 4, y - 9, textWidth + 8, 12);
   ctx.strokeStyle = hero.themeColor || '#00F0FF';
   ctx.lineWidth = 1;
-  ctx.strokeRect(x - (textWidth / 2) - 4, y - 9, textWidth + 8, 11);
+  ctx.strokeRect(x - (textWidth / 2) - 4, y - 9, textWidth + 8, 12);
 
   ctx.fillStyle = '#000000';
-  ctx.fillText(label, x - (textWidth / 2) + 1, y - 1);
+  ctx.fillText(label, x - (textWidth / 2) + 1, y);
   ctx.fillStyle = hero.themeColor || '#FFFFFF';
-  ctx.fillText(label, x - (textWidth / 2), y - 2);
+  ctx.fillText(label, x - (textWidth / 2), y - 1);
 
   ctx.restore();
 }
@@ -1003,7 +1050,7 @@ function drawRedstoneDAGMesh(time) {
   const sPos = gridToScreen(stark.gx, stark.gy, getElevation(stark.gx, stark.gy) + 1);
 
   ctx.save();
-  ctx.lineWidth = 1.6;
+  ctx.lineWidth = 1.6 * state.camera.zoom;
 
   for (const [id, agent] of Object.entries(state.roamingAgents)) {
     if (id === 'tony-stark') continue;
@@ -1037,7 +1084,8 @@ function drawRedstoneDAGMesh(time) {
     ctx.fillStyle = pulse.color;
     ctx.shadowColor = pulse.color;
     ctx.shadowBlur = 12;
-    ctx.fillRect(curX - 3, curY - 3, 6, 6);
+    const sz = 6 * state.camera.zoom;
+    ctx.fillRect(curX - sz / 2, curY - sz / 2, sz, sz);
     ctx.restore();
 
     return true;
@@ -1068,15 +1116,15 @@ function drawVoxelLightning(x1, y1, x2, y2) {
   ctx.strokeStyle = '#FFFFFF';
   ctx.shadowColor = '#00F0FF';
   ctx.shadowBlur = 18;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 3 * state.camera.zoom;
 
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   let curX = x1;
   let curY = y1;
   while (curY < y2) {
-    curX += (Math.floor(Math.random() * 3) - 1) * 12;
-    curY += 16;
+    curX += (Math.floor(Math.random() * 3) - 1) * (12 * state.camera.zoom);
+    curY += 16 * state.camera.zoom;
     ctx.lineTo(curX, curY);
   }
   ctx.stroke();
@@ -1107,7 +1155,7 @@ function drawActiveAttacks() {
     ctx.strokeStyle = attack.color;
     ctx.shadowColor = attack.color;
     ctx.shadowBlur = 14;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3 * state.camera.zoom;
 
     ctx.beginPath();
     ctx.moveTo(attack.from.x, attack.from.y);
@@ -1124,7 +1172,7 @@ function spawnPortalParticles(x, y, color) {
       x, y,
       vx: (Math.random() - 0.5) * 4,
       vy: (Math.random() - 0.5) * 4,
-      size: Math.random() * 4 + 2,
+      size: Math.random() * 3 + 2,
       color: color || '#A855F7',
       life: 1.0,
     });
@@ -1132,7 +1180,6 @@ function spawnPortalParticles(x, y, color) {
 }
 
 function drawWeatherAndParticles(w, h) {
-  // Rain
   for (const p of state.particles) {
     p.y += p.speedY;
     if (p.y > h) { p.y = 0; p.x = Math.random() * w; }
@@ -1140,7 +1187,6 @@ function drawWeatherAndParticles(w, h) {
     ctx.fillRect(p.x, p.y, p.size, p.size);
   }
 
-  // Portal particles
   state.portalParticles = state.portalParticles.filter(p => {
     p.x += p.vx;
     p.y += p.vy;
@@ -1149,7 +1195,7 @@ function drawWeatherAndParticles(w, h) {
     ctx.save();
     ctx.globalAlpha = p.life;
     ctx.fillStyle = p.color;
-    ctx.fillRect(p.x, p.y, p.size, p.size);
+    ctx.fillRect(p.x, p.y, p.size * state.camera.zoom, p.size * state.camera.zoom);
     ctx.restore();
 
     return p.life > 0;
@@ -1159,7 +1205,7 @@ function drawWeatherAndParticles(w, h) {
 // ── Multiverse Clash ────────────────────────────────────────────────
 window.triggerMultiverseClash = function () {
   appendVerboseStream(`⚔️ [VOXEL BATTLE CLASH] All Minecraft Avengers unleashing full combat grid!`);
-  showCosmicSpeechBubble('tony-stark', 'Avengers Assemble! Defend the Taj Mahal & Isometric Matrix!');
+  showCosmicSpeechBubble('tony-stark', 'Avengers Assemble! Defend the Taj Mahal & Isometric World!');
 
   for (const hero of Object.values(state.roamingAgents)) {
     triggerHeroAttack(hero);
@@ -1205,13 +1251,12 @@ window.spawnHeroDirect = function (heroId) {
   const hero = MINECRAFT_HEROES[heroId];
   if (!hero) return;
 
-  // Immediate actual spawning in the active world
   state.roamingAgents[heroId] = {
     ...hero,
-    gx: 8 + Math.random() * 10,
-    gy: 8 + Math.random() * 10,
-    targetGx: 8 + Math.random() * 10,
-    targetGy: 8 + Math.random() * 10,
+    gx: 10 + Math.random() * 10,
+    gy: 10 + Math.random() * 10,
+    targetGx: 10 + Math.random() * 10,
+    targetGy: 10 + Math.random() * 10,
     spawned: true,
   };
 
@@ -1248,8 +1293,8 @@ window.submitCustomHero = async function () {
   }
 
   const heroId = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  const customGx = 10 + Math.random() * 6;
-  const customGy = 10 + Math.random() * 6;
+  const customGx = 12 + Math.random() * 6;
+  const customGy = 12 + Math.random() * 6;
 
   const newHero = {
     id: heroId,
@@ -1311,7 +1356,7 @@ function showCosmicSpeechBubble(entityId, text, durationMs = 6000) {
 
   const pos = gridToScreen(entity.gx, entity.gy, getElevation(entity.gx, entity.gy));
   bubble.style.left = `${pos.x}px`;
-  bubble.style.top = `${pos.y - 48}px`;
+  bubble.style.top = `${pos.y - 48 * state.camera.zoom}px`;
 
   bubble.innerHTML = `
     <span class="bubble-speaker">[${entity.callsign}]</span>
@@ -1471,7 +1516,7 @@ async function dispatchMasterMission() {
 
   quantumPromptInput.value = '';
   appendVerboseStream(`● [USER DIRECTIVE] ${prompt}`);
-  appendVerboseStream(`● [TONY STARK] Deconstructing directive across the 45° isometric world...`);
+  appendVerboseStream(`● [TONY STARK] Deconstructing directive across the 100% edge-to-edge Minecraft world...`);
 
   showCosmicSpeechBubble('tony-stark', `Analyzing directive: "${prompt.slice(0, 35)}..."`);
   triggerDAGSimulationPulse();
@@ -1507,7 +1552,7 @@ function initWebSocket() {
   state.ws = new WebSocket(wsUrl);
 
   state.ws.onopen = () => {
-    console.log('⚡ Connected to Stark 45° Isometric Comms');
+    console.log('⚡ Connected to Stark 100% Edge-to-Edge Minecraft Comms');
   };
 
   state.ws.onmessage = (event) => {
@@ -1529,8 +1574,8 @@ function initWebSocket() {
         const heroId = msg.data?.assignedHero;
         const hero = state.roamingAgents[heroId];
         if (hero) {
-          hero.targetGx = 3 + (Math.random() - 0.5) * 2;
-          hero.targetGy = 3 + (Math.random() - 0.5) * 2;
+          hero.targetGx = 4 + (Math.random() - 0.5) * 2;
+          hero.targetGy = 4 + (Math.random() - 0.5) * 2;
           hero.isWalking = true;
           const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy));
           spawnPortalParticles(pos.x, pos.y, hero.themeColor);
