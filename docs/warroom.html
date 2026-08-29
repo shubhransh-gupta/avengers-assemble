@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SCAVENGERS // 100% 3D Minecraft Avengers World · Diamond Swords & Crafting · Powered by Shubhransh Gupta</title>
+  <title>SCAVENGERS // 100% 3D Minecraft Avengers World · Powered by Shubhransh Gupta</title>
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23060210' stroke='%2300F0FF' stroke-width='4'/><text x='50' y='65' font-size='42' font-family='monospace' font-weight='900' fill='%2300F0FF' text-anchor='middle'>A</text></svg>" />
 
@@ -20,25 +20,48 @@
         <!-- Pure Edge-to-Edge Isometric Canvas -->
         <canvas id="minecraftCanvas"></canvas>
 
-        <!-- Top Arcade HUD Badges -->
+        <!-- Top-Left Clean Arcade HUD Badge -->
         <div class="valley-top-hud">
           <div class="hud-pill">
             <span class="pill-glow-dot diamond"></span>
-            <span class="pill-txt" id="incursionStatusPill">🕹️ 3D MINECRAFT WORLD // DRAG TO PAN &bull; CLICK TO MOVE</span>
+            <span class="pill-txt">3D MINECRAFT // DRAG TO PAN &bull; SCROLL TO ZOOM</span>
           </div>
           <div class="hud-pill">
             <span class="pill-glow-dot cyan"></span>
-            <span class="pill-txt" id="arcReactorGridPill">⚡ REDSTONE REPEATERS: 100%</span>
+            <span class="pill-txt">⚡ REDSTONE: 100%</span>
           </div>
         </div>
 
-        <!-- Floating Valley Action Toolbar (Top Right) -->
+        <!-- Top-Right Action Toolbar (Clean & Compact) -->
         <div class="valley-actions-toolbar">
-          <button class="valley-action-pill-btn sword" onclick="spawnDiamondSwordPedestal()">🗡️ Spawn Diamond Sword</button>
-          <button class="valley-action-pill-btn" onclick="triggerDAGSimulationPulse()">⚡ Redstone DAG</button>
-          <button class="valley-action-pill-btn" onclick="openSpawnModal()">➕ Spawn Hero</button>
-          <button class="valley-action-pill-btn" onclick="openCustomHeroModal()">🛠️ Custom Hero</button>
+          <button class="valley-action-pill-btn sword" onclick="spawnDiamondSwordPedestal()">🗡️ Diamond Sword</button>
           <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Voxel Battle</button>
+          <button class="ellipsis-menu-btn" id="ellipsisMenuBtn" onclick="toggleEllipsisMenu()" title="More Simulation Actions">•••</button>
+        </div>
+
+        <!-- Ellipsis Dropdown Overlay Menu -->
+        <div class="ellipsis-dropdown-overlay" id="ellipsisDropdownMenu">
+          <div class="ellipsis-menu-item" onclick="openSpawnModal(); closeEllipsisMenu();">
+            <span>👥</span> Spawn & Despawn Roster
+          </div>
+          <div class="ellipsis-menu-item" onclick="openCustomHeroModal(); closeEllipsisMenu();">
+            <span>🛠️</span> Forge Custom Hero
+          </div>
+          <div class="ellipsis-menu-item" onclick="triggerDAGSimulationPulse(); closeEllipsisMenu();">
+            <span>⚡</span> Redstone DAG Pulse
+          </div>
+          <div class="ellipsis-menu-item" onclick="spawnDiamondSwordPedestal(); closeEllipsisMenu();">
+            <span>🗡️</span> Spawn Diamond Sword
+          </div>
+          <div class="ellipsis-menu-item" onclick="triggerMultiverseClash(); closeEllipsisMenu();">
+            <span>⚔️</span> Unleash Multiverse Clash
+          </div>
+          <div class="ellipsis-menu-item" onclick="resetCamera(); closeEllipsisMenu();">
+            <span>⟲</span> Reset Camera View
+          </div>
+          <div class="ellipsis-menu-item" onclick="clearTerminal(); closeEllipsisMenu();">
+            <span>🧹</span> Clear Terminal
+          </div>
         </div>
 
         <!-- Minecraft Hotbar (Bottom Center) -->
@@ -88,7 +111,9 @@
         <div class="stream-mode-selector">
           <div class="segmented-toggle">
             <button class="toggle-segment active" id="btnModeVerbose" onclick="setConsoleMode('verbose')">⚡ VERBOSE STREAM</button>
-            <button class="toggle-segment" id="btnModeResult" onclick="setConsoleMode('result')">🏆 RESULT ONLY</button>
+            <button class="toggle-segment" id="btnModeResult" onclick="setConsoleMode('result')">
+              🏆 RESULT ONLY <span class="result-badge-ready" id="resultBadgeReady"></span>
+            </button>
           </div>
           <div class="mode-description" id="modeDescriptionLabel">Real-time inter-agent thoughts & DAG directives</div>
         </div>
@@ -98,14 +123,14 @@
           
           <!-- View 1: Verbose Thought Stream -->
           <div class="verbose-stream-feed" id="verboseStreamFeed">
-            <div class="stream-entry"><span class="stream-bullet" style="color:#4AEDD9;">●</span> <span class="stream-hero-tag" style="color:#4AEDD9;">[MINECRAFT WORLD]</span> 3D Minecraft landscape rendered. Crafting tables, furnaces, lanterns, and Diamond Swords spawned.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#4AEDD9;">●</span> <span class="stream-hero-tag" style="color:#4AEDD9;">[MINECRAFT WORLD]</span> 3D Minecraft landscape rendered. Multi-block trees, Valyrian lava lake, and Diamond Swords active.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#00F0FF;">●</span> <span class="stream-hero-tag" style="color:#00F0FF;">[TONY STARK]</span> Edge-to-edge 3D Minecraft world generated. Redstone repeaters active.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#10B981;">●</span> <span class="stream-hero-tag" style="color:#10B981;">[DOCTOR DOOM]</span> Latverian 3D Castle standing by. Nether portal matrix active.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#10B981;">●</span> <span class="stream-hero-tag" style="color:#10B981;">[DOCTOR DOOM]</span> Valyrian Lava Keep online. Roaring dragonfire braziers burning.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#00D5E8;">●</span> <span class="stream-hero-tag" style="color:#00D5E8;">[THOR]</span> Thunderstorm vortex summoned! Mjolnir lightning forged Swift packages!</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#FFC83B;">●</span> <span class="stream-hero-tag" style="color:#FFC83B;">[THANOS]</span> 3D Obsidian Altar balanced. Infinity Gauntlet tokens in equilibrium.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#38BDF8;">●</span> <span class="stream-hero-tag" style="color:#38BDF8;">[KANG]</span> Chrono-bridge calculating parallel reality branches across the full world.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#A855F7;">●</span> <span class="stream-hero-tag" style="color:#A855F7;">[DOCTOR STRANGE]</span> Taj Mahal astral nexus synchronized with memory matrix.</div>
-            <div class="stream-entry"><span class="stream-bullet" style="color:#60A5FA;">●</span> <span class="stream-hero-tag" style="color:#60A5FA;">[SPIDER-MAN]</span> Voxel web components & modern frontend UI ready to deploy.</div>
+            <div class="stream-entry"><span class="stream-bullet" style="color:#EF4444;">●</span> <span class="stream-hero-tag" style="color:#EF4444;">[SPIDER-MAN]</span> Web nets spun across the forest canopy! Frontend architecture ready.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#22C55E;">●</span> <span class="stream-hero-tag" style="color:#22C55E;">[HULK]</span> HULK SMASH 3D VOXEL BLOCKS AND MINE DIAMOND ORES!</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#C084FC;">●</span> <span class="stream-hero-tag" style="color:#C084FC;">[BLACK WIDOW]</span> Perimeter secure. API bearer tokens sanitized in enclave.</div>
             <div class="stream-entry"><span class="stream-bullet" style="color:#3B82F6;">●</span> <span class="stream-hero-tag" style="color:#3B82F6;">[CAPTAIN AMERICA]</span> Vibranium standards inspection ready for battle.</div>
@@ -116,7 +141,7 @@
             <div class="deliverable-hero-card" id="emptyResultCard">
               <h2>🏆 Mission Deliverables & Generated Code</h2>
               <p style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-secondary); line-height:1.6;">
-                No mission active. Enter your objective below in the Quantum Console to generate full source code files, package manifests, and runnable project folders directly on your computer.
+                No mission active. Enter your objective below in the Quantum Console to generate complete, runnable source code packages directly on your disk.
               </p>
             </div>
           </div>
@@ -155,19 +180,19 @@
 
   </div>
 
-  <!-- ── MODAL 1: Spawn Character Roster Modal ────────────────── -->
+  <!-- ── MODAL 1: Spawn & Despawn Character Roster Modal ────────── -->
   <div class="battleworld-modal-backdrop" id="spawnRosterModal">
     <div class="battleworld-modal">
       <div class="modal-header">
-        <div class="modal-title">⚡ SPAWN VOXEL HERO INTO MINECRAFT WORLD</div>
+        <div class="modal-title">👥 MULTIVERSE ROSTER // SPAWN & DESPAWN</div>
         <button class="modal-close-btn" onclick="closeModals()">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-family:var(--font-arcade); font-size:10px; color:var(--ink-secondary);">
-          Select a Marvel Hero or Villain to materialize into the 3D Minecraft world:
+          Spawn heroes to defend the world or despawn idle agents. (Agents active on tasks cannot be despawned).
         </p>
         <div class="spawn-roster-grid" id="spawnRosterGrid">
-          <!-- Populated dynamically -->
+          <!-- Populated dynamically with Spawn / Despawn buttons -->
         </div>
       </div>
     </div>

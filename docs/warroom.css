@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS // 100% EDGE-TO-EDGE 3D MINECRAFT SIMULATION
-   CRAFTING, ENCHANTING, DIAMOND SWORDS & AUTHENTIC PIXEL TEXTURES
+   SCAVENGERS // 100% 3D MINECRAFT AVENGERS SIMULATION ENGINE
+   CLEAN TOPBAR, ELLIPSIS OVERLAY MENU, SPAWN/DESPAWN & RESULT VIEW
    ══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -70,7 +70,7 @@ html, body {
   border: 3px solid #381A6E;
 }
 
-/* ── Split Stage (Left Edge-to-Edge Canvas + Right Command Console) ── */
+/* ── Split Stage ── */
 .battleworld-split {
   display: flex;
   flex: 1;
@@ -99,12 +99,13 @@ html, body {
   z-index: 5;
 }
 
-/* Floating Arcade HUD Badges */
+/* ── Clean Top Navigation Bar ──────────────────────────────── */
 .valley-top-hud {
   position: absolute;
-  top: 12px;
+  top: 10px;
   left: 12px;
   display: flex;
+  align-items: center;
   gap: 8px;
   z-index: 20;
   pointer-events: none;
@@ -119,6 +120,7 @@ html, body {
   border-radius: 6px;
   padding: 6px 12px;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
 }
 
 .pill-glow-dot {
@@ -126,24 +128,24 @@ html, body {
   height: 8px;
 }
 .pill-glow-dot.cyan { background: var(--arc-cyan); box-shadow: 0 0 8px var(--arc-cyan); }
-.pill-glow-dot.gold { background: var(--thanos-gold); box-shadow: 0 0 8px var(--thanos-gold); }
 .pill-glow-dot.diamond { background: var(--diamond-cyan); box-shadow: 0 0 8px var(--diamond-cyan); }
 
 .pill-txt {
   font-family: var(--font-arcade);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
   color: var(--ink);
 }
 
-/* Floating Valley Action Toolbar (Top Right) */
+/* ── Top-Right Action Toolbar ──────────────────────────────── */
 .valley-actions-toolbar {
   position: absolute;
-  top: 12px;
+  top: 10px;
   right: 12px;
   display: flex;
-  gap: 8px;
-  z-index: 20;
+  align-items: center;
+  gap: 6px;
+  z-index: 25;
 }
 
 .valley-action-pill-btn {
@@ -152,12 +154,16 @@ html, body {
   border-radius: 6px;
   padding: 6px 12px;
   font-family: var(--font-arcade);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
   color: var(--ink);
   cursor: pointer;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.7);
   transition: all 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 .valley-action-pill-btn:hover {
   background: var(--bg-card-hover);
@@ -175,10 +181,74 @@ html, body {
   border-color: #EF4444;
 }
 
-/* Minecraft Hotbar (Bottom Center of Viewport) */
+/* Ellipsis Button (•••) */
+.ellipsis-menu-btn {
+  width: 34px;
+  height: 32px;
+  background: rgba(22, 10, 52, 0.96);
+  border: 2px solid var(--border-bright);
+  border-radius: 6px;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--arc-cyan);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.7);
+  transition: all 0.15s ease;
+}
+.ellipsis-menu-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--arc-cyan);
+  box-shadow: 0 0 10px var(--arc-glow);
+}
+
+/* ── Ellipsis Overlay Dropdown Menu ────────────────────────── */
+.ellipsis-dropdown-overlay {
+  position: absolute;
+  top: 48px;
+  right: 12px;
+  background: rgba(14, 6, 34, 0.98);
+  border: 2px solid var(--border-bright);
+  border-radius: 8px;
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  width: 220px;
+  z-index: 50;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9), 0 0 18px rgba(0, 240, 255, 0.3);
+  animation: popUp 0.15s ease;
+}
+
+.ellipsis-menu-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: var(--font-arcade);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.12s ease;
+}
+.ellipsis-menu-item:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--arc-cyan);
+  color: var(--arc-cyan);
+  transform: translateX(3px);
+}
+
+/* ── Minecraft Hotbar ──────────────────────────────────────── */
 .minecraft-hotbar {
   position: absolute;
-  bottom: 12px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -192,15 +262,15 @@ html, body {
 }
 
 .hotbar-slot {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   background: #090318;
   border: 2px solid #2F175A;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   position: relative;
   transition: all 0.12s ease;
@@ -219,10 +289,10 @@ html, body {
   color: #FFFFFF;
 }
 
-/* Camera Zoom / Pan Controls (Bottom Left of Canvas) */
+/* Camera Zoom / Pan Controls */
 .canvas-camera-controls {
   position: absolute;
-  bottom: 12px;
+  bottom: 10px;
   left: 12px;
   display: flex;
   gap: 6px;
@@ -230,13 +300,13 @@ html, body {
 }
 
 .camera-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   background: rgba(19, 9, 44, 0.94);
   border: 2px solid var(--border-bright);
   border-radius: 6px;
   font-family: var(--font-arcade);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   color: var(--arc-cyan);
   cursor: pointer;
@@ -297,7 +367,6 @@ html, body {
   height: 100%;
 }
 
-/* Header */
 .console-header {
   display: flex;
   align-items: center;
@@ -354,7 +423,6 @@ html, body {
   margin-top: 3px;
 }
 
-/* Header Action Buttons */
 .console-hdr-actions { display: flex; gap: 6px; }
 .hdr-action-btn {
   background: var(--bg-card);
@@ -381,7 +449,7 @@ html, body {
   box-shadow: 0 0 10px var(--arc-glow);
 }
 
-/* Stream Mode Toggle (VERBOSE vs RESULT) */
+/* Stream Mode Toggle */
 .stream-mode-selector {
   display: flex;
   align-items: center;
@@ -411,6 +479,7 @@ html, body {
   color: var(--ink-muted);
   cursor: pointer;
   transition: all 0.12s ease;
+  position: relative;
 }
 
 .toggle-segment:hover { color: var(--ink); }
@@ -420,13 +489,25 @@ html, body {
   box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
 }
 
+.result-badge-ready {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #10B981;
+  color: #030108;
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  display: none;
+}
+
 .mode-description {
   font-family: var(--font-arcade);
   font-size: 9.5px;
   color: var(--ink-muted);
 }
 
-/* ── Console Output Feeds ──────────────────────────────────── */
+/* ── Console Body Feeds ────────────────────────────────────── */
 .console-body {
   flex: 1;
   min-height: 0;
@@ -435,7 +516,6 @@ html, body {
   flex-direction: column;
 }
 
-/* 1. Verbose Thought Stream */
 .verbose-stream-feed {
   flex: 1;
   min-height: 0;
@@ -468,7 +548,7 @@ html, body {
   letter-spacing: 0.02em;
 }
 
-/* 2. Result View (Clean Deliverable & Workspace Path Only) */
+/* ── Result View (Clean Deliverables & Files) ──────────────── */
 .result-deliverable-view {
   flex: 1;
   min-height: 0;
@@ -476,7 +556,7 @@ html, body {
   padding: 16px;
   display: none;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .deliverable-hero-card {
@@ -728,7 +808,7 @@ html, body {
   border: 3px solid var(--border-bright);
   border-radius: 8px;
   width: 90%;
-  max-width: 580px;
+  max-width: 620px;
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 240, 255, 0.25);
@@ -771,11 +851,12 @@ html, body {
   gap: 14px;
 }
 
+/* Roster Grid with Spawn/Despawn Buttons */
 .spawn-roster-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 10px;
-  max-height: 340px;
+  max-height: 380px;
   overflow-y: auto;
 }
 
@@ -788,14 +869,11 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  cursor: pointer;
   text-align: center;
   transition: all 0.15s ease;
 }
 .roster-spawn-card:hover {
-  border-color: var(--arc-cyan);
   background: var(--bg-card-hover);
-  transform: translateY(-2px);
   box-shadow: 0 0 10px var(--arc-glow);
 }
 
@@ -809,6 +887,42 @@ html, body {
 .roster-avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
 .roster-name { font-family: var(--font-arcade); font-size: 10px; font-weight: 800; color: var(--ink); }
 .roster-callsign { font-family: var(--font-pixel); font-size: 7px; color: var(--arc-cyan); }
+
+.roster-action-btn {
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-family: var(--font-arcade);
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.12s ease;
+}
+.roster-action-btn.spawn {
+  background: #10B981;
+  border: 1px solid #34D399;
+  color: #030108;
+}
+.roster-action-btn.spawn:hover {
+  background: #34D399;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+.roster-action-btn.despawn {
+  background: #EF4444;
+  border: 1px solid #F87171;
+  color: #FFFFFF;
+}
+.roster-action-btn.despawn:hover {
+  background: #DC2626;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+.roster-action-btn.locked {
+  background: #334155;
+  border: 1px solid #475569;
+  color: #94A3B8;
+  cursor: not-allowed;
+}
 
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-label {
