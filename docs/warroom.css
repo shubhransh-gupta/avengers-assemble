@@ -512,9 +512,10 @@ html, body {
 /* 3-Mode Stream Selector */
 .stream-mode-selector {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 18px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 10px 16px;
   background: #F8FAFC;
   border-bottom: 1px solid var(--border);
 }
@@ -525,6 +526,7 @@ html, body {
   border-radius: 7px;
   padding: 2px;
   gap: 2px;
+  align-self: flex-start;
 }
 
 .toggle-segment {
@@ -562,10 +564,14 @@ html, body {
 .mode-description {
   font-family: var(--font-body);
   font-size: 11px;
-  color: var(--ink-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color: var(--ink-secondary);
+  line-height: 1.45;
+  white-space: normal;
+  word-break: break-word;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
 }
 
 /* ── Console Body Feeds ────────────────────────────────────── */
