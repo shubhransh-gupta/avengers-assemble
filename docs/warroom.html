@@ -24,14 +24,14 @@
         <!-- High-Resolution Cinematic Valley Backdrop -->
         <img src="./assets/battleworld_valley.jpg" alt="Battleworld Incursions Valley" class="valley-backdrop-image" />
         
-        <!-- Canvas for Roaming Characters, Combat Lasers, Lightning & Effects -->
-        <canvas id="battleworldCanvas"></canvas>
+        <!-- Canvas for Dynamic Incursion Lightning, Lake Waves & Respawn Beams -->
+        <canvas id="valleyEffectsCanvas"></canvas>
 
         <!-- Top HUD Badges -->
         <div class="valley-top-hud">
           <div class="hud-pill">
             <span class="pill-glow-dot cyan"></span>
-            <span class="pill-txt" id="incursionStatusPill">⚡ BATTLEWORLD // MULTIVERSE INCURSIONS ACTIVE</span>
+            <span class="pill-txt" id="incursionStatusPill">⚡ BATTLEWORLD // 9 MEANINGFUL CHAMBERS ONLINE</span>
           </div>
           <div class="hud-pill">
             <span class="pill-glow-dot gold"></span>
@@ -44,6 +44,11 @@
           <button class="valley-action-pill-btn" onclick="openSpawnModal()">➕ Spawn Agent</button>
           <button class="valley-action-pill-btn" onclick="openCustomHeroModal()">🛠️ Custom Agent</button>
           <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Multiverse Clash</button>
+        </div>
+
+        <!-- Meaningful Multiverse Chambers Layer -->
+        <div class="valley-chambers-layer" id="chambersLayer">
+          <!-- Dynamically populated with high-tech chambers -->
         </div>
 
         <!-- Speech Bubbles Layer -->
@@ -148,7 +153,7 @@
       </div>
       <div class="modal-body">
         <p style="font-family:var(--font-mono); font-size:11px; color:var(--ink-secondary);">
-          Select a Marvel Hero or Villain to spawn directly onto the Battleworld landscape:
+          Select a Marvel Hero or Villain to spawn directly into their designated chamber:
         </p>
         <div class="spawn-roster-grid" id="spawnRosterGrid">
           <!-- Populated dynamically -->
