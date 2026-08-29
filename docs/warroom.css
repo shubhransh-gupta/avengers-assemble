@@ -103,36 +103,39 @@ html, body {
   z-index: 5;
 }
 
-/* ── Unified Top Navigation Bar (Clean Architecture) ────────── */
+/* ── Unified Top Navigation Bar (Clean Architecture & Viewport Bound) ── */
 .valley-unified-top-bar {
   position: absolute;
-  top: 12px;
-  left: 14px;
-  right: 14px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  width: calc(100% - 20px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   z-index: 25;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .top-bar-left, .top-bar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   pointer-events: auto;
+  flex-shrink: 0;
 }
 
 .hud-pill {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 12px;
+  border-radius: 7px;
+  padding: 5px 10px;
   box-shadow: var(--shadow-sm);
   white-space: nowrap;
 }

@@ -87,6 +87,18 @@ export function createMissionControlServer(orchestrator: StarkOrchestrator, conf
 
   // Serve static UI from docs/
   const publicDir = path.resolve(__dirname, '../../../docs');
+
+  // Root on local server opens warroom.html (Local Mission Control)
+  app.get('/', (req, res) => {
+    res.sendFile(path.resolve(publicDir, 'warroom.html'));
+  });
+  app.get('/warroom', (req, res) => {
+    res.sendFile(path.resolve(publicDir, 'warroom.html'));
+  });
+  app.get('/marketing', (req, res) => {
+    res.sendFile(path.resolve(publicDir, 'index.html'));
+  });
+
   app.use(express.static(publicDir));
   app.use('/assets', express.static(path.resolve(publicDir, 'assets')));
 
