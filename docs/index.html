@@ -9,7 +9,7 @@
 
   <link rel="stylesheet" href="./warroom.css" />
 </head>
-<body>
+<body class="theme-daylight">
   <div class="battleworld-layout">
     
     <!-- TOP STAGE (100% Edge-to-Edge 3D Minecraft Canvas + Stark Command Console) -->
@@ -31,6 +31,9 @@
               <span class="pill-glow-dot cyan"></span>
               <span class="pill-txt" id="rosterCountBadge">👥 TEAM: 5/10 ACTIVE</span>
             </div>
+            <div class="hud-pill clickable" onclick="openSettingsModal('theme')" title="Change Theme (Daylight / Light / Dark)">
+              <span class="pill-txt" id="currentThemeBadge">☀️ DAYLIGHT</span>
+            </div>
             <div class="hud-pill" id="buildModeIndicator" style="display:none;">
               <span class="pill-glow-dot build"></span>
               <span class="pill-txt" style="color:#D97706; font-weight:700;">🔨 BUILD MODE</span>
@@ -41,12 +44,15 @@
             <button class="valley-action-pill-btn" id="buildModeToggleBtn" onclick="toggleBuildMode()">🔨 Build Mode</button>
             <button class="valley-action-pill-btn sword" onclick="spawnDiamondSwordPedestal()">🗡️ Diamond Sword</button>
             <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Voxel Battle</button>
-            <button class="ellipsis-menu-btn" id="ellipsisMenuBtn" onclick="toggleEllipsisMenu()" title="More Simulation Actions">•••</button>
+            <button class="ellipsis-menu-btn" id="ellipsisMenuBtn" onclick="toggleEllipsisMenu()" title="Settings & Simulation Actions">•••</button>
           </div>
         </div>
 
-        <!-- Ellipsis Dropdown Overlay Menu -->
+        <!-- Ellipsis Dropdown Overlay Menu (Clean & Organized) -->
         <div class="ellipsis-dropdown-overlay" id="ellipsisDropdownMenu">
+          <div class="ellipsis-menu-item" onclick="openSettingsModal(); closeEllipsisMenu();" style="font-weight:700; color:var(--primary-blue);">
+            <span>⚙️</span> Settings &amp; API Keys
+          </div>
           <div class="ellipsis-menu-item" onclick="openWorkspaceExplorer(); closeEllipsisMenu();">
             <span>📁</span> Open Workspace Explorer
           </div>
@@ -117,12 +123,12 @@
             <div class="stark-reactor-avatar">🦾</div>
             <div class="stark-badge-text">
               <div class="stark-badge-title">TONY STARK <span class="stark-tag-god">GOD ORCHESTRATOR</span></div>
-              <div class="stark-badge-sub"><span class="pill-glow-dot cyan" style="width:6px;height:6px;"></span> Stark Voxel Spire Online &bull; Player 1 Ready</div>
+              <div class="stark-badge-sub"><span class="pill-glow-dot cyan" style="width:6px;height:6px;"></span> Model: <strong id="headerActiveModelText">gemini-3.5-flash-lite</strong> &bull; Player 1 Ready</div>
             </div>
           </div>
           <div class="console-hdr-actions">
             <button class="hdr-action-btn" id="workspaceBtn" onclick="openWorkspaceExplorer()" title="Open Interactive Project Workspace Explorer">📁 Workspace</button>
-            <button class="hdr-action-btn active" id="incursionsBtn">⚡ Incursions</button>
+            <button class="hdr-action-btn" id="settingsBtn" onclick="openSettingsModal()" title="Settings, API Keys & Themes">⚙️ Settings</button>
             <button class="hdr-action-btn" id="reloadBtn" onclick="window.location.reload()">🔄 Reset</button>
           </div>
         </div>
@@ -196,7 +202,175 @@
 
   </div>
 
-  <!-- ── MODAL 1: Interactive Workspace File Explorer Modal ─────── -->
+  <!-- ── MODAL 1: Comprehensive Settings & Configuration Modal ── -->
+  <div class="battleworld-modal-backdrop" id="settingsModal">
+    <div class="battleworld-modal" style="max-width:720px;">
+      <div class="modal-header">
+        <div class="modal-title">⚙️ STARK SYSTEM SETTINGS &amp; CONFIGURATION</div>
+        <button class="modal-close-btn" onclick="closeModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Settings Tabs -->
+        <div class="settings-nav-tabs">
+          <button class="settings-tab-btn active" id="tabBtnTheme" onclick="switchSettingsTab('theme')">🎨 Themes &amp; Look</button>
+          <button class="settings-tab-btn" id="tabBtnKeys" onclick="switchSettingsTab('keys')">🔑 AI Keys &amp; Models</button>
+          <button class="settings-tab-btn" id="tabBtnSkills" onclick="switchSettingsTab('skills')">🧠 Personal Skills</button>
+          <button class="settings-tab-btn" id="tabBtnSim" onclick="switchSettingsTab('sim')">🕹️ Simulation</button>
+        </div>
+
+        <!-- Tab 1: Themes & Look -->
+        <div class="settings-tab-panel active" id="tabPanelTheme">
+          <p style="font-family:var(--font-body); font-size:12px; color:var(--ink-muted);">
+            Choose your preferred workspace aesthetic. Persists across browser refreshes.
+          </p>
+          <div class="theme-selector-grid">
+            <div class="theme-preview-card active" id="themeCardDaylight" onclick="applyAppTheme('daylight')">
+              <div class="theme-card-icon">☀️</div>
+              <div class="theme-card-name">Daylight Theme</div>
+              <div class="theme-card-desc">Ultra-bright, clean white daylight aesthetic with sky-blue accents.</div>
+            </div>
+            <div class="theme-preview-card" id="themeCardLight" onclick="applyAppTheme('light')">
+              <div class="theme-card-icon">⛅</div>
+              <div class="theme-card-name">Modern Slate</div>
+              <div class="theme-card-desc">Linear-style soft neutral slate palette with subtle shadows.</div>
+            </div>
+            <div class="theme-preview-card" id="themeCardDark" onclick="applyAppTheme('dark')">
+              <div class="theme-card-icon">🌙</div>
+              <div class="theme-card-name">Dark Stark HUD</div>
+              <div class="theme-card-desc">Deep space obsidian with neon Arc Reactor glow and dark card panels.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: AI Keys & Models -->
+        <div class="settings-tab-panel" id="tabPanelKeys">
+          <p style="font-family:var(--font-body); font-size:12px; color:var(--ink-muted);">
+            Inspect live connection health, update API keys, and switch AI models on the fly.
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <!-- Active Model Selection -->
+            <div class="form-group">
+              <label class="form-label">Active AI Model (Orchestrator &amp; Mesh)</label>
+              <select id="settingsActiveModelSelect" class="form-select">
+                <option value="gemini-3.5-flash-lite">Google Gemini 3.5 Flash Lite (Ultra-Fast)</option>
+                <option value="gemini-3.1-flash-lite">Google Gemini 3.1 Flash Lite</option>
+                <option value="gemini-3.1-pro">Google Gemini 3.1 Pro (Deep Reasoning)</option>
+                <option value="claude-3-7-sonnet">Anthropic Claude 3.7 Sonnet</option>
+                <option value="claude-3-5-sonnet">Anthropic Claude 3.5 Sonnet</option>
+                <option value="gpt-4o">OpenAI GPT-4o</option>
+                <option value="gpt-4o-mini">OpenAI GPT-4o Mini</option>
+                <option value="kimi-k1.5">Kimi Moonshot k1.5</option>
+                <option value="ollama-deepseek">Ollama Local DeepSeek R1</option>
+              </select>
+            </div>
+
+            <!-- Provider 1: Gemini -->
+            <div class="provider-key-card">
+              <div class="provider-card-header">
+                <div class="provider-title-row">
+                  <span>✨</span> Google Gemini API
+                </div>
+                <span class="provider-status-badge live" id="badgeGeminiStatus">● CONNECTED</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <input type="password" id="inputGeminiKey" class="form-input" style="flex:1;" placeholder="Enter GEMINI_API_KEY (leave blank to keep active)" />
+                <button class="console-action-btn" onclick="verifyProviderKey('gemini')">⚡ Test Key</button>
+              </div>
+              <div id="statusResultGemini" style="font-family:var(--font-mono); font-size:10px; color:var(--ink-muted);"></div>
+            </div>
+
+            <!-- Provider 2: Claude -->
+            <div class="provider-key-card">
+              <div class="provider-card-header">
+                <div class="provider-title-row">
+                  <span>🧠</span> Anthropic Claude API
+                </div>
+                <span class="provider-status-badge off" id="badgeClaudeStatus">○ NOT CONFIGURED</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <input type="password" id="inputClaudeKey" class="form-input" style="flex:1;" placeholder="Enter ANTHROPIC_API_KEY" />
+                <button class="console-action-btn" onclick="verifyProviderKey('claude')">⚡ Test Key</button>
+              </div>
+              <div id="statusResultClaude" style="font-family:var(--font-mono); font-size:10px; color:var(--ink-muted);"></div>
+            </div>
+
+            <!-- Provider 3: OpenAI -->
+            <div class="provider-key-card">
+              <div class="provider-card-header">
+                <div class="provider-title-row">
+                  <span>⚡</span> OpenAI API
+                </div>
+                <span class="provider-status-badge off" id="badgeOpenaiStatus">○ NOT CONFIGURED</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <input type="password" id="inputOpenaiKey" class="form-input" style="flex:1;" placeholder="Enter OPENAI_API_KEY" />
+                <button class="console-action-btn" onclick="verifyProviderKey('openai')">⚡ Test Key</button>
+              </div>
+              <div id="statusResultOpenai" style="font-family:var(--font-mono); font-size:10px; color:var(--ink-muted);"></div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+            <button class="dispatch-infinity-btn" onclick="saveApiKeysAndModel()">💾 SAVE &amp; UPDATE CONFIGURATION</button>
+          </div>
+        </div>
+
+        <!-- Tab 3: Custom Personal Skills -->
+        <div class="settings-tab-panel" id="tabPanelSkills">
+          <p style="font-family:var(--font-body); font-size:12px; color:var(--ink-muted);">
+            Load your own personal capabilities, prompt instructions, and tool skills into the Avengers agent harness.
+          </p>
+
+          <!-- List of Personal Skills -->
+          <div class="skills-list-container" id="personalSkillsListContainer">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Add Skill Form -->
+          <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+            <div style="font-family:var(--font-display); font-size:11.5px; font-weight:700; color:var(--ink);">➕ LOAD NEW PERSONAL SKILL</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+              <input type="text" id="newSkillName" class="form-input" placeholder="Skill Name (e.g. Clean Architecture Pro)" />
+              <input type="text" id="newSkillCategory" class="form-input" placeholder="Category (e.g. Architecture, DevOps)" />
+            </div>
+            <textarea id="newSkillPrompt" class="quantum-textarea" rows="2" placeholder="System instructions & capability rules for the agents..."></textarea>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="dispatch-infinity-btn" onclick="submitNewPersonalSkill()">➕ REGISTER SKILL</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Simulation & Controls -->
+        <div class="settings-tab-panel" id="tabPanelSim">
+          <p style="font-family:var(--font-body); font-size:12px; color:var(--ink-muted);">
+            Controls for 3D Minecraft isometric engine, DAG energy pulse, and camera viewport.
+          </p>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="provider-key-card">
+              <div class="provider-title-row">🔨 Minecraft Creative Build Mode</div>
+              <div style="font-size:11px; color:var(--ink-muted);">Place and break blocks on the 3D landscape.</div>
+              <button class="console-action-btn" onclick="toggleBuildMode(); closeModals();">Toggle Build Mode</button>
+            </div>
+            <div class="provider-key-card">
+              <div class="provider-title-row">⟲ Camera Viewport</div>
+              <div style="font-size:11px; color:var(--ink-muted);">Reset camera zoom and pan back to origin.</div>
+              <button class="console-action-btn" onclick="resetCamera(); closeModals();">Reset Camera View</button>
+            </div>
+            <div class="provider-key-card">
+              <div class="provider-title-row">🧹 Terminal History</div>
+              <div style="font-size:11px; color:var(--ink-muted);">Clear the verbose thought feed and reset console.</div>
+              <button class="console-action-btn" onclick="clearTerminal(); closeModals();">Clear Terminal Feed</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL 2: Interactive Workspace File Explorer Modal ─────── -->
   <div class="battleworld-modal-backdrop" id="workspaceExplorerModal">
     <div class="battleworld-modal" style="max-width:820px;">
       <div class="modal-header">
@@ -245,12 +419,12 @@
     </div>
   </div>
 
-  <!-- ── MODAL 2: Voice Comms Recording & Translation Modal ─────── -->
+  <!-- ── MODAL 3: Voice Comms Recording & Translation Modal ─────── -->
   <div class="battleworld-modal-backdrop" id="voiceCommsModal">
     <div class="battleworld-modal" style="max-width:520px;">
       <div class="modal-header">
-        <div class="modal-title">🎙️ JARVIS VOICE COMMS & TRANSLATOR</div>
-        <button class="modal-close-btn" onclick="stopVoiceComms()">&times;</button>
+        <div class="modal-title">🎙️ JARVIS VOICE COMMS &amp; TRANSLATOR</div>
+        <button class="modal-close-btn" onclick="closeModals()">&times;</button>
       </div>
       <div class="modal-body" style="text-align:center; gap:16px;">
         <div style="display:flex; justify-content:center;">
@@ -277,7 +451,7 @@
         </div>
 
         <div style="display:flex; gap:8px; justify-content:flex-end;">
-          <button class="console-action-btn" onclick="stopVoiceComms()">Cancel</button>
+          <button class="console-action-btn" onclick="closeModals()">Cancel</button>
           <button class="console-action-btn" onclick="insertVoiceTranscriptIntoInput()">✏️ Insert into Input</button>
           <button class="dispatch-infinity-btn" onclick="dispatchVoiceDirective()">⚡ DISPATCH TO AVENGERS</button>
         </div>
@@ -285,7 +459,7 @@
     </div>
   </div>
 
-  <!-- ── MODAL 3: Spawn & Despawn Character Roster Modal ────────── -->
+  <!-- ── MODAL 4: Spawn & Despawn Character Roster Modal ────────── -->
   <div class="battleworld-modal-backdrop" id="spawnRosterModal">
     <div class="battleworld-modal">
       <div class="modal-header">
@@ -303,7 +477,7 @@
     </div>
   </div>
 
-  <!-- ── MODAL 4: Create Custom Character Modal ────────────────── -->
+  <!-- ── MODAL 5: Create Custom Character Modal ────────────────── -->
   <div class="battleworld-modal-backdrop" id="customHeroModal">
     <div class="battleworld-modal">
       <div class="modal-header">
