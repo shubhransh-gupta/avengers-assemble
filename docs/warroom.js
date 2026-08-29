@@ -1,6 +1,6 @@
 /**
  * ══════════════════════════════════════════════════════════════════════
- * SCAVENGERS // REAL-TIME MULTIVERSE SIMULATION & DAG MESH ENGINE (docs/warroom.js)
+ * SCAVENGERS // MINECRAFT AVENGERS VOXEL ARCADE ENGINE (docs/warroom.js)
  * ══════════════════════════════════════════════════════════════════════
  */
 
@@ -9,27 +9,28 @@ const state = {
   ws: null,
   consoleMode: 'verbose', // 'verbose' | 'result'
   particles: [],
-  dagPulses: [],       // Packets of energy traveling across DAG links
-  respawnPillars: [],  // Holographic cylinder beams descending into chambers
+  dagPulses: [],       // Blocky redstone energy packets
+  respawnPillars: [],  // Voxel beacon beams
   activeAttacks: [],
   roamingAgents: {},
+  thunderboltTimer: 0,
 };
 
-// ── Complete Photorealistic Marvel Multiverse Catalog ───────────────
+// ── Minecraft Avengers Voxel Strongholds & MCU Heroes Catalog ───────
 const MARVEL_CHAMBERS = {
   'tony-stark': {
     id: 'tony-stark',
     name: 'Tony Stark',
     callsign: 'IRON MAN',
     role: 'God Orchestrator',
-    chamberName: 'Stark Holographic Citadel',
+    chamberName: 'Stark Voxel Tower',
     image: './assets/iron_man.jpg',
     avatar: '🦾',
     themeColor: '#00F0FF',
     glowColor: 'rgba(0, 240, 255, 0.65)',
     power: 'laser',
-    screenPos: { top: '42%', left: '50%' },
-    quote: 'JARVIS, decompose directives across the neural Battleworld mesh.',
+    screenPos: { top: '32%', left: '26%' },
+    quote: 'JARVIS, decompose master prompt into redstone DAG blocks.',
     status: 'ONLINE',
     spawned: true,
   },
@@ -38,31 +39,15 @@ const MARVEL_CHAMBERS = {
     name: 'Doctor Doom',
     callsign: 'DOOM',
     role: 'Latverian AST & Compiler',
-    chamberName: 'Latverian Arcane Sanctum',
+    chamberName: 'Latverian Voxel Castle',
     image: './assets/doctor_doom.jpg',
     avatar: '👑',
     themeColor: '#10B981',
     glowColor: 'rgba(16, 185, 129, 0.65)',
     power: 'runes',
-    screenPos: { top: '58%', left: '82%' },
-    quote: 'Doom commands the syntax trees. Imperfect code shall be banished.',
+    screenPos: { top: '44%', left: '82%' },
+    quote: 'Doom commands the syntax trees. Imperfect code shall be banished to the Nether.',
     status: 'COMPILING',
-    spawned: true,
-  },
-  'kang': {
-    id: 'kang',
-    name: 'Kang the Conqueror',
-    callsign: 'KANG',
-    role: 'Quantum Timeline Branching',
-    chamberName: 'Quantum Chrono-Chamber',
-    image: './assets/kang_conqueror.jpg',
-    avatar: '⏳',
-    themeColor: '#38BDF8',
-    glowColor: 'rgba(56, 189, 248, 0.65)',
-    power: 'chrono',
-    screenPos: { top: '52%', left: '18%' },
-    quote: 'I have simulated 14 billion timelines. Reality-616 targeted.',
-    status: 'BRANCHING',
     spawned: true,
   },
   'thor': {
@@ -70,14 +55,14 @@ const MARVEL_CHAMBERS = {
     name: 'Thor Odinson',
     callsign: 'THOR',
     role: 'DevOps & Package Manifest',
-    chamberName: 'Asgardian Thunder Forge',
+    chamberName: 'Thunderstorm Vortex',
     image: './assets/thor.jpg',
     avatar: '⚡',
     themeColor: '#00D5E8',
     glowColor: 'rgba(0, 213, 232, 0.65)',
     power: 'thunder',
-    screenPos: { top: '25%', left: '86%' },
-    quote: 'By Mjolnir, forged high-voltage Swift packages and CI/CD!',
+    screenPos: { top: '18%', left: '54%' },
+    quote: 'By Mjolnir, summoned thunderstorm CI/CD and Swift packages!',
     status: 'FORGING',
     spawned: true,
   },
@@ -86,15 +71,31 @@ const MARVEL_CHAMBERS = {
     name: 'Thanos',
     callsign: 'MAD TITAN',
     role: 'Power & Rate Balancer',
-    chamberName: 'Titan Gauntlet Sanctuary',
+    chamberName: 'Obsidian Mountain Peak',
     image: './assets/thanos.jpg',
     avatar: '🪐',
     themeColor: '#FFC83B',
     glowColor: 'rgba(255, 200, 59, 0.65)',
     power: 'cosmic',
-    screenPos: { top: '22%', left: '70%' },
+    screenPos: { top: '25%', left: '12%' },
     quote: 'Rate limits, memory, and tokens in perfect equilibrium.',
     status: 'BALANCED',
+    spawned: true,
+  },
+  'kang': {
+    id: 'kang',
+    name: 'Kang the Conqueror',
+    callsign: 'KANG',
+    role: 'Quantum Timeline Branching',
+    chamberName: 'Quantum Chrono-Bridge',
+    image: './assets/kang_conqueror.jpg',
+    avatar: '⏳',
+    themeColor: '#38BDF8',
+    glowColor: 'rgba(56, 189, 248, 0.65)',
+    power: 'chrono',
+    screenPos: { top: '62%', left: '52%' },
+    quote: 'Simulated 14 billion voxel timelines. Reality-616 targeted.',
+    status: 'BRANCHING',
     spawned: true,
   },
   'doctor-strange': {
@@ -102,14 +103,14 @@ const MARVEL_CHAMBERS = {
     name: 'Stephen Strange',
     callsign: 'STRANGE',
     role: 'Temporal Memory',
-    chamberName: 'Kamar-Taj Mystic Nexus',
+    chamberName: 'Mystic End Portal Spire',
     image: './assets/doctor_strange.jpg',
     avatar: '🔮',
     themeColor: '#A855F7',
     glowColor: 'rgba(168, 85, 247, 0.65)',
     power: 'mandala',
-    screenPos: { top: '24%', left: '22%' },
-    quote: 'Temporal snapshots preserved for instant rollback.',
+    screenPos: { top: '28%', left: '92%' },
+    quote: 'Temporal snapshots preserved in the Ender matrix for instant rollback.',
     status: 'SYNCHRONIZING',
     spawned: true,
   },
@@ -118,14 +119,14 @@ const MARVEL_CHAMBERS = {
     name: 'Steve Rogers',
     callsign: 'CAP',
     role: 'Vibranium QA Auditor',
-    chamberName: 'Wakandan Bastion',
+    chamberName: 'Wakandan Outpost House',
     image: './assets/captain_america.jpg',
     avatar: '🛡️',
     themeColor: '#3B82F6',
     glowColor: 'rgba(59, 130, 246, 0.65)',
     power: 'shield',
-    screenPos: { top: '78%', left: '28%' },
-    quote: 'Standards inspection ready. Sound off, strike team.',
+    screenPos: { top: '78%', left: '36%' },
+    quote: 'Standards inspection ready. Sound off, soldiers.',
     status: 'INSPECTING',
     spawned: true,
   },
@@ -134,13 +135,13 @@ const MARVEL_CHAMBERS = {
     name: 'Peter Parker',
     callsign: 'SPIDEY',
     role: 'Frontend UI Architect',
-    chamberName: 'Web Vanguard Hub',
+    chamberName: 'Web Forest Outpost',
     image: './assets/spider_man.jpg',
     avatar: '🕸️',
     themeColor: '#EF4444',
     glowColor: 'rgba(239, 68, 68, 0.65)',
     power: 'web',
-    screenPos: { top: '80%', left: '72%' },
+    screenPos: { top: '82%', left: '78%' },
     quote: 'Spun up reactive components with buttery 60 FPS animations!',
     status: 'RENDER_READY',
     spawned: true,
@@ -150,14 +151,14 @@ const MARVEL_CHAMBERS = {
     name: 'Bruce Banner',
     callsign: 'HULK',
     role: 'Gamma Logic Optimizer',
-    chamberName: 'Gamma Containment Lab',
+    chamberName: 'Emerald Gamma Meadow',
     image: './assets/hulk.jpg',
     avatar: '🟢',
     themeColor: '#22C55E',
     glowColor: 'rgba(34, 197, 94, 0.65)',
     power: 'gamma',
-    screenPos: { top: '76%', left: '50%' },
-    quote: 'HULK SMASH BOTTLENECKS AND REFACTOR WITH GAMMA POWER!',
+    screenPos: { top: '72%', left: '58%' },
+    quote: 'HULK SMASH VOXEL BLOCKS AND REFACTOR FOR MAX PERFORMANCE!',
     status: 'OPTIMIZING',
     spawned: true,
   },
@@ -166,13 +167,13 @@ const MARVEL_CHAMBERS = {
     name: 'Natasha Romanoff',
     callsign: 'WIDOW',
     role: 'Security & CVE Recon',
-    chamberName: 'Red Enclave Stealth Hub',
+    chamberName: 'Redstone Stealth Enclave',
     image: './assets/black_widow.jpg',
     avatar: '🕷️',
     themeColor: '#C084FC',
     glowColor: 'rgba(192, 132, 252, 0.65)',
     power: 'laser',
-    screenPos: { top: '64%', left: '62%' },
+    screenPos: { top: '60%', left: '38%' },
     quote: 'Perimeter secure. API bearer keys sanitized in the enclave.',
     status: 'STANDBY',
     spawned: false,
@@ -208,19 +209,19 @@ document.addEventListener('DOMContentLoaded', () => {
   renderStrongholdDock();
   setupEventListeners();
   initWebSocket();
-  initParticles();
+  initVoxelRainParticles();
 
   // Show opening dramatic line
   setTimeout(() => {
-    showCosmicSpeechBubble('tony-stark', 'Real-time Multiverse Neural DAG mesh online. All 9 sanctums active.');
+    showCosmicSpeechBubble('tony-stark', 'Minecraft Avengers Voxel grid loaded. Ready Player 1.');
   }, 1200);
 
   // Periodic living pulses and random respawn beams
-  setInterval(triggerRandomRespawnSequence, 4000);
-  setInterval(triggerDAGSimulationPulse, 6000);
+  setInterval(triggerRandomRespawnSequence, 4200);
+  setInterval(triggerDAGSimulationPulse, 5500);
 });
 
-// ── Canvas Setup & Simulation Engine Loop ───────────────────────────
+// ── Canvas Setup & Arcade Voxel Loop ────────────────────────────────
 function initCanvas() {
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect();
@@ -232,15 +233,15 @@ function initCanvas() {
   requestAnimationFrame(simulationLoop);
 }
 
-function initParticles() {
-  for (let i = 0; i < 55; i++) {
+function initVoxelRainParticles() {
+  for (let i = 0; i < 60; i++) {
     state.particles.push({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
-      size: Math.random() * 2.5 + 0.5,
-      speedY: Math.random() * 0.4 + 0.1,
-      color: ['#00F0FF', '#FF0055', '#FFC83B', '#10B981', '#A855F7'][Math.floor(Math.random() * 5)],
-      opacity: Math.random() * 0.8 + 0.2,
+      size: Math.random() * 3 + 2,
+      speedY: Math.random() * 1.5 + 0.8,
+      color: ['#00F0FF', '#38BDF8', '#818CF8', '#A855F7', '#10B981'][Math.floor(Math.random() * 5)],
+      opacity: Math.random() * 0.7 + 0.3,
     });
   }
 }
@@ -250,49 +251,49 @@ function simulationLoop(time) {
   const h = canvas.height;
   ctx.clearRect(0, 0, w, h);
 
-  // 1. Floating Cosmic Particles
+  // 1. Pixelated Voxel Rain / Magic Sparks
   for (const p of state.particles) {
-    p.y -= p.speedY;
-    if (p.y < 0) p.y = h;
+    p.y += p.speedY;
+    if (p.y > h) { p.y = 0; p.x = Math.random() * w; }
     ctx.fillStyle = p.color;
     ctx.globalAlpha = p.opacity;
-    ctx.beginPath();
-    ctx.arc(p.x % w, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
+    // Draw pixel rectangle (Voxel block style)
+    ctx.fillRect(p.x % w, p.y, p.size, p.size);
     ctx.globalAlpha = 1.0;
   }
 
-  // 2. Lake Water Shimmer Wave Shader
-  const lakeX = w * 0.50;
-  const lakeY = h * 0.68;
-  const shimmer = ctx.createRadialGradient(lakeX, lakeY, 10, lakeX, lakeY, w * 0.30);
-  shimmer.addColorStop(0, 'rgba(0, 240, 255, 0.16)');
-  shimmer.addColorStop(0.5, 'rgba(168, 85, 247, 0.09)');
+  // 2. Voxel Lake Water Shimmer Waves
+  const lakeX = w * 0.65;
+  const lakeY = h * 0.76;
+  const shimmer = ctx.createRadialGradient(lakeX, lakeY, 10, lakeX, lakeY, w * 0.25);
+  shimmer.addColorStop(0, 'rgba(0, 240, 255, 0.2)');
+  shimmer.addColorStop(0.5, 'rgba(56, 189, 248, 0.1)');
   shimmer.addColorStop(1, 'rgba(0, 0, 0, 0)');
   ctx.fillStyle = shimmer;
-  ctx.fillRect(lakeX - w * 0.30, lakeY - h * 0.16, w * 0.60, h * 0.32);
+  ctx.fillRect(lakeX - w * 0.25, lakeY - h * 0.12, w * 0.50, h * 0.24);
 
-  // 3. Render Neural DAG Inter-Agent Laser Mesh
+  // 3. Render Neural Redstone DAG Links
   renderDAGMeshLinks(w, h, time);
 
-  // 4. Render Active DAG Data Pulses (Traveling Packets)
+  // 4. Render Active DAG Data Pulses (Blocky Packets)
   renderDAGPulses(w, h);
 
-  // 5. Incursion Sky Lightning Branches
-  if (Math.random() < 0.02) {
-    drawLightningBranch(w * (0.2 + Math.random() * 0.6), 15, w * (0.2 + Math.random() * 0.6), h * 0.38);
+  // 5. Pixelated Thunderstorm Lightning Strikes
+  state.thunderboltTimer++;
+  if (state.thunderboltTimer % 180 === 0 || Math.random() < 0.015) {
+    drawVoxelLightning(w * 0.54, h * 0.05, w * 0.54, h * 0.52);
   }
 
-  // 6. Render Active Quantum Respawn Cylinder Beams
+  // 6. Render Active Voxel Beacon Beams
   state.respawnPillars = state.respawnPillars.filter(pillar => {
-    pillar.life -= 0.022;
-    renderRespawnPillar(pillar, w, h);
+    pillar.life -= 0.024;
+    renderVoxelBeacon(pillar, w, h);
     return pillar.life > 0;
   });
 
   // 7. Render Active Combat Attacks between Chambers
   state.activeAttacks = state.activeAttacks.filter(a => {
-    a.life -= 0.03;
+    a.life -= 0.035;
     renderAttackEffect(a, w, h);
     return a.life > 0;
   });
@@ -300,7 +301,7 @@ function simulationLoop(time) {
   requestAnimationFrame(simulationLoop);
 }
 
-// ── Neural DAG Mesh Data Stream Links ───────────────────────────────
+// ── Neural Redstone DAG Mesh Stream Links ───────────────────────────
 function renderDAGMeshLinks(w, h, time) {
   const stark = state.roamingAgents['tony-stark'];
   if (!stark) return;
@@ -309,7 +310,7 @@ function renderDAGMeshLinks(w, h, time) {
   const sY = (parseFloat(stark.screenPos.top) / 100) * h;
 
   ctx.save();
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 2;
 
   for (const [id, agent] of Object.entries(state.roamingAgents)) {
     if (id === 'tony-stark') continue;
@@ -317,14 +318,13 @@ function renderDAGMeshLinks(w, h, time) {
     const aX = (parseFloat(agent.screenPos.left) / 100) * w;
     const aY = (parseFloat(agent.screenPos.top) / 100) * h;
 
-    // Glowing laser stream connecting Stark to agent
     const grad = ctx.createLinearGradient(sX, sY, aX, aY);
-    grad.addColorStop(0, 'rgba(0, 240, 255, 0.45)');
-    grad.addColorStop(1, agent.glowColor || 'rgba(168, 85, 247, 0.35)');
+    grad.addColorStop(0, 'rgba(0, 240, 255, 0.5)');
+    grad.addColorStop(1, agent.glowColor || 'rgba(168, 85, 247, 0.4)');
 
     ctx.strokeStyle = grad;
     ctx.shadowColor = agent.themeColor || '#00F0FF';
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 8;
 
     ctx.beginPath();
     ctx.moveTo(sX, sY);
@@ -347,9 +347,8 @@ function renderDAGPulses(w, h) {
     ctx.fillStyle = pulse.color;
     ctx.shadowColor = pulse.color;
     ctx.shadowBlur = 14;
-    ctx.beginPath();
-    ctx.arc(curX, curY, 4, 0, Math.PI * 2);
-    ctx.fill();
+    // Draw blocky pixel data packet
+    ctx.fillRect(curX - 4, curY - 4, 8, 8);
     ctx.restore();
 
     return true;
@@ -373,48 +372,49 @@ function triggerDAGSimulationPulse() {
   }
 }
 
-function drawLightningBranch(x1, y1, x2, y2) {
-  ctx.strokeStyle = '#FF0055';
-  ctx.shadowColor = '#FF0055';
-  ctx.shadowBlur = 12;
-  ctx.lineWidth = 1.8;
+// ── Voxel Pixelated Lightning Strike ────────────────────────────────
+function drawVoxelLightning(x1, y1, x2, y2) {
+  ctx.save();
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.shadowColor = '#00F0FF';
+  ctx.shadowBlur = 20;
+  ctx.lineWidth = 3;
 
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   let curX = x1;
   let curY = y1;
   while (curY < y2) {
-    curX += (Math.random() - 0.5) * 20;
-    curY += Math.random() * 25 + 10;
+    curX += (Math.floor(Math.random() * 3) - 1) * 16;
+    curY += 20;
     ctx.lineTo(curX, curY);
   }
   ctx.stroke();
-  ctx.shadowBlur = 0;
+  ctx.restore();
 }
 
-function renderRespawnPillar(pillar, w, h) {
+function renderVoxelBeacon(pillar, w, h) {
   ctx.save();
-  ctx.globalAlpha = Math.sin(pillar.life * Math.PI) * 0.85;
+  ctx.globalAlpha = Math.sin(pillar.life * Math.PI) * 0.9;
   const targetX = pillar.x * w;
   const targetY = pillar.y * h;
 
-  // Quantum Cylinder Beam
+  // Blocky Voxel Beacon Beam
   const beamGrad = ctx.createLinearGradient(targetX, 0, targetX, targetY);
   beamGrad.addColorStop(0, pillar.color);
-  beamGrad.addColorStop(0.7, 'rgba(255, 255, 255, 0.95)');
+  beamGrad.addColorStop(0.7, '#FFFFFF');
   beamGrad.addColorStop(1, pillar.color);
 
   ctx.fillStyle = beamGrad;
   ctx.shadowColor = pillar.color;
   ctx.shadowBlur = 24;
-  ctx.fillRect(targetX - 5, 0, 10, targetY);
+  ctx.fillRect(targetX - 6, 0, 12, targetY);
 
-  // Expanding Ground Reticle Rings
+  // Voxel Ground Impact Box
   ctx.strokeStyle = pillar.color;
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.arc(targetX, targetY, 40 * (1.1 - pillar.life), 0, Math.PI * 2);
-  ctx.stroke();
+  ctx.lineWidth = 3;
+  const radius = 35 * (1.1 - pillar.life);
+  ctx.strokeRect(targetX - radius, targetY - radius * 0.5, radius * 2, radius);
 
   ctx.restore();
 }
@@ -425,7 +425,7 @@ function renderAttackEffect(attack, w, h) {
   ctx.strokeStyle = attack.color;
   ctx.shadowColor = attack.color;
   ctx.shadowBlur = 16;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 3.5;
 
   ctx.beginPath();
   ctx.moveTo(attack.from.x * w, attack.from.y * h);
@@ -435,7 +435,7 @@ function renderAttackEffect(attack, w, h) {
   ctx.restore();
 }
 
-// ── Render Photorealistic Chambers on the Landscape ────────────────
+// ── Render Photorealistic Chambers on the Voxel Landscape ──────────
 function renderChambersOnLandscape() {
   chambersLayer.innerHTML = '';
 
@@ -481,7 +481,7 @@ function triggerChamberActivation(entityId) {
     chamberEl.classList.add('chamber-respawn-active');
   }
 
-  // Add quantum respawn cylinder light beam
+  // Add voxel beacon beam
   const numLeft = parseFloat(entity.screenPos.left) / 100;
   const numTop = parseFloat(entity.screenPos.top) / 100;
   state.respawnPillars.push({
@@ -491,7 +491,7 @@ function triggerChamberActivation(entityId) {
     life: 1.0,
   });
 
-  // Pulse data packet back to Stark Citadel
+  // Pulse data packet back to Stark Tower
   const stark = state.roamingAgents['tony-stark'];
   if (stark && entityId !== 'tony-stark') {
     state.dagPulses.push({
@@ -515,8 +515,8 @@ function triggerRandomRespawnSequence() {
 
 // ── Multiverse Clash (All Chambers Synchronized Attack) ─────────────
 window.triggerMultiverseClash = function () {
-  appendVerboseStream(`⚔️ [MULTIVERSE CLASH] All 10 Multiverse Chambers unleashing synchronized energy grids!`);
-  showCosmicSpeechBubble('tony-stark', 'All Multiverse Sanctums, execute maximum combat protocol!');
+  appendVerboseStream(`⚔️ [VOXEL CLASH] All Minecraft Avengers Strongholds unleashing full combat grid!`);
+  showCosmicSpeechBubble('tony-stark', 'Avengers, assemble and engage full voxel power!');
 
   for (const agent of Object.values(state.roamingAgents)) {
     triggerChamberActivation(agent.id);
@@ -532,7 +532,7 @@ window.openSpawnModal = function () {
     const isSpawned = Boolean(state.roamingAgents[id]);
     const card = document.createElement('div');
     card.className = 'roster-spawn-card';
-    card.style.borderColor = isSpawned ? hero.themeColor : '#231445';
+    card.style.borderColor = isSpawned ? hero.themeColor : '#2F175A';
 
     card.innerHTML = `
       <div class="roster-avatar-frame">
@@ -540,8 +540,8 @@ window.openSpawnModal = function () {
       </div>
       <div class="roster-name">${hero.name}</div>
       <div class="roster-callsign">[${hero.callsign}]</div>
-      <div style="font-size:9px; color:${isSpawned ? '#10B981' : '#8B78B0'}; font-weight:700;">
-        ${isSpawned ? '● ONLINE' : '➕ SPAWN CHAMBER'}
+      <div style="font-size:8px; font-family:var(--font-arcade); color:${isSpawned ? '#10B981' : '#9D84C7'}; font-weight:700;">
+        ${isSpawned ? '● SPAWNED' : '➕ CLICK TO SPAWN'}
       </div>
     `;
 
@@ -564,7 +564,7 @@ window.spawnHeroDirect = function (heroId) {
   renderChambersOnLandscape();
   renderStrongholdDock();
   triggerChamberActivation(heroId);
-  appendVerboseStream(`⚡ [CHAMBER MATERIALIZED] ${hero.chamberName} brought online for ${hero.name}!`);
+  appendVerboseStream(`⚡ [HERO MATERIALIZED] ${hero.chamberName} initialized for ${hero.name}!`);
 };
 
 // ── Custom Character Creator ────────────────────────────────────────
@@ -597,7 +597,7 @@ window.submitCustomHero = async function () {
     name,
     callsign,
     role,
-    chamberName: `${name} Sanctum`,
+    chamberName: `${name} Voxel Outpost`,
     image: './assets/iron_man.jpg', // fallback image
     avatar,
     themeColor: '#00F0FF',
@@ -625,7 +625,7 @@ window.submitCustomHero = async function () {
   closeModals();
   triggerChamberActivation(heroId);
   showCosmicSpeechBubble(heroId, newHero.quote);
-  appendVerboseStream(`🚀 [CUSTOM SANCTUM FORGED] ${newHero.chamberName} brought online!`);
+  appendVerboseStream(`🚀 [CUSTOM VOXEL HERO SPAWNED] ${newHero.chamberName} online!`);
 };
 
 // ── Speech Bubble Rendering ─────────────────────────────────────────
@@ -806,7 +806,7 @@ async function dispatchMasterMission() {
 
   quantumPromptInput.value = '';
   appendVerboseStream(`● [USER DIRECTIVE] ${prompt}`);
-  appendVerboseStream(`● [TONY STARK] Deconstructing directive across the Battleworld mesh...`);
+  appendVerboseStream(`● [TONY STARK] Deconstructing directive across the Voxel Battleworld mesh...`);
 
   showCosmicSpeechBubble('tony-stark', `Analyzing directive: "${prompt.slice(0, 35)}..."`);
   triggerDAGSimulationPulse();
@@ -842,7 +842,7 @@ function initWebSocket() {
   state.ws = new WebSocket(wsUrl);
 
   state.ws.onopen = () => {
-    console.log('⚡ Connected to Stark Incursion Comms');
+    console.log('⚡ Connected to Stark Voxel Incursion Comms');
   };
 
   state.ws.onmessage = (event) => {
