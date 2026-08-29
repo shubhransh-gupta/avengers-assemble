@@ -164,12 +164,27 @@ function getBlockData(gx, gy) {
     return { h: 1, type: 'sandstone' };
   }
 
-  // 7. THANOS OBSIDIAN PEAK (gx: 13..17, gy: 24..28)
+  // 7. PISA ISLAND SURROUNDED BY WATER (gx: 1..6, gy: 8..14)
+  if (gx >= 1 && gx <= 6 && gy >= 8 && gy <= 14) {
+    const isWaterMoat = (gx === 1 || gx === 6 || gy === 8 || gy === 14);
+    if (isWaterMoat) return { h: 0, type: 'water' };
+    if (gx >= 3 && gx <= 4 && gy >= 10 && gy <= 12) return { h: 2, type: 'quartz' };
+    return { h: 1, type: 'grass' };
+  }
+
+  // 8. HIMALAYAN GLACIER & SNOW PEAKS (gx: 12..19, gy: 0..4)
+  if (gx >= 12 && gx <= 19 && gy >= 0 && gy <= 4) {
+    if (gx >= 14 && gx <= 17 && gy <= 2) return { h: 5, type: 'snow_block' };
+    if (gx >= 13 && gx <= 18 && gy <= 3) return { h: 4, type: 'ice' };
+    return { h: 3, type: 'ice' };
+  }
+
+  // 9. THANOS OBSIDIAN PEAK (gx: 13..17, gy: 24..28)
   if (gx >= 13 && gx <= 17 && gy >= 24 && gy <= 28) {
     return { h: 3, type: 'obsidian' };
   }
 
-  // 8. OAK WOODEN BRIDGES ACROSS RIVER
+  // 10. OAK WOODEN BRIDGES ACROSS RIVER
   if (isBridgeTile(gx, gy)) {
     return { h: 1, type: 'oak_plank' };
   }
@@ -868,6 +883,8 @@ function simulationLoop(time) {
   drawPyramidOfGizaAndSphinx(time);
   drawStatueOfLiberty(time);
   drawIndiaGateAndRashtrapatiBhavan(time);
+  drawLeaningTowerOfPisa(time);
+  drawHimalayanGlacierCreatures(time);
 
   // 8. Draw Volcano Mountain Eruptions & Cascading Lava River
   drawValyrianLavaAndFire(time);
@@ -1501,6 +1518,147 @@ function drawIndiaGateAndRashtrapatiBhavan(time) {
   ctx.lineTo(flagPolePos.x + 1.5 * zoom, flagY + flagH * 3);
   ctx.closePath();
   ctx.fill();
+}
+
+// ── 4E. Leaning Tower of Pisa on Water-Surrounded Island (Italy) ──────
+function drawLeaningTowerOfPisa(time) {
+  const zoom = state.camera.zoom;
+  const islandCenter = gridToScreen(3.5, 11, 2);
+
+  ctx.save();
+  ctx.translate(islandCenter.x, islandCenter.y);
+  // Realistic 8.5° Lean Angle (Tilt to the South-West)
+  ctx.rotate(-0.14);
+
+  // 1. Marble Cylindrical Base (Tier 1)
+  ctx.fillStyle = '#F8FAFC';
+  ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 1.5 * zoom;
+  ctx.fillRect(-12 * zoom, -16 * zoom, 24 * zoom, 16 * zoom);
+  ctx.strokeRect(-12 * zoom, -16 * zoom, 24 * zoom, 16 * zoom);
+
+  // 2. Six Tiers of Romanesque Open Column Arcades (Tiers 2 to 7)
+  const tierH = 10 * zoom;
+  for (let t = 1; t <= 6; t++) {
+    const tierY = -16 * zoom - t * tierH;
+    // Core marble cylinder
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(-10 * zoom, tierY, 20 * zoom, tierH);
+    ctx.strokeStyle = '#E2E8F0'; ctx.strokeRect(-10 * zoom, tierY, 20 * zoom, tierH);
+
+    // Romanesque Open Column Arcades
+    ctx.fillStyle = '#1E293B';
+    for (let col = -8; col <= 8; col += 4) {
+      ctx.fillRect(col * zoom, tierY + 2 * zoom, 2 * zoom, tierH - 3 * zoom);
+    }
+  }
+
+  // 3. Top Belfry Chamber with Bronze Bells (Tier 8)
+  const belfryY = -16 * zoom - 7 * tierH;
+  ctx.fillStyle = '#F1F5F9';
+  ctx.fillRect(-8 * zoom, belfryY, 16 * zoom, 12 * zoom);
+  ctx.strokeStyle = '#CBD5E1'; ctx.strokeRect(-8 * zoom, belfryY, 16 * zoom, 12 * zoom);
+
+  // Bronze Bells in open arches
+  ctx.fillStyle = '#D97706';
+  ctx.beginPath();
+  ctx.arc(-2 * zoom, belfryY + 6 * zoom, 2.5 * zoom, 0, Math.PI * 2);
+  ctx.arc(3 * zoom, belfryY + 6 * zoom, 2.5 * zoom, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 4. ITALIAN NATIONAL TRICOLOR FLAG (IL TRICOLORE)
+  const poleTopY = belfryY - 18 * zoom;
+  ctx.fillStyle = '#94A3B8';
+  ctx.fillRect(-1 * zoom, poleTopY, 2 * zoom, 18 * zoom);
+
+  // Fluttering Italian Flag: Green, White, Red Vertical Bands
+  const flagW = 6 * zoom;
+  const flagH = 12 * zoom;
+  const wave = Math.sin(time * 0.09) * 2.5 * zoom;
+
+  // Stripe 1: Green (Verde)
+  ctx.fillStyle = '#009246';
+  ctx.fillRect(1 * zoom, poleTopY, flagW, flagH + wave);
+
+  // Stripe 2: White (Bianco)
+  ctx.fillStyle = '#F1F5F9';
+  ctx.fillRect(1 * zoom + flagW, poleTopY, flagW, flagH + wave);
+
+  // Stripe 3: Red (Rosso)
+  ctx.fillStyle = '#CE2B37';
+  ctx.fillRect(1 * zoom + flagW * 2, poleTopY, flagW, flagH + wave);
+
+  ctx.restore();
+}
+
+// ── 4F. Himalayan Snowy Glaciers, Polar Bear & Mythical Yeti ──────────
+function drawHimalayanGlacierCreatures(time) {
+  const zoom = state.camera.zoom;
+
+  // 1. Himalayan Glacial Ice Crag at (gx: 15.5, gy: 2, z: 5)
+  const glacierPos = gridToScreen(15.5, 2, 5);
+
+  // Translucent Blue Glacial Ice Shimmer
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.85)';
+  ctx.shadowColor = '#38BDF8';
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.moveTo(glacierPos.x, glacierPos.y - 28 * zoom);
+  ctx.lineTo(glacierPos.x + 22 * zoom, glacierPos.y);
+  ctx.lineTo(glacierPos.x - 22 * zoom, glacierPos.y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Pure White Snow Cap Ridge
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath();
+  ctx.moveTo(glacierPos.x, glacierPos.y - 32 * zoom);
+  ctx.lineTo(glacierPos.x + 12 * zoom, glacierPos.y - 18 * zoom);
+  ctx.lineTo(glacierPos.x - 12 * zoom, glacierPos.y - 18 * zoom);
+  ctx.closePath();
+  ctx.fill();
+
+  // 2. VOXEL POLAR BEAR roaming near ice edge (gx: 13.5, gy: 2.5, z: 4)
+  const bearPos = gridToScreen(13.5, 2.5, 4);
+  const bearWalk = Math.sin(time * 0.05) * 4 * zoom;
+  // White Bear Body
+  ctx.fillStyle = '#F8FAFC';
+  ctx.fillRect(bearPos.x - 10 * zoom + bearWalk, bearPos.y - 14 * zoom, 20 * zoom, 10 * zoom);
+  // 4 Legs
+  ctx.fillRect(bearPos.x - 9 * zoom + bearWalk, bearPos.y - 5 * zoom, 4 * zoom, 6 * zoom);
+  ctx.fillRect(bearPos.x + 5 * zoom + bearWalk, bearPos.y - 5 * zoom, 4 * zoom, 6 * zoom);
+  // Polar Bear Head with Black Snout & Ears
+  ctx.fillRect(bearPos.x + 9 * zoom + bearWalk, bearPos.y - 17 * zoom, 7 * zoom, 7 * zoom);
+  ctx.fillStyle = '#0F172A';
+  ctx.fillRect(bearPos.x + 15 * zoom + bearWalk, bearPos.y - 14 * zoom, 2 * zoom, 2 * zoom); // Black Snout
+  ctx.fillRect(bearPos.x + 12 * zoom + bearWalk, bearPos.y - 16 * zoom, 1.5 * zoom, 1.5 * zoom); // Eye
+
+  // 3. MYTHICAL HIMALAYAN YETI (Abominable Snowman) on peak (gx: 16.5, gy: 1.5, z: 5)
+  const yetiPos = gridToScreen(16.5, 1.5, 5);
+  const yetiBreath = Math.sin(time * 0.04) * 2 * zoom;
+
+  // Massive Yeti White-Furred Body
+  ctx.fillStyle = '#E2E8F0';
+  ctx.fillRect(yetiPos.x - 8 * zoom, yetiPos.y - 28 * zoom - yetiBreath, 16 * zoom, 20 * zoom);
+
+  // Powerful Yeti Arms
+  ctx.fillStyle = '#CBD5E1';
+  ctx.fillRect(yetiPos.x - 13 * zoom, yetiPos.y - 26 * zoom - yetiBreath, 5 * zoom, 16 * zoom);
+  ctx.fillRect(yetiPos.x + 8 * zoom, yetiPos.y - 26 * zoom - yetiBreath, 5 * zoom, 16 * zoom);
+
+  // Yeti Head with Mythical Glowing Cyan Eyes
+  ctx.fillStyle = '#94A3B8';
+  ctx.fillRect(yetiPos.x - 6 * zoom, yetiPos.y - 38 * zoom - yetiBreath, 12 * zoom, 11 * zoom);
+  ctx.fillStyle = '#00F0FF';
+  ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 8;
+  ctx.fillRect(yetiPos.x - 3.5 * zoom, yetiPos.y - 34 * zoom - yetiBreath, 2.5 * zoom, 2.5 * zoom);
+  ctx.fillRect(yetiPos.x + 1 * zoom, yetiPos.y - 34 * zoom - yetiBreath, 2.5 * zoom, 2.5 * zoom);
+  ctx.shadowBlur = 0;
+
+  // Yeti Horns / Frozen Fur Tufts
+  ctx.fillStyle = '#F8FAFC';
+  ctx.fillRect(yetiPos.x - 5 * zoom, yetiPos.y - 41 * zoom - yetiBreath, 3 * zoom, 4 * zoom);
+  ctx.fillRect(yetiPos.x + 2 * zoom, yetiPos.y - 41 * zoom - yetiBreath, 3 * zoom, 4 * zoom);
 }
 
 // ── 5. Volcano Mountain Eruptions & Cascading Lava River ─────────────
