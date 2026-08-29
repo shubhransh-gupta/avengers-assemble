@@ -133,22 +133,43 @@ function getBlockData(gx, gy) {
     return { h: 1, type: 'blackstone' };
   }
 
-  // 4. THOR THUNDER HILL (gx: 24..29, gy: 1..6)
-  if (gx >= 24 && gx <= 29 && gy >= 1 && gy <= 6) {
+  // 4. DESERT ISLAND & THE GREAT PYRAMID OF GIZA (gx: 23..30, gy: 1..8)
+  if (gx >= 23 && gx <= 30 && gy >= 1 && gy <= 8) {
+    // Concentric Pyramid Tiers
+    if (gx >= 25 && gx <= 28 && gy >= 3 && gy <= 6) {
+      if (gx >= 26 && gx <= 27 && gy >= 4 && gy <= 5) {
+        return { h: 5, type: 'gold_block' }; // Golden Pyramidion
+      }
+      return { h: 4, type: 'sandstone' };
+    }
+    if (gx >= 24 && gx <= 29 && gy >= 2 && gy <= 7) {
+      return { h: 3, type: 'sandstone' };
+    }
+    return { h: 2, type: 'sand' };
+  }
+
+  // 5. STATUE OF LIBERTY HARBOR ISLAND (gx: 8..11, gy: 1..4)
+  if (gx >= 8 && gx <= 11 && gy >= 1 && gy <= 4) {
     return { h: 2, type: 'stone' };
   }
 
-  // 5. WAKANDA VIBRANIUM BUNKER (gx: 1..6, gy: 24..29)
-  if (gx >= 1 && gx <= 6 && gy >= 24 && gy <= 29) {
-    return { h: 2, type: 'blackstone' };
+  // 6. RASHTRAPATI BHAVAN & INDIA GATE PLAZA (gx: 1..9, gy: 18..24)
+  if (gx >= 1 && gx <= 9 && gy >= 18 && gy <= 24) {
+    if (gx >= 1 && gx <= 5 && gy >= 19 && gy <= 23) {
+      return { h: 3, type: 'sandstone' };
+    }
+    if (gx >= 7 && gx <= 9 && gy >= 20 && gy <= 22) {
+      return { h: 2, type: 'sandstone' };
+    }
+    return { h: 1, type: 'sandstone' };
   }
 
-  // 6. THANOS OBSIDIAN PEAK (gx: 13..17, gy: 24..28)
+  // 7. THANOS OBSIDIAN PEAK (gx: 13..17, gy: 24..28)
   if (gx >= 13 && gx <= 17 && gy >= 24 && gy <= 28) {
     return { h: 3, type: 'obsidian' };
   }
 
-  // 7. OAK WOODEN BRIDGES ACROSS RIVER
+  // 8. OAK WOODEN BRIDGES ACROSS RIVER
   if (isBridgeTile(gx, gy)) {
     return { h: 1, type: 'oak_plank' };
   }
@@ -842,10 +863,13 @@ function simulationLoop(time) {
   // 6. Draw Real Multi-Block 3D Voxel Minecraft Trees
   drawRealVoxelTrees(time);
 
-  // 7. Draw 3D Minecraft Taj Mahal of India & Avengers Monuments
+  // 7. Draw 3D Minecraft Taj Mahal of India & World Monuments
   drawTajMahalAndMonuments(time);
+  drawPyramidOfGizaAndSphinx(time);
+  drawStatueOfLiberty(time);
+  drawIndiaGateAndRashtrapatiBhavan(time);
 
-  // 8. Draw Valyrian Lava Falls & Dragonfire Pits
+  // 8. Draw Volcano Mountain Eruptions & Cascading Lava River
   drawValyrianLavaAndFire(time);
 
   // 9. Draw Decorative Minecraft Game Objects
@@ -1227,6 +1251,256 @@ function drawTajMahalAndMonuments(time) {
       drawIsometricBlock(x, 26, z, 'blackstone', time);
     }
   }
+}
+
+// ── 4B. The Great Pyramid of Giza & Desert Island ────────────────────
+function drawPyramidOfGizaAndSphinx(time) {
+  const zoom = state.camera.zoom;
+
+  // 1. Concentric Stepped Sandstone Pyramid
+  // Base Tier (z=2): gx 24..29, gy 2..7
+  // Tier 2 (z=3): gx 25..28, gy 3..6
+  for (let x = 25; x <= 28; x++) {
+    for (let y = 3; y <= 6; y++) {
+      drawIsometricBlock(x, y, 3, 'sandstone', time);
+    }
+  }
+  // Tier 3 (z=4): gx 26..27, gy 4..5
+  for (let x = 26; x <= 27; x++) {
+    for (let y = 4; y <= 5; y++) {
+      drawIsometricBlock(x, y, 4, 'sandstone', time);
+    }
+  }
+
+  // 2. Shining Golden Pyramidion Capstone at Peak (z=5..6)
+  const peakPos = gridToScreen(26.5, 4.5, 5);
+  ctx.fillStyle = '#F59E0B';
+  ctx.shadowColor = '#FBBF24';
+  ctx.shadowBlur = 16;
+  ctx.beginPath();
+  ctx.moveTo(peakPos.x, peakPos.y - 20 * zoom);
+  ctx.lineTo(peakPos.x - 14 * zoom, peakPos.y + 4 * zoom);
+  ctx.lineTo(peakPos.x + 14 * zoom, peakPos.y + 4 * zoom);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // 3. Sandstone Great Sphinx of Giza facing East
+  const sphinxPos = gridToScreen(23.5, 4.5, 2.5);
+  // Lion Body
+  ctx.fillStyle = '#D97706';
+  ctx.fillRect(sphinxPos.x - 12 * zoom, sphinxPos.y - 6 * zoom, 24 * zoom, 12 * zoom);
+  // Pharaoh Head with Nemes Headdress
+  ctx.fillStyle = '#FBBF24';
+  ctx.fillRect(sphinxPos.x + 4 * zoom, sphinxPos.y - 18 * zoom, 10 * zoom, 12 * zoom);
+  // Golden Uraeus Crown
+  ctx.fillStyle = '#EF4444';
+  ctx.fillRect(sphinxPos.x + 8 * zoom, sphinxPos.y - 22 * zoom, 4 * zoom, 4 * zoom);
+
+  // 4. Desert Palm Trees
+  const palmPos = gridToScreen(24, 7.5, 2);
+  ctx.fillStyle = '#78350F';
+  ctx.fillRect(palmPos.x - 2 * zoom, palmPos.y - 24 * zoom, 4 * zoom, 24 * zoom);
+  ctx.fillStyle = '#16A34A';
+  // Drooping Palm Fronds
+  ctx.beginPath();
+  ctx.ellipse(palmPos.x, palmPos.y - 26 * zoom, 14 * zoom, 6 * zoom, Math.PI / 6, 0, Math.PI * 2);
+  ctx.ellipse(palmPos.x, palmPos.y - 26 * zoom, 14 * zoom, 6 * zoom, -Math.PI / 6, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// ── 4C. Statue of Liberty (New York Harbor) ──────────────────────────
+function drawStatueOfLiberty(time) {
+  const zoom = state.camera.zoom;
+  const basePos = gridToScreen(9.5, 2.5, 2);
+
+  // 1. Star-Shaped Fort Wood Granite Pedestal Base (z=2..4)
+  ctx.fillStyle = '#64748B';
+  ctx.beginPath();
+  ctx.moveTo(basePos.x, basePos.y - 12 * zoom);
+  ctx.lineTo(basePos.x + 14 * zoom, basePos.y);
+  ctx.lineTo(basePos.x, basePos.y + 12 * zoom);
+  ctx.lineTo(basePos.x - 14 * zoom, basePos.y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Granite Pedestal Shaft
+  ctx.fillStyle = '#94A3B8';
+  ctx.fillRect(basePos.x - 8 * zoom, basePos.y - 28 * zoom, 16 * zoom, 22 * zoom);
+  ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 1.5 * zoom;
+  ctx.strokeRect(basePos.x - 8 * zoom, basePos.y - 28 * zoom, 16 * zoom, 22 * zoom);
+
+  // 2. Patina Copper-Green Lady Liberty Body (z=5..8)
+  const statueY = basePos.y - 28 * zoom;
+  // Draped Copper Robes
+  ctx.fillStyle = '#10B981';
+  ctx.beginPath();
+  ctx.moveTo(statueY, statueY);
+  ctx.moveTo(basePos.x - 6 * zoom, statueY);
+  ctx.lineTo(basePos.x - 8 * zoom, statueY - 32 * zoom);
+  ctx.lineTo(basePos.x + 8 * zoom, statueY - 32 * zoom);
+  ctx.lineTo(basePos.x + 6 * zoom, statueY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Head with 7-Spike Radiant Solar Crown
+  const headY = statueY - 36 * zoom;
+  ctx.fillStyle = '#34D399';
+  ctx.beginPath();
+  ctx.arc(basePos.x, headY, 5 * zoom, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 7 Crown Spikes
+  ctx.strokeStyle = '#34D399';
+  ctx.lineWidth = 1.5 * zoom;
+  for (let i = -3; i <= 3; i++) {
+    const angle = -Math.PI / 2 + (i * Math.PI) / 8;
+    ctx.beginPath();
+    ctx.moveTo(basePos.x, headY);
+    ctx.lineTo(basePos.x + Math.cos(angle) * 11 * zoom, headY + Math.sin(angle) * 11 * zoom);
+    ctx.stroke();
+  }
+
+  // 3. Raised Right Arm with Golden Torch of Liberty
+  const torchArmX = basePos.x + 8 * zoom;
+  const torchArmY = statueY - 26 * zoom;
+  ctx.strokeStyle = '#10B981'; ctx.lineWidth = 2.5 * zoom;
+  ctx.beginPath();
+  ctx.moveTo(basePos.x + 4 * zoom, statueY - 26 * zoom);
+  ctx.lineTo(torchArmX + 4 * zoom, torchArmY - 20 * zoom);
+  ctx.stroke();
+
+  // Glowing Golden Torch Beacon with Dynamic Light
+  const flameY = torchArmY - 24 * zoom;
+  ctx.fillStyle = '#F59E0B';
+  ctx.shadowColor = '#FBBF24';
+  ctx.shadowBlur = 20 + Math.sin(time * 0.05) * 6;
+  ctx.beginPath();
+  ctx.arc(torchArmX + 4 * zoom, flameY, 4.5 * zoom, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // 4. Left Arm holding Tablet of Declaration
+  ctx.fillStyle = '#1E293B';
+  ctx.fillRect(basePos.x - 10 * zoom, statueY - 22 * zoom, 5 * zoom, 8 * zoom);
+}
+
+// ── 4D. India Gate, Rashtrapati Bhavan & Indian National Flag ────────
+function drawIndiaGateAndRashtrapatiBhavan(time) {
+  const zoom = state.camera.zoom;
+
+  // 1. INDIA GATE (gx: 8, gy: 21, z: 2..6)
+  const gatePos = gridToScreen(8, 21, 2);
+  // Red & Yellow Sandstone Arch Pillars
+  ctx.fillStyle = '#B45309';
+  ctx.fillRect(gatePos.x - 18 * zoom, gatePos.y - 44 * zoom, 36 * zoom, 44 * zoom);
+
+  // Grand Open Vaulted Central Arch
+  ctx.fillStyle = '#0F172A';
+  ctx.beginPath();
+  ctx.moveTo(gatePos.x - 8 * zoom, gatePos.y);
+  ctx.lineTo(gatePos.x - 8 * zoom, gatePos.y - 26 * zoom);
+  ctx.quadraticCurveTo(gatePos.x, gatePos.y - 36 * zoom, gatePos.x + 8 * zoom, gatePos.y - 26 * zoom);
+  ctx.lineTo(gatePos.x + 8 * zoom, gatePos.y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Yellow Sandstone Trim & Inscription Band
+  ctx.fillStyle = '#F59E0B';
+  ctx.fillRect(gatePos.x - 20 * zoom, gatePos.y - 48 * zoom, 40 * zoom, 6 * zoom);
+  ctx.fillRect(gatePos.x - 14 * zoom, gatePos.y - 54 * zoom, 28 * zoom, 6 * zoom);
+
+  // Amar Jawan Jyoti Eternal Flame under the Arch
+  ctx.fillStyle = '#1E293B';
+  ctx.fillRect(gatePos.x - 3 * zoom, gatePos.y - 4 * zoom, 6 * zoom, 4 * zoom);
+  // Inverted Rifle & Helmet
+  ctx.fillStyle = '#0F172A';
+  ctx.fillRect(gatePos.x - 0.5 * zoom, gatePos.y - 10 * zoom, 1 * zoom, 6 * zoom);
+  ctx.beginPath();
+  ctx.arc(gatePos.x, gatePos.y - 11 * zoom, 2 * zoom, 0, Math.PI * 2);
+  ctx.fill();
+  // Eternal Flame
+  ctx.fillStyle = '#F97316';
+  ctx.shadowColor = '#EF4444';
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.arc(gatePos.x, gatePos.y - 14 * zoom, 2.5 * zoom, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // 2. RASHTRAPATI BHAVAN (gx: 3, gy: 21, z: 2..5)
+  const bhavanPos = gridToScreen(3, 21, 2);
+  // Colonnaded Sandstone Facade
+  ctx.fillStyle = '#B45309';
+  ctx.fillRect(bhavanPos.x - 24 * zoom, bhavanPos.y - 26 * zoom, 48 * zoom, 26 * zoom);
+  // Jaipur Colonnade Pillars
+  ctx.fillStyle = '#FBBF24';
+  for (let c = -18; c <= 18; c += 6) {
+    ctx.fillRect(bhavanPos.x + c * zoom, bhavanPos.y - 26 * zoom, 2 * zoom, 26 * zoom);
+  }
+  // Massive Buddhist Stupa-Inspired Copper Dome
+  const domeBhavanY = bhavanPos.y - 26 * zoom;
+  ctx.fillStyle = '#0284C7';
+  ctx.beginPath();
+  ctx.arc(bhavanPos.x, domeBhavanY, 14 * zoom, Math.PI, 0);
+  ctx.fill();
+  ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 1.5 * zoom;
+  ctx.stroke();
+
+  // Dome Spire
+  ctx.fillStyle = '#F59E0B';
+  ctx.fillRect(bhavanPos.x - 1.5 * zoom, domeBhavanY - 20 * zoom, 3 * zoom, 8 * zoom);
+
+  // 3. INDIAN NATIONAL TRICOLOR FLAG (TIRANGA)
+  const flagPolePos = gridToScreen(6, 19, 2);
+  // White High-Mast Flagpole (z=2..9)
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(flagPolePos.x - 1.5 * zoom, flagPolePos.y - 56 * zoom, 3 * zoom, 56 * zoom);
+
+  // Fluttering Tiranga Flag Banner with Sine Wave Wind
+  const flagY = flagPolePos.y - 54 * zoom;
+  const flagW = 28 * zoom;
+  const flagH = 6 * zoom;
+  const waveOffset = Math.sin(time * 0.08) * 3 * zoom;
+
+  // Top Band: Saffron (Kesari)
+  ctx.fillStyle = '#FF9933';
+  ctx.beginPath();
+  ctx.moveTo(flagPolePos.x + 1.5 * zoom, flagY);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom + flagW, flagY + waveOffset);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom + flagW, flagY + flagH + waveOffset);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom, flagY + flagH);
+  ctx.closePath();
+  ctx.fill();
+
+  // Middle Band: White
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath();
+  ctx.moveTo(flagPolePos.x + 1.5 * zoom, flagY + flagH);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom + flagW, flagY + flagH + waveOffset);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom + flagW, flagY + flagH * 2 + waveOffset);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom, flagY + flagH * 2);
+  ctx.closePath();
+  ctx.fill();
+
+  // Ashoka Chakra (Navy Blue 24-spoke wheel in center of white band)
+  const chakraX = flagPolePos.x + 1.5 * zoom + flagW / 2;
+  const chakraY = flagY + flagH * 1.5 + waveOffset / 2;
+  ctx.strokeStyle = '#000080';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(chakraX, chakraY, 2.5 * zoom, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Bottom Band: India Green
+  ctx.fillStyle = '#138808';
+  ctx.beginPath();
+  ctx.moveTo(flagPolePos.x + 1.5 * zoom, flagY + flagH * 2);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom + flagW, flagY + flagH * 2 + waveOffset);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom + flagW, flagY + flagH * 3 + waveOffset);
+  ctx.lineTo(flagPolePos.x + 1.5 * zoom, flagY + flagH * 3);
+  ctx.closePath();
+  ctx.fill();
 }
 
 // ── 5. Volcano Mountain Eruptions & Cascading Lava River ─────────────
