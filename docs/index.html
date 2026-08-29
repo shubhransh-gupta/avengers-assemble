@@ -9,181 +9,618 @@
   <!-- Glowing Arc Reactor Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23040814' stroke='%2300F0FF' stroke-width='4'/><circle cx='50' cy='50' r='34' fill='none' stroke='%23A855F7' stroke-width='3' stroke-dasharray='8 6'/><circle cx='50' cy='50' r='22' fill='none' stroke='%2300F0FF' stroke-width='3' stroke-dasharray='4 4'/><circle cx='50' cy='50' r='10' fill='%2300F0FF'/><text x='50' y='57' font-size='18' font-weight='900' fill='%23040814' text-anchor='middle'>A</text></svg>" />
 
-  <!-- Space Grotesk · Inter · JetBrains Mono -->
+  <!-- Typography: Space Grotesk, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root {
       color-scheme: dark;
-      --bg: #030712;
-      --bg-surface: #0B0F19;
-      --surface-card: #111827;
-      --surface-hover: #1F2937;
-      --border: #1F2937;
-      --border-bright: #374151;
+      
+      /* Grayish Liquid Morphism Color Palette */
+      --bg-base: #07090e;
+      --bg-gradient: radial-gradient(1200px 700px at 50% -10%, rgba(30, 41, 59, 0.45) 0%, rgba(10, 14, 23, 0.95) 70%, #06080d 100%);
+      --liquid-mesh-1: radial-gradient(800px 400px at 20% 15%, rgba(0, 240, 255, 0.08), transparent 70%);
+      --liquid-mesh-2: radial-gradient(700px 400px at 80% 25%, rgba(168, 85, 247, 0.07), transparent 70%);
+      --liquid-mesh-3: radial-gradient(600px 300px at 50% 60%, rgba(56, 189, 248, 0.05), transparent 75%);
+
+      /* Glass & Liquid Morphism Surfaces */
+      --glass-bg: rgba(18, 24, 38, 0.62);
+      --glass-bg-hover: rgba(28, 36, 54, 0.75);
+      --glass-bg-card: rgba(14, 19, 31, 0.58);
+      --glass-bg-inset: rgba(6, 9, 15, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.09);
+      --glass-border-subtle: rgba(255, 255, 255, 0.04);
+      --glass-border-bright: rgba(255, 255, 255, 0.18);
+      --glass-specular: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+      --glass-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.55), 0 0 1px 1px rgba(255, 255, 255, 0.06) inset;
+      --glass-shadow-floating: 0 24px 60px -12px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 240, 255, 0.08);
+
+      /* Accents & Brand Glows */
       --arc-cyan: #00F0FF;
+      --arc-cyan-soft: rgba(0, 240, 255, 0.14);
       --arc-glow: rgba(0, 240, 255, 0.25);
       --purple: #A855F7;
-      --gold: #FFD700;
+      --purple-soft: rgba(168, 85, 247, 0.14);
+      --gold: #F59E0B;
       --green: #10B981;
-      --ink: #F9FAFB;
-      --muted: #9CA3AF;
-      --faint: #4B5563;
-      --maxw: 1120px;
+      --red: #EF4444;
 
+      /* Grayish Ink Spectrum */
+      --ink-pure: #FFFFFF;
+      --ink-primary: #F1F5F9;
+      --ink-secondary: #CBD5E1;
+      --ink-muted: #94A3B8;
+      --ink-faint: #64748B;
+      --ink-subtle: #475569;
+
+      /* Typography */
       --font-display: "Space Grotesk", -apple-system, sans-serif;
       --font-body: "Inter", system-ui, -apple-system, sans-serif;
       --font-mono: "JetBrains Mono", monospace;
+
+      --maxw: 1200px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background-color: var(--bg);
-      background-image:
-        radial-gradient(900px 450px at 50% -80px, rgba(0, 240, 255, 0.1), transparent 70%),
-        radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: auto, 28px 28px;
-      color: var(--ink);
+      background-color: var(--bg-base);
+      background-image: var(--liquid-mesh-1), var(--liquid-mesh-2), var(--liquid-mesh-3), var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--ink-primary);
       font-family: var(--font-body);
       font-size: 15px;
-      line-height: 1.55;
+      line-height: 1.6;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
-    section { padding: 70px 0; }
+    /* Ambient Liquid Orb Glows in Background */
+    .ambient-glow-1 {
+      position: fixed; top: 5%; left: 15%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: -1; filter: blur(60px);
+    }
+    .ambient-glow-2 {
+      position: fixed; top: 40%; right: 10%; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.035) 0%, transparent 70%);
+      pointer-events: none; z-index: -1; filter: blur(70px);
+    }
 
-    /* Top Nav */
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+    section { padding: 64px 0; }
+
+    /* Top Sticky Liquid Header */
     header {
-      position: sticky; top: 0; z-index: 100;
-      backdrop-filter: blur(12px); background: rgba(3, 7, 18, 0.85);
-      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 1000;
+      backdrop-filter: blur(24px) saturate(180%);
+      background: rgba(7, 9, 14, 0.78);
+      border-bottom: 1px solid var(--glass-border);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
     }
     .nav-row {
-      display: flex; align-items: center; justify-content: space-between; height: 64px;
+      display: flex; align-items: center; justify-content: space-between; height: 70px;
     }
     .brand {
-      display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;
+      display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff;
     }
-    .brand-logo {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: linear-gradient(135deg, #00F0FF, #A855F7);
-      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #000;
+    .brand-logo-box {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.9), rgba(168, 85, 247, 0.9));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-weight: 900; font-size: 18px; color: #07090e;
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
     }
     .brand-title { font-family: var(--font-display); font-weight: 800; font-size: 16px; letter-spacing: -0.02em; }
-    .brand-by { font-size: 11px; color: var(--muted); }
-    .brand-by a { color: var(--gold); text-decoration: none; font-weight: 600; }
+    .brand-by { font-size: 11px; color: var(--ink-muted); }
+    .brand-by a { color: var(--arc-cyan); text-decoration: none; font-weight: 600; }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 24px;
+    }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500; color: var(--ink-secondary); text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .nav-link:hover { color: var(--arc-cyan); }
 
     .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* Button Styles with Liquid Morphism */
     .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-family: var(--font-display); font-weight: 700; font-size: 13px;
-      padding: 8px 16px; border-radius: 8px; text-decoration: none;
-      transition: all 0.15s ease; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: var(--font-display); font-weight: 700; font-size: 13.5px;
+      padding: 9px 18px; border-radius: 10px; text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;
+      border: 1px solid transparent;
     }
-    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn-ghost:hover { color: #fff; border-color: var(--border-bright); }
-    .btn-primary { background: var(--arc-cyan); color: #030712; border: 1px solid var(--arc-cyan); box-shadow: 0 0 16px var(--arc-glow); }
-    .btn-primary:hover { background: #38BDF8; box-shadow: 0 0 24px var(--arc-glow); transform: translateY(-1px); }
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.05); color: var(--ink-secondary);
+      border-color: var(--glass-border);
+      backdrop-filter: blur(12px);
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.09); color: #fff; border-color: var(--glass-border-bright);
+      transform: translateY(-1px);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00F0FF 0%, #38BDF8 100%);
+      color: #050811; font-weight: 800;
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.35);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 28px rgba(0, 240, 255, 0.55);
+      transform: translateY(-2px);
+    }
+    .btn-purple {
+      background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
+      color: #fff; font-weight: 700;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.35);
+    }
+    .btn-purple:hover {
+      box-shadow: 0 6px 28px rgba(168, 85, 247, 0.55);
+      transform: translateY(-2px);
+    }
 
     /* Hero Section */
-    .hero { text-align: center; padding: 80px 0 50px; }
+    .hero { text-align: center; padding: 75px 0 40px; }
     .badge-pill {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25);
-      border-radius: 999px; padding: 5px 14px; font-family: var(--font-mono); font-size: 11px;
-      color: var(--arc-cyan); margin-bottom: 20px;
+      background: rgba(18, 26, 42, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 11.5px;
+      color: var(--arc-cyan); margin-bottom: 22px; backdrop-filter: blur(16px);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.12);
     }
+    .badge-pill-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #00F0FF;
+      box-shadow: 0 0 8px #00F0FF; animation: pulseGlow 2s infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
     .hero h1 {
-      font-family: var(--font-display); font-size: clamp(32px, 5.5vw, 56px);
-      font-weight: 800; line-height: 1.12; letter-spacing: -0.03em; margin-bottom: 18px;
+      font-family: var(--font-display); font-size: clamp(34px, 5.8vw, 62px);
+      font-weight: 800; line-height: 1.1; letter-spacing: -0.035em; margin-bottom: 20px;
+      color: #fff;
     }
     .hero h1 span.gradient {
-      background: linear-gradient(135deg, #00F0FF 0%, #A855F7 60%, #FFD700 100%);
+      background: linear-gradient(135deg, #00F0FF 0%, #A855F7 50%, #FFD700 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 20px rgba(0, 240, 255, 0.2));
     }
-    .hero p {
-      font-size: 17px; color: var(--muted); max-width: 620px; margin: 0 auto 30px; line-height: 1.55;
+    .hero p.lead {
+      font-size: 18px; color: var(--ink-secondary); max-width: 760px; margin: 0 auto 34px; line-height: 1.6;
+    }
+    .hero-cta-group {
+      display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 38px;
     }
 
-    /* Terminal Quickstart */
-    .quickstart-box {
-      max-width: 540px; margin: 0 auto 40px;
-      background: #000; border: 1px solid var(--border-bright); border-radius: 10px;
-      padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    /* Screenshot Frame with Liquid Glass Bezel */
+    .screenshot-bezel {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+      padding: 1px; border-radius: var(--radius-xl);
+      box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.12);
+      margin-top: 24px;
     }
-    .quickstart-cmd {
-      font-family: var(--font-mono); font-size: 13px; color: #4ADE80; display: flex; align-items: center; gap: 8px;
+    .screenshot-inner {
+      background: #090D17; border-radius: calc(var(--radius-xl) - 1px);
+      overflow: hidden; position: relative;
     }
-    .copy-btn {
-      background: #1F2937; border: 1px solid #374151; color: var(--muted);
-      border-radius: 6px; padding: 5px 10px; font-size: 11px; font-family: var(--font-mono);
+    .screenshot-bar {
+      height: 38px; background: rgba(14, 19, 31, 0.95);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+    }
+    .screenshot-dots { display: flex; gap: 6px; }
+    .screenshot-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+    .screenshot-title { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+    .screenshot-inner img { width: 100%; height: auto; display: block; }
+
+    /* ==========================================================================
+       LIQUID MORPHISM TABBED SYSTEM (Core User Request)
+       ========================================================================== */
+    .liquid-tab-hub {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(28px) saturate(190%);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--glass-shadow-floating);
+      padding: 32px;
+      margin: 40px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .liquid-tab-hub::before {
+      content: ""; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), rgba(168, 85, 247, 0.4), transparent);
+    }
+
+    .tab-hub-header {
+      text-align: center; margin-bottom: 28px;
+    }
+    .tab-hub-header h2 {
+      font-family: var(--font-display); font-size: clamp(26px, 3.8vw, 36px);
+      font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 10px;
+    }
+    .tab-hub-header p {
+      font-size: 14.5px; color: var(--ink-muted); max-width: 650px; margin: 0 auto;
+    }
+
+    /* Tab Bar Navigation */
+    .tab-nav-wrapper {
+      display: flex; justify-content: center; margin-bottom: 30px;
+    }
+    .liquid-tab-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(8, 12, 20, 0.85);
+      border: 1px solid var(--glass-border-bright);
+      padding: 6px; border-radius: 999px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      overflow-x: auto; max-width: 100%; scrollbar-width: none;
+    }
+    .liquid-tab-nav::-webkit-scrollbar { display: none; }
+
+    .liquid-tab-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 999px;
+      background: transparent; border: none;
+      font-family: var(--font-display); font-size: 13.5px; font-weight: 700;
+      color: var(--ink-muted); cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap; outline: none;
+    }
+    .liquid-tab-btn:hover {
+      color: var(--ink-primary); background: rgba(255, 255, 255, 0.04);
+    }
+    .liquid-tab-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 100%);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 16px rgba(0, 240, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .liquid-tab-btn .tab-badge {
+      font-size: 10px; font-family: var(--font-mono); font-weight: 700;
+      padding: 2px 7px; border-radius: 999px;
+      background: rgba(0, 240, 255, 0.15); color: var(--arc-cyan);
+    }
+
+    /* Tab Panes */
+    .liquid-tab-pane {
+      display: none;
+      animation: fadeInTab 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .liquid-tab-pane.active { display: block; }
+    @keyframes fadeInTab {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Liquid Glass Cards */
+    .glass-card {
+      background: var(--glass-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--glass-shadow);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .glass-card:hover {
+      border-color: var(--glass-border-bright);
+      background: var(--glass-bg-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
+    }
+
+    /* Sub-tabs inside Tab Panes */
+    .sub-tabs-bar {
+      display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .sub-tab-btn {
+      background: var(--glass-bg-inset); border: 1px solid var(--glass-border);
+      color: var(--ink-muted); padding: 8px 16px; border-radius: 8px;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
       cursor: pointer; transition: all 0.15s ease;
     }
-    .copy-btn:hover { background: #374151; color: #fff; }
-
-    /* Screenshot Frame */
-    .screenshot-frame {
-      border: 1px solid var(--border-bright); border-radius: 12px; overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.7); background: #0B0F19; margin-top: 20px;
+    .sub-tab-btn:hover { color: #fff; border-color: var(--glass-border-bright); }
+    .sub-tab-btn.active {
+      background: rgba(0, 240, 255, 0.12); border-color: var(--arc-cyan);
+      color: #fff; box-shadow: 0 0 14px rgba(0, 240, 255, 0.2);
     }
-    .screenshot-frame img { width: 100%; display: block; }
 
-    /* Feature Grid */
+    /* Terminal & Code Blocks */
+    .code-terminal {
+      background: #04070D;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+      margin: 16px 0;
+    }
+    .code-header {
+      background: #090E17;
+      padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .code-header-left { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-muted); }
+    .code-body {
+      padding: 16px 20px; font-family: var(--font-mono); font-size: 13px;
+      color: #E2E8F0; line-height: 1.7; overflow-x: auto;
+    }
+    .code-body .cmd-prompt { color: var(--purple); font-weight: 700; user-select: none; }
+    .code-body .cmd-comment { color: var(--ink-faint); font-style: italic; }
+    .code-body .cmd-kw { color: var(--arc-cyan); font-weight: 600; }
+    .code-body .cmd-val { color: #34D399; }
+    
+    .copy-chip {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--glass-border);
+      color: var(--ink-secondary); font-family: var(--font-mono); font-size: 11px;
+      padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.15s ease;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .copy-chip:hover { background: rgba(255, 255, 255, 0.16); color: #fff; }
+
+    /* Comparison Table Styling */
+    .comparison-container {
+      overflow-x: auto; border-radius: var(--radius-md);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg-inset);
+      box-shadow: var(--glass-shadow);
+      margin-top: 14px;
+    }
+    .comparison-table {
+      width: 100%; border-collapse: collapse; text-align: left;
+      font-size: 13.5px;
+    }
+    .comparison-table th {
+      padding: 16px 20px; background: rgba(14, 20, 32, 0.9);
+      border-bottom: 1px solid var(--glass-border);
+      font-family: var(--font-display); font-weight: 700; color: #fff;
+    }
+    .comparison-table th.highlight-col {
+      background: rgba(0, 240, 255, 0.08); border-left: 1px solid rgba(0, 240, 255, 0.3); border-right: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--arc-cyan);
+    }
+    .comparison-table td {
+      padding: 14px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--ink-secondary); vertical-align: middle;
+    }
+    .comparison-table td.highlight-col {
+      background: rgba(0, 240, 255, 0.04); border-left: 1px solid rgba(0, 240, 255, 0.2); border-right: 1px solid rgba(0, 240, 255, 0.2);
+      font-weight: 600; color: #fff;
+    }
+    .comparison-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .comparison-table tr:hover td.highlight-col {
+      background: rgba(0, 240, 255, 0.07);
+    }
+    .status-check { color: #10B981; font-weight: 800; }
+    .status-cross { color: #64748B; }
+
+    /* Superhero Roster Grid */
+    .roster-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px;
+    }
+    .hero-card {
+      background: var(--glass-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column;
+    }
+    .hero-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--arc-cyan);
+      box-shadow: 0 16px 36px rgba(0, 240, 255, 0.15);
+    }
+    .hero-img-wrap {
+      height: 160px; overflow: hidden; position: relative; background: #000;
+    }
+    .hero-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .hero-card:hover .hero-img-wrap img {
+      transform: scale(1.08);
+    }
+    .hero-badge-tag {
+      position: absolute; top: 10px; right: 10px;
+      padding: 4px 10px; border-radius: 999px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+      backdrop-filter: blur(12px);
+    }
+    .tag-core { background: rgba(0, 240, 255, 0.85); color: #000; }
+    .tag-specialist { background: rgba(168, 85, 247, 0.85); color: #fff; }
+    
+    .hero-content {
+      padding: 18px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .hero-name { font-family: var(--font-display); font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .hero-role { font-family: var(--font-mono); font-size: 11.5px; color: var(--arc-cyan); margin-bottom: 8px; }
+    .hero-desc { font-size: 12.5px; color: var(--ink-muted); line-height: 1.5; margin-bottom: 12px; }
+    .hero-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .hero-pill {
+      font-family: var(--font-mono); font-size: 10px;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+      padding: 2px 8px; border-radius: 4px; color: var(--ink-secondary);
+    }
+
+    /* Architecture DAG Visualizer */
+    .dag-flow-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;
+      position: relative; margin: 24px 0;
+    }
+    .dag-node {
+      background: var(--glass-bg-inset); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md); padding: 18px; text-align: center;
+      position: relative;
+    }
+    .dag-node.active-node {
+      border-color: var(--arc-cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+    }
+    .dag-node-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(0, 240, 255, 0.2); color: var(--arc-cyan);
+      font-family: var(--font-mono); font-weight: 700; font-size: 12px;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+    }
+    .dag-node-title { font-family: var(--font-display); font-size: 14.5px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .dag-node-desc { font-size: 11.5px; color: var(--ink-muted); }
+
+    /* Features Grid (Bottom Section) */
     .features-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;
     }
-    .feature-card {
-      background: var(--surface-card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 22px; transition: all 0.18s ease; display: flex; flex-direction: column; gap: 8px;
+    .feat-card {
+      background: var(--glass-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      transition: all 0.22s ease;
+      display: flex; flex-direction: column; gap: 12px;
     }
-    .feature-card:hover {
-      border-color: var(--arc-cyan); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    .feat-card:hover {
+      border-color: var(--glass-border-bright);
+      background: var(--glass-bg-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
     }
-    .feat-icon { font-size: 26px; }
-    .feat-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: #fff; }
-    .feat-desc { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+    .feat-icon-box {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .feat-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: #fff; }
+    .feat-desc { font-size: 13.5px; color: var(--ink-muted); line-height: 1.55; }
 
-    /* Superhero Strike Team Cards */
-    .hero-team-row {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 24px;
+    /* Interactive Command Playground / Generator */
+    .playground-box {
+      background: var(--glass-bg-inset);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-top: 30px;
     }
-    .hero-badge-card {
-      background: #0B0F19; border: 1px solid var(--border); border-radius: 10px; padding: 14px;
-      display: flex; align-items: center; gap: 10px;
+    .playground-controls {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;
     }
-    .hero-badge-avatar { font-size: 24px; }
-    .hero-badge-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: #fff; }
-    .hero-badge-role { font-family: var(--font-mono); font-size: 10px; color: var(--arc-cyan); }
+    .control-group label {
+      display: block; font-family: var(--font-display); font-size: 12px; font-weight: 700;
+      color: var(--ink-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .select-input {
+      width: 100%; background: #0A0F19; border: 1px solid var(--glass-border-bright);
+      color: #fff; padding: 10px 14px; border-radius: 8px; font-family: var(--font-body);
+      font-size: 13.5px; outline: none; cursor: pointer;
+    }
+
+    /* FAQ Accordion */
+    .faq-item {
+      background: var(--glass-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .faq-question {
+      padding: 18px 22px; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--font-display); font-size: 15px; font-weight: 700; color: #fff;
+    }
+    .faq-question:hover { color: var(--arc-cyan); }
+    .faq-arrow { transition: transform 0.2s ease; color: var(--ink-muted); font-size: 12px; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--arc-cyan); }
+    .faq-answer {
+      display: none; padding: 0 22px 18px;
+      font-size: 13.5px; color: var(--ink-secondary); line-height: 1.6;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 14px;
+    }
+    .faq-item.open .faq-answer { display: block; }
 
     /* Footer */
     footer {
-      border-top: 1px solid var(--border); padding: 36px 0; background: #030712;
-      text-align: center; font-size: 12px; color: var(--muted);
+      border-top: 1px solid var(--glass-border); padding: 48px 0 36px;
+      background: rgba(4, 6, 11, 0.95); text-align: center;
+      margin-top: 60px;
     }
-    footer a { color: var(--gold); text-decoration: none; font-weight: 600; }
+    .footer-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px; text-align: left; margin-bottom: 40px;
+    }
+    .footer-col h4 {
+      font-family: var(--font-display); font-size: 13.5px; font-weight: 700;
+      color: #fff; margin-bottom: 14px; letter-spacing: -0.01em;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: var(--ink-muted); font-size: 13px; text-decoration: none; transition: color 0.15s ease; }
+    .footer-col a:hover { color: var(--arc-cyan); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+      font-size: 12px; color: var(--ink-muted);
+    }
+    .footer-bottom a { color: var(--ink-secondary); text-decoration: none; font-weight: 600; }
+    .footer-bottom a:hover { color: var(--arc-cyan); }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .liquid-tab-hub { padding: 20px; }
+      .hero { padding: 45px 0 20px; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- Top Sticky Navigation Header -->
   <header>
     <div class="wrap nav-row">
       <a href="./index.html" class="brand">
-        <div class="brand-logo">A</div>
+        <div class="brand-logo-box">A</div>
         <div>
           <div class="brand-title">SCAVENGERS ASSEMBLE</div>
           <div class="brand-by">Crafted by <a href="https://shubhransh-gupta.github.io/cv/" target="_blank">Shubhransh Gupta</a></div>
         </div>
       </a>
+
+      <nav class="nav-links">
+        <a href="#quickstart" class="nav-link">Setup</a>
+        <a href="#tab-hub" onclick="switchMainTab('tab-diff')" class="nav-link">Why Scavengers?</a>
+        <a href="#tab-hub" onclick="switchMainTab('tab-architecture')" class="nav-link">Architecture</a>
+        <a href="#tab-hub" onclick="switchMainTab('tab-roster')" class="nav-link">Heroes</a>
+        <a href="#tab-hub" onclick="switchMainTab('tab-providers')" class="nav-link">LLM Providers</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </nav>
+
       <div class="nav-actions">
-        <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="btn btn-ghost">⭐ GitHub</a>
-        <a href="#quickstart" class="btn btn-primary">⚡ Launch App</a>
+        <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="btn btn-ghost">
+          <span>⭐</span> Star GitHub
+        </a>
+        <a href="./warroom.html" class="btn btn-primary">
+          <span>⚡</span> Enter 3D War Room
+        </a>
       </div>
     </div>
   </header>
@@ -191,109 +628,825 @@
   <!-- Hero Section -->
   <section class="hero wrap">
     <div class="badge-pill">
-      <span>🦾</span> 100% 3D MINECRAFT AVENGERS AGENT HARNESS
+      <span class="badge-pill-dot"></span>
+      <span>100% 3D MINECRAFT VOXEL MULTI-AGENT CODING HARNESS</span>
     </div>
-    <h1>Turn Your AI Models into an<br/><span class="gradient">Autonomous Superhero Strike Team</span></h1>
-    <p>
-      Multi-agent DAG orchestrator with a 100% 3D Minecraft isometric engine, JARVIS voice comms, graphical workspace explorer, and real code generation.
+
+    <h1>
+      Turn Your AI Models into an<br />
+      <span class="gradient">Autonomous Superhero Strike Team</span>
+    </h1>
+
+    <p class="lead">
+      Scavengers Assemble orchestrates your favorite LLMs (Gemini, Claude, GPT, Ollama) in an asynchronous 
+      Directed Acyclic Graph (DAG) with a 100% 3D Minecraft isometric engine, JARVIS voice comms, and direct disk code synthesis.
     </p>
 
-    <!-- Quickstart Box -->
-    <div class="quickstart-box" id="quickstart">
-      <div class="quickstart-cmd">
-        <span style="color:#A855F7;">$</span> <code>npx scavengers-assemble hud</code>
-      </div>
-      <button class="copy-btn" onclick="navigator.clipboard.writeText('npx scavengers-assemble hud'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 2000)">Copy</button>
+    <div class="hero-cta-group">
+      <a href="./warroom.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 15px;">
+        <span>🎮</span> Launch Interactive 3D War Room
+      </a>
+      <a href="#quickstart" class="btn btn-ghost" style="padding: 12px 24px; font-size: 15px;">
+        <span>⚡</span> Quick Setup Guide
+      </a>
+      <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" class="btn btn-purple" style="padding: 12px 20px; font-size: 15px;">
+        <span>🚀</span> View Source (MIT)
+      </a>
     </div>
 
-    <!-- Product Screenshot Showcase -->
-    <div class="screenshot-frame">
-      <img src="./assets/app_screenshot.png" alt="Scavengers Assemble 3D Minecraft Mission Control HUD" />
+    <!-- Quickstart 1-Liner Banner -->
+    <div class="code-terminal" id="quickstart" style="max-width: 620px; margin: 0 auto 30px; text-align: left;">
+      <div class="code-header">
+        <div class="code-header-left">
+          <span style="color:#00F0FF;">⚡</span> 1-Click Instant Run (Zero install needed)
+        </div>
+        <button class="copy-chip" onclick="copySnippet('npx scavengers-assemble hud', this)">
+          <span>📋</span> Copy Command
+        </button>
+      </div>
+      <div class="code-body" style="padding: 14px 18px;">
+        <span class="cmd-prompt">$</span> <span class="cmd-kw">npx</span> scavengers-assemble <span class="cmd-val">hud</span> --port 3000
+      </div>
     </div>
-  </section>
 
-  <!-- 5 Core Heroes & Multiverse Specialists -->
-  <section class="wrap" style="padding-top:20px;">
-    <div style="text-align:center; margin-bottom:20px;">
-      <h2 style="font-family:var(--font-display); font-size:24px; font-weight:800; color:#fff;">Core 5-Hero Squad &amp; Specialists</h2>
-      <p style="font-size:13px; color:var(--muted);">Parallel DAG orchestration with zero token wastage.</p>
-    </div>
-
-    <div class="hero-team-row">
-      <div class="hero-badge-card">
-        <div class="hero-badge-avatar">🦾</div>
-        <div>
-          <div class="hero-badge-name">Tony Stark</div>
-          <div class="hero-badge-role">GOD Orchestrator</div>
+    <!-- Product Screenshot Showcase in Glass Bezel -->
+    <div class="screenshot-bezel">
+      <div class="screenshot-inner">
+        <div class="screenshot-bar">
+          <div class="screenshot-dots">
+            <span class="screenshot-dot dot-red"></span>
+            <span class="screenshot-dot dot-yellow"></span>
+            <span class="screenshot-dot dot-green"></span>
+          </div>
+          <div class="screenshot-title">scavengers-mission-control · 3D Isometric Minecraft Engine · Taj Mahal &amp; Stark Tower</div>
+          <div style="font-size:11px; color:#00F0FF; font-family:var(--font-mono);">ONLINE: 5 AGENTS</div>
         </div>
-      </div>
-      <div class="hero-badge-card">
-        <div class="hero-badge-avatar">🕸️</div>
-        <div>
-          <div class="hero-badge-name">Spider-Man</div>
-          <div class="hero-badge-role">Frontend &amp; UI/UX</div>
-        </div>
-      </div>
-      <div class="hero-badge-card">
-        <div class="hero-badge-avatar">⚡</div>
-        <div>
-          <div class="hero-badge-name">Thor</div>
-          <div class="hero-badge-role">DevOps &amp; Builds</div>
-        </div>
-      </div>
-      <div class="hero-badge-card">
-        <div class="hero-badge-avatar">🟢</div>
-        <div>
-          <div class="hero-badge-name">The Hulk</div>
-          <div class="hero-badge-role">Core Logic &amp; AST</div>
-        </div>
-      </div>
-      <div class="hero-badge-card">
-        <div class="hero-badge-avatar">🛡️</div>
-        <div>
-          <div class="hero-badge-name">Captain America</div>
-          <div class="hero-badge-role">Vibranium QA</div>
-        </div>
+        <img src="./assets/app_screenshot.png" alt="Scavengers Assemble 3D Minecraft Mission Control HUD" />
       </div>
     </div>
   </section>
 
-  <!-- Core Features Grid -->
+  <!-- ==========================================================================
+       CORE LIQUID MORPHISM TABBED SYSTEM
+       ========================================================================== -->
+  <section class="wrap" id="tab-hub" style="padding-top: 10px;">
+    <div class="liquid-tab-hub">
+      <div class="tab-hub-header">
+        <h2>Explore Scavengers Assemble</h2>
+        <p>Everything you need to configure your superhero harness, understand our DAG architecture, and see why we outperform single-agent chatbots.</p>
+      </div>
+
+      <!-- Navigation Pill Tabs -->
+      <div class="tab-nav-wrapper">
+        <div class="liquid-tab-nav" role="tablist">
+          <button class="liquid-tab-btn active" onclick="switchMainTab('tab-setup')" id="btn-tab-setup" role="tab">
+            <span>🚀</span> Setup &amp; Quickstart
+          </button>
+          <button class="liquid-tab-btn" onclick="switchMainTab('tab-diff')" id="btn-tab-diff" role="tab">
+            <span>⚔️</span> Scavengers vs Market <span class="tab-badge">Differentiator</span>
+          </button>
+          <button class="liquid-tab-btn" onclick="switchMainTab('tab-architecture')" id="btn-tab-architecture" role="tab">
+            <span>🧠</span> GOD DAG Architecture
+          </button>
+          <button class="liquid-tab-btn" onclick="switchMainTab('tab-roster')" id="btn-tab-roster" role="tab">
+            <span>🦸</span> Superhero Roster <span class="tab-badge">10 Heroes</span>
+          </button>
+          <button class="liquid-tab-btn" onclick="switchMainTab('tab-providers')" id="btn-tab-providers" role="tab">
+            <span>🔌</span> Multi-LLM Routing
+          </button>
+          <button class="liquid-tab-btn" onclick="switchMainTab('tab-playground')" id="btn-tab-playground" role="tab">
+            <span>⚡</span> Command Generator
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 1: SETUP & QUICKSTART -->
+      <div class="liquid-tab-pane active" id="tab-setup" role="tabpanel">
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
+            How to Set Up &amp; Launch Scavengers Assemble
+          </h3>
+          <p style="font-size:14px; color:var(--ink-muted);">
+            Choose your preferred method below to get up and running in under 60 seconds on macOS, Linux, or Windows.
+          </p>
+        </div>
+
+        <div class="sub-tabs-bar">
+          <button class="sub-tab-btn active" onclick="switchSubTab('setup-npx', this)">⚡ Method 1: NPX (No Install)</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('setup-git', this)">🛠️ Method 2: Git Clone &amp; Source Build</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('setup-cli', this)">💻 Method 3: Headless CLI Missions</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('setup-env', this)">🔑 Method 4: API Keys &amp; Providers</button>
+        </div>
+
+        <!-- Setup Subpane 1: NPX -->
+        <div id="setup-npx" class="setup-subpane">
+          <div class="glass-card" style="margin-bottom: 16px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+              <div>
+                <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff;">Option A: 1-Step Instant HUD Launch</h4>
+                <p style="font-size:13px; color:var(--ink-muted);">Directly spins up the local Mission Control server and launches the 3D Minecraft interface.</p>
+              </div>
+              <span class="hero-pill" style="background:rgba(0,240,255,0.15); color:var(--arc-cyan); border-color:var(--arc-cyan);">Recommended</span>
+            </div>
+            
+            <div class="code-terminal">
+              <div class="code-header">
+                <div class="code-header-left">Terminal (bash / zsh / powershell)</div>
+                <button class="copy-chip" onclick="copySnippet('npx scavengers-assemble hud', this)">📋 Copy</button>
+              </div>
+              <div class="code-body">
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">npx</span> scavengers-assemble hud<br/>
+                <span class="cmd-comment"># => [STARK TOWER] Mission Control initialized at http://localhost:3000/</span>
+              </div>
+            </div>
+
+            <p style="font-size:12.5px; color:var(--ink-secondary); margin-top:8px;">
+              💡 <strong>Next Step:</strong> Open your web browser at <code>http://localhost:3000/</code> to enter the 3D Voxel Minecraft War Room, enter your prompt or speak via voice comms!
+            </p>
+          </div>
+        </div>
+
+        <!-- Setup Subpane 2: Git Clone -->
+        <div id="setup-git" class="setup-subpane" style="display:none;">
+          <div class="glass-card">
+            <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Option B: Clone &amp; Compile TypeScript from Source</h4>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Ideal for contributors, customizing hero prompts, adding new superhero agents, or offline hacking.</p>
+
+            <div class="code-terminal">
+              <div class="code-header">
+                <div class="code-header-left">Terminal setup commands</div>
+                <button class="copy-chip" onclick="copySnippet('git clone https://github.com/shubhransh-gupta/scavengers-assemble.git\ncd scavengers-assemble\nnpm install\nnpm run build\nnode bin/stark.js hud --port 3000', this)">📋 Copy All</button>
+              </div>
+              <div class="code-body">
+                <span class="cmd-comment"># 1. Clone the repository</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">git clone</span> https://github.com/shubhransh-gupta/scavengers-assemble.git<br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">cd</span> scavengers-assemble<br/><br/>
+                <span class="cmd-comment"># 2. Install dependencies &amp; compile TypeScript</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">npm install</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">npm run build</span><br/><br/>
+                <span class="cmd-comment"># 3. Launch Mission Control HUD</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">node</span> bin/stark.js hud --port 3000
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Setup Subpane 3: Headless CLI -->
+        <div id="setup-cli" class="setup-subpane" style="display:none;">
+          <div class="glass-card">
+            <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Option C: Autonomous Terminal Mission Runner</h4>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Run full multi-agent missions without opening a web browser. Code is saved directly to disk.</p>
+
+            <div class="code-terminal">
+              <div class="code-header">
+                <div class="code-header-left">Headless Mission Command</div>
+                <button class="copy-chip" onclick="copySnippet('node bin/stark.js mission \"Create a fullstack Next.js and Tailwind SaaS boilerplate with auth\"', this)">📋 Copy</button>
+              </div>
+              <div class="code-body">
+                <span class="cmd-comment"># Run a full autonomous mission with the 5 Core Avengers</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">node</span> bin/stark.js mission <span class="cmd-val">"Create a fullstack Next.js and Tailwind SaaS boilerplate with auth"</span><br/><br/>
+                <span class="cmd-comment"># Check system status and registered hero subagents</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">node</span> bin/stark.js status
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Setup Subpane 4: Env & Providers -->
+        <div id="setup-env" class="setup-subpane" style="display:none;">
+          <div class="glass-card">
+            <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Configuring API Keys (Zero Vendor Lock-In)</h4>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">You can provide API keys via environment variables or directly inside the browser Settings dialog with live ping testing.</p>
+
+            <div class="code-terminal">
+              <div class="code-header">
+                <div class="code-header-left">.env configuration template</div>
+                <button class="copy-chip" onclick="copySnippet('GEMINI_API_KEY=\"your_gemini_api_key\"\nANTHROPIC_API_KEY=\"your_claude_api_key\"\nOPENAI_API_KEY=\"your_openai_api_key\"\nOLLAMA_HOST=\"http://localhost:11434\"', this)">📋 Copy .env</button>
+              </div>
+              <div class="code-body">
+                <span class="cmd-comment"># Google Gemini (Primary high-speed provider)</span><br/>
+                <span class="cmd-kw">GEMINI_API_KEY</span>=<span class="cmd-val">"AIzaSy..."</span><br/><br/>
+                <span class="cmd-comment"># Anthropic Claude (Deep reasoning &amp; refactoring)</span><br/>
+                <span class="cmd-kw">ANTHROPIC_API_KEY</span>=<span class="cmd-val">"sk-ant-..."</span><br/><br/>
+                <span class="cmd-comment"># OpenAI (GPT-4o &amp; o3-mini)</span><br/>
+                <span class="cmd-kw">OPENAI_API_KEY</span>=<span class="cmd-val">"sk-proj-..."</span><br/><br/>
+                <span class="cmd-comment"># Local Offline Models (Ollama) - 100% Free &amp; Private</span><br/>
+                <span class="cmd-kw">OLLAMA_HOST</span>=<span class="cmd-val">"http://localhost:11434"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Requirements Grid -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:20px;">
+          <div class="glass-card" style="padding:16px;">
+            <div style="font-family:var(--font-mono); font-size:11px; color:var(--arc-cyan);">PREREQUISITE 1</div>
+            <div style="font-weight:700; color:#fff; margin:4px 0;">Node.js &gt;= 18.0.0</div>
+            <div style="font-size:12px; color:var(--ink-muted);">Compatible with Node 18, 20, 22 LTS on macOS, Linux, and Windows.</div>
+          </div>
+          <div class="glass-card" style="padding:16px;">
+            <div style="font-family:var(--font-mono); font-size:11px; color:var(--purple);">PREREQUISITE 2</div>
+            <div style="font-weight:700; color:#fff; margin:4px 0;">Web Browser (Canvas 2D)</div>
+            <div style="font-size:12px; color:var(--ink-muted);">Chrome, Safari, Firefox, Edge or Brave with WebGL/Canvas support.</div>
+          </div>
+          <div class="glass-card" style="padding:16px;">
+            <div style="font-family:var(--font-mono); font-size:11px; color:var(--gold);">PREREQUISITE 3</div>
+            <div style="font-weight:700; color:#fff; margin:4px 0;">At least 1 LLM Key or Ollama</div>
+            <div style="font-size:12px; color:var(--ink-muted);">Use free Gemini API keys, OpenAI, Claude, or run 100% offline with Ollama.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: SCAVENGERS VS THE MARKET (DIFFERENTIATOR) -->
+      <div class="liquid-tab-pane" id="tab-diff" role="tabpanel">
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
+            How Scavengers Assemble is Radically Different
+          </h3>
+          <p style="font-size:14px; color:var(--ink-muted);">
+            Most AI tools force you into a single text chatbox or charge \$20-\$500/mo for a sequential single-agent loop. Scavengers turns your models into an asynchronous superhero war room with zero vendor lock-in.
+          </p>
+        </div>
+
+        <!-- Highlight Differentiator Cards Grid -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:24px;">
+          <div class="glass-card">
+            <div style="font-size:24px; margin-bottom:8px;">🦾</div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">Parallel DAG vs. Sequential Bottleneck</div>
+            <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
+              Tools like Devin or Copilot run single-threaded loops that stall on errors. Tony Stark deconstructs your goal into an asynchronous DAG where Spider-Man (UI), Hulk (Logic), and Thor (DevOps) build concurrently in parallel.
+            </p>
+          </div>
+
+          <div class="glass-card">
+            <div style="font-size:24px; margin-bottom:8px;">🌍</div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">100% 3D Minecraft Isometric Engine</div>
+            <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
+              Instead of watching a boring CLI spinner or plain text logs, watch your agents walk across Taj Mahal, Stark Voxel Tower, and Nether Bridges with real-time thought bubbles, speech synthesis, and live creative building.
+            </p>
+          </div>
+
+          <div class="glass-card">
+            <div style="font-size:24px; margin-bottom:8px;">📁</div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">Direct Local Disk Codebase Output</div>
+            <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
+              No sandboxed ephemeral VMs. Scavengers creates full, runnable projects directly on your local disk at <code>./workspace/&lt;slug&gt;/</code> complete with package manifests and copyable terminal run scripts.
+            </p>
+          </div>
+
+          <div class="glass-card">
+            <div style="font-size:24px; margin-bottom:8px;">💎</div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">100% Free &amp; Open-Source (MIT)</div>
+            <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
+              Zero subscription fees. Bring your own keys (Gemini, Claude, OpenAI) or use 100% free offline local models with Ollama (DeepSeek-R1, Llama 3.3). You own all generated code.
+            </p>
+          </div>
+        </div>
+
+        <!-- Full Feature Comparison Matrix Table -->
+        <h4 style="font-family:var(--font-display); font-size:17px; font-weight:700; color:#fff; margin-bottom:12px;">
+          Comprehensive Capability Comparison Matrix
+        </h4>
+        <div class="comparison-container">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Feature / Dimension</th>
+                <th class="highlight-col">🦾 Scavengers Assemble</th>
+                <th>Cursor / Copilot</th>
+                <th>Devin / AutoGPT</th>
+                <th>ChatGPT / Claude Web</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Agent Architecture</strong></td>
+                <td class="highlight-col"><span class="status-check">✓</span> 5-Hero Parallel DAG + 5 Reserve</td>
+                <td><span class="status-cross">✗</span> Single-turn Autocomplete</td>
+                <td><span class="status-cross">✗</span> Sequential Single Agent</td>
+                <td><span class="status-cross">✗</span> Single Chat Turn</td>
+              </tr>
+              <tr>
+                <td><strong>Visual Interface</strong></td>
+                <td class="highlight-col"><span class="status-check">✓</span> 100% 3D Minecraft Isometric Engine</td>
+                <td><span class="status-cross">✗</span> Code Editor Sidebar</td>
+                <td><span class="status-cross">✗</span> Web Terminal Log</td>
+                <td><span class="status-cross">✗</span> Plain Text Markdown</td>
+              </tr>
+              <tr>
+                <td><strong>Multilingual Voice Comms</strong></td>
+                <td class="highlight-col"><span class="status-check">✓</span> JARVIS Mic Translation (Hindi/Eng/Esp)</td>
+                <td><span class="status-cross">✗</span> None</td>
+                <td><span class="status-cross">✗</span> None</td>
+                <td>Voice chat only (no code DAG)</td>
+              </tr>
+              <tr>
+                <td><strong>Local Disk Code Emission</strong></td>
+                <td class="highlight-col"><span class="status-check">✓</span> Full runnable repos (<code>./workspace/</code>)</td>
+                <td>Inline file edits only</td>
+                <td>Remote Cloud VM Sandbox</td>
+                <td><span class="status-cross">✗</span> Copy-paste code blocks</td>
+              </tr>
+              <tr>
+                <td><strong>Vibranium QA &amp; AST Verifier</strong></td>
+                <td class="highlight-col"><span class="status-check">✓</span> Captain America &amp; Dr. Strange</td>
+                <td>Basic Linter check</td>
+                <td>CLI error loop retry</td>
+                <td><span class="status-cross">✗</span> None</td>
+              </tr>
+              <tr>
+                <td><strong>LLM Provider Freedom</strong></td>
+                <td class="highlight-col"><span class="status-check">✓</span> Gemini, Claude, OpenAI, Ollama (Zero Lock)</td>
+                <td>Proprietary Proxy</td>
+                <td>Fixed Model</td>
+                <td>Provider Specific</td>
+              </tr>
+              <tr>
+                <td><strong>Pricing &amp; License</strong></td>
+                <td class="highlight-col"><span class="status-check">✓</span> 100% Free &amp; MIT Open Source</td>
+                <td>$20 / month</td>
+                <td>$500 / month / Waitlist</td>
+                <td>$20 / month</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: GOD DAG ARCHITECTURE -->
+      <div class="liquid-tab-pane" id="tab-architecture" role="tabpanel">
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
+            Goal-Oriented Decomposition (GOD) DAG Architecture
+          </h3>
+          <p style="font-size:14px; color:var(--ink-muted);">
+            How Scavengers Assemble deconstructs high-level human directives into production-grade multi-file repositories with zero hallucination.
+          </p>
+        </div>
+
+        <div class="dag-flow-grid">
+          <div class="dag-node active-node">
+            <div class="dag-node-num">1</div>
+            <div class="dag-node-title">Directive Input</div>
+            <div class="dag-node-desc">Voice comms (Hindi/English) or text prompt submitted to Stark Tower.</div>
+          </div>
+          <div class="dag-node active-node">
+            <div class="dag-node-num">2</div>
+            <div class="dag-node-title">Tony Stark Blueprint</div>
+            <div class="dag-node-desc">GOD Orchestrator parses requirements, structures file graph &amp; task DAG.</div>
+          </div>
+          <div class="dag-node active-node">
+            <div class="dag-node-num">3</div>
+            <div class="dag-node-title">Parallel Dispatch</div>
+            <div class="dag-node-desc">Spider-Man (UI), Hulk (Logic) &amp; Thor (Builds) execute simultaneously.</div>
+          </div>
+          <div class="dag-node active-node">
+            <div class="dag-node-num">4</div>
+            <div class="dag-node-title">Vibranium QA Shield</div>
+            <div class="dag-node-desc">Captain America verifies typing, boundary conditions &amp; syntax integrity.</div>
+          </div>
+          <div class="dag-node active-node">
+            <div class="dag-node-num">5</div>
+            <div class="dag-node-title">Disk Generation</div>
+            <div class="dag-node-desc">Complete project files emitted to <code>./workspace/</code> with run scripts.</div>
+          </div>
+        </div>
+
+        <div class="glass-card" style="margin-top:20px;">
+          <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">
+            ⚡ Asynchronous Inter-Agent Mesh Communication Bus
+          </h4>
+          <p style="font-size:13.5px; color:var(--ink-secondary); line-height:1.6;">
+            Heroes do not operate in silos. If <strong>The Hulk</strong> exposes an exported TypeScript interface (e.g., <code>interface UserSession</code>), the <strong>Stark Comms Bus</strong> broadcasts that contract in real-time to <strong>Spider-Man</strong> for frontend state binding and to <strong>Thor</strong> for container environment variables, preventing schema drift before code is even written.
+          </p>
+        </div>
+      </div>
+
+      <!-- TAB 4: SUPERHERO ROSTER (10 HEROES) -->
+      <div class="liquid-tab-pane" id="tab-roster" role="tabpanel">
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
+            Earth's Mightiest Agent Roster: 5 Core + 5 Multiverse Specialists
+          </h3>
+          <p style="font-size:14px; color:var(--ink-muted);">
+            Each superhero agent is backed by specialized system prompts, tailored tools, and distinct cognitive tasks.
+          </p>
+        </div>
+
+        <div class="roster-grid">
+          <!-- Hero 1: Tony Stark -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/iron_man.jpg" alt="Tony Stark Iron Man" />
+              <span class="hero-badge-tag tag-core">CORE LEAD</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Tony Stark</div>
+                <div class="hero-role">GOD Lead Architect</div>
+                <div class="hero-desc">Breaks master requirements into modular file graphs and orchestrates parallel subagent execution.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">DAG Planner</span>
+                <span class="hero-pill">Synthesis</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero 2: Spider-Man -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/spider_man.jpg" alt="Spider-Man" />
+              <span class="hero-badge-tag tag-core">CORE HERO</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Spider-Man</div>
+                <div class="hero-role">Frontend UI/UX Specialist</div>
+                <div class="hero-desc">Builds ultra-clean, reactive UI components in React, Tailwind, Next.js, and SwiftUI with fluid animations.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">React</span>
+                <span class="hero-pill">Tailwind</span>
+                <span class="hero-pill">Glassmorphism</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero 3: Thor -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/thor.jpg" alt="Thor" />
+              <span class="hero-badge-tag tag-core">CORE HERO</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Thor</div>
+                <div class="hero-role">DevOps &amp; Infrastructure</div>
+                <div class="hero-desc">Forges Dockerfiles, package manifests (<code>package.json</code>), build pipelines, and terminal run scripts.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">Docker</span>
+                <span class="hero-pill">CI/CD</span>
+                <span class="hero-pill">Scripts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero 4: The Hulk -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/hulk.jpg" alt="The Hulk" />
+              <span class="hero-badge-tag tag-core">CORE HERO</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">The Hulk</div>
+                <div class="hero-role">Core Logic &amp; Algorithms</div>
+                <div class="hero-desc">Smashes computational bottlenecks, writes complex business logic, state machines, and high-speed services.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">Algorithms</span>
+                <span class="hero-pill">State Logic</span>
+                <span class="hero-pill">Database</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero 5: Captain America -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/captain_america.jpg" alt="Captain America" />
+              <span class="hero-badge-tag tag-core">CORE HERO</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Captain America</div>
+                <div class="hero-role">Vibranium QA Shield</div>
+                <div class="hero-desc">Enforces strict TypeScript safety, boundary unit tests, and production code compliance before disk write.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">Unit Tests</span>
+                <span class="hero-pill">Type Safety</span>
+                <span class="hero-pill">QA Shield</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Specialist 6: Doctor Strange -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/doctor_strange.jpg" alt="Doctor Strange" />
+              <span class="hero-badge-tag tag-specialist">MULTIVERSE</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Doctor Strange</div>
+                <div class="hero-role">Temporal AST &amp; Memory</div>
+                <div class="hero-desc">Manipulates Abstract Syntax Trees and preserves cross-turn context memory across long coding sessions.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">AST</span>
+                <span class="hero-pill">Memory Stone</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Specialist 7: Black Widow -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/black_widow.jpg" alt="Black Widow" />
+              <span class="hero-badge-tag tag-specialist">MULTIVERSE</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Black Widow</div>
+                <div class="hero-role">Security &amp; Vulnerabilities</div>
+                <div class="hero-desc">Performs deep threat modeling, audits dependencies for CVEs, and prevents secret leaks or injection attacks.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">Security</span>
+                <span class="hero-pill">CVE Patching</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Specialist 8: Doctor Doom -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/doctor_doom.jpg" alt="Doctor Doom" />
+              <span class="hero-badge-tag tag-specialist">MULTIVERSE</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Doctor Doom</div>
+                <div class="hero-role">Compilers &amp; Low-Level</div>
+                <div class="hero-desc">Optimizes Rust, C++, WebAssembly, and native binary bindings for maximum silicon efficiency.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">Rust / C++</span>
+                <span class="hero-pill">Wasm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Specialist 9: Thanos -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/thanos.jpg" alt="Thanos" />
+              <span class="hero-badge-tag tag-specialist">MULTIVERSE</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Thanos</div>
+                <div class="hero-role">Rate Limiter &amp; Balancer</div>
+                <div class="hero-desc">Balances API quota utilization across models so token limits are never exceeded during large builds.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">Load Balancing</span>
+                <span class="hero-pill">Quota Manager</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Specialist 10: Kang -->
+          <div class="hero-card">
+            <div class="hero-img-wrap">
+              <img src="./assets/kang_conqueror.jpg" alt="Kang the Conqueror" />
+              <span class="hero-badge-tag tag-specialist">MULTIVERSE</span>
+            </div>
+            <div class="hero-content">
+              <div>
+                <div class="hero-name">Kang the Conqueror</div>
+                <div class="hero-role">Timeline Simulator</div>
+                <div class="hero-desc">Simulates multiple architectural forks simultaneously to pick the fastest and cleanest implementation.</div>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-pill">Forks</span>
+                <span class="hero-pill">Simulation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: MULTI-LLM ROUTING -->
+      <div class="liquid-tab-pane" id="tab-providers" role="tabpanel">
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
+            Universal Multi-LLM Provider Engine
+          </h3>
+          <p style="font-size:14px; color:var(--ink-muted);">
+            Route tasks to the best model for the job with live health check ping latency and instant fallback support.
+          </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+          <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-family:var(--font-display); font-weight:800; font-size:16px; color:#fff;">Google Gemini</div>
+              <span class="hero-pill" style="color:#00F0FF; border-color:#00F0FF;">Ultra Fast</span>
+            </div>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:12px;">
+              Gemini 2.0 Flash / Pro &amp; Gemini 1.5. Massive 1M-2M context window with near-instant sub-second token generation.
+            </p>
+            <div style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-secondary);">Default: <code>gemini-2.0-flash</code></div>
+          </div>
+
+          <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-family:var(--font-display); font-weight:800; font-size:16px; color:#fff;">Anthropic Claude</div>
+              <span class="hero-pill" style="color:#A855F7; border-color:#A855F7;">Deep Reasoning</span>
+            </div>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:12px;">
+              Claude 3.5 / 3.7 Sonnet &amp; Opus. Outstanding precision for complex architectural design, AST logic, and code refactoring.
+            </p>
+            <div style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-secondary);">Default: <code>claude-3-5-sonnet-latest</code></div>
+          </div>
+
+          <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-family:var(--font-display); font-weight:800; font-size:16px; color:#fff;">OpenAI</div>
+              <span class="hero-pill" style="color:#10B981; border-color:#10B981;">Versatile</span>
+            </div>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:12px;">
+              GPT-4o, GPT-4o-mini &amp; o3-mini. Reliable code structure, OpenAPI schema generators, and unit test compliance.
+            </p>
+            <div style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-secondary);">Default: <code>gpt-4o</code></div>
+          </div>
+
+          <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-family:var(--font-display); font-weight:800; font-size:16px; color:#fff;">Local Ollama</div>
+              <span class="hero-pill" style="color:#F59E0B; border-color:#F59E0B;">100% Offline</span>
+            </div>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:12px;">
+              DeepSeek-R1, Llama 3.3, Qwen 2.5 Coder, Mistral. Zero cloud requests, full privacy, and zero token costs.
+            </p>
+            <div style="font-family:var(--font-mono); font-size:11.5px; color:var(--ink-secondary);">Default: <code>deepseek-r1:latest</code></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: COMMAND GENERATOR / PLAYGROUND -->
+      <div class="liquid-tab-pane" id="tab-playground" role="tabpanel">
+        <div style="margin-bottom: 20px;">
+          <h3 style="font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:6px;">
+            Interactive Mission Command Generator
+          </h3>
+          <p style="font-size:14px; color:var(--ink-muted);">
+            Pick your stack and desired project to generate the customized execution command for your terminal.
+          </p>
+        </div>
+
+        <div class="playground-box">
+          <div class="playground-controls">
+            <div class="control-group">
+              <label for="pg-stack">Tech Stack</label>
+              <select id="pg-stack" class="select-input" onchange="updateGeneratedCommand()">
+                <option value="react-express">React 19 + Express + TypeScript</option>
+                <option value="nextjs-tailwind">Next.js 15 App Router + Tailwind + Prisma</option>
+                <option value="python-fastapi">Python FastAPI + SQLAlchemy + JWT</option>
+                <option value="swiftui-ios">SwiftUI iOS App + CoreData</option>
+                <option value="rust-cli">Rust High-Performance CLI Tool</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="pg-heroes">Squad Size</label>
+              <select id="pg-heroes" class="select-input" onchange="updateGeneratedCommand()">
+                <option value="5-core">Core 5 Heroes (Stark, Spidey, Thor, Hulk, Cap)</option>
+                <option value="full-multiverse">Full 10-Hero Multiverse Strike Team</option>
+                <option value="fast-trio">Speed Strike Trio (Tony, Spidey, Hulk)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="pg-mode">Execution Mode</label>
+              <select id="pg-mode" class="select-input" onchange="updateGeneratedCommand()">
+                <option value="hud">3D Minecraft War Room HUD (Browser)</option>
+                <option value="cli">Headless Terminal One-Shot</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="code-terminal" style="margin-bottom:0;">
+            <div class="code-header">
+              <div class="code-header-left">Generated Terminal Command</div>
+              <button class="copy-chip" id="pg-copy-btn" onclick="copySnippet(document.getElementById('generated-cmd-text').innerText, this)">📋 Copy</button>
+            </div>
+            <div class="code-body" id="generated-cmd-text">
+              npx scavengers-assemble hud --mission "Build a production-grade React 19 + Express + TypeScript fullstack application with unit tests"
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Key Features Grid -->
   <section class="wrap">
-    <div style="text-align:center; margin-bottom:32px;">
-      <h2 style="font-family:var(--font-display); font-size:26px; font-weight:800; color:#fff;">Engineered for Maximum Speed</h2>
+    <div style="text-align:center; margin-bottom:36px;">
+      <h2 style="font-family:var(--font-display); font-size:28px; font-weight:800; color:#fff;">Engineered for Maximum Speed &amp; Developer Delight</h2>
+      <p style="font-size:14px; color:var(--ink-muted);">Built with modern web standards, HTML5 canvas, and rigorous type safety.</p>
     </div>
 
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="feat-icon">🌍</div>
+      <div class="feat-card">
+        <div class="feat-icon-box">🌍</div>
         <div class="feat-title">100% 3D Minecraft Engine</div>
-        <div class="feat-desc">Pure HTML5 Canvas isometric world with Taj Mahal, Pyramid of Giza, Statue of Liberty, Leaning Tower of Pisa, and Himalayan glaciers.</div>
+        <div class="feat-desc">Pure HTML5 Canvas isometric world rendering Taj Mahal, Valyrian Nether Lava Keep, Stark Tower, and mountain bridges with zero third-party 3D bundle bloat.</div>
       </div>
-      <div class="feature-card">
-        <div class="feat-icon">🎙️</div>
+
+      <div class="feat-card">
+        <div class="feat-icon-box">🎙️</div>
         <div class="feat-title">JARVIS Voice Comms</div>
-        <div class="feat-desc">Speak in Hindi, English, or any language with live microphone recording and automatic AI translation into software engineering directives.</div>
+        <div class="feat-desc">Speak in Hindi, English, Spanish, or your native language. Our live microphone pipeline translates your voice directly into production engineering directives.</div>
       </div>
-      <div class="feature-card">
-        <div class="feat-icon">📁</div>
+
+      <div class="feat-card">
+        <div class="feat-icon-box">📁</div>
         <div class="feat-title">Workspace File Explorer</div>
-        <div class="feat-desc">Browse generated codebases on disk, preview syntax-highlighted source code, and copy terminal run scripts with one click.</div>
+        <div class="feat-desc">Browse generated codebases on local disk, inspect syntax-highlighted source code, copy file paths, and execute terminal launch scripts with 1 click.</div>
       </div>
-      <div class="feature-card">
-        <div class="feat-icon">🔨</div>
+
+      <div class="feat-card">
+        <div class="feat-icon-box">🔨</div>
         <div class="feat-title">Creative Build Mode</div>
-        <div class="feat-desc">Place and break blocks in 3D space with a ghost block cursor preview and particle destruction effects.</div>
+        <div class="feat-desc">Place and mine 3D voxel blocks in real time with ghost preview cursors, particle destruction FX, and custom block palettes.</div>
       </div>
-      <div class="feature-card">
-        <div class="feat-icon">🎨</div>
+
+      <div class="feat-card">
+        <div class="feat-icon-box">🎨</div>
         <div class="feat-title">Multi-Theme Engine</div>
-        <div class="feat-desc">Instant switching between Daylight Mode, Modern Slate, and Dark Stark HUD with localStorage persistence.</div>
+        <div class="feat-desc">Seamlessly toggle between ☀️ Daylight Theme (crisp white &amp; sky blue), ⛅ Modern Slate, and 🌙 Dark Stark HUD with instant localStorage sync.</div>
       </div>
-      <div class="feature-card">
-        <div class="feat-icon">🧠</div>
+
+      <div class="feat-card">
+        <div class="feat-icon-box">🧠</div>
         <div class="feat-title">Personal Skills Loader</div>
-        <div class="feat-desc">Register custom personal prompt skills, architectural patterns, and tool capabilities into the Avengers knowledge base.</div>
+        <div class="feat-desc">Register your own custom prompt skills, architecture patterns, and tools into the Avengers harness to personalize code generation standards.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="wrap" id="faq">
+    <div style="text-align:center; margin-bottom:36px;">
+      <h2 style="font-family:var(--font-display); font-size:28px; font-weight:800; color:#fff;">Frequently Asked Questions</h2>
+      <p style="font-size:14px; color:var(--ink-muted);">Answers to common questions about setup, safety, and agent orchestration.</p>
+    </div>
+
+    <div style="max-width: 800px; margin: 0 auto;">
+      <div class="faq-item open">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Is Scavengers Assemble completely free to use?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          Yes! Scavengers Assemble is 100% free and open-source under the permissive MIT License. There are no monthly paywalls or subscription tiers. You can use free Google Gemini API tiers, bring your own API keys, or run entirely offline with Ollama models.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Where does Scavengers Assemble save the generated code?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          Generated projects are written directly to your local filesystem inside the <code>./workspace/&lt;project-slug&gt;/</code> directory. Each workspace includes full source files, package manifests, and copyable terminal execution scripts (e.g. <code>npm install &amp;&amp; npm start</code>).
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Can I run Scavengers Assemble without an internet connection?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          Yes! With our local Ollama integration, you can connect models such as DeepSeek-R1, Llama 3.3, or Qwen 2.5 Coder running on <code>http://localhost:11434</code>. All multi-agent orchestration will run entirely locally on your machine.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How does JARVIS voice comms translate multilingual audio?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          When you speak into the microphone (in Hindi, English, Spanish, etc.), the audio is transcribed and synthesized via our language model pipeline to distill the spoken intent into a formal engineering task graph before Tony Stark initiates decomposition.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How do I add my own custom personal skills or hero agents?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          You can add custom hero classes in <code>src/heroes/</code> extending <code>BaseHero</code> or drop prompt skill files into the registered skills directory. The orchestrator automatically discovers registered agents and delegates tasks matched to their declared competencies.
+        </div>
       </div>
     </div>
   </section>
@@ -301,14 +1454,126 @@
   <!-- Footer -->
   <footer>
     <div class="wrap">
-      <p style="margin-bottom:8px;">
-        <strong>SCAVENGERS ASSEMBLE</strong> &bull; Developed by <a href="https://shubhransh-gupta.github.io/cv/" target="_blank">Shubhransh Gupta</a>
-      </p>
-      <p style="color:var(--faint);">
-        Open Source under MIT License &bull; <a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank" style="color:var(--muted);">GitHub Repository</a> &bull; <a href="https://shubhransh-gupta.github.io/cv/" target="_blank" style="color:var(--muted);">Portfolio &amp; CV</a>
-      </p>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand" style="margin-bottom: 12px;">
+            <div class="brand-logo-box" style="width:30px; height:30px; font-size:14px;">A</div>
+            <div class="brand-title" style="font-size:14px;">SCAVENGERS ASSEMBLE</div>
+          </div>
+          <p style="font-size:12.5px; color:var(--ink-muted); line-height:1.5;">
+            Earth's Mightiest Agentic AI Coding War Room &amp; 3D Minecraft isometric engine.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#quickstart">Setup Guide</a></li>
+            <li><a href="#tab-hub" onclick="switchMainTab('tab-diff')">Scavengers vs Market</a></li>
+            <li><a href="#tab-hub" onclick="switchMainTab('tab-architecture')">DAG Architecture</a></li>
+            <li><a href="#tab-hub" onclick="switchMainTab('tab-roster')">Superhero Roster</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Interactive Apps</h4>
+          <ul>
+            <li><a href="./warroom.html">3D Mission Control War Room</a></li>
+            <li><a href="https://github.com/shubhransh-gupta/scavengers-assemble" target="_blank">GitHub Repository</a></li>
+            <li><a href="https://github.com/shubhransh-gupta/scavengers-assemble/issues" target="_blank">Issue Tracker</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Creator</h4>
+          <ul>
+            <li><a href="https://shubhransh-gupta.github.io/cv/" target="_blank">Shubhransh Gupta CV</a></li>
+            <li><a href="https://github.com/shubhransh-gupta" target="_blank">GitHub Profile</a></li>
+            <li><a href="https://github.com/shubhransh-gupta/scavengers-assemble/blob/main/LICENSE" target="_blank">MIT License</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 <strong>SCAVENGERS ASSEMBLE</strong> &bull; Crafted with ❤️ by <a href="https://shubhransh-gupta.github.io/cv/" target="_blank">Shubhransh Gupta</a>
+        </div>
+        <div>
+          Licensed under <a href="https://github.com/shubhransh-gupta/scavengers-assemble/blob/main/LICENSE" target="_blank">MIT</a> &bull; Open Source for all developers worldwide.
+        </div>
+      </div>
     </div>
   </footer>
 
+  <!-- Interactive Tab & UI Controller Scripts -->
+  <script>
+    // Main Liquid Morphism Tab Switcher
+    function switchMainTab(tabId) {
+      // Hide all panes
+      const panes = document.querySelectorAll('.liquid-tab-pane');
+      panes.forEach(pane => pane.classList.remove('active'));
+
+      // Deactivate all buttons
+      const btns = document.querySelectorAll('.liquid-tab-btn');
+      btns.forEach(btn => btn.classList.remove('active'));
+
+      // Activate target pane & button
+      const targetPane = document.getElementById(tabId);
+      const targetBtn = document.getElementById('btn-' + tabId);
+      if (targetPane) targetPane.classList.add('active');
+      if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    // Sub-tab switcher inside Setup pane
+    function switchSubTab(subTabId, clickedBtn) {
+      const subpanes = document.querySelectorAll('.setup-subpane');
+      subpanes.forEach(p => p.style.display = 'none');
+
+      const target = document.getElementById(subTabId);
+      if (target) target.style.display = 'block';
+
+      const siblingBtns = clickedBtn.parentElement.querySelectorAll('.sub-tab-btn');
+      siblingBtns.forEach(b => b.classList.remove('active'));
+      clickedBtn.classList.add('active');
+    }
+
+    // FAQ Accordion Toggle
+    function toggleFaq(el) {
+      const item = el.parentElement;
+      item.classList.toggle('open');
+    }
+
+    // Copy snippet helper
+    function copySnippet(text, buttonEl) {
+      navigator.clipboard.writeText(text).then(() => {
+        const original = buttonEl.innerHTML;
+        buttonEl.innerHTML = '<span>✓</span> Copied!';
+        setTimeout(() => {
+          buttonEl.innerHTML = original;
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    // Interactive Command Generator Updater
+    function updateGeneratedCommand() {
+      const stack = document.getElementById('pg-stack').value;
+      const heroes = document.getElementById('pg-heroes').value;
+      const mode = document.getElementById('pg-mode').value;
+
+      let stackName = "React 19 + Express + TypeScript fullstack application";
+      if (stack === 'nextjs-tailwind') stackName = "Next.js 15 App Router + Tailwind + Prisma SaaS";
+      if (stack === 'python-fastapi') stackName = "Python FastAPI + SQLAlchemy + JWT microservice";
+      if (stack === 'swiftui-ios') stackName = "SwiftUI iOS app with glassmorphic cards";
+      if (stack === 'rust-cli') stackName = "high-performance Rust CLI tool";
+
+      let cmd = "";
+      if (mode === 'hud') {
+        cmd = `npx scavengers-assemble hud --mission "Build a production-grade ${stackName} with unit tests"`;
+      } else {
+        cmd = `node bin/stark.js mission "Build a production-grade ${stackName} with unit tests" --squad ${heroes}`;
+      }
+
+      document.getElementById('generated-cmd-text').innerText = cmd;
+    }
+  </script>
 </body>
 </html>
