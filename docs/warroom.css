@@ -1,5 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS // 100% EDGE-TO-EDGE ISOMETRIC 3D MINECRAFT SIMULATION
+   SCAVENGERS // 100% EDGE-TO-EDGE 3D MINECRAFT SIMULATION
+   CRAFTING, ENCHANTING, DIAMOND SWORDS & AUTHENTIC PIXEL TEXTURES
    ══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -20,6 +21,7 @@
   --border-gold: #FFD700;
   --border-emerald: #10B981;
   --border-purple: #A855F7;
+  --diamond-cyan: #4AEDD9;
 
   --ink: #FFFFFF;
   --ink-secondary: #D8B4FE;
@@ -125,6 +127,7 @@ html, body {
 }
 .pill-glow-dot.cyan { background: var(--arc-cyan); box-shadow: 0 0 8px var(--arc-cyan); }
 .pill-glow-dot.gold { background: var(--thanos-gold); box-shadow: 0 0 8px var(--thanos-gold); }
+.pill-glow-dot.diamond { background: var(--diamond-cyan); box-shadow: 0 0 8px var(--diamond-cyan); }
 
 .pill-txt {
   font-family: var(--font-arcade);
@@ -162,12 +165,61 @@ html, body {
   box-shadow: 0 0 12px var(--arc-glow);
   transform: translateY(-2px);
 }
+.valley-action-pill-btn.sword {
+  background: linear-gradient(135deg, #0EA5E9 0%, #4338CA 100%);
+  border-color: var(--diamond-cyan);
+  color: #FFFFFF;
+}
 .valley-action-pill-btn.clash {
   background: linear-gradient(135deg, #DC2626 0%, #7E22CE 100%);
   border-color: #EF4444;
 }
 
-/* Zoom / Pan Controls (Bottom Left of Canvas) */
+/* Minecraft Hotbar (Bottom Center of Viewport) */
+.minecraft-hotbar {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  background: rgba(15, 7, 36, 0.94);
+  border: 3px solid #4E288E;
+  border-radius: 6px;
+  padding: 3px;
+  gap: 3px;
+  z-index: 20;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.8);
+}
+
+.hotbar-slot {
+  width: 36px;
+  height: 36px;
+  background: #090318;
+  border: 2px solid #2F175A;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.12s ease;
+}
+.hotbar-slot:hover, .hotbar-slot.active {
+  border-color: var(--diamond-cyan);
+  box-shadow: 0 0 8px rgba(74, 237, 217, 0.5);
+  transform: translateY(-2px);
+}
+.hotbar-count {
+  position: absolute;
+  bottom: 1px;
+  right: 2px;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: #FFFFFF;
+}
+
+/* Camera Zoom / Pan Controls (Bottom Left of Canvas) */
 .canvas-camera-controls {
   position: absolute;
   bottom: 12px;
