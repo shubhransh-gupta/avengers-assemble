@@ -1,6 +1,6 @@
 /**
  * ══════════════════════════════════════════════════════════════════════
- * SCAVENGERS // DYNAMIC ROAMING BATTLEWORLD & MULTIVERSE ENGINE (docs/warroom.js)
+ * SCAVENGERS // MARVEL BATTLEWORLD CHAMBERS & MULTIVERSE ENGINE (docs/warroom.js)
  * ══════════════════════════════════════════════════════════════════════
  */
 
@@ -9,26 +9,27 @@ const state = {
   ws: null,
   consoleMode: 'verbose', // 'verbose' | 'result'
   particles: [],
-  activeAttacks: [], // Laser beams, lightning strikes, runes, shockwaves
+  respawnPillars: [], // Beams of light descending into chambers
+  activeAttacks: [],
   roamingAgents: {},
 };
 
-// ── Complete Marvel Superheroes & Supervillains Catalog ─────────────
-const MARVEL_CATALOG = {
+// ── Complete Marvel Multiverse Chambers & Heroes Catalog ────────────
+const MARVEL_CHAMBERS = {
   'tony-stark': {
     id: 'tony-stark',
     name: 'Tony Stark',
     callsign: 'IRON MAN',
     role: 'God Orchestrator',
+    chamberName: 'Stark Holographic Citadel',
     avatar: '🦾',
     themeColor: '#00F0FF',
-    glowColor: 'rgba(0, 240, 255, 0.6)',
+    glowColor: 'rgba(0, 240, 255, 0.55)',
     power: 'laser',
-    suit: 'mark-85',
-    pos: { x: 250, y: 120 },
-    targetPos: { x: 250, y: 120 },
-    vx: 0, vy: 0,
-    quote: 'JARVIS, decompose master prompt into DAG directives.',
+    screenPos: { top: '42%', left: '50%' },
+    canvasPos: { x: 250, y: 135 },
+    quote: 'JARVIS, decompose directives across the Battleworld mesh.',
+    status: 'ONLINE',
     spawned: true,
   },
   'doctor-doom': {
@@ -36,15 +37,16 @@ const MARVEL_CATALOG = {
     name: 'Doctor Doom',
     callsign: 'DOOM',
     role: 'Latverian AST & Compiler',
+    chamberName: 'Latverian Arcane Sanctum',
+    image: './assets/doctor_doom.jpg',
     avatar: '👑',
     themeColor: '#10B981',
-    glowColor: 'rgba(16, 185, 129, 0.6)',
+    glowColor: 'rgba(16, 185, 129, 0.55)',
     power: 'runes',
-    suit: 'doom-armor',
-    pos: { x: 380, y: 190 },
-    targetPos: { x: 380, y: 190 },
-    vx: 0, vy: 0,
-    quote: 'Doom commands the syntax tree. Bugs shall not survive.',
+    screenPos: { top: '58%', left: '82%' },
+    canvasPos: { x: 410, y: 185 },
+    quote: 'Doom commands the syntax trees. Imperfect code shall be banished.',
+    status: 'COMPILING',
     spawned: true,
   },
   'kang': {
@@ -52,31 +54,16 @@ const MARVEL_CATALOG = {
     name: 'Kang the Conqueror',
     callsign: 'KANG',
     role: 'Quantum Timeline Branching',
+    chamberName: 'Quantum Chrono-Chamber',
+    image: './assets/kang_conqueror.jpg',
     avatar: '⏳',
     themeColor: '#38BDF8',
-    glowColor: 'rgba(56, 189, 248, 0.6)',
+    glowColor: 'rgba(56, 189, 248, 0.55)',
     power: 'chrono',
-    suit: 'kang-armor',
-    pos: { x: 110, y: 175 },
-    targetPos: { x: 110, y: 175 },
-    vx: 0, vy: 0,
-    quote: 'I have simulated 14 billion timelines. Reality-616 targeted.',
-    spawned: true,
-  },
-  'thanos': {
-    id: 'thanos',
-    name: 'Thanos',
-    callsign: 'MAD TITAN',
-    role: 'Power & Rate Balancer',
-    avatar: '🪐',
-    themeColor: '#FFC83B',
-    glowColor: 'rgba(255, 200, 59, 0.6)',
-    power: 'cosmic',
-    suit: 'thanos-gold',
-    pos: { x: 360, y: 80 },
-    targetPos: { x: 360, y: 80 },
-    vx: 0, vy: 0,
-    quote: 'Rate limits, memory, and tokens in perfect equilibrium.',
+    screenPos: { top: '52%', left: '18%' },
+    canvasPos: { x: 90, y: 165 },
+    quote: 'I have navigated 14 billion timelines. Reality-616 targeted.',
+    status: 'BRANCHING',
     spawned: true,
   },
   'thor': {
@@ -84,63 +71,31 @@ const MARVEL_CATALOG = {
     name: 'Thor Odinson',
     callsign: 'THOR',
     role: 'DevOps & Package Manifest',
+    chamberName: 'Asgardian Thunder Forge',
     avatar: '⚡',
     themeColor: '#00D5E8',
-    glowColor: 'rgba(0, 213, 232, 0.6)',
+    glowColor: 'rgba(0, 213, 232, 0.55)',
     power: 'thunder',
-    suit: 'thor-armor',
-    pos: { x: 420, y: 110 },
-    targetPos: { x: 420, y: 110 },
-    vx: 0, vy: 0,
+    screenPos: { top: '25%', left: '86%' },
+    canvasPos: { x: 430, y: 80 },
     quote: 'By Mjolnir, forged high-voltage Swift packages and CI/CD!',
+    status: 'FORGING',
     spawned: true,
   },
-  'captain-america': {
-    id: 'captain-america',
-    name: 'Steve Rogers',
-    callsign: 'CAP',
-    role: 'Vibranium QA Auditor',
-    avatar: '🛡️',
-    themeColor: '#3B82F6',
-    glowColor: 'rgba(59, 130, 246, 0.6)',
-    power: 'shield',
-    suit: 'cap-stealth',
-    pos: { x: 160, y: 255 },
-    targetPos: { x: 160, y: 255 },
-    vx: 0, vy: 0,
-    quote: 'Standards inspection ready. Sound off, soldiers.',
-    spawned: true,
-  },
-  'spider-man': {
-    id: 'spider-man',
-    name: 'Peter Parker',
-    callsign: 'SPIDEY',
-    role: 'Frontend UI Architect',
-    avatar: '🕸️',
-    themeColor: '#EF4444',
-    glowColor: 'rgba(239, 68, 68, 0.6)',
-    power: 'web',
-    suit: 'spidey-nanotech',
-    pos: { x: 325, y: 260 },
-    targetPos: { x: 325, y: 260 },
-    vx: 0, vy: 0,
-    quote: 'Spun up reactive components with buttery 60 FPS animations!',
-    spawned: true,
-  },
-  'hulk': {
-    id: 'hulk',
-    name: 'Bruce Banner',
-    callsign: 'HULK',
-    role: 'Gamma Logic Optimizer',
-    avatar: '🟢',
-    themeColor: '#22C55E',
-    glowColor: 'rgba(34, 197, 94, 0.6)',
-    power: 'gamma',
-    suit: 'hulk-titan',
-    pos: { x: 240, y: 240 },
-    targetPos: { x: 240, y: 240 },
-    vx: 0, vy: 0,
-    quote: 'HULK SMASH BOTTLENECKS AND REFACTOR FOR MAX PERFORMANCE!',
+  'thanos': {
+    id: 'thanos',
+    name: 'Thanos',
+    callsign: 'MAD TITAN',
+    role: 'Power & Rate Balancer',
+    chamberName: 'Titan Gauntlet Sanctuary',
+    avatar: '🪐',
+    themeColor: '#FFC83B',
+    glowColor: 'rgba(255, 200, 59, 0.55)',
+    power: 'cosmic',
+    screenPos: { top: '22%', left: '70%' },
+    canvasPos: { x: 350, y: 70 },
+    quote: 'Rate limits, memory, and tokens in perfect equilibrium.',
+    status: 'BALANCED',
     spawned: true,
   },
   'doctor-strange': {
@@ -148,15 +103,63 @@ const MARVEL_CATALOG = {
     name: 'Stephen Strange',
     callsign: 'STRANGE',
     role: 'Temporal Memory',
+    chamberName: 'Kamar-Taj Mystic Nexus',
     avatar: '🔮',
     themeColor: '#A855F7',
-    glowColor: 'rgba(168, 85, 247, 0.6)',
+    glowColor: 'rgba(168, 85, 247, 0.55)',
     power: 'mandala',
-    suit: 'strange-robes',
-    pos: { x: 75, y: 110 },
-    targetPos: { x: 75, y: 110 },
-    vx: 0, vy: 0,
-    quote: 'Temporal snapshots preserved for instant multiverse rollback.',
+    screenPos: { top: '24%', left: '22%' },
+    canvasPos: { x: 110, y: 75 },
+    quote: 'Temporal snapshots preserved for instant rollback.',
+    status: 'SYNCHRONIZING',
+    spawned: true,
+  },
+  'captain-america': {
+    id: 'captain-america',
+    name: 'Steve Rogers',
+    callsign: 'CAP',
+    role: 'Vibranium QA Auditor',
+    chamberName: 'Wakandan Bastion',
+    avatar: '🛡️',
+    themeColor: '#3B82F6',
+    glowColor: 'rgba(59, 130, 246, 0.55)',
+    power: 'shield',
+    screenPos: { top: '78%', left: '28%' },
+    canvasPos: { x: 140, y: 250 },
+    quote: 'Standards inspection ready. Sound off, strike team.',
+    status: 'INSPECTING',
+    spawned: true,
+  },
+  'spider-man': {
+    id: 'spider-man',
+    name: 'Peter Parker',
+    callsign: 'SPIDEY',
+    role: 'Frontend UI Architect',
+    chamberName: 'Web Vanguard Hub',
+    avatar: '🕸️',
+    themeColor: '#EF4444',
+    glowColor: 'rgba(239, 68, 68, 0.55)',
+    power: 'web',
+    screenPos: { top: '80%', left: '72%' },
+    canvasPos: { x: 360, y: 255 },
+    quote: 'Spun up reactive components with buttery 60 FPS animations!',
+    status: 'RENDER_READY',
+    spawned: true,
+  },
+  'hulk': {
+    id: 'hulk',
+    name: 'Bruce Banner',
+    callsign: 'HULK',
+    role: 'Gamma Logic Optimizer',
+    chamberName: 'Gamma Containment Lab',
+    avatar: '🟢',
+    themeColor: '#22C55E',
+    glowColor: 'rgba(34, 197, 94, 0.55)',
+    power: 'gamma',
+    screenPos: { top: '76%', left: '50%' },
+    canvasPos: { x: 250, y: 245 },
+    quote: 'HULK SMASH BOTTLENECKS AND REFACTOR WITH GAMMA POWER!',
+    status: 'OPTIMIZING',
     spawned: true,
   },
   'vision': {
@@ -164,47 +167,31 @@ const MARVEL_CATALOG = {
     name: 'Vision',
     callsign: 'VISION',
     role: 'Org Knowledge Mesh',
+    chamberName: 'Mind Stone Matrix',
     avatar: '💎',
     themeColor: '#10B981',
-    glowColor: 'rgba(16, 185, 129, 0.6)',
+    glowColor: 'rgba(16, 185, 129, 0.55)',
     power: 'laser',
-    suit: 'vision-android',
-    pos: { x: 250, y: 185 },
-    targetPos: { x: 250, y: 185 },
-    vx: 0, vy: 0,
-    quote: '100% org knowledge synchronization achieved across the mesh.',
-    spawned: true,
+    screenPos: { top: '64%', left: '38%' },
+    canvasPos: { x: 190, y: 205 },
+    quote: '100% org knowledge synchronization achieved across mental nodes.',
+    status: 'STANDBY',
+    spawned: false,
   },
   'black-widow': {
     id: 'black-widow',
     name: 'Natasha Romanoff',
     callsign: 'WIDOW',
     role: 'Security & CVE Recon',
+    chamberName: 'Red Enclave Stealth Hub',
     avatar: '🕷️',
     themeColor: '#C084FC',
-    glowColor: 'rgba(192, 132, 252, 0.6)',
+    glowColor: 'rgba(192, 132, 252, 0.55)',
     power: 'laser',
-    suit: 'widow-stealth',
-    pos: { x: 195, y: 215 },
-    targetPos: { x: 195, y: 215 },
-    vx: 0, vy: 0,
+    screenPos: { top: '64%', left: '62%' },
+    canvasPos: { x: 310, y: 205 },
     quote: 'Perimeter secure. API bearer keys sanitized in the enclave.',
-    spawned: false,
-  },
-  'hawkeye': {
-    id: 'hawkeye',
-    name: 'Clint Barton',
-    callsign: 'HAWKEYE',
-    role: 'Unit Test Sniper',
-    avatar: '🏹',
-    themeColor: '#F59E0B',
-    glowColor: 'rgba(245, 158, 11, 0.6)',
-    power: 'arrow',
-    suit: 'hawkeye-tactical',
-    pos: { x: 300, y: 215 },
-    targetPos: { x: 300, y: 215 },
-    vx: 0, vy: 0,
-    quote: 'Never missed a bug. 100% assertion accuracy achieved.',
+    status: 'STANDBY',
     spawned: false,
   },
   'scarlet-witch': {
@@ -212,50 +199,34 @@ const MARVEL_CATALOG = {
     name: 'Wanda Maximoff',
     callsign: 'SCARLET WITCH',
     role: 'Reality Refactoring',
+    chamberName: 'Chaos Magic Spire',
     avatar: '🔴',
     themeColor: '#EF4444',
     glowColor: 'rgba(239, 68, 68, 0.8)',
     power: 'chaos',
-    suit: 'wanda-tiara',
-    pos: { x: 140, y: 140 },
-    targetPos: { x: 140, y: 140 },
-    vx: 0, vy: 0,
+    screenPos: { top: '35%', left: '35%' },
+    canvasPos: { x: 175, y: 110 },
     quote: 'I can rewrite the codebase into any reality I choose.',
-    spawned: false,
-  },
-  'wolverine': {
-    id: 'wolverine',
-    name: 'Logan',
-    callsign: 'WOLVERINE',
-    role: 'Hardcore Stress Testing',
-    avatar: '⚔️',
-    themeColor: '#F59E0B',
-    glowColor: 'rgba(245, 158, 11, 0.7)',
-    power: 'slash',
-    suit: 'logan-suit',
-    pos: { x: 280, y: 270 },
-    targetPos: { x: 280, y: 270 },
-    vx: 0, vy: 0,
-    quote: 'I am the best at what I do, and what I do is stress-test code.',
+    status: 'STANDBY',
     spawned: false,
   }
 };
 
-// Copy spawned characters into active roaming pool
-for (const [k, v] of Object.entries(MARVEL_CATALOG)) {
+// Copy spawned chambers into active pool
+for (const [k, v] of Object.entries(MARVEL_CHAMBERS)) {
   if (v.spawned) state.roamingAgents[k] = { ...v };
 }
 
 // ── DOM References ──────────────────────────────────────────────────
-let canvas, ctx;
+let effectsCanvas, effectsCtx;
 let verboseStreamFeed, resultDeliverableView;
 let quantumPromptInput, dispatchMissionBtn;
-let multiverseStrongholdDock, incursionSpeechLayer;
+let multiverseStrongholdDock, incursionSpeechLayer, chambersLayer;
 
 // ── Initialization ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  canvas = document.getElementById('battleworldCanvas');
-  ctx = canvas.getContext('2d');
+  effectsCanvas = document.getElementById('valleyEffectsCanvas');
+  effectsCtx = effectsCanvas.getContext('2d');
 
   verboseStreamFeed = document.getElementById('verboseStreamFeed');
   resultDeliverableView = document.getElementById('resultDeliverableView');
@@ -263,8 +234,10 @@ document.addEventListener('DOMContentLoaded', () => {
   dispatchMissionBtn = document.getElementById('dispatchMissionBtn');
   multiverseStrongholdDock = document.getElementById('multiverseStrongholdDock');
   incursionSpeechLayer = document.getElementById('incursionSpeechLayer');
+  chambersLayer = document.getElementById('chambersLayer');
 
-  initCanvas();
+  initEffectsCanvas();
+  renderChambersOnLandscape();
   renderStrongholdDock();
   setupEventListeners();
   initWebSocket();
@@ -272,62 +245,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Show opening dramatic line
   setTimeout(() => {
-    showCosmicSpeechBubble('tony-stark', 'Battleworld live. All superheroes & villains patrolling sectors.');
+    showCosmicSpeechBubble('tony-stark', 'All 9 Battleworld Chambers synchronized across the incursion valley.');
   }, 1200);
+
+  // Setup periodic random respawn light beams to feel living
+  setInterval(triggerRandomRespawnSequence, 4500);
 });
 
-// ── Canvas Setup & Cosmic Loop ──────────────────────────────────────
-function initCanvas() {
+// ── Canvas Setup & Cinematic FX Loop ────────────────────────────────
+function initEffectsCanvas() {
   function resize() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+    const rect = effectsCanvas.parentElement.getBoundingClientRect();
+    effectsCanvas.width = rect.width;
+    effectsCanvas.height = rect.height;
   }
   window.addEventListener('resize', resize);
   resize();
-  requestAnimationFrame(gameLoop);
-
-  // Click on canvas to move nearest agent or attack!
-  canvas.addEventListener('click', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const scale = Math.max(1, Math.min(canvas.width / 500, canvas.height / 320));
-    const clickX = (e.clientX - rect.left) / scale;
-    const clickY = (e.clientY - rect.top) / scale;
-
-    // Check if clicked directly on an agent
-    let clickedAgent = null;
-    for (const agent of Object.values(state.roamingAgents)) {
-      if (Math.hypot(agent.pos.x - clickX, agent.pos.y - clickY) < 18) {
-        clickedAgent = agent;
-        break;
-      }
-    }
-
-    if (clickedAgent) {
-      triggerAgentAttack(clickedAgent);
-      showCosmicSpeechBubble(clickedAgent.id, clickedAgent.quote);
-      appendVerboseStream(`● [${clickedAgent.callsign}] Executing signature ${clickedAgent.power} attack.`);
-    } else {
-      // Command nearest hero to move to location
-      let nearest = null;
-      let minD = Infinity;
-      for (const agent of Object.values(state.roamingAgents)) {
-        const d = Math.hypot(agent.pos.x - clickX, agent.pos.y - clickY);
-        if (d < minD) { minD = d; nearest = agent; }
-      }
-      if (nearest) {
-        nearest.targetPos = { x: clickX, y: clickY };
-        showCosmicSpeechBubble(nearest.id, `Moving to coordinate (${Math.round(clickX)}, ${Math.round(clickY)})`);
-      }
-    }
-  });
+  requestAnimationFrame(effectsLoop);
 }
 
 function initParticles() {
-  for (let i = 0; i < 45; i++) {
+  for (let i = 0; i < 50; i++) {
     state.particles.push({
-      x: Math.random() * 500,
-      y: Math.random() * 320,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
       size: Math.random() * 2.5 + 0.5,
       speedY: Math.random() * 0.4 + 0.1,
       color: ['#00F0FF', '#FF0055', '#FFC83B', '#10B981', '#A855F7'][Math.floor(Math.random() * 5)],
@@ -336,287 +277,203 @@ function initParticles() {
   }
 }
 
-function gameLoop(time) {
-  updateAgents(time);
-  renderBattlefield(time);
-  requestAnimationFrame(gameLoop);
-}
+function effectsLoop(time) {
+  const w = effectsCanvas.width;
+  const h = effectsCanvas.height;
+  effectsCtx.clearRect(0, 0, w, h);
 
-// ── Agent Roaming, Floating & Autonomous Patrols ────────────────────
-function updateAgents(time) {
-  for (const agent of Object.values(state.roamingAgents)) {
-    // Autonomous floating / breathing
-    if (agent.id === 'tony-stark' || agent.id === 'vision' || agent.id === 'doctor-strange') {
-      agent.pos.y += Math.sin(time * 0.004 + agent.pos.x) * 0.3;
-    }
-
-    // Move toward target
-    const dx = agent.targetPos.x - agent.pos.x;
-    const dy = agent.targetPos.y - agent.pos.y;
-    const dist = Math.hypot(dx, dy);
-
-    if (dist > 2) {
-      agent.pos.x += (dx / dist) * 1.2;
-      agent.pos.y += (dy / dist) * 1.2;
-    } else {
-      // Occasionally pick a new gentle patrol point
-      if (Math.random() < 0.003) {
-        agent.targetPos = {
-          x: Math.max(50, Math.min(450, agent.pos.x + (Math.random() - 0.5) * 80)),
-          y: Math.max(60, Math.min(280, agent.pos.y + (Math.random() - 0.5) * 60)),
-        };
-      }
-    }
-
-    // Autonomous sparring & attack sparks
-    if (Math.random() < 0.002) {
-      triggerAgentAttack(agent);
-    }
-  }
-
-  // Update active attacks & particles
-  state.activeAttacks = state.activeAttacks.filter(a => {
-    a.life -= 0.03;
-    return a.life > 0;
-  });
-}
-
-// ── Canvas Rendering Engine ─────────────────────────────────────────
-function renderBattlefield(time) {
-  const w = canvas.width;
-  const h = canvas.height;
-  const scale = Math.max(1, Math.min(w / 500, h / 320));
-
-  ctx.clearRect(0, 0, w, h);
-  ctx.save();
-  ctx.scale(scale, scale);
-
-  // 1. Floating Quantum Energy Particles
+  // 1. Floating Quantum Energy Sparks
   for (const p of state.particles) {
     p.y -= p.speedY;
-    if (p.y < 0) p.y = 320;
-    ctx.fillStyle = p.color;
-    ctx.globalAlpha = p.opacity;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1.0;
+    if (p.y < 0) p.y = h;
+    effectsCtx.fillStyle = p.color;
+    effectsCtx.globalAlpha = p.opacity;
+    effectsCtx.beginPath();
+    effectsCtx.arc(p.x % w, p.y, p.size, 0, Math.PI * 2);
+    effectsCtx.fill();
+    effectsCtx.globalAlpha = 1.0;
   }
 
-  // 2. Render Active Combat Attacks (Lasers, Lightning, Runes, Webs)
-  for (const a of state.activeAttacks) {
-    renderAttackEffect(a, time);
+  // 2. Lake Water Shimmer & Waves
+  const lakeX = w * 0.50;
+  const lakeY = h * 0.68;
+  const shimmer = effectsCtx.createRadialGradient(lakeX, lakeY, 10, lakeX, lakeY, w * 0.28);
+  shimmer.addColorStop(0, 'rgba(0, 240, 255, 0.14)');
+  shimmer.addColorStop(0.5, 'rgba(168, 85, 247, 0.08)');
+  shimmer.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  effectsCtx.fillStyle = shimmer;
+  effectsCtx.fillRect(lakeX - w * 0.28, lakeY - h * 0.15, w * 0.56, h * 0.3);
+
+  // 3. Incursion Sky Lightning Branches
+  if (Math.random() < 0.02) {
+    drawLightningBranch(w * (0.2 + Math.random() * 0.6), 15, w * (0.2 + Math.random() * 0.6), h * 0.38);
   }
 
-  // 3. Render All Active Roaming Heroes & Villains
-  for (const agent of Object.values(state.roamingAgents)) {
-    renderRealisticCharacter(agent, time);
-  }
+  // 4. Render Active Respawn Energy Pillars
+  state.respawnPillars = state.respawnPillars.filter(pillar => {
+    pillar.life -= 0.025;
+    renderRespawnPillar(pillar, w, h);
+    return pillar.life > 0;
+  });
 
-  ctx.restore();
+  // 5. Render Active Combat Attacks between Chambers
+  state.activeAttacks = state.activeAttacks.filter(a => {
+    a.life -= 0.03;
+    renderAttackEffect(a, w, h);
+    return a.life > 0;
+  });
+
+  requestAnimationFrame(effectsLoop);
 }
 
-// ── Render Realistic Character on Canvas ────────────────────────────
-function renderRealisticCharacter(agent, time) {
-  const x = agent.pos.x;
-  const y = agent.pos.y;
+function drawLightningBranch(x1, y1, x2, y2) {
+  effectsCtx.strokeStyle = '#FF0055';
+  effectsCtx.shadowColor = '#FF0055';
+  effectsCtx.shadowBlur = 12;
+  effectsCtx.lineWidth = 1.8;
 
-  ctx.save();
-
-  // Aura / Shadow
-  ctx.fillStyle = agent.glowColor || 'rgba(0,240,255,0.3)';
-  ctx.beginPath();
-  ctx.arc(x, y + 10, 10, 0, Math.PI * 2);
-  ctx.fill();
-
-  switch (agent.suit) {
-    case 'mark-85': // Iron Man
-      // Red & Gold armor
-      ctx.fillStyle = '#B91C1C';
-      ctx.fillRect(x - 6, y - 16, 12, 9);
-      ctx.fillStyle = '#FBBF24';
-      ctx.fillRect(x - 5, y - 14, 10, 4);
-      // Cyan Visor & Arc Reactor
-      ctx.fillStyle = '#00F0FF';
-      ctx.shadowColor = '#00F0FF'; ctx.shadowBlur = 6;
-      ctx.fillRect(x - 4, y - 13, 3, 1.5);
-      ctx.fillRect(x + 1, y - 13, 3, 1.5);
-      ctx.fillStyle = '#B91C1C';
-      ctx.fillRect(x - 8, y - 7, 16, 13);
-      ctx.fillStyle = '#00F0FF';
-      ctx.beginPath(); ctx.arc(x, y - 1, 3, 0, Math.PI * 2); ctx.fill();
-      // Repulsor Thrusters
-      ctx.fillStyle = '#00F0FF';
-      ctx.fillRect(x - 5, y + 8, 3, 4 + Math.sin(time * 0.02) * 2);
-      ctx.fillRect(x + 2, y + 8, 3, 4 + Math.sin(time * 0.02) * 2);
-      break;
-
-    case 'doom-armor': // Doctor Doom
-      // Emerald Hood & Titanium Mask
-      ctx.fillStyle = '#065F46';
-      ctx.fillRect(x - 8, y - 18, 16, 11);
-      ctx.fillStyle = '#94A3B8';
-      ctx.fillRect(x - 5, y - 14, 10, 7);
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(x - 4, y - 12, 2, 2); ctx.fillRect(x + 2, y - 12, 2, 2);
-      // Emerald Robe & Gold Clasp
-      ctx.fillStyle = '#047857';
-      ctx.fillRect(x - 9, y - 7, 18, 16);
-      ctx.fillStyle = '#FBBF24'; ctx.fillRect(x - 5, y - 6, 10, 2);
-      // Floating Green Runes
-      ctx.strokeStyle = '#10B981'; ctx.shadowColor = '#10B981'; ctx.shadowBlur = 6;
-      ctx.beginPath(); ctx.arc(x + 10, y - 5, 4, 0, Math.PI * 2); ctx.stroke();
-      break;
-
-    case 'thor-armor': // Thor (Mjolnir & Lightning)
-      ctx.fillStyle = '#FDE047'; // Blonde hair
-      ctx.fillRect(x - 6, y - 16, 12, 9);
-      ctx.fillStyle = '#DC2626'; // Red cape
-      ctx.fillRect(x - 9, y - 7, 18, 16);
-      ctx.fillStyle = '#64748B'; // Armor
-      ctx.fillRect(x - 7, y - 7, 14, 13);
-      // Mjolnir Hammer with Spark
-      ctx.fillStyle = '#94A3B8'; ctx.fillRect(x + 9, y - 4, 7, 5);
-      ctx.fillStyle = '#78350F'; ctx.fillRect(x + 11, y + 1, 3, 7);
-      ctx.strokeStyle = '#00D5E8'; ctx.shadowColor = '#00D5E8'; ctx.shadowBlur = 8;
-      ctx.strokeRect(x + 8, y - 5, 9, 7);
-      break;
-
-    case 'thanos-gold': // Thanos
-      ctx.fillStyle = '#8B5CF6'; ctx.fillRect(x - 8, y - 18, 16, 10);
-      ctx.fillStyle = '#D97706'; ctx.fillRect(x - 8, y - 18, 16, 5); // Helmet
-      ctx.fillStyle = '#B45309'; ctx.fillRect(x - 10, y - 8, 20, 15);
-      // Golden Infinity Gauntlet
-      ctx.fillStyle = '#FFC83B'; ctx.shadowColor = '#FFC83B'; ctx.shadowBlur = 8;
-      ctx.fillRect(x - 15, y - 3, 5, 9);
-      break;
-
-    case 'kang-armor': // Kang
-      ctx.fillStyle = '#581C87'; ctx.fillRect(x - 7, y - 17, 14, 10);
-      ctx.fillStyle = '#38BDF8'; ctx.shadowColor = '#38BDF8'; ctx.shadowBlur = 6;
-      ctx.fillRect(x - 5, y - 13, 10, 3);
-      ctx.fillStyle = '#065F46'; ctx.fillRect(x - 8, y - 7, 16, 14);
-      break;
-
-    case 'cap-stealth': // Captain America
-      ctx.fillStyle = '#1E40AF'; ctx.fillRect(x - 6, y - 16, 12, 9);
-      ctx.fillStyle = '#1D4ED8'; ctx.fillRect(x - 7, y - 7, 14, 13);
-      // Vibranium Round Shield
-      ctx.fillStyle = '#DC2626'; ctx.beginPath(); ctx.arc(x - 10, y, 6, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(x - 10, y, 4.5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#2563EB'; ctx.beginPath(); ctx.arc(x - 10, y, 2.5, 0, Math.PI * 2); ctx.fill();
-      break;
-
-    case 'spidey-nanotech': // Spider-Man
-      ctx.fillStyle = '#DC2626'; ctx.fillRect(x - 6, y - 15, 12, 9);
-      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(x - 5, y - 13, 3, 3); ctx.fillRect(x + 2, y - 13, 3, 3);
-      ctx.fillStyle = '#2563EB'; ctx.fillRect(x - 7, y - 6, 14, 13);
-      ctx.fillStyle = '#DC2626'; ctx.fillRect(x - 4, y - 6, 8, 13);
-      break;
-
-    case 'hulk-titan': // Hulk
-      ctx.fillStyle = '#15803D'; ctx.fillRect(x - 10, y - 22, 20, 12);
-      ctx.fillStyle = '#16A34A'; ctx.fillRect(x - 13, y - 10, 26, 18);
-      ctx.fillStyle = '#7E22CE'; ctx.fillRect(x - 11, y + 8, 22, 9);
-      break;
-
-    default: // Custom / Generic Hero
-      ctx.fillStyle = agent.themeColor || '#00F0FF';
-      ctx.fillRect(x - 6, y - 14, 12, 18);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '10px sans-serif';
-      ctx.fillText(agent.avatar || '🦸', x - 5, y);
-      break;
+  effectsCtx.beginPath();
+  effectsCtx.moveTo(x1, y1);
+  let curX = x1;
+  let curY = y1;
+  while (curY < y2) {
+    curX += (Math.random() - 0.5) * 20;
+    curY += Math.random() * 25 + 10;
+    effectsCtx.lineTo(curX, curY);
   }
-
-  // Name Tag under character
-  ctx.fillStyle = 'rgba(13, 6, 32, 0.85)';
-  ctx.fillRect(x - 22, y + 16, 44, 12);
-  ctx.strokeStyle = agent.themeColor || '#00F0FF';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(x - 22, y + 16, 44, 12);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = '8px "JetBrains Mono"';
-  ctx.textAlign = 'center';
-  ctx.fillText(agent.callsign || agent.name, x, y + 25);
-  ctx.textAlign = 'start';
-
-  ctx.restore();
+  effectsCtx.stroke();
+  effectsCtx.shadowBlur = 0;
 }
 
-// ── Combat Attack Effects ───────────────────────────────────────────
-function triggerAgentAttack(agent) {
-  let target = null;
-  const others = Object.values(state.roamingAgents).filter(a => a.id !== agent.id);
-  if (others.length > 0) {
-    target = others[Math.floor(Math.random() * others.length)];
+function renderRespawnPillar(pillar, w, h) {
+  effectsCtx.save();
+  effectsCtx.globalAlpha = Math.sin(pillar.life * Math.PI) * 0.75;
+  const targetX = pillar.x * w;
+  const targetY = pillar.y * h;
+
+  // Energy Beam from Sky to Chamber
+  const beamGrad = effectsCtx.createLinearGradient(targetX, 0, targetX, targetY);
+  beamGrad.addColorStop(0, pillar.color);
+  beamGrad.addColorStop(1, 'rgba(255, 255, 255, 0.9)');
+  effectsCtx.fillStyle = beamGrad;
+  effectsCtx.shadowColor = pillar.color;
+  effectsCtx.shadowBlur = 20;
+  effectsCtx.fillRect(targetX - 4, 0, 8, targetY);
+
+  // Ground Impact Ring
+  effectsCtx.strokeStyle = pillar.color;
+  effectsCtx.lineWidth = 2.5;
+  effectsCtx.beginPath();
+  effectsCtx.arc(targetX, targetY, 35 * (1.1 - pillar.life), 0, Math.PI * 2);
+  effectsCtx.stroke();
+
+  effectsCtx.restore();
+}
+
+function renderAttackEffect(attack, w, h) {
+  effectsCtx.save();
+  effectsCtx.globalAlpha = attack.life;
+  effectsCtx.strokeStyle = attack.color;
+  effectsCtx.shadowColor = attack.color;
+  effectsCtx.shadowBlur = 14;
+  effectsCtx.lineWidth = 2.5;
+
+  effectsCtx.beginPath();
+  effectsCtx.moveTo(attack.from.x * w, attack.from.y * h);
+  effectsCtx.lineTo(attack.to.x * w, attack.to.y * h);
+  effectsCtx.stroke();
+
+  effectsCtx.restore();
+}
+
+// ── Render Meaningful Chambers on the Landscape ─────────────────────
+function renderChambersOnLandscape() {
+  chambersLayer.innerHTML = '';
+
+  for (const entity of Object.values(state.roamingAgents)) {
+    const chamber = document.createElement('div');
+    chamber.className = 'battleworld-chamber';
+    chamber.id = `chamber-${entity.id}`;
+    chamber.style.top = entity.screenPos.top;
+    chamber.style.left = entity.screenPos.left;
+    chamber.style.setProperty('--chamber-accent', entity.themeColor);
+    chamber.style.setProperty('--chamber-glow', entity.glowColor);
+
+    let avatarHtml = entity.image
+      ? `<img src="${entity.image}" alt="${entity.name}" class="chamber-portrait-img" />`
+      : `<span class="chamber-emoji-icon">${entity.avatar}</span>`;
+
+    chamber.innerHTML = `
+      <div class="chamber-pod-frame">
+        <div class="chamber-pulse-ring"></div>
+        ${avatarHtml}
+      </div>
+      <div class="chamber-meta-pill">
+        <span class="chamber-status-dot"></span>
+        <span>${entity.callsign} // ${entity.role.split(' ')[0].toUpperCase()}</span>
+      </div>
+    `;
+
+    chamber.addEventListener('click', () => {
+      triggerChamberActivation(entity.id);
+    });
+
+    chambersLayer.appendChild(chamber);
+  }
+}
+
+// ── Chamber Activation & Random Respawn ─────────────────────────────
+function triggerChamberActivation(entityId) {
+  const entity = state.roamingAgents[entityId] || MARVEL_CHAMBERS[entityId];
+  if (!entity) return;
+
+  const chamberEl = document.getElementById(`chamber-${entityId}`);
+  if (chamberEl) {
+    chamberEl.classList.remove('chamber-respawn-active');
+    void chamberEl.offsetWidth; // Trigger reflow
+    chamberEl.classList.add('chamber-respawn-active');
   }
 
-  state.activeAttacks.push({
-    from: { ...agent.pos },
-    to: target ? { ...target.pos } : { x: agent.pos.x + (Math.random() - 0.5) * 100, y: agent.pos.y - 40 },
-    type: agent.power,
-    color: agent.themeColor,
+  // Add respawn light beam
+  const numLeft = parseFloat(entity.screenPos.left) / 100;
+  const numTop = parseFloat(entity.screenPos.top) / 100;
+  state.respawnPillars.push({
+    x: numLeft,
+    y: numTop,
+    color: entity.themeColor,
     life: 1.0,
   });
-}
 
-function renderAttackEffect(attack, time) {
-  ctx.save();
-  ctx.globalAlpha = attack.life;
-
-  if (attack.type === 'laser') {
-    ctx.strokeStyle = attack.color;
-    ctx.shadowColor = attack.color;
-    ctx.shadowBlur = 12;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(attack.from.x, attack.from.y);
-    ctx.lineTo(attack.to.x, attack.to.y);
-    ctx.stroke();
-  } else if (attack.type === 'thunder') {
-    ctx.strokeStyle = '#00D5E8';
-    ctx.shadowColor = '#00D5E8';
-    ctx.shadowBlur = 16;
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(attack.from.x, 20);
-    ctx.lineTo((attack.from.x + attack.to.x) / 2, attack.to.y / 2);
-    ctx.lineTo(attack.to.x, attack.to.y);
-    ctx.stroke();
-  } else if (attack.type === 'runes' || attack.type === 'mandala') {
-    ctx.strokeStyle = attack.color;
-    ctx.shadowColor = attack.color;
-    ctx.shadowBlur = 10;
-    ctx.beginPath();
-    ctx.arc(attack.from.x, attack.from.y, 22 * (1.2 - attack.life), 0, Math.PI * 2);
-    ctx.stroke();
-  } else if (attack.type === 'gamma') {
-    ctx.strokeStyle = '#22C55E';
-    ctx.shadowColor = '#22C55E';
-    ctx.shadowBlur = 12;
-    ctx.beginPath();
-    ctx.ellipse(attack.from.x, attack.from.y + 10, 30 * (1.2 - attack.life), 12 * (1.2 - attack.life), 0, 0, Math.PI * 2);
-    ctx.stroke();
-  } else if (attack.type === 'web') {
-    ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(attack.from.x, attack.from.y);
-    ctx.lineTo(attack.to.x, attack.to.y);
-    ctx.stroke();
+  // Trigger attack from this chamber to another
+  const others = Object.values(state.roamingAgents).filter(a => a.id !== entityId);
+  if (others.length > 0) {
+    const target = others[Math.floor(Math.random() * others.length)];
+    state.activeAttacks.push({
+      from: { x: numLeft, y: numTop },
+      to: { x: parseFloat(target.screenPos.left) / 100, y: parseFloat(target.screenPos.top) / 100 },
+      color: entity.themeColor,
+      life: 1.0,
+    });
   }
 
-  ctx.restore();
+  showCosmicSpeechBubble(entityId, entity.quote);
+  appendVerboseStream(`● [${entity.callsign}] ${entity.chamberName} active (${entity.status}).`);
 }
 
-// ── Multiverse Clash Trigger (Epic All-Out Battle) ──────────────────
+function triggerRandomRespawnSequence() {
+  const agents = Object.values(state.roamingAgents);
+  if (agents.length === 0) return;
+  const lucky = agents[Math.floor(Math.random() * agents.length)];
+  triggerChamberActivation(lucky.id);
+}
+
+// ── Multiverse Clash (All Chambers Synchronized Attack) ─────────────
 window.triggerMultiverseClash = function () {
-  appendVerboseStream(`⚔️ [MULTIVERSE CLASH INITIATED] All heroes and villains unleashing full tactical power!`);
-  showCosmicSpeechBubble('tony-stark', 'Avengers & Multiverse forces, engage full combat power!');
+  appendVerboseStream(`⚔️ [MULTIVERSE CLASH] All 9 Chambers unleashing synchronized energy grids!`);
+  showCosmicSpeechBubble('tony-stark', 'All Multiverse Chambers, execute synchronized protocol!');
 
   for (const agent of Object.values(state.roamingAgents)) {
-    triggerAgentAttack(agent);
+    triggerChamberActivation(agent.id);
   }
 };
 
@@ -625,7 +482,7 @@ window.openSpawnModal = function () {
   const grid = document.getElementById('spawnRosterGrid');
   grid.innerHTML = '';
 
-  for (const [id, hero] of Object.entries(MARVEL_CATALOG)) {
+  for (const [id, hero] of Object.entries(MARVEL_CHAMBERS)) {
     const isSpawned = Boolean(state.roamingAgents[id]);
     const card = document.createElement('div');
     card.className = 'roster-spawn-card';
@@ -636,7 +493,7 @@ window.openSpawnModal = function () {
       <div class="roster-name">${hero.name}</div>
       <div class="roster-callsign">[${hero.callsign}]</div>
       <div style="font-size:9px; color:${isSpawned ? '#10B981' : '#8B78B0'}; font-weight:700;">
-        ${isSpawned ? '● ACTIVE' : '➕ CLICK TO SPAWN'}
+        ${isSpawned ? '● ONLINE' : '➕ SPAWN CHAMBER'}
       </div>
     `;
 
@@ -652,19 +509,14 @@ window.openSpawnModal = function () {
 };
 
 window.spawnHeroDirect = function (heroId) {
-  const hero = MARVEL_CATALOG[heroId];
+  const hero = MARVEL_CHAMBERS[heroId];
   if (!hero) return;
 
-  state.roamingAgents[heroId] = {
-    ...hero,
-    pos: { x: 100 + Math.random() * 300, y: 100 + Math.random() * 160 },
-    targetPos: { x: 100 + Math.random() * 300, y: 100 + Math.random() * 160 },
-  };
-
+  state.roamingAgents[heroId] = { ...hero };
+  renderChambersOnLandscape();
   renderStrongholdDock();
-  triggerAgentAttack(state.roamingAgents[heroId]);
-  showCosmicSpeechBubble(heroId, hero.quote);
-  appendVerboseStream(`⚡ [SPAWNED] ${hero.name} (${hero.callsign}) entered the Battleworld!`);
+  triggerChamberActivation(heroId);
+  appendVerboseStream(`⚡ [CHAMBER INITIALIZED] ${hero.chamberName} brought online for ${hero.name}!`);
 };
 
 // ── Custom Character Creator ────────────────────────────────────────
@@ -697,18 +549,18 @@ window.submitCustomHero = async function () {
     name,
     callsign,
     role,
+    chamberName: `${name} Sanctum`,
     avatar,
     themeColor: '#00F0FF',
     glowColor: 'rgba(0, 240, 255, 0.6)',
     power,
-    suit: 'custom',
-    pos: { x: 250 + (Math.random() - 0.5) * 100, y: 180 },
-    targetPos: { x: 250, y: 180 },
+    screenPos: { top: `${35 + Math.random() * 40}%`, left: `${30 + Math.random() * 40}%` },
     quote: directive || `Agent ${name} operational. Ready for directives.`,
+    status: 'ONLINE',
     spawned: true,
   };
 
-  MARVEL_CATALOG[heroId] = newHero;
+  MARVEL_CHAMBERS[heroId] = newHero;
   state.roamingAgents[heroId] = newHero;
 
   try {
@@ -719,16 +571,17 @@ window.submitCustomHero = async function () {
     });
   } catch {}
 
+  renderChambersOnLandscape();
   renderStrongholdDock();
   closeModals();
-  triggerAgentAttack(newHero);
+  triggerChamberActivation(heroId);
   showCosmicSpeechBubble(heroId, newHero.quote);
-  appendVerboseStream(`🚀 [CUSTOM HERO FORGED] ${name} (${callsign}) has entered the Multiverse!`);
+  appendVerboseStream(`🚀 [CUSTOM SANCTUM FORGED] ${newHero.chamberName} brought online!`);
 };
 
 // ── Speech Bubble Rendering ─────────────────────────────────────────
 function showCosmicSpeechBubble(entityId, text, durationMs = 6000) {
-  const entity = state.roamingAgents[entityId] || MARVEL_CATALOG[entityId];
+  const entity = state.roamingAgents[entityId] || MARVEL_CHAMBERS[entityId];
   if (!entity) return;
 
   const existing = document.getElementById(`bubble-${entityId}`);
@@ -741,10 +594,9 @@ function showCosmicSpeechBubble(entityId, text, durationMs = 6000) {
   bubble.style.setProperty('--bubble-border', entity.themeColor);
   bubble.style.setProperty('--bubble-glow', entity.glowColor);
 
-  const rect = canvas.getBoundingClientRect();
-  const scale = Math.max(1, Math.min(canvas.width / 500, canvas.height / 320));
-  const screenX = entity.pos.x * scale;
-  const screenY = entity.pos.y * scale;
+  const rect = effectsCanvas.getBoundingClientRect();
+  const screenX = rect.width * (parseFloat(entity.screenPos.left) / 100);
+  const screenY = rect.height * (parseFloat(entity.screenPos.top) / 100);
 
   bubble.style.left = `${screenX}px`;
   bubble.style.top = `${screenY}px`;
@@ -779,14 +631,12 @@ function renderStrongholdDock() {
           <span class="stronghold-name">${entity.name.split(' ')[0]}</span>
           <span class="stronghold-callsign">${entity.callsign}</span>
         </div>
-        <div class="stronghold-sub">${entity.role}</div>
+        <div class="stronghold-sub">${entity.chamberName}</div>
       </div>
     `;
 
     card.addEventListener('click', () => {
-      triggerAgentAttack(entity);
-      showCosmicSpeechBubble(entity.id, entity.quote);
-      appendVerboseStream(`● [${entity.callsign}] Telemetry active & synchronized with Stark Mesh.`);
+      triggerChamberActivation(entity.id);
     });
 
     multiverseStrongholdDock.appendChild(card);
@@ -949,11 +799,13 @@ function initWebSocket() {
       if (msg.type === 'comms_message' && msg.data?.content) {
         appendVerboseStream(msg.data.content);
         const speaker = msg.data.from;
-        if (state.roamingAgents[speaker] || MARVEL_CATALOG[speaker]) {
+        if (state.roamingAgents[speaker] || MARVEL_CHAMBERS[speaker]) {
+          triggerChamberActivation(speaker);
           showCosmicSpeechBubble(speaker, msg.data.content.replace(/^\[[^\]]+\]\s*/, '').slice(0, 70));
         }
       } else if (msg.type === 'directive_started') {
         const heroId = msg.data?.assignedHero;
+        if (heroId) triggerChamberActivation(heroId);
         appendVerboseStream(`● [${(heroId || 'HERO').toUpperCase()}] Writing source code for "${msg.data?.title}"...`);
       }
     } catch {}
