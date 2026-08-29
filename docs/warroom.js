@@ -1,7 +1,7 @@
 /**
  * ══════════════════════════════════════════════════════════════════════
  * SCAVENGERS // 100% 3D MINECRAFT AVENGERS & VALYRIAN LAVA SIMULATION
- * REAL 3D VOXEL TREES, BOILING LAVA LAKE & ALL SUPERHERO POWERS
+ * REAL VOXEL TREES, LAVA LAKE, HERO POWERS, SPAWN/DESPAWN & RESULT VIEW
  * ══════════════════════════════════════════════════════════════════════
  */
 
@@ -18,7 +18,6 @@ const state = {
   selectedAgentId: 'tony-stark',
   roamingAgents: {},
   thunderboltTimer: 0,
-  powerShowcaseTimer: 0,
   time: 0,
   activeHotbarItem: 'diamond_sword',
 
@@ -67,15 +66,12 @@ function getBlockData(gx, gy) {
 
   // 3. VALYRIAN / DOOM NETHER LAVA BIOME (gx: 22..30, gy: 22..30)
   if (gx >= 22 && gy >= 22) {
-    // Castle keep
     if (gx >= 25 && gx <= 28 && gy >= 25 && gy <= 28) {
       return { h: 3, type: 'cobblestone' };
     }
-    // Boiling Lava Lake & Falls surrounding Valyrian keep
     if ((gx >= 22 && gx <= 24 && gy >= 23 && gy <= 29) || (gy >= 22 && gy <= 24 && gx >= 23 && gx <= 29)) {
       return { h: 0, type: 'lava' };
     }
-    // Magma / Obsidian crust
     if ((gx + gy) % 2 === 0) return { h: 2, type: 'magma' };
     return { h: 2, type: 'obsidian' };
   }
@@ -101,7 +97,6 @@ function getBlockData(gx, gy) {
   if (wave > 0.45) h = 2;
   if (wave > 0.85) h = 3;
 
-  // Diagonal Water Canal
   if (Math.abs(gx - gy - 8) <= 1 && !(gx >= 12 && gx <= 18 && gy >= 12 && gy <= 18) && !(gx >= 22 && gy >= 22)) {
     return { h: 0, type: 'water' };
   }
@@ -109,30 +104,23 @@ function getBlockData(gx, gy) {
   return { h, type: 'grass' };
 }
 
-// ── Multi-Block 3D Voxel Minecraft Trees Generator ──────────────────
+// ── Multi-Block 3D Voxel Minecraft Trees ────────────────────────────
 const VOXEL_TREES = [
-  // Forest Cluster (West of Taj Mahal)
   { gx: 8, gy: 6, type: 'oak', height: 4 },
   { gx: 9, gy: 4, type: 'oak', height: 3 },
   { gx: 7, gy: 9, type: 'spruce', height: 5 },
   { gx: 10, gy: 10, type: 'oak', height: 4 },
   { gx: 6, gy: 12, type: 'birch', height: 4 },
   { gx: 8, gy: 14, type: 'oak', height: 3 },
-
-  // Forest Cluster (East of Taj Mahal)
   { gx: 20, gy: 6, type: 'spruce', height: 5 },
   { gx: 22, gy: 8, type: 'spruce', height: 4 },
   { gx: 21, gy: 11, type: 'oak', height: 4 },
   { gx: 20, gy: 14, type: 'oak', height: 3 },
   { gx: 22, gy: 16, type: 'birch', height: 4 },
-
-  // South Forest Cluster (Near Wakanda & Meadow)
   { gx: 8, gy: 20, type: 'oak', height: 4 },
   { gx: 10, gy: 22, type: 'spruce', height: 5 },
   { gx: 11, gy: 25, type: 'oak', height: 3 },
   { gx: 7, gy: 25, type: 'birch', height: 4 },
-
-  // Spider-Man Web Treehouse Grove
   { gx: 10, gy: 7, type: 'giant_oak', height: 6 },
   { gx: 12, gy: 8, type: 'oak', height: 3 },
 ];
@@ -163,7 +151,7 @@ function getElevation(gx, gy) {
   return getBlockData(Math.round(gx), Math.round(gy)).h;
 }
 
-// ── Minecraft Avengers Characters Catalog with Unique Powers ────────
+// ── Minecraft Avengers Characters Catalog ───────────────────────────
 const MINECRAFT_HEROES = {
   'tony-stark': {
     id: 'tony-stark',
@@ -181,6 +169,7 @@ const MINECRAFT_HEROES = {
     targetGx: 4, targetGy: 4,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.08,
     weapon: 'repulsors',
     quote: 'Repulsors primed at 100% capacity! JARVIS, target the DAG.',
@@ -202,6 +191,7 @@ const MINECRAFT_HEROES = {
     targetGx: 10, targetGy: 7,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.09,
     weapon: 'web_shooters',
     quote: 'THWIP! Spun up high-speed web nets across the voxel canopy!',
@@ -223,6 +213,7 @@ const MINECRAFT_HEROES = {
     targetGx: 26, targetGy: 26,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.065,
     weapon: 'dragonflame',
     quote: 'Doom commands the Valyrian dragonflame and Nether lava pits!',
@@ -244,6 +235,7 @@ const MINECRAFT_HEROES = {
     targetGx: 26, targetGy: 4,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.075,
     weapon: 'mjolnir',
     quote: 'FEEL THE WRATH OF ASGARDIAN THUNDER AND MJOLNIR STRIKES!',
@@ -265,6 +257,7 @@ const MINECRAFT_HEROES = {
     targetGx: 15, targetGy: 15,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.07,
     weapon: 'eldritch_magic',
     quote: 'By the Vishanti, casting fiery Eldritch portal shields!',
@@ -286,6 +279,7 @@ const MINECRAFT_HEROES = {
     targetGx: 15, targetGy: 26,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.055,
     weapon: 'infinity_gauntlet',
     quote: 'All six Infinity Stones unleashed. Reality bends to my will.',
@@ -307,6 +301,7 @@ const MINECRAFT_HEROES = {
     targetGx: 8, targetGy: 16,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.06,
     weapon: 'fists',
     quote: 'HULK SMASH 3D VOXEL EARTH WITH GAMMA SHOCKWAVES!',
@@ -328,6 +323,7 @@ const MINECRAFT_HEROES = {
     targetGx: 4, targetGy: 26,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.075,
     weapon: 'shield',
     quote: 'Vibranium shield bouncing with precision trajectory!',
@@ -349,6 +345,7 @@ const MINECRAFT_HEROES = {
     targetGx: 20, targetGy: 12,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.07,
     weapon: 'chrono_device',
     quote: 'Opening temporal rifts across 14 billion Minecraft branches.',
@@ -370,6 +367,7 @@ const MINECRAFT_HEROES = {
     targetGx: 8, targetGy: 11,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.085,
     weapon: 'batons',
     quote: 'Widow bites charged. Neutralizing perimeter security threats.',
@@ -385,7 +383,7 @@ for (const [k, v] of Object.entries(MINECRAFT_HEROES)) {
 let canvas, ctx;
 let verboseStreamFeed, resultDeliverableView;
 let quantumPromptInput, dispatchMissionBtn;
-let multiverseStrongholdDock, incursionSpeechLayer;
+let multiverseStrongholdDock, incursionSpeechLayer, ellipsisDropdownMenu;
 
 // ── Initialization ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -398,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
   dispatchMissionBtn = document.getElementById('dispatchMissionBtn');
   multiverseStrongholdDock = document.getElementById('multiverseStrongholdDock');
   incursionSpeechLayer = document.getElementById('incursionSpeechLayer');
+  ellipsisDropdownMenu = document.getElementById('ellipsisDropdownMenu');
 
   initCanvas();
   renderStrongholdDock();
@@ -405,14 +404,32 @@ document.addEventListener('DOMContentLoaded', () => {
   initWebSocket();
   initWeatherParticles();
 
+  // Close ellipsis menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#ellipsisMenuBtn') && !e.target.closest('#ellipsisDropdownMenu')) {
+      closeEllipsisMenu();
+    }
+  });
+
   setTimeout(() => {
-    showCosmicSpeechBubble('tony-stark', '3D Voxel Trees & Valyrian Lava Biome loaded! All Marvel superpowers active.');
+    showCosmicSpeechBubble('tony-stark', '3D Minecraft Simulation active! Use the ••• menu or toolbar to spawn/despawn heroes.');
   }, 1000);
 
   setInterval(triggerAutonomousHeroMovement, 5000);
   setInterval(triggerDAGSimulationPulse, 6000);
   setInterval(triggerRandomHeroSuperpower, 3500);
 });
+
+// ── Ellipsis Menu Toggle ────────────────────────────────────────────
+window.toggleEllipsisMenu = function () {
+  if (!ellipsisDropdownMenu) return;
+  const isShown = ellipsisDropdownMenu.style.display === 'flex';
+  ellipsisDropdownMenu.style.display = isShown ? 'none' : 'flex';
+};
+
+window.closeEllipsisMenu = function () {
+  if (ellipsisDropdownMenu) ellipsisDropdownMenu.style.display = 'none';
+};
 
 // ── Canvas Setup & Event Handling (Pan, Zoom & Click) ────────────────
 function initCanvas() {
@@ -475,7 +492,7 @@ function handleCanvasClick(e) {
     }
   }
 
-  // 2. Check if clicked on a hero -> trigger their superpower!
+  // 2. Check if clicked on a hero -> trigger superpower
   let clickedHero = null;
   for (const hero of Object.values(state.roamingAgents)) {
     const pos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy) + 0.5);
@@ -598,7 +615,7 @@ function simulationLoop(time) {
   // 1. Draw Space Sky
   drawSpaceSky(w, h, time);
 
-  // 2. Compute Viewport Bounds to Tile 100% of Screen Edge-to-Edge
+  // 2. Compute Viewport Bounds to Tile 100% of Screen
   const pTL = screenToGrid(-60, -60);
   const pTR = screenToGrid(w + 60, -60);
   const pBL = screenToGrid(-60, h + 100);
@@ -609,7 +626,7 @@ function simulationLoop(time) {
   const minGy = Math.min(pTL.gy, pTR.gy, pBL.gy, pBR.gy) - 4;
   const maxGy = Math.max(pTL.gy, pTR.gy, pBL.gy, pBR.gy) + 4;
 
-  // 3. Render 100% Screen-Filling Isometric Block Terrain (With Lava & Magma)
+  // 3. Render 100% Screen-Filling Isometric Block Terrain
   for (let sum = minGx + minGy; sum <= maxGx + maxGy; sum++) {
     for (let gx = minGx; gx <= maxGx; gx++) {
       const gy = sum - gx;
@@ -622,7 +639,7 @@ function simulationLoop(time) {
     }
   }
 
-  // 4. Draw Real Multi-Block 3D Voxel Minecraft Trees (Oak, Spruce & Birch)
+  // 4. Draw Real Multi-Block 3D Voxel Minecraft Trees
   drawRealVoxelTrees(time);
 
   // 5. Draw 3D Minecraft Taj Mahal of India & Avengers Monuments
@@ -631,7 +648,7 @@ function simulationLoop(time) {
   // 6. Draw Valyrian Lava Falls & Dragonfire Pits
   drawValyrianLavaAndFire(time);
 
-  // 7. Draw Decorative Minecraft Game Objects (Crafting Tables, Furnaces, Chests, Lanterns)
+  // 7. Draw Decorative Minecraft Game Objects
   drawDecorativeMinecraftObjects(time);
 
   // 8. Draw 3D Floating Diamond Swords on Pedestals
@@ -650,13 +667,13 @@ function simulationLoop(time) {
   // 11. Update Character Physics & Walking Cycles
   updateHeroPhysics();
 
-  // 12. Draw All 3D Isometric Minecraft Walking Characters (Depth sorted)
+  // 12. Draw All 3D Isometric Minecraft Walking Characters
   const sortedHeroes = Object.values(state.roamingAgents).sort((a, b) => (a.gx + a.gy) - (b.gx + b.gy));
   for (const hero of sortedHeroes) {
     drawMinecraftIsometricHero(hero, time);
   }
 
-  // 13. Draw All Marvel Superpowers (Webs, Repulsors, Dragonflame, Mandalas, Beams)
+  // 13. Draw All Marvel Superpowers
   drawAllSuperpowerEffects(time);
 
   // 14. Draw Lava Bubbles, XP Orbs & Rain Particles
@@ -690,9 +707,9 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   const hh = (BASE_TILE_HEIGHT * state.camera.zoom) / 2;
   const d = BASE_BLOCK_DEPTH * state.camera.zoom;
 
-  let topColor = '#4D8C28';   // Vibrant Grass green
-  let leftColor = '#79553A';  // Dirt left
-  let rightColor = '#5D402A'; // Dirt right
+  let topColor = '#4D8C28';
+  let leftColor = '#79553A';
+  let rightColor = '#5D402A';
 
   if (type === 'quartz') {
     topColor = '#FFFFFF'; leftColor = '#E2E8F0'; rightColor = '#CBD5E1';
@@ -701,7 +718,6 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   } else if (type === 'water') {
     topColor = '#00B4D8'; leftColor = '#0077B6'; rightColor = '#03045E';
   } else if (type === 'lava') {
-    // 🌋 Boiling Valyrian Lava
     const pulse = Math.sin(time * 0.006 + gx + gy) * 0.15;
     topColor = pulse > 0 ? '#FF5722' : '#FF9800';
     leftColor = '#E65100';
@@ -728,7 +744,7 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
     topColor = '#E0E0D1'; leftColor = '#C5C5B5'; rightColor = '#2A2A2A';
   }
 
-  // 1. TOP FACE (Rhombus)
+  // TOP FACE
   ctx.fillStyle = topColor;
   ctx.beginPath();
   ctx.moveTo(p.x, p.y - hh);
@@ -742,7 +758,7 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   ctx.lineWidth = 0.6;
   ctx.stroke();
 
-  // 2. LEFT FACE (Parallelogram)
+  // LEFT FACE
   ctx.fillStyle = leftColor;
   ctx.beginPath();
   ctx.moveTo(p.x - hw, p.y);
@@ -752,7 +768,7 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   ctx.closePath();
   ctx.fill();
 
-  // 3. RIGHT FACE (Parallelogram)
+  // RIGHT FACE
   ctx.fillStyle = rightColor;
   ctx.beginPath();
   ctx.moveTo(p.x, p.y + hh);
@@ -762,43 +778,37 @@ function drawIsometricBlock(gx, gy, gz, type, time) {
   ctx.closePath();
   ctx.fill();
 
-  // Magma Glowing Cracks & Lava Glow
   if (type === 'lava' || type === 'magma') {
     ctx.fillStyle = '#FFD700';
     ctx.fillRect(p.x - 2, p.y - 2, 4, 3);
   }
 }
 
-// ── 3. Real Multi-Block 3D Voxel Minecraft Trees ────────────────────
+// ── 3. Multi-Block 3D Voxel Minecraft Trees ─────────────────────────
 function drawRealVoxelTrees(time) {
   for (const tree of VOXEL_TREES) {
     const baseElev = getElevation(tree.gx, tree.gy);
     const logType = tree.type === 'birch' ? 'birch_log' : 'wood_log';
     const leafType = tree.type === 'spruce' ? 'spruce_leaf' : 'oak_leaf';
 
-    // 1. Trunk (Stacked 3D wood log blocks)
     for (let z = 1; z <= tree.height; z++) {
       drawIsometricBlock(tree.gx, tree.gy, baseElev + z, logType, time);
     }
 
-    // 2. Layer 1 Leaf Canopy (3x3 ring of leaf blocks)
     const leafZ1 = baseElev + tree.height;
     for (let dx = -1; dx <= 1; dx++) {
       for (let dy = -1; dy <= 1; dy++) {
-        if (dx === 0 && dy === 0) continue; // center has trunk
+        if (dx === 0 && dy === 0) continue;
         drawIsometricBlock(tree.gx + dx, tree.gy + dy, leafZ1, leafType, time);
       }
     }
 
-    // 3. Layer 2 Leaf Canopy (Cross / Top cluster)
     const leafZ2 = leafZ1 + 1;
     drawIsometricBlock(tree.gx, tree.gy, leafZ2, leafType, time);
     drawIsometricBlock(tree.gx + 1, tree.gy, leafZ2, leafType, time);
     drawIsometricBlock(tree.gx - 1, tree.gy, leafZ2, leafType, time);
     drawIsometricBlock(tree.gx, tree.gy + 1, leafZ2, leafType, time);
     drawIsometricBlock(tree.gx, tree.gy - 1, leafZ2, leafType, time);
-
-    // 4. Cap Leaf Block
     drawIsometricBlock(tree.gx, tree.gy, leafZ2 + 1, leafType, time);
   }
 }
@@ -807,7 +817,6 @@ function drawRealVoxelTrees(time) {
 function drawTajMahalAndMonuments(time) {
   const zoom = state.camera.zoom;
 
-  // 1. Four Corner Slender Minarets
   const minaretCorners = [
     { gx: 12, gy: 12 },
     { gx: 18, gy: 12 },
@@ -826,7 +835,6 @@ function drawTajMahalAndMonuments(time) {
     ctx.shadowBlur = 0;
   }
 
-  // 2. Main Mausoleum Body
   for (let z = 3; z <= 6; z++) {
     for (let x = 13; x <= 17; x++) {
       for (let y = 13; y <= 17; y++) {
@@ -842,7 +850,6 @@ function drawTajMahalAndMonuments(time) {
     }
   }
 
-  // 3. Central Grand Bulbous White Dome with Golden Spire
   for (let x = 14; x <= 16; x++) {
     for (let y = 14; y <= 16; y++) {
       drawIsometricBlock(x, y, 7, 'quartz', time);
@@ -914,11 +921,9 @@ function drawTajMahalAndMonuments(time) {
 function drawValyrianLavaAndFire(time) {
   const zoom = state.camera.zoom;
 
-  // 1. Dragonfire Brazier Pit at Doom Castle (24, 24)
   const brazierPos = gridToScreen(24, 24, 3);
   ctx.fillStyle = '#1E293B';
   ctx.fillRect(brazierPos.x - 6 * zoom, brazierPos.y - 8 * zoom, 12 * zoom, 8 * zoom);
-  // Roaring Green / Orange Valyrian Flame
   const flameH = (14 + Math.sin(time * 0.02) * 4) * zoom;
   const flameGrad = ctx.createLinearGradient(0, brazierPos.y - 8 * zoom, 0, brazierPos.y - 8 * zoom - flameH);
   flameGrad.addColorStop(0, '#10B981');
@@ -929,7 +934,6 @@ function drawValyrianLavaAndFire(time) {
   ctx.fillRect(brazierPos.x - 5 * zoom, brazierPos.y - 8 * zoom - flameH, 10 * zoom, flameH);
   ctx.shadowBlur = 0;
 
-  // 2. Roaring Fire Pit at (28, 24)
   const firePos = gridToScreen(28, 24, 3);
   ctx.fillStyle = '#1E293B';
   ctx.fillRect(firePos.x - 6 * zoom, firePos.y - 8 * zoom, 12 * zoom, 8 * zoom);
@@ -939,7 +943,6 @@ function drawValyrianLavaAndFire(time) {
   ctx.fillRect(firePos.x - 5 * zoom, firePos.y - 8 * zoom - orangeFlameH, 10 * zoom, orangeFlameH);
   ctx.shadowBlur = 0;
 
-  // Spawn periodic lava bubbles
   if (Math.random() < 0.25) {
     const lPos = gridToScreen(22 + Math.random() * 6, 22 + Math.random() * 6, 0.5);
     state.lavaBubbles.push({
@@ -957,21 +960,15 @@ function drawValyrianLavaAndFire(time) {
 function drawDecorativeMinecraftObjects(time) {
   const zoom = state.camera.zoom;
 
-  // Crafting Tables
   drawCraftingTable(10, 14, 1, zoom);
   drawCraftingTable(21, 14, 1, zoom);
 
-  // Furnaces
   drawFurnace(10, 15, 1, zoom, time);
   drawFurnace(21, 15, 1, zoom, time);
 
-  // Chest
   drawChest(11, 15, 1, zoom);
-
-  // Enchanting Table
   drawEnchantingTable(15, 13, 2, zoom, time);
 
-  // Lanterns & Torches
   drawMinecraftLantern(13, 5, 2, zoom, time);
   drawMinecraftLantern(17, 5, 2, zoom, time);
   drawMinecraftLantern(13, 11, 2, zoom, time);
@@ -982,7 +979,7 @@ function drawDecorativeMinecraftObjects(time) {
 
 function drawCraftingTable(gx, gy, gz, zoom) {
   const p = gridToScreen(gx, gy, gz);
-  ctx.fillStyle = '#A16207'; // Oak Wood
+  ctx.fillStyle = '#A16207';
   ctx.fillRect(p.x - 8 * zoom, p.y - 14 * zoom, 16 * zoom, 14 * zoom);
   ctx.fillStyle = '#78350F';
   ctx.fillRect(p.x - 6 * zoom, p.y - 13 * zoom, 12 * zoom, 4 * zoom);
@@ -1093,7 +1090,6 @@ function triggerRandomHeroSuperpower() {
 function executeHeroSuperpower(hero) {
   const startPos = gridToScreen(hero.gx, hero.gy, getElevation(hero.gx, hero.gy) + 1);
 
-  // Pick target or landmark
   let targetPos;
   const others = Object.values(state.roamingAgents).filter(a => a.id !== hero.id);
   if (others.length > 0) {
@@ -1113,7 +1109,6 @@ function executeHeroSuperpower(hero) {
     maxLife: 1.0,
   });
 
-  // Spawn visual celebration
   spawnPortalParticles(startPos.x, startPos.y, hero.themeColor);
   spawnXpOrbs(startPos.x, startPos.y, 4);
 }
@@ -1129,7 +1124,6 @@ function drawAllSuperpowerEffects(time) {
     ctx.globalAlpha = alpha;
 
     if (fx.power === 'repulsor_unibeam') {
-      // 🦾 IRON MAN: Cyan Repulsor Laser & Chest Beam
       ctx.strokeStyle = '#00F0FF';
       ctx.shadowColor = '#00F0FF';
       ctx.shadowBlur = 18;
@@ -1139,7 +1133,6 @@ function drawAllSuperpowerEffects(time) {
       ctx.lineTo(fx.to.x, fx.to.y);
       ctx.stroke();
     } else if (fx.power === 'web_stream') {
-      // 🕸️ SPIDER-MAN: White Web Lines with Cross Webbing
       ctx.strokeStyle = '#FFFFFF';
       ctx.shadowColor = '#EF4444';
       ctx.shadowBlur = 10;
@@ -1150,12 +1143,10 @@ function drawAllSuperpowerEffects(time) {
       const midY = (fx.from.y + fx.to.y) / 2 - 20 * zoom;
       ctx.quadraticCurveTo(midX, midY, fx.to.x, fx.to.y);
       ctx.stroke();
-      // Web net circle at target
       ctx.beginPath();
       ctx.arc(fx.to.x, fx.to.y, 16 * zoom, 0, Math.PI * 2);
       ctx.stroke();
     } else if (fx.power === 'valyrian_dragonflame') {
-      // 👑 DOCTOR DOOM: Emerald Valyrian Dragonfire Stream
       ctx.strokeStyle = '#10B981';
       ctx.shadowColor = '#10B981';
       ctx.shadowBlur = 20;
@@ -1165,10 +1156,8 @@ function drawAllSuperpowerEffects(time) {
       ctx.lineTo(fx.to.x, fx.to.y);
       ctx.stroke();
     } else if (fx.power === 'mjolnir_lightning') {
-      // ⚡ THOR: Lightning Arc to Target
       drawVoxelLightning(fx.from.x, fx.from.y, fx.to.x, fx.to.y);
     } else if (fx.power === 'eldritch_mandala') {
-      // 🔮 DOCTOR STRANGE: Spinning Fiery Orange Eldritch Mandala Shield
       ctx.strokeStyle = '#F59E0B';
       ctx.shadowColor = '#F59E0B';
       ctx.shadowBlur = 18;
@@ -1178,7 +1167,6 @@ function drawAllSuperpowerEffects(time) {
       ctx.stroke();
       ctx.strokeRect(fx.from.x - 14 * zoom, fx.from.y - 26 * zoom, 28 * zoom, 28 * zoom);
     } else if (fx.power === 'infinity_beam') {
-      // 🪐 THANOS: Rainbow 6-Gem Infinity Gauntlet Cosmic Beam
       const colors = ['#38BDF8', '#DC2626', '#10B981', '#A855F7', '#F59E0B', '#FBBF24'];
       for (let c = 0; c < colors.length; c++) {
         ctx.strokeStyle = colors[c];
@@ -1189,7 +1177,6 @@ function drawAllSuperpowerEffects(time) {
         ctx.stroke();
       }
     } else if (fx.power === 'gamma_smash') {
-      // 🟢 HULK: Green Ground Shockwave Rings
       ctx.strokeStyle = '#22C55E';
       ctx.shadowColor = '#22C55E';
       ctx.shadowBlur = 20;
@@ -1199,7 +1186,6 @@ function drawAllSuperpowerEffects(time) {
       ctx.arc(fx.from.x, fx.from.y, radius, 0, Math.PI * 2);
       ctx.stroke();
     } else if (fx.power === 'vibranium_shield_throw') {
-      // 🛡️ CAPTAIN AMERICA: Bouncing Vibranium Shield
       const curX = fx.from.x + (fx.to.x - fx.from.x) * (1 - fx.life);
       const curY = fx.from.y + (fx.to.y - fx.from.y) * (1 - fx.life);
       ctx.fillStyle = '#DC2626';
@@ -1215,7 +1201,6 @@ function drawAllSuperpowerEffects(time) {
       ctx.arc(curX, curY, 2.5 * zoom, 0, Math.PI * 2);
       ctx.fill();
     } else if (fx.power === 'chrono_portal') {
-      // ⏳ KANG: Blue Chrono-Warp Ring
       ctx.strokeStyle = '#38BDF8';
       ctx.shadowColor = '#38BDF8';
       ctx.shadowBlur = 16;
@@ -1224,7 +1209,6 @@ function drawAllSuperpowerEffects(time) {
       ctx.ellipse(fx.from.x, fx.from.y, 24 * zoom, 12 * zoom, Math.PI / 4, 0, Math.PI * 2);
       ctx.stroke();
     } else {
-      // Default Energy Line
       ctx.strokeStyle = fx.color || '#00F0FF';
       ctx.lineWidth = 2 * zoom;
       ctx.beginPath();
@@ -1263,17 +1247,17 @@ function triggerAutonomousHeroMovement() {
   const lucky = heroes[Math.floor(Math.random() * heroes.length)];
 
   const spots = [
-    { gx: 15, gy: 15 }, // Taj Mahal Center
-    { gx: 15, gy: 10 }, // Diamond Sword Pedestal
-    { gx: 10, gy: 14 }, // Crafting Table
-    { gx: 15, gy: 7 },  // Reflecting Pool Front
-    { gx: 4, gy: 4 },   // Stark Tower
-    { gx: 26, gy: 26 }, // Doom Castle / Valyrian Lava Keep
-    { gx: 26, gy: 4 },  // Thor Altar
-    { gx: 4, gy: 26 },  // Wakanda Bunker
-    { gx: 15, gy: 26 }, // Thanos Altar
-    { gx: 10, gy: 7 },  // Spider-Man Outpost
-    { gx: 8, gy: 16 },  // Gamma Meadow
+    { gx: 15, gy: 15 },
+    { gx: 15, gy: 10 },
+    { gx: 10, gy: 14 },
+    { gx: 15, gy: 7 },
+    { gx: 4, gy: 4 },
+    { gx: 26, gy: 26 },
+    { gx: 26, gy: 4 },
+    { gx: 4, gy: 26 },
+    { gx: 15, gy: 26 },
+    { gx: 10, gy: 7 },
+    { gx: 8, gy: 16 },
   ];
   const target = spots[Math.floor(Math.random() * spots.length)];
   lucky.targetGx = target.gx;
@@ -1294,7 +1278,6 @@ function drawMinecraftIsometricHero(hero, time) {
   ctx.translate(pos.x, pos.y - bobY * state.camera.zoom);
   ctx.scale(scale, scale);
 
-  // Selection Indicator
   if (hero.id === state.selectedAgentId) {
     ctx.strokeStyle = '#00F0FF';
     ctx.lineWidth = 1.5;
@@ -1349,7 +1332,6 @@ function drawMinecraftIsometricHero(hero, time) {
 
   ctx.restore();
 
-  // 5. MINECRAFT FLOATING NAME TAG
   renderMinecraftNameTag(hero, pos.x, pos.y - (46 + bobY) * state.camera.zoom);
 }
 
@@ -1685,16 +1667,29 @@ window.triggerMultiverseClash = function () {
   }
 };
 
-// ── Spawn Character Modal & Roster Selection ────────────────────────
+// ── Spawn & Despawn Roster System (With Task Protection) ─────────────
 window.openSpawnModal = function () {
   const grid = document.getElementById('spawnRosterGrid');
   grid.innerHTML = '';
 
   for (const [id, hero] of Object.entries(MINECRAFT_HEROES)) {
     const isSpawned = Boolean(state.roamingAgents[id]);
+    const liveHero = state.roamingAgents[id];
+    const isBusy = liveHero?.isWorking || false;
+    const isProtected = (id === 'tony-stark');
+
     const card = document.createElement('div');
     card.className = 'roster-spawn-card';
     card.style.borderColor = isSpawned ? hero.themeColor : '#2F175A';
+
+    let actionBtnHtml = '';
+    if (!isSpawned) {
+      actionBtnHtml = `<button class="roster-action-btn spawn" onclick="spawnHeroDirect('${id}')">➕ SPAWN</button>`;
+    } else if (isProtected || isBusy) {
+      actionBtnHtml = `<button class="roster-action-btn locked" title="Agent is working on an active task or is Player 1" disabled>🔒 ${isProtected ? 'PLAYER 1' : 'ACTIVE ON TASK'}</button>`;
+    } else {
+      actionBtnHtml = `<button class="roster-action-btn despawn" onclick="despawnHeroDirect('${id}')">❌ DESPAWN</button>`;
+    }
 
     card.innerHTML = `
       <div class="roster-avatar-frame">
@@ -1702,15 +1697,9 @@ window.openSpawnModal = function () {
       </div>
       <div class="roster-name">${hero.name}</div>
       <div class="roster-callsign">[${hero.callsign}]</div>
-      <div style="font-size:8px; font-family:var(--font-arcade); color:${isSpawned ? '#10B981' : '#9D84C7'}; font-weight:700;">
-        ${isSpawned ? '● ACTIVE' : '➕ SPAWN NOW'}
-      </div>
+      <div style="font-size:8px; font-family:var(--font-arcade); color:var(--ink-muted);">${hero.station}</div>
+      ${actionBtnHtml}
     `;
-
-    card.addEventListener('click', () => {
-      spawnHeroDirect(id);
-      closeModals();
-    });
 
     grid.appendChild(card);
   }
@@ -1736,8 +1725,31 @@ window.spawnHeroDirect = function (heroId) {
   spawnPortalParticles(pos.x, pos.y, hero.themeColor);
   spawnXpOrbs(pos.x, pos.y, 6);
   renderStrongholdDock();
+  openSpawnModal();
   showCosmicSpeechBubble(heroId, hero.quote);
   appendVerboseStream(`⚡ [VOXEL HERO MATERIALIZED] ${hero.name} spawned into the Minecraft world!`);
+};
+
+window.despawnHeroDirect = function (heroId) {
+  const liveHero = state.roamingAgents[heroId];
+  if (!liveHero) return;
+
+  if (heroId === 'tony-stark' || liveHero.isWorking) {
+    alert(`Cannot despawn ${liveHero.name} while active on mission directives!`);
+    return;
+  }
+
+  const pos = gridToScreen(liveHero.gx, liveHero.gy, getElevation(liveHero.gx, liveHero.gy));
+  spawnPortalParticles(pos.x, pos.y, '#9333EA');
+
+  delete state.roamingAgents[heroId];
+  if (state.selectedAgentId === heroId) {
+    state.selectedAgentId = 'tony-stark';
+  }
+
+  renderStrongholdDock();
+  openSpawnModal();
+  appendVerboseStream(`🚪 [HERO DESPAWNED] ${liveHero.name} stepped through Nether portal to home base.`);
 };
 
 // ── Custom Character Creator ────────────────────────────────────────
@@ -1787,6 +1799,7 @@ window.submitCustomHero = async function () {
     targetGy: customGy,
     walkTimer: 0,
     isWalking: false,
+    isWorking: false,
     speed: 0.075,
     quote: directive || `Agent ${name} operational. Ready for directives.`,
     spawned: true,
@@ -1884,6 +1897,7 @@ window.setConsoleMode = function (mode) {
   const btnVerbose = document.getElementById('btnModeVerbose');
   const btnResult = document.getElementById('btnModeResult');
   const descLabel = document.getElementById('modeDescriptionLabel');
+  const badge = document.getElementById('resultBadgeReady');
 
   if (mode === 'verbose') {
     btnVerbose.classList.add('active');
@@ -1897,6 +1911,7 @@ window.setConsoleMode = function (mode) {
     resultDeliverableView.style.display = 'flex';
     verboseStreamFeed.style.display = 'none';
     descLabel.innerText = 'Only final code deliverables & project workspace paths';
+    if (badge) badge.style.display = 'none';
   }
 };
 
@@ -1938,38 +1953,75 @@ function appendVerboseStream(text) {
   verboseStreamFeed.scrollTop = verboseStreamFeed.scrollHeight;
 }
 
-function updateResultDeliverable(markdownContent, workspacePath) {
+function updateResultDeliverable(summaryText, workspaceData, workspacePath) {
   resultDeliverableView.innerHTML = '';
 
   const card = document.createElement('div');
   card.className = 'deliverable-hero-card';
 
-  let html = `<h2>🏆 Mission Deliverable & Source Files</h2>`;
-  if (workspacePath) {
-    html += `
-      <div class="workspace-path-banner">
-        <span>📁 <strong>Saved on Disk:</strong> <code>${escapeHtml(workspacePath)}</code></span>
-        <button class="code-copy-btn" onclick="navigator.clipboard.writeText('${workspacePath.replace(/\\/g, '\\\\')}'); this.innerText='Copied!';">Copy Path</button>
+  const actualPath = workspacePath || workspaceData?.workspacePath || './workspace/generated-app';
+  const runCmds = workspaceData?.runInstructions || [
+    `cd ${actualPath}`,
+    `npm install`,
+    `npm start`,
+  ];
+
+  let html = `
+    <h2>🏆 Mission Deliverables & Source Code Repository</h2>
+    
+    <div class="workspace-path-banner">
+      <span>📁 <strong>Saved on Local Disk:</strong> <code>${escapeHtml(actualPath)}</code></span>
+      <button class="code-copy-btn" onclick="navigator.clipboard.writeText('${actualPath.replace(/\\/g, '\\\\')}'); this.innerText='Copied!';">Copy Path</button>
+    </div>
+
+    <div style="background:#05010E; border:1px solid #4E288E; border-radius:6px; padding:12px; margin:10px 0;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-family:var(--font-arcade); font-size:10px; font-weight:800; color:#10B981;">🚀 RUN YOUR APP (TERMINAL):</span>
+        <button class="code-copy-btn" style="position:static;" onclick="navigator.clipboard.writeText(\`${runCmds.join('\n')}\`); this.innerText='Copied!';">Copy Run Script</button>
       </div>
-    `;
+      <pre style="margin:0; background:#000000;"><code style="color:#4ADE80;">${escapeHtml(runCmds.join('\n'))}</code></pre>
+    </div>
+  `;
+
+  // Render Files if available in workspace
+  if (workspaceData?.files && workspaceData.files.length > 0) {
+    html += `<div style="font-family:var(--font-arcade); font-size:10px; font-weight:800; color:#00F0FF; margin:12px 0 6px;">📂 GENERATED REPOSITORY FILES:</div>`;
+    for (const file of workspaceData.files) {
+      html += `
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; font-family:var(--font-mono); font-size:10.5px; color:#D8B4FE; padding:4px 0;">
+            <span>📄 <strong>${escapeHtml(file.relativePath)}</strong> (${file.language})</span>
+            <span style="font-size:9.5px; color:#9D84C7;">Crafted by [${escapeHtml(file.hero.toUpperCase())}]</span>
+          </div>
+          <pre><code>${escapeHtml(file.content)}</code><button class="code-copy-btn" onclick="navigator.clipboard.writeText(\`${file.content.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`); this.innerText='Copied!';">Copy File</button></pre>
+        </div>
+      `;
+    }
+  } else {
+    // Parse code blocks from summaryText
+    const codeBlockRegex = /```([a-zA-Z0-9_\-\.]*)\n([\s\S]*?)```/g;
+    let lastIndex = 0;
+    let match;
+    let parsed = '';
+
+    while ((match = codeBlockRegex.exec(summaryText)) !== null) {
+      const lang = match[1] || 'text';
+      const code = match[2];
+      parsed += escapeHtml(summaryText.substring(lastIndex, match.index));
+      parsed += `<pre><code>${escapeHtml(code)}</code><button class="code-copy-btn" onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`); this.innerText='Copied!';">Copy</button></pre>`;
+      lastIndex = match.index + match[0].length;
+    }
+    parsed += escapeHtml(summaryText.substring(lastIndex));
+    html += `<div style="font-size:11.5px; line-height:1.6; color:#CBD5E1;">${parsed.replace(/\n/g, '<br/>')}</div>`;
   }
 
-  const codeBlockRegex = /```([a-zA-Z0-9_\-\.]*)\n([\s\S]*?)```/g;
-  let lastIndex = 0;
-  let match;
-  let parsed = '';
-
-  while ((match = codeBlockRegex.exec(markdownContent)) !== null) {
-    const lang = match[1] || 'text';
-    const code = match[2];
-    parsed += escapeHtml(markdownContent.substring(lastIndex, match.index));
-    parsed += `<pre><code>${escapeHtml(code)}</code><button class="code-copy-btn" onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`); this.innerText='Copied!';">Copy</button></pre>`;
-    lastIndex = match.index + match[0].length;
-  }
-  parsed += escapeHtml(markdownContent.substring(lastIndex));
-
-  card.innerHTML = html + `<div style="font-size:11.5px; line-height:1.6; color:#CBD5E1;">${parsed.replace(/\n/g, '<br/>')}</div>`;
+  card.innerHTML = html;
   resultDeliverableView.appendChild(card);
+
+  // Badge & auto-switch
+  const badge = document.getElementById('resultBadgeReady');
+  if (badge) badge.style.display = 'block';
+  setConsoleMode('result');
 }
 
 // ── Mission Launch & User Interaction ───────────────────────────────
@@ -1989,6 +2041,8 @@ async function dispatchMasterMission() {
   if (!prompt) return;
 
   quantumPromptInput.value = '';
+  setConsoleMode('verbose');
+
   appendVerboseStream(`● [USER DIRECTIVE] ${prompt}`);
   appendVerboseStream(`● [TONY STARK] Deconstructing directive across the Minecraft world...`);
 
@@ -2010,8 +2064,9 @@ async function dispatchMasterMission() {
 
     const data = await res.json();
     if (data.success) {
-      appendVerboseStream(`● [WORKSPACE SAVED] Project written to: ${data.workspacePath}`);
-      updateResultDeliverable(data.summary, data.workspacePath);
+      const wPath = data.workspacePath || data.workspace?.workspacePath || './workspace';
+      appendVerboseStream(`● [WORKSPACE SAVED] Project written to: ${wPath}`);
+      updateResultDeliverable(data.summary || data.result, data.workspace, wPath);
     }
   } catch (err) {
     appendVerboseStream(`● [NETWORK ERROR] ${err.message}`);
@@ -2048,6 +2103,7 @@ function initWebSocket() {
         const heroId = msg.data?.assignedHero;
         const hero = state.roamingAgents[heroId];
         if (hero) {
+          hero.isWorking = true;
           hero.targetGx = 4 + (Math.random() - 0.5) * 2;
           hero.targetGy = 4 + (Math.random() - 0.5) * 2;
           hero.isWalking = true;
@@ -2055,6 +2111,15 @@ function initWebSocket() {
           spawnPortalParticles(pos.x, pos.y, hero.themeColor);
         }
         appendVerboseStream(`● [${(heroId || 'HERO').toUpperCase()}] Writing source code for "${msg.data?.title}"...`);
+      } else if (msg.type === 'directive_completed') {
+        const heroId = msg.data?.assignedHero;
+        const hero = state.roamingAgents[heroId];
+        if (hero) hero.isWorking = false;
+      } else if (msg.type === 'mission_completed') {
+        for (const h of Object.values(state.roamingAgents)) h.isWorking = false;
+        if (msg.data?.workspace || msg.data?.finalSummary) {
+          updateResultDeliverable(msg.data.finalSummary || msg.data.result, msg.data.workspace, msg.data.workspace?.workspacePath);
+        }
       }
     } catch {}
   };

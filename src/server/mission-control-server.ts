@@ -1,80 +1,58 @@
 import express from 'express';
-import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
-import { WebSocketServer, WebSocket } from 'ws';
 import { fileURLToPath } from 'node:url';
+import { WebSocketServer, WebSocket } from 'ws';
 import { StarkOrchestrator } from '../core/stark-orchestrator.js';
 import { StarkCommsNetwork } from '../core/stark-comms.js';
-import { MindStoneMemory } from '../core/mind-stone.js';
-import { TimeStoneEngine } from '../core/time-stone.js';
 import { StarkConfig } from '../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function createMissionControlServer(
-  orchestrator: StarkOrchestrator,
-  config: StarkConfig
-): { app: express.Application; server: http.Server; start: () => Promise<number> } {
+export function createMissionControlServer(orchestrator: StarkOrchestrator, config: StarkConfig) {
   const app = express();
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server });
   const comms = StarkCommsNetwork.getInstance();
-  const mindStone = MindStoneMemory.getInstance();
-  const timeStone = TimeStoneEngine.getInstance();
 
   app.use(express.json());
 
-  const candidate0 = path.resolve(process.cwd(), 'docs');
-  const candidate1 = path.resolve(__dirname, '../../../docs');
-  const candidate2 = path.resolve(__dirname, '../../docs');
-  const candidate3 = path.resolve(__dirname, '../docs');
-  const candidate4 = path.resolve(__dirname, '../../../public');
-  const staticDir = [candidate0, candidate1, candidate2, candidate3, candidate4].find((p) => fs.existsSync(p)) || candidate0;
-  app.use(express.static(staticDir));
+  // Serve static UI from docs/
+  const publicDir = path.resolve(__dirname, '../../../docs');
+  app.use(express.static(publicDir));
+  app.use('/assets', express.static(path.resolve(publicDir, 'assets')));
 
   app.get('/api/status', (req, res) => {
-    const arcReactor = orchestrator.getArcReactor().getState();
-    const activeMission = orchestrator.getActiveMission();
-    const heroes = orchestrator.getAllHeroes().map((h) => ({
-      profile: h.profile,
-      status: h.status,
-      metrics: h.metrics,
-    }));
+    const arc = orchestrator.getArcReactor();
+    const arcState = arc.getState();
+    const heroes = orchestrator.getAllHeroes();
+    const mission = orchestrator.getActiveMission();
 
     res.json({
       status: 'online',
-      callsign: config.orchestrator.callsign,
-      arcReactor,
-      activeMission,
-      heroes,
-      commsCount: comms.getHistory().length,
+      arcReactor: {
+        totalCapacity: arcState.totalCapacityPerHour,
+        powerConsumed: arcState.currentConsumption,
+        percentRemaining: arcState.hourlyPowerLevelPct,
+        optimalProvider: arc.getOptimalProvider(),
+      },
+      heroes: heroes.map((h) => ({
+        id: h.profile.id,
+        name: h.profile.name,
+        role: h.profile.role,
+        avatar: h.profile.avatar,
+        status: h.status,
+        tokensUsed: h.metrics?.tokensConsumed ?? 0,
+      })),
+      activeMission: mission || null,
     });
-  });
-
-  app.get('/api/heroes', (req, res) => {
-    const heroes = orchestrator.getAllHeroes().map((h) => ({
-      profile: h.profile,
-      status: h.status,
-      metrics: h.metrics,
-    }));
-    res.json(heroes);
-  });
-
-  app.get('/api/comms', (req, res) => {
-    const limit = Number(req.query.limit) || 100;
-    res.json(comms.getHistory(limit));
-  });
-
-  app.get('/api/memory', (req, res) => {
-    res.json(mindStone.getAll());
   });
 
   app.post('/api/mission/launch', async (req, res) => {
     const { prompt } = req.body;
     if (!prompt) {
-      return res.status(400).json({ error: 'Missing mission prompt' });
+      return res.status(400).json({ error: 'Directive prompt is required' });
     }
 
     try {
@@ -87,6 +65,8 @@ export function createMissionControlServer(
         missionId: mission.id,
         summary: mission.finalSummary,
         result: (mission as any).result || mission.finalSummary,
+        workspace: (mission as any).workspace,
+        workspacePath: (mission as any).workspace?.workspacePath,
         directives: mission.directives,
       });
     } catch (err: any) {
@@ -97,8 +77,7 @@ export function createMissionControlServer(
   app.post('/api/connect', (req, res) => {
     const { provider, apiKey, model } = req.body;
     const providerName = provider || 'antigravity';
-    
-    // Save to runtime config
+
     if (apiKey) {
       if (provider === 'claude-code') process.env.ANTHROPIC_API_KEY = apiKey;
       else if (provider === 'gemini') process.env.GEMINI_API_KEY = apiKey;
@@ -136,7 +115,7 @@ export function createMissionControlServer(
       avatar: avatar || '🦸',
       harness: harness || 'gemini',
       superpower: superpower || 'Quantum Laser',
-      message: `Hero ${name} (${callsign}) successfully spawned into Battleworld!`
+      message: `Hero ${name} (${callsign}) successfully spawned into Battleworld!`,
     });
   });
 
@@ -159,42 +138,36 @@ export function createMissionControlServer(
   orchestrator.on('directive-started', (dir) => broadcast('directive_started', dir));
   orchestrator.on('directive-completed', (dir) => broadcast('directive_completed', dir));
 
-  orchestrator.getArcReactor().on('power-consumed', (data) => broadcast('arc_reactor_update', data.state));
-
   wss.on('connection', (ws) => {
-    ws.send(
-      JSON.stringify({
-        type: 'initial_state',
-        data: {
-          arcReactor: orchestrator.getArcReactor().getState(),
-          activeMission: orchestrator.getActiveMission(),
-          heroes: orchestrator.getAllHeroes().map((h) => ({
-            profile: h.profile,
-            status: h.status,
-            metrics: h.metrics,
-          })),
-          history: comms.getHistory(50),
-          memory: mindStone.getAll(),
-        },
-      })
-    );
+    const arc = orchestrator.getArcReactor();
+    const arcState = arc.getState();
+    ws.send(JSON.stringify({
+      type: 'system_status',
+      data: {
+        status: 'online',
+        starkModel: process.env.STARK_MODEL || 'gemini-3.5-flash-lite',
+        powerGrid: arcState.hourlyPowerLevelPct,
+        connectedHeroes: orchestrator.getAllHeroes().map(h => h.profile.id),
+      },
+      timestamp: Date.now(),
+    }));
 
     ws.on('message', async (raw) => {
       try {
         const message = JSON.parse(raw.toString());
-        if (message.type === 'launch_mission' && message.prompt) {
-          orchestrator.launchMission(message.prompt);
+        if (message.type === 'launch_mission') {
+          await orchestrator.launchMission(message.data.prompt);
+        } else if (message.type === 'broadcast_chat') {
+          comms.send('user', 'all', 'war-room', message.data.text);
         }
-      } catch (err) {
-        console.error('[WebSocket] Error parsing client message:', err);
+      } catch (err: any) {
+        ws.send(JSON.stringify({ type: 'error', data: { message: err.message } }));
       }
     });
   });
 
-  const start = (): Promise<number> => {
-    const port = config.missionControl.port || 3000;
-    const host = config.missionControl.host || 'localhost';
-
+  const start = async (): Promise<number> => {
+    const port = config.missionControl?.port || 3000;
     return new Promise((resolve) => {
       server.listen(port, () => {
         resolve(port);
@@ -202,5 +175,11 @@ export function createMissionControlServer(
     });
   };
 
-  return { app, server, start };
+  const stop = (): Promise<void> => {
+    return new Promise((resolve) => {
+      wss.close(() => server.close(() => resolve()));
+    });
+  };
+
+  return { app, server, wss, orchestrator, start, stop };
 }

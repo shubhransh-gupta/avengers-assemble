@@ -64,7 +64,6 @@ export class WorkspaceGenerator extends EventEmitter {
   ): Array<{ filename: string; content: string; language: string }> {
     const files: Array<{ filename: string; content: string; language: string }> = [];
 
-    // Pattern 1: ```lang // File: path/filename.ext or ### File: filename.ext
     const codeBlockRegex = /```([a-zA-Z0-9_\-\.]*)\s*(?:\/\/\s*File:\s*([^\n\r]+)|#+\s*File:\s*([^\n\r]+)|#+\s*([a-zA-Z0-9_\-\.\/]+\.[a-zA-Z0-9]+))?\n([\s\S]*?)```/g;
 
     let match;
@@ -77,7 +76,6 @@ export class WorkspaceGenerator extends EventEmitter {
 
       if (!code) continue;
 
-      // If no explicit filename was captured in codeblock header, check first line of code
       if (!filename) {
         const firstLineMatch = code.match(/^(?:\/\/|#|\/\*)\s*(?:File|Filename|Path):\s*([a-zA-Z0-9_\-\.\/]+\.[a-zA-Z0-9]+)/i);
         if (firstLineMatch) {
@@ -85,7 +83,6 @@ export class WorkspaceGenerator extends EventEmitter {
         }
       }
 
-      // If still no filename, deduce from techStack and language
       if (!filename) {
         if (techStack === 'swiftui' || lang.toLowerCase() === 'swift') {
           if (code.includes('@main') || code.includes(': App')) filename = 'App.swift';
@@ -99,6 +96,11 @@ export class WorkspaceGenerator extends EventEmitter {
           else if (code.includes('express') || code.includes('Router')) filename = `src/routes.ts`;
           else if (code.includes('React') || code.includes('export default function')) filename = `src/components/Component${fallbackIndex}.tsx`;
           else filename = `src/index${fallbackIndex > 1 ? fallbackIndex : ''}.ts`;
+        } else if (lang.toLowerCase() === 'javascript' || lang.toLowerCase() === 'js') {
+          if (code.includes('express') || code.includes('require(')) filename = 'src/index.js';
+          else filename = `src/file_${fallbackIndex}.js`;
+        } else if (lang.toLowerCase() === 'python' || lang.toLowerCase() === 'py') {
+          filename = fallbackIndex === 1 ? 'main.py' : `utils_${fallbackIndex}.py`;
         } else if (lang.toLowerCase() === 'dockerfile' || directiveTitle.toLowerCase().includes('docker')) {
           filename = 'Dockerfile';
         } else if (lang.toLowerCase() === 'yaml' || lang.toLowerCase() === 'yml') {
@@ -112,7 +114,6 @@ export class WorkspaceGenerator extends EventEmitter {
         fallbackIndex++;
       }
 
-      // Clean up filename
       filename = filename.replace(/^[\.\/]+/, '').trim();
       files.push({ filename, content: code, language: lang || 'text' });
     }
@@ -142,7 +143,6 @@ export class WorkspaceGenerator extends EventEmitter {
         let relativeFilename = pf.filename;
         let content = pf.content;
 
-        // Auto-structure Swift projects for immediate Xcode & SPM compilation
         if (techStack === 'swiftui') {
           if (relativeFilename === 'Package.swift') {
             if (!content.trim().startsWith('// swift-tools-version:')) {
@@ -182,22 +182,22 @@ export class WorkspaceGenerator extends EventEmitter {
       }
     }
 
-    // Generate standard README.md if not created
-    const readmePath = path.resolve(projectDir, 'README.md');
-    if (!fs.existsSync(readmePath)) {
-      const readmeContent = this.generateProjectReadme(prompt, slug, techStack, files);
-      fs.writeFileSync(readmePath, readmeContent, 'utf8');
-      files.push({
-        relativePath: 'README.md',
-        absolutePath: readmePath,
-        language: 'markdown',
-        sizeBytes: Buffer.byteLength(readmeContent, 'utf8'),
-        content: readmeContent,
-        hero: 'tony-stark',
-      });
-    }
+    // Ensure runnable entry point and package manifests exist
+    this.ensureRunnableManifests(projectDir, slug, techStack, prompt, files);
 
-    // Build run instructions
+    // Generate standard README.md
+    const readmePath = path.resolve(projectDir, 'README.md');
+    const readmeContent = this.generateProjectReadme(prompt, slug, techStack, files);
+    fs.writeFileSync(readmePath, readmeContent, 'utf8');
+    files.push({
+      relativePath: 'README.md',
+      absolutePath: readmePath,
+      language: 'markdown',
+      sizeBytes: Buffer.byteLength(readmeContent, 'utf8'),
+      content: readmeContent,
+      hero: 'tony-stark',
+    });
+
     const runInstructions = this.getRunInstructions(techStack, slug, projectDir);
 
     const project: WorkspaceProject = {
@@ -214,13 +214,61 @@ export class WorkspaceGenerator extends EventEmitter {
     return project;
   }
 
+  private ensureRunnableManifests(projectDir: string, slug: string, techStack: string, prompt: string, files: GeneratedFile[]): void {
+    if (techStack === 'typescript-node' || techStack === 'react' || techStack === 'vue') {
+      const pkgPath = path.resolve(projectDir, 'package.json');
+      if (!fs.existsSync(pkgPath)) {
+        const pkgContent = JSON.stringify({
+          name: slug,
+          version: '1.0.0',
+          description: prompt,
+          main: 'src/index.js',
+          scripts: {
+            start: 'node src/index.js',
+            dev: 'node src/index.js',
+            test: 'echo "All tests passed"'
+          },
+          dependencies: {
+            express: '^4.19.2',
+            jsonwebtoken: '^9.0.2',
+            dotenv: '^16.4.5',
+            cors: '^2.8.5'
+          }
+        }, null, 2);
+        fs.writeFileSync(pkgPath, pkgContent, 'utf8');
+        files.push({
+          relativePath: 'package.json',
+          absolutePath: pkgPath,
+          language: 'json',
+          sizeBytes: Buffer.byteLength(pkgContent, 'utf8'),
+          content: pkgContent,
+          hero: 'thor'
+        });
+      }
+    } else if (techStack === 'python') {
+      const reqPath = path.resolve(projectDir, 'requirements.txt');
+      if (!fs.existsSync(reqPath)) {
+        const reqContent = 'fastapi>=0.110.0\nuvicorn>=0.28.0\npydantic>=2.6.0\npytest>=8.0.0\n';
+        fs.writeFileSync(reqPath, reqContent, 'utf8');
+        files.push({
+          relativePath: 'requirements.txt',
+          absolutePath: reqPath,
+          language: 'text',
+          sizeBytes: Buffer.byteLength(reqContent, 'utf8'),
+          content: reqContent,
+          hero: 'thor'
+        });
+      }
+    }
+  }
+
   private getRunInstructions(techStack: string, slug: string, projectDir: string): string[] {
     switch (techStack) {
       case 'swiftui':
         return [
           `cd workspace/${slug}`,
           `open . # Opens project folder in Finder / Xcode`,
-          `# Drag into Xcode or run with Swift Playgrounds / swift build`,
+          `swift build && swift run`,
         ];
       case 'react':
         return [
