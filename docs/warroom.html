@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SCAVENGERS // Multiverse Incursions & Battleworld Coding Harness · Powered by Shubhransh Gupta</title>
+  <title>SCAVENGERS // Multiverse Incursions & Battleworld Real-Time Simulation · Powered by Shubhransh Gupta</title>
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23030008' stroke='%2300F0FF' stroke-width='4'/><circle cx='50' cy='50' r='34' fill='none' stroke='%23A855F7' stroke-width='3' stroke-dasharray='8 6'/><circle cx='50' cy='50' r='22' fill='none' stroke='%2300F0FF' stroke-width='3' stroke-dasharray='4 4'/><circle cx='50' cy='50' r='10' fill='%2300F0FF'/><text x='50' y='57' font-size='18' font-weight='900' fill='%2300F0FF' text-anchor='middle'>A</text></svg>" />
 
@@ -16,22 +16,25 @@
 <body>
   <div class="battleworld-layout">
     
-    <!-- TOP STAGE (Cosmic Incursions Valley Viewport + Stark Command Console) -->
+    <!-- TOP STAGE (Cosmic Incursions Simulation Viewport + Stark Command Console) -->
     <div class="battleworld-split">
       
-      <!-- LEFT: PHOTOREALISTIC BATTLEWORLD VALLEY VIEWPORT -->
+      <!-- LEFT: PHOTOREALISTIC BATTLEWORLD SIMULATION VIEWPORT -->
       <div class="valley-viewport">
         <!-- High-Resolution Cinematic Valley Backdrop -->
         <img src="./assets/battleworld_valley.jpg" alt="Battleworld Incursions Valley" class="valley-backdrop-image" />
         
-        <!-- Canvas for Dynamic Incursion Lightning, Lake Waves & Respawn Beams -->
-        <canvas id="valleyEffectsCanvas"></canvas>
+        <!-- 3D Holographic Cyber Grid Overlay -->
+        <div class="simulation-grid-overlay"></div>
+
+        <!-- Canvas for Active DAG Neural Streams, Respawn Light Beams & VFX -->
+        <canvas id="simulationCanvas"></canvas>
 
         <!-- Top HUD Badges -->
         <div class="valley-top-hud">
           <div class="hud-pill">
             <span class="pill-glow-dot cyan"></span>
-            <span class="pill-txt" id="incursionStatusPill">⚡ BATTLEWORLD // 9 MEANINGFUL CHAMBERS ONLINE</span>
+            <span class="pill-txt" id="incursionStatusPill">⚡ BATTLEWORLD SIMULATION // 10 MULTIVERSE SANCTUMS ACTIVE</span>
           </div>
           <div class="hud-pill">
             <span class="pill-glow-dot gold"></span>
@@ -41,12 +44,13 @@
 
         <!-- Floating Valley Action Toolbar (Top Right) -->
         <div class="valley-actions-toolbar">
+          <button class="valley-action-pill-btn" onclick="triggerDAGSimulationPulse()">⚡ Pulse DAG</button>
           <button class="valley-action-pill-btn" onclick="openSpawnModal()">➕ Spawn Agent</button>
           <button class="valley-action-pill-btn" onclick="openCustomHeroModal()">🛠️ Custom Agent</button>
           <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Multiverse Clash</button>
         </div>
 
-        <!-- Meaningful Multiverse Chambers Layer -->
+        <!-- Photorealistic Multiverse Chambers Layer -->
         <div class="valley-chambers-layer" id="chambersLayer">
           <!-- Dynamically populated with high-tech chambers -->
         </div>
@@ -153,10 +157,10 @@
       </div>
       <div class="modal-body">
         <p style="font-family:var(--font-mono); font-size:11px; color:var(--ink-secondary);">
-          Select a Marvel Hero or Villain to spawn directly into their designated chamber:
+          Select a Marvel Hero or Villain to materialize directly onto the Battleworld simulation grid:
         </p>
         <div class="spawn-roster-grid" id="spawnRosterGrid">
-          <!-- Populated dynamically -->
+          <!-- Populated dynamically with photorealistic avatars -->
         </div>
       </div>
     </div>
