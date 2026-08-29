@@ -66,7 +66,6 @@ html, body {
   height: 100vh;
   background: var(--bg-void);
   border: 3px solid #381A6E;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
 }
 
 /* ── Split Stage (Left Minecraft Voxel Viewport + Right Command Console) ── */
@@ -84,6 +83,7 @@ html, body {
   overflow: hidden;
   background: #04010A;
   border-right: 3px solid #381A6E;
+  cursor: crosshair;
 }
 
 /* Photorealistic Minecraft Avengers Voxel Background */
@@ -107,117 +107,17 @@ html, body {
   background-size: 100% 3px, 6px 100%;
   pointer-events: none;
   z-index: 3;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
-/* Canvas Overlay for Voxel Storm, Lightning Strikes, Water Ripples & DAG Pulses */
-#simulationCanvas {
+/* Main Canvas for Minecraft Walking Avatars, Storm Lightning & Redstone DAG Mesh */
+#minecraftCanvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 6;
-  pointer-events: none;
-}
-
-/* ── Living Multiverse Voxel Chambers Layer ─────────────────── */
-.valley-chambers-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  pointer-events: auto;
-}
-
-/* Individual Chamber Card Component */
-.battleworld-chamber {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 12;
-}
-
-.battleworld-chamber:hover {
-  transform: translate(-50%, -54%) scale(1.1);
-  z-index: 35;
-}
-
-/* Voxel / Item Frame Pod with Pixel Bevel Borders */
-.chamber-pod-frame {
-  width: 78px;
-  height: 78px;
-  border-radius: 8px;
-  background: rgba(13, 6, 32, 0.94);
-  border: 3px solid var(--chamber-accent, var(--arc-cyan));
-  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.6), 0 0 18px var(--chamber-glow, var(--arc-glow));
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Holographic Scanline across portrait */
-.chamber-pod-frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 240, 255, 0.25) 50%, transparent 100%);
-  transform: translateY(-100%);
-  animation: scanlineSweep 3.5s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.chamber-portrait-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
-  image-rendering: pixelated;
-  filter: contrast(1.1) brightness(0.95);
-}
-
-.chamber-pulse-ring {
-  position: absolute;
-  inset: -6px;
-  border-radius: 12px;
-  border: 2px dashed var(--chamber-accent, var(--arc-cyan));
-  animation: rotateRing 14s linear infinite;
-  pointer-events: none;
-}
-
-/* Respawn Beam Effect on Chamber */
-.chamber-respawn-active {
-  animation: voxelRespawnFlash 1.4s ease-out;
-}
-
-/* Voxel Meta Pill with Pixel Font */
-.chamber-meta-pill {
-  margin-top: 6px;
-  background: #090318;
-  border: 2px solid var(--chamber-accent, var(--border));
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-family: var(--font-arcade);
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--ink);
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.8);
-  white-space: nowrap;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.chamber-status-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--chamber-accent, var(--arc-cyan));
-  box-shadow: 0 0 6px var(--chamber-accent, var(--arc-cyan));
+  z-index: 5;
+  cursor: crosshair;
 }
 
 /* Floating Arcade HUD Badges */
@@ -235,7 +135,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: rgba(13, 6, 32, 0.92);
+  background: rgba(13, 6, 32, 0.94);
   border: 2px solid var(--border-bright);
   border-radius: 6px;
   padding: 6px 12px;
@@ -290,7 +190,7 @@ html, body {
   border-color: #EF4444;
 }
 
-/* Speech Bubbles */
+/* Minecraft Speech Bubbles */
 #incursionSpeechLayer {
   position: absolute;
   inset: 0;
@@ -311,7 +211,7 @@ html, body {
   box-shadow: 0 6px 0 rgba(0, 0, 0, 0.8), 0 0 16px var(--bubble-glow, rgba(0, 240, 255, 0.4));
   max-width: 260px;
   transform: translate(-50%, -100%);
-  margin-top: -50px;
+  margin-top: -38px;
   pointer-events: none;
   animation: popUp 0.18s ease-out;
 }
@@ -319,7 +219,7 @@ html, body {
 .bubble-speaker {
   font-weight: 800;
   font-family: var(--font-pixel);
-  font-size: 9px;
+  font-size: 8.5px;
   color: var(--bubble-color, var(--arc-cyan));
   display: block;
   margin-bottom: 3px;
@@ -749,7 +649,7 @@ html, body {
   overflow: hidden;
 }
 
-/* ── Interactive Modals (Spawn Character & Create Custom Character) ── */
+/* ── Interactive Modals ────────────────────────────────────── */
 .battleworld-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -810,7 +710,6 @@ html, body {
   gap: 14px;
 }
 
-/* Spawn Character Grid */
 .spawn-roster-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -850,7 +749,6 @@ html, body {
 .roster-name { font-family: var(--font-arcade); font-size: 10px; font-weight: 800; color: var(--ink); }
 .roster-callsign { font-family: var(--font-pixel); font-size: 7px; color: var(--arc-cyan); }
 
-/* Form Controls for Custom Character */
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-label {
   font-family: var(--font-arcade);
@@ -882,22 +780,6 @@ html, body {
   padding: 12px 18px;
   border-top: 2px solid var(--border);
   background: #080318;
-}
-
-@keyframes scanlineSweep {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-@keyframes rotateRing {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes voxelRespawnFlash {
-  0% { transform: translate(-50%, -50%) scale(0.6); filter: brightness(3.5) drop-shadow(0 0 35px #00F0FF); }
-  50% { transform: translate(-50%, -50%) scale(1.18); filter: brightness(2) drop-shadow(0 0 25px #FF0055); }
-  100% { transform: translate(-50%, -50%) scale(1.0); filter: brightness(1.0); }
 }
 
 @keyframes popUp {
