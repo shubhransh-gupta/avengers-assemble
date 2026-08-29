@@ -131,9 +131,13 @@
       100% { transform: rotate(360deg) scale(1); }
     }
 
-    .brand-title { font-family: var(--font-display); font-weight: 800; font-size: 16px; letter-spacing: -0.02em; }
-    .brand-by { font-size: 11px; color: var(--ink-muted); }
-    .brand-by a { color: var(--arc-cyan); text-decoration: none; font-weight: 600; }
+    .brand-title {
+      font-family: "Monotype Corsiva", "Apple Chancery", "Brush Script MT", cursive, serif;
+      font-weight: 600;
+      font-size: 21px;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
 
     .nav-links {
       display: flex; align-items: center; gap: 24px;
@@ -569,6 +573,18 @@
     /* ==========================================================================
        FAQ BUBBLE SMOOTH OPEN ANIMATION
        ========================================================================== */
+    #faq {
+      padding-top: 100px;
+      padding-bottom: 70px;
+      margin-top: 50px;
+      position: relative;
+    }
+    #faq::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 20%; right: 20%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glass-border-bright), transparent);
+    }
     .faq-item {
       background: var(--glass-bg-card);
       border: 1px solid var(--glass-border);
@@ -679,8 +695,7 @@
           </svg>
         </div>
         <div>
-          <div class="brand-title">SCAVENGERS ASSEMBLE</div>
-          <div class="brand-by">Crafted by <a href="https://shubhransh-gupta.github.io/cv/" target="_blank">Shubhransh Gupta</a></div>
+          <div class="brand-title">Scavengers Assemble</div>
         </div>
       </a>
 
@@ -733,19 +748,27 @@
       </a>
     </div>
 
-    <!-- Quickstart 1-Liner Banner -->
-    <div class="code-terminal" id="quickstart" style="max-width: 680px; margin: 0 auto 30px; text-align: left;">
+    <!-- Installation & Dashboard Initiation Procedure Box -->
+    <div class="code-terminal" id="quickstart" style="max-width: 680px; margin: 0 auto 32px; text-align: left;">
       <div class="code-header">
         <div class="code-header-left">
-          <span style="color:#00F0FF;">⚡</span> Quickstart (Clone &amp; Run in 30 Seconds)
+          <span style="color:#00F0FF;">⚡</span> Install &amp; Launch Dashboard Procedure
         </div>
         <button class="copy-chip" onclick="copySnippet('git clone https://github.com/shubhransh-gupta/scavengers-assemble.git && cd scavengers-assemble && npm install && npm run build && npm start', this)">
-          <span>📋</span> Copy All
+          <span>📋</span> Copy Commands
         </button>
       </div>
-      <div class="code-body" style="padding: 14px 18px; font-size: 12.5px;">
-        <span class="cmd-prompt">$</span> <span class="cmd-kw">git clone</span> https://github.com/shubhransh-gupta/scavengers-assemble.git<br/>
-        <span class="cmd-prompt">$</span> <span class="cmd-kw">cd</span> scavengers-assemble <span style="color:var(--ink-muted);">&amp;&amp;</span> <span class="cmd-kw">npm install</span> <span style="color:var(--ink-muted);">&amp;&amp;</span> <span class="cmd-kw">npm start</span>
+      <div class="code-body" style="padding: 16px 20px; font-size: 13px; line-height: 1.8;">
+        <div style="color:var(--ink-muted); font-size:12px; margin-bottom:8px;">
+          Follow the 3-step setup procedure below to build and initiate your local mission control dashboard:
+        </div>
+        <div><span class="cmd-comment"># Step 1: Clone repo &amp; install dependencies</span></div>
+        <div><span class="cmd-prompt">$</span> <span class="cmd-kw">git clone</span> https://github.com/shubhransh-gupta/scavengers-assemble.git</div>
+        <div><span class="cmd-prompt">$</span> <span class="cmd-kw">cd</span> scavengers-assemble <span style="color:var(--ink-muted);">&amp;&amp;</span> <span class="cmd-kw">npm install</span></div>
+        <div style="margin-top:6px;"><span class="cmd-comment"># Step 2: Compile TypeScript source</span></div>
+        <div><span class="cmd-prompt">$</span> <span class="cmd-kw">npm run build</span></div>
+        <div style="margin-top:6px;"><span class="cmd-comment"># Step 3: Initiate and open the local app dashboard</span></div>
+        <div><span class="cmd-prompt">$</span> <span class="cmd-kw">npm start</span> <span class="cmd-comment"># ➔ Initiates dashboard at http://localhost:3000</span></div>
       </div>
     </div>
 
