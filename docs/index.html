@@ -734,17 +734,18 @@
     </div>
 
     <!-- Quickstart 1-Liner Banner -->
-    <div class="code-terminal" id="quickstart" style="max-width: 620px; margin: 0 auto 30px; text-align: left;">
+    <div class="code-terminal" id="quickstart" style="max-width: 680px; margin: 0 auto 30px; text-align: left;">
       <div class="code-header">
         <div class="code-header-left">
-          <span style="color:#00F0FF;">⚡</span> 1-Click Instant Run (Zero install needed)
+          <span style="color:#00F0FF;">⚡</span> Quickstart (Clone &amp; Run in 30 Seconds)
         </div>
-        <button class="copy-chip" onclick="copySnippet('npx scavengers-assemble hud', this)">
-          <span>📋</span> Copy Command
+        <button class="copy-chip" onclick="copySnippet('git clone https://github.com/shubhransh-gupta/scavengers-assemble.git && cd scavengers-assemble && npm install && npm run build && npm start', this)">
+          <span>📋</span> Copy All
         </button>
       </div>
-      <div class="code-body" style="padding: 14px 18px;">
-        <span class="cmd-prompt">$</span> <span class="cmd-kw">npx</span> scavengers-assemble <span class="cmd-val">hud</span> --port 3000
+      <div class="code-body" style="padding: 14px 18px; font-size: 12.5px;">
+        <span class="cmd-prompt">$</span> <span class="cmd-kw">git clone</span> https://github.com/shubhransh-gupta/scavengers-assemble.git<br/>
+        <span class="cmd-prompt">$</span> <span class="cmd-kw">cd</span> scavengers-assemble <span style="color:var(--ink-muted);">&amp;&amp;</span> <span class="cmd-kw">npm install</span> <span style="color:var(--ink-muted);">&amp;&amp;</span> <span class="cmd-kw">npm start</span>
       </div>
     </div>
 
@@ -808,65 +809,68 @@
             How to Set Up &amp; Launch Scavengers Assemble
           </h3>
           <p style="font-size:14px; color:var(--ink-muted);">
-            Choose your preferred method below to get up and running in under 60 seconds on macOS, Linux, or Windows.
+            Clone the repository, build TypeScript, and launch the autonomous coding war room in under 60 seconds.
           </p>
         </div>
 
         <div class="sub-tabs-bar">
-          <button class="sub-tab-btn active" onclick="switchSubTab('setup-npx', this)">⚡ Method 1: NPX (No Install)</button>
-          <button class="sub-tab-btn" onclick="switchSubTab('setup-git', this)">🛠️ Method 2: Git Clone &amp; Source Build</button>
+          <button class="sub-tab-btn active" onclick="switchSubTab('setup-git', this)">⚡ Method 1: Git Clone &amp; Launch (Recommended)</button>
+          <button class="sub-tab-btn" onclick="switchSubTab('setup-link', this)">🔗 Method 2: Global CLI (npm link)</button>
           <button class="sub-tab-btn" onclick="switchSubTab('setup-cli', this)">💻 Method 3: Headless CLI Missions</button>
           <button class="sub-tab-btn" onclick="switchSubTab('setup-env', this)">🔑 Method 4: API Keys &amp; Providers</button>
         </div>
 
-        <!-- Setup Subpane 1: NPX -->
-        <div id="setup-npx" class="setup-subpane">
-          <div class="glass-card" style="margin-bottom: 16px;">
+        <!-- Setup Subpane 1: Git Clone -->
+        <div id="setup-git" class="setup-subpane">
+          <div class="glass-card">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
               <div>
-                <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff;">Option A: 1-Step Instant Launch</h4>
-                <p style="font-size:13px; color:var(--ink-muted);">Spins up the local Mission Control server and launches the interactive visual interface.</p>
+                <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff;">Option A: Clone &amp; Compile TypeScript (Recommended)</h4>
+                <p style="font-size:13px; color:var(--ink-muted);">Installs all dependencies, compiles TypeScript, and boots the local Mission Control server.</p>
               </div>
               <span class="hero-pill" style="background:rgba(0,240,255,0.15); color:var(--arc-cyan); border-color:var(--arc-cyan);">Recommended</span>
             </div>
-            
+
             <div class="code-terminal">
               <div class="code-header">
                 <div class="code-header-left">Terminal (bash / zsh / powershell)</div>
-                <button class="copy-chip" onclick="copySnippet('npx scavengers-assemble hud', this)">📋 Copy</button>
+                <button class="copy-chip" onclick="copySnippet('git clone https://github.com/shubhransh-gupta/scavengers-assemble.git\ncd scavengers-assemble\nnpm install\nnpm run build\nnpm start', this)">📋 Copy All</button>
               </div>
               <div class="code-body">
-                <span class="cmd-prompt">$</span> <span class="cmd-kw">npx</span> scavengers-assemble hud<br/>
-                <span class="cmd-comment"># => [STARK TOWER] Mission Control initialized at http://localhost:3000/</span>
-              </div>
-            </div>
-
-            <p style="font-size:12.5px; color:var(--ink-secondary); margin-top:8px;">
-              💡 <strong>Next Step:</strong> Open your local browser at <code>http://localhost:3000/</code> to enter Mission Control, type your prompt, or speak via voice comms!
-            </p>
-          </div>
-        </div>
-
-        <!-- Setup Subpane 2: Git Clone -->
-        <div id="setup-git" class="setup-subpane" style="display:none;">
-          <div class="glass-card">
-            <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Option B: Clone &amp; Compile TypeScript from Source</h4>
-            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Ideal for contributors, customizing hero prompts, adding new superhero agents, or offline development.</p>
-
-            <div class="code-terminal">
-              <div class="code-header">
-                <div class="code-header-left">Terminal setup commands</div>
-                <button class="copy-chip" onclick="copySnippet('git clone https://github.com/shubhransh-gupta/scavengers-assemble.git\ncd scavengers-assemble\nnpm install\nnpm run build\nnode bin/stark.js hud --port 3000', this)">📋 Copy All</button>
-              </div>
-              <div class="code-body">
-                <span class="cmd-comment"># 1. Clone the repository</span><br/>
+                <span class="cmd-comment"># 1. Clone repository from GitHub</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">git clone</span> https://github.com/shubhransh-gupta/scavengers-assemble.git<br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">cd</span> scavengers-assemble<br/><br/>
                 <span class="cmd-comment"># 2. Install dependencies &amp; compile TypeScript</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">npm install</span><br/>
                 <span class="cmd-prompt">$</span> <span class="cmd-kw">npm run build</span><br/><br/>
-                <span class="cmd-comment"># 3. Launch Mission Control</span><br/>
-                <span class="cmd-prompt">$</span> <span class="cmd-kw">node</span> bin/stark.js hud --port 3000
+                <span class="cmd-comment"># 3. Launch Mission Control HUD (opens http://localhost:3000)</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">npm start</span>
+              </div>
+            </div>
+
+            <p style="font-size:12.5px; color:var(--ink-secondary); margin-top:8px;">
+              💡 <strong>Next Step:</strong> Open your local browser at <code>http://localhost:3000/</code> to enter Mission Control, enter your directive, or speak via JARVIS voice comms!
+            </p>
+          </div>
+        </div>
+
+        <!-- Setup Subpane 2: Global Link -->
+        <div id="setup-link" class="setup-subpane" style="display:none;">
+          <div class="glass-card">
+            <h4 style="font-family:var(--font-display); font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Option B: Global CLI Link (Run `stark` or `scavengers` anywhere)</h4>
+            <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">Link the package globally on your machine so you can run Stark commands directly in any directory.</p>
+
+            <div class="code-terminal">
+              <div class="code-header">
+                <div class="code-header-left">Terminal Link Commands</div>
+                <button class="copy-chip" onclick="copySnippet('cd scavengers-assemble\nnpm link\nstark hud --port 3000', this)">📋 Copy</button>
+              </div>
+              <div class="code-body">
+                <span class="cmd-comment"># In the scavengers-assemble repo directory:</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">npm link</span><br/><br/>
+                <span class="cmd-comment"># Now run stark from ANY folder on your machine!</span><br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">stark</span> hud --port 3000<br/>
+                <span class="cmd-prompt">$</span> <span class="cmd-kw">scavengers</span> status
               </div>
             </div>
           </div>
@@ -1417,7 +1421,7 @@
               <button class="copy-chip" id="pg-copy-btn" onclick="copySnippet(document.getElementById('generated-cmd-text').innerText, this)">📋 Copy</button>
             </div>
             <div class="code-body" id="generated-cmd-text">
-              npx scavengers-assemble hud --mission "Build a production-grade React 19 + Express + TypeScript fullstack application with unit tests"
+              node bin/stark.js hud --port 3000
             </div>
           </div>
         </div>
@@ -1715,7 +1719,7 @@
 
       let cmd = "";
       if (mode === 'hud') {
-        cmd = `npx scavengers-assemble hud --mission "Build a production-grade ${stackName} with unit tests"`;
+        cmd = `node bin/stark.js hud --port 3000`;
       } else {
         cmd = `node bin/stark.js mission "Build a production-grade ${stackName} with unit tests" --squad ${heroes}`;
       }
