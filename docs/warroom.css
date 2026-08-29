@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
-   SCAVENGERS // CLEAN MODERN LIGHT THEME + ARCADE MINECRAFT ENGINE
-   PROFESSIONAL UI WITH MINECRAFT VOXEL BUILD MODE & BRIDGE NETWORKS
+   SCAVENGERS // CLEAN MODERN LIGHT THEME + UNIFIED TOP BAR ARCHITECTURE
+   DYNAMIC 5-HERO DEFAULT WITH ON-DEMAND MULTIVERSE SPECIALIST SPAWNING
    ══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap');
@@ -103,29 +103,49 @@ html, body {
   z-index: 5;
 }
 
-/* ── Clean Top Navigation Bar ──────────────────────────────── */
-.valley-top-hud {
+/* ── Unified Top Navigation Bar (Clean Architecture) ────────── */
+.valley-unified-top-bar {
   position: absolute;
   top: 12px;
   left: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.top-bar-left, .top-bar-right {
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 20;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .hud-pill {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 6px 12px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   white-space: nowrap;
+}
+
+.hud-pill.clickable {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.hud-pill.clickable:hover {
+  background: #FFFFFF;
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .pill-glow-dot {
@@ -146,16 +166,6 @@ html, body {
 }
 
 /* ── Top-Right Action Toolbar ──────────────────────────────── */
-.valley-actions-toolbar {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 25;
-}
-
 .valley-action-pill-btn {
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
@@ -239,7 +249,7 @@ html, body {
   display: none;
   flex-direction: column;
   gap: 4px;
-  width: 225px;
+  width: 230px;
   z-index: 50;
   box-shadow: var(--shadow-lg);
   animation: popUp 0.15s ease;
@@ -814,6 +824,17 @@ html, body {
   box-shadow: var(--shadow-sm);
 }
 
+.stronghold-card.add-specialist-card {
+  background: #EFF6FF;
+  border: 1px dashed #93C5FD;
+  justify-content: center;
+  min-width: 140px;
+}
+.stronghold-card.add-specialist-card:hover {
+  background: #DBEAFE;
+  border-color: var(--primary-blue);
+}
+
 .stronghold-thumb-frame {
   width: 34px;
   height: 34px;
@@ -869,7 +890,7 @@ html, body {
   border: 1px solid var(--border);
   border-radius: 12px;
   width: 90%;
-  max-width: 620px;
+  max-width: 650px;
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
@@ -916,7 +937,7 @@ html, body {
 /* Roster Grid with Spawn/Despawn Buttons */
 .spawn-roster-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 10px;
   max-height: 380px;
   overflow-y: auto;

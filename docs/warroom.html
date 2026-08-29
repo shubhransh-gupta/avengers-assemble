@@ -20,33 +20,38 @@
         <!-- Pure Edge-to-Edge Isometric Canvas -->
         <canvas id="minecraftCanvas"></canvas>
 
-        <!-- Top-Left Clean Modern HUD Badge -->
-        <div class="valley-top-hud">
-          <div class="hud-pill">
-            <span class="pill-glow-dot diamond"></span>
-            <span class="pill-txt" id="hudStatusText">3D MINECRAFT // DRAG TO PAN &bull; SCROLL TO ZOOM</span>
+        <!-- UNIFIED TOP NAVIGATION BAR (Clean Non-Overlapping Architecture) -->
+        <div class="valley-unified-top-bar">
+          <div class="top-bar-left">
+            <div class="hud-pill">
+              <span class="pill-glow-dot diamond"></span>
+              <span class="pill-txt" id="hudStatusText">3D MINECRAFT</span>
+            </div>
+            <div class="hud-pill clickable" onclick="openSpawnModal()" title="Manage Multiverse Hero Roster (Spawn & Despawn)">
+              <span class="pill-glow-dot cyan"></span>
+              <span class="pill-txt" id="rosterCountBadge">👥 TEAM: 5/10 ACTIVE</span>
+            </div>
+            <div class="hud-pill" id="buildModeIndicator" style="display:none;">
+              <span class="pill-glow-dot build"></span>
+              <span class="pill-txt" style="color:#D97706; font-weight:700;">🔨 BUILD MODE</span>
+            </div>
           </div>
-          <div class="hud-pill" id="buildModeIndicator" style="display:none;">
-            <span class="pill-glow-dot build"></span>
-            <span class="pill-txt" style="color:#D97706; font-weight:700;">🔨 BUILD MODE ACTIVE (CLICK TO PLACE &bull; RIGHT-CLICK TO BREAK)</span>
-          </div>
-        </div>
 
-        <!-- Top-Right Action Toolbar (Clean & Modern) -->
-        <div class="valley-actions-toolbar">
-          <button class="valley-action-pill-btn" id="buildModeToggleBtn" onclick="toggleBuildMode()">🔨 Build Mode</button>
-          <button class="valley-action-pill-btn sword" onclick="spawnDiamondSwordPedestal()">🗡️ Diamond Sword</button>
-          <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Voxel Battle</button>
-          <button class="ellipsis-menu-btn" id="ellipsisMenuBtn" onclick="toggleEllipsisMenu()" title="More Simulation Actions">•••</button>
+          <div class="top-bar-right">
+            <button class="valley-action-pill-btn" id="buildModeToggleBtn" onclick="toggleBuildMode()">🔨 Build Mode</button>
+            <button class="valley-action-pill-btn sword" onclick="spawnDiamondSwordPedestal()">🗡️ Diamond Sword</button>
+            <button class="valley-action-pill-btn clash" onclick="triggerMultiverseClash()">⚔️ Voxel Battle</button>
+            <button class="ellipsis-menu-btn" id="ellipsisMenuBtn" onclick="toggleEllipsisMenu()" title="More Simulation Actions">•••</button>
+          </div>
         </div>
 
         <!-- Ellipsis Dropdown Overlay Menu -->
         <div class="ellipsis-dropdown-overlay" id="ellipsisDropdownMenu">
+          <div class="ellipsis-menu-item" onclick="openSpawnModal(); closeEllipsisMenu();">
+            <span>👥</span> Spawn &amp; Despawn Roster
+          </div>
           <div class="ellipsis-menu-item" onclick="toggleBuildMode(); closeEllipsisMenu();">
             <span>🔨</span> Toggle Minecraft Build Mode
-          </div>
-          <div class="ellipsis-menu-item" onclick="openSpawnModal(); closeEllipsisMenu();">
-            <span>👥</span> Spawn & Despawn Roster
           </div>
           <div class="ellipsis-menu-item" onclick="openCustomHeroModal(); closeEllipsisMenu();">
             <span>🛠️</span> Forge Custom Hero
@@ -134,16 +139,11 @@
           <!-- View 1: Verbose Thought Stream -->
           <div class="verbose-stream-feed" id="verboseStreamFeed">
             <div class="stream-entry" data-kind="code"><span class="stream-bullet" style="color:#0284C7;">●</span> <span class="stream-hero-tag" style="color:#0284C7;">[MINECRAFT WORLD]</span> 3D Minecraft world online. Oak bridges, multi-block trees, and Creative Build Mode active.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#2563EB;">●</span> <span class="stream-hero-tag" style="color:#2563EB;">[TONY STARK]</span> Voxel Spire synchronized. Player 1 ready for master directives.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#059669;">●</span> <span class="stream-hero-tag" style="color:#059669;">[DOCTOR DOOM]</span> Valyrian Lava Keep online. Roaring dragonfire braziers burning.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#0284C7;">●</span> <span class="stream-hero-tag" style="color:#0284C7;">[THOR]</span> Thunderstorm vortex summoned! Mjolnir lightning ready for directives.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#D97706;">●</span> <span class="stream-hero-tag" style="color:#D97706;">[THANOS]</span> 3D Obsidian Altar balanced. Infinity Gauntlet tokens in equilibrium.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#0284C7;">●</span> <span class="stream-hero-tag" style="color:#0284C7;">[KANG]</span> Chrono-bridge calculating parallel reality branches across the full world.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#7C3AED;">●</span> <span class="stream-hero-tag" style="color:#7C3AED;">[DOCTOR STRANGE]</span> Taj Mahal astral nexus synchronized with memory matrix.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#DC2626;">●</span> <span class="stream-hero-tag" style="color:#DC2626;">[SPIDER-MAN]</span> Web nets spun across the forest canopy! Frontend architecture ready.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#16A34A;">●</span> <span class="stream-hero-tag" style="color:#16A34A;">[HULK]</span> HULK SMASH 3D VOXEL BLOCKS AND MINE DIAMOND ORES!</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#9333EA;">●</span> <span class="stream-hero-tag" style="color:#9333EA;">[BLACK WIDOW]</span> Perimeter secure. API bearer tokens sanitized in enclave.</div>
-            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#2563EB;">●</span> <span class="stream-hero-tag" style="color:#2563EB;">[CAPTAIN AMERICA]</span> Vibranium standards inspection ready for battle.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#2563EB;">●</span> <span class="stream-hero-tag" style="color:#2563EB;">[TONY STARK]</span> Voxel Spire synchronized. Core 5-hero strike team active. Multiverse specialists on standby.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#DC2626;">●</span> <span class="stream-hero-tag" style="color:#DC2626;">[SPIDER-MAN]</span> Web Treehouse online! Ready for Frontend UI and reactive views.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#0284C7;">●</span> <span class="stream-hero-tag" style="color:#0284C7;">[THOR]</span> Thunder Altar active! DevOps, package manifests, and server builds ready.</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#16A34A;">●</span> <span class="stream-hero-tag" style="color:#16A34A;">[HULK]</span> HULK SMASH CORE LOGIC, STATE MODELS, AND ALGORITHMS!</div>
+            <div class="stream-entry" data-kind="chat"><span class="stream-bullet" style="color:#2563EB;">●</span> <span class="stream-hero-tag" style="color:#2563EB;">[CAPTAIN AMERICA]</span> Vibranium standards QA &amp; code review ready.</div>
           </div>
 
           <!-- View 2: Result Deliverable View (Only Final Deliverables & Project Files) -->
@@ -194,12 +194,12 @@
   <div class="battleworld-modal-backdrop" id="spawnRosterModal">
     <div class="battleworld-modal">
       <div class="modal-header">
-        <div class="modal-title">👥 MULTIVERSE ROSTER // SPAWN & DESPAWN</div>
+        <div class="modal-title" id="modalRosterTitle">👥 MULTIVERSE TEAM // SPAWN &amp; DESPAWN HEROES</div>
         <button class="modal-close-btn" onclick="closeModals()">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-family:var(--font-body); font-size:12px; color:var(--ink-muted);">
-          Spawn heroes to defend the world or despawn idle agents. (Agents active on tasks cannot be despawned).
+          Choose which heroes to spawn into Battleworld. By default, the 5 core specialists (Iron Man, Spidey, Thor, Hulk, Cap) are active. Spawn Stephen Strange or others whenever additional expertise is needed!
         </p>
         <div class="spawn-roster-grid" id="spawnRosterGrid">
           <!-- Populated dynamically with Spawn / Despawn buttons -->
