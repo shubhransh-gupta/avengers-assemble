@@ -1,7 +1,7 @@
 /**
  * ══════════════════════════════════════════════════════════════════════
  * SCAVENGERS // 100% 3D MINECRAFT AVENGERS & CREATIVE BUILD MODE
- * OAK RIVER BRIDGES, BLOCK PLACEMENT/MINING, TASK RESPONSIVENESS
+ * UNIFIED ARCHITECTURE, DEFAULT 5-HERO SQUAD & ON-DEMAND SPECIALISTS
  * ══════════════════════════════════════════════════════════════════════
  */
 
@@ -188,12 +188,14 @@ function getElevation(gx, gy) {
   return getBlockData(Math.round(gx), Math.round(gy)).h;
 }
 
-// ── Minecraft Avengers Characters Catalog ───────────────────────────
+// ── Minecraft Avengers Characters Catalog (5 Core + 5 Reserve) ───────
 const MINECRAFT_HEROES = {
+  // ── CORE STRIKE TEAM (5 DEFAULT SPAWNED) ─────────────────────────
   'tony-stark': {
     id: 'tony-stark',
     name: 'Tony Stark',
     callsign: 'IRON MAN',
+    category: 'core',
     role: 'God Orchestrator',
     station: 'Stark Voxel Spire',
     homeStation: { gx: 4, gy: 4 },
@@ -218,6 +220,7 @@ const MINECRAFT_HEROES = {
     id: 'spider-man',
     name: 'Peter Parker',
     callsign: 'SPIDEY',
+    category: 'core',
     role: 'Frontend UI Architect',
     station: 'Web Treehouse Hub',
     homeStation: { gx: 10, gy: 7 },
@@ -238,34 +241,11 @@ const MINECRAFT_HEROES = {
     quote: 'THWIP! Spun up high-speed web nets across the voxel canopy!',
     spawned: true,
   },
-  'doctor-doom': {
-    id: 'doctor-doom',
-    name: 'Doctor Doom',
-    callsign: 'DOOM',
-    role: 'Latverian AST & Compiler',
-    station: 'Valyrian Lava Keep',
-    homeStation: { gx: 26, gy: 26 },
-    image: './assets/doctor_doom.jpg',
-    avatar: '👑',
-    themeColor: '#059669',
-    glowColor: 'rgba(5, 150, 105, 0.5)',
-    skinType: 'doctor-doom',
-    power: 'valyrian_dragonflame',
-    gx: 26, gy: 26,
-    targetGx: 26, targetGy: 26,
-    walkTimer: 0,
-    isWalking: false,
-    isWorking: false,
-    activeTask: '',
-    speed: 0.065,
-    weapon: 'dragonflame',
-    quote: 'Doom commands the Valyrian dragonflame and Nether lava pits!',
-    spawned: true,
-  },
   'thor': {
     id: 'thor',
     name: 'Thor Odinson',
     callsign: 'THOR',
+    category: 'core',
     role: 'DevOps & Package Manifest',
     station: 'Thunder Altar Spire',
     homeStation: { gx: 26, gy: 4 },
@@ -286,58 +266,11 @@ const MINECRAFT_HEROES = {
     quote: 'FEEL THE WRATH OF ASGARDIAN THUNDER AND MJOLNIR STRIKES!',
     spawned: true,
   },
-  'doctor-strange': {
-    id: 'doctor-strange',
-    name: 'Stephen Strange',
-    callsign: 'STRANGE',
-    role: 'Temporal Memory',
-    station: 'Taj Mahal Astral Spire',
-    homeStation: { gx: 15, gy: 15 },
-    image: './assets/doctor_strange.jpg',
-    avatar: '🔮',
-    themeColor: '#D97706',
-    glowColor: 'rgba(217, 119, 6, 0.5)',
-    skinType: 'doctor-strange',
-    power: 'eldritch_mandala',
-    gx: 15, gy: 15,
-    targetGx: 15, targetGy: 15,
-    walkTimer: 0,
-    isWalking: false,
-    isWorking: false,
-    activeTask: '',
-    speed: 0.07,
-    weapon: 'eldritch_magic',
-    quote: 'By the Vishanti, casting fiery Eldritch portal shields!',
-    spawned: true,
-  },
-  'thanos': {
-    id: 'thanos',
-    name: 'Thanos',
-    callsign: 'MAD TITAN',
-    role: 'Power & Rate Balancer',
-    station: '3D Obsidian Altar',
-    homeStation: { gx: 15, gy: 26 },
-    image: './assets/thanos.jpg',
-    avatar: '🪐',
-    themeColor: '#7C3AED',
-    glowColor: 'rgba(124, 58, 237, 0.5)',
-    skinType: 'thanos',
-    power: 'infinity_beam',
-    gx: 15, gy: 26,
-    targetGx: 15, targetGy: 26,
-    walkTimer: 0,
-    isWalking: false,
-    isWorking: false,
-    activeTask: '',
-    speed: 0.055,
-    weapon: 'infinity_gauntlet',
-    quote: 'All six Infinity Stones unleashed. Reality bends to my will.',
-    spawned: true,
-  },
   'hulk': {
     id: 'hulk',
     name: 'Bruce Banner',
     callsign: 'HULK',
+    category: 'core',
     role: 'Gamma Logic Optimizer',
     station: 'Gamma Emerald Meadow',
     homeStation: { gx: 8, gy: 16 },
@@ -362,6 +295,7 @@ const MINECRAFT_HEROES = {
     id: 'captain-america',
     name: 'Steve Rogers',
     callsign: 'CAP',
+    category: 'core',
     role: 'Vibranium QA Auditor',
     station: 'Wakandan Vibranium Bunker',
     homeStation: { gx: 4, gy: 26 },
@@ -382,10 +316,88 @@ const MINECRAFT_HEROES = {
     quote: 'Vibranium shield bouncing with precision trajectory!',
     spawned: true,
   },
+
+  // ── MULTIVERSE SPECIALISTS (SPAWNABLE ON-DEMAND TO ASSIST) ─────────
+  'doctor-strange': {
+    id: 'doctor-strange',
+    name: 'Stephen Strange',
+    callsign: 'STRANGE',
+    category: 'specialist',
+    role: 'Temporal Memory & Assistance',
+    station: 'Taj Mahal Astral Spire',
+    homeStation: { gx: 15, gy: 15 },
+    image: './assets/doctor_strange.jpg',
+    avatar: '🔮',
+    themeColor: '#D97706',
+    glowColor: 'rgba(217, 119, 6, 0.5)',
+    skinType: 'doctor-strange',
+    power: 'eldritch_mandala',
+    gx: 15, gy: 15,
+    targetGx: 15, targetGy: 15,
+    walkTimer: 0,
+    isWalking: false,
+    isWorking: false,
+    activeTask: '',
+    speed: 0.07,
+    weapon: 'eldritch_magic',
+    quote: 'By the Vishanti, assisting Thor and the team across all temporal timelines!',
+    spawned: false,
+  },
+  'doctor-doom': {
+    id: 'doctor-doom',
+    name: 'Doctor Doom',
+    callsign: 'DOOM',
+    category: 'specialist',
+    role: 'Latverian AST & Compiler',
+    station: 'Valyrian Lava Keep',
+    homeStation: { gx: 26, gy: 26 },
+    image: './assets/doctor_doom.jpg',
+    avatar: '👑',
+    themeColor: '#059669',
+    glowColor: 'rgba(5, 150, 105, 0.5)',
+    skinType: 'doctor-doom',
+    power: 'valyrian_dragonflame',
+    gx: 26, gy: 26,
+    targetGx: 26, targetGy: 26,
+    walkTimer: 0,
+    isWalking: false,
+    isWorking: false,
+    activeTask: '',
+    speed: 0.065,
+    weapon: 'dragonflame',
+    quote: 'Doom commands the Valyrian dragonflame and high-speed compilers!',
+    spawned: false,
+  },
+  'thanos': {
+    id: 'thanos',
+    name: 'Thanos',
+    callsign: 'MAD TITAN',
+    category: 'specialist',
+    role: 'Power & Rate Balancer',
+    station: '3D Obsidian Altar',
+    homeStation: { gx: 15, gy: 26 },
+    image: './assets/thanos.jpg',
+    avatar: '🪐',
+    themeColor: '#7C3AED',
+    glowColor: 'rgba(124, 58, 237, 0.5)',
+    skinType: 'thanos',
+    power: 'infinity_beam',
+    gx: 15, gy: 26,
+    targetGx: 15, targetGy: 26,
+    walkTimer: 0,
+    isWalking: false,
+    isWorking: false,
+    activeTask: '',
+    speed: 0.055,
+    weapon: 'infinity_gauntlet',
+    quote: 'All six Infinity Stones unleashed. Perfectly balanced.',
+    spawned: false,
+  },
   'kang': {
     id: 'kang',
     name: 'Kang the Conqueror',
     callsign: 'KANG',
+    category: 'specialist',
     role: 'Quantum Timeline Branching',
     station: 'Chrono-Bridge Nexus',
     homeStation: { gx: 20, gy: 12 },
@@ -404,12 +416,13 @@ const MINECRAFT_HEROES = {
     speed: 0.07,
     weapon: 'chrono_device',
     quote: 'Opening temporal rifts across 14 billion Minecraft branches.',
-    spawned: true,
+    spawned: false,
   },
   'black-widow': {
     id: 'black-widow',
     name: 'Natasha Romanoff',
     callsign: 'WIDOW',
+    category: 'specialist',
     role: 'Security & CVE Recon',
     station: 'Redstone Stealth Enclave',
     homeStation: { gx: 8, gy: 11 },
@@ -459,6 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initCanvas();
   renderStrongholdDock();
+  updateRosterBadge();
   setupEventListeners();
   initWebSocket();
   initWeatherParticles();
@@ -471,13 +485,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   setTimeout(() => {
-    showCosmicSpeechBubble('tony-stark', '3D Minecraft World online! Oak bridges built over the river. Use Build Mode to craft blocks!');
+    showCosmicSpeechBubble('tony-stark', 'Welcome to Battleworld! 5 core heroes assembled. Click [👥 Team] to spawn specialists on demand!');
   }, 1000);
 
   setInterval(triggerAutonomousHeroMovement, 5000);
   setInterval(triggerDAGSimulationPulse, 6000);
   setInterval(triggerRandomHeroSuperpower, 4000);
 });
+
+function updateRosterBadge() {
+  const badge = document.getElementById('rosterCountBadge');
+  const count = Object.keys(state.roamingAgents).length;
+  if (badge) {
+    badge.innerText = `👥 TEAM: ${count}/10 ACTIVE`;
+  }
+}
 
 // ── Ellipsis Menu Toggle ────────────────────────────────────────────
 window.toggleEllipsisMenu = function () {
@@ -507,7 +529,7 @@ window.toggleBuildMode = function () {
     if (btn) btn.classList.remove('active');
     if (indicator) indicator.style.display = 'none';
     if (container) container.classList.remove('build-mode-active');
-    showCosmicSpeechBubble('tony-stark', 'Exited Build Mode. Character movement enabled.');
+    showCosmicSpeechBubble('tony-stark', 'Exited Build Mode. Character exploration restored.');
     appendVerboseStream(`🕹️ [BUILD MODE DEACTIVATED] Normal exploration restored.`, 'code');
   }
 };
@@ -528,7 +550,6 @@ function initCanvas() {
   // Mouse Drag to Pan Camera / Update Hover Grid
   canvas.addEventListener('mousedown', (e) => {
     if (e.button === 2) {
-      // Right Click -> Break Block
       e.preventDefault();
       handleBlockBreak(e);
       return;
@@ -563,7 +584,6 @@ function initCanvas() {
     state.camera.isDragging = false;
   });
 
-  // Prevent default context menu for block breaking
   canvas.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     handleBlockBreak(e);
@@ -594,7 +614,6 @@ function handleBlockBreak(e) {
   } else if (state.placedBlocks[key1]) {
     delete state.placedBlocks[key1];
   } else {
-    // Break natural top block
     state.placedBlocks[key1] = 'air';
   }
 
@@ -645,7 +664,6 @@ function handleCanvasClick(e) {
   if (clickedHero) {
     state.selectedAgentId = clickedHero.id;
 
-    // If hero is actively executing directive -> respect task!
     if (clickedHero.isWorking) {
       showCosmicSpeechBubble(clickedHero.id, `⚙️ I am currently coding "${clickedHero.activeTask || 'Directive'}"! Mesh synchronized.`);
       appendVerboseStream(`● [${clickedHero.callsign} BUSY] Executing active task: "${clickedHero.activeTask || 'Code Directive'}".`, 'code');
@@ -1229,7 +1247,7 @@ function drawFloatingMinecraftSwords(time) {
 
 // ── 8. Superpower Showcase Engine for ALL Marvel Heroes ─────────────
 function triggerRandomHeroSuperpower() {
-  if (state.missionActive) return; // Respect active mission!
+  if (state.missionActive) return;
   const heroes = Object.values(state.roamingAgents);
   if (heroes.length === 0) return;
   const hero = heroes[Math.floor(Math.random() * heroes.length)];
@@ -1301,6 +1319,15 @@ function drawAllSuperpowerEffects(time) {
       ctx.stroke();
     } else if (fx.power === 'mjolnir_lightning') {
       drawVoxelLightning(fx.from.x, fx.from.y, fx.to.x, fx.to.y);
+    } else if (fx.power === 'eldritch_mandala') {
+      ctx.strokeStyle = '#D97706';
+      ctx.shadowColor = '#D97706';
+      ctx.shadowBlur = 18;
+      ctx.lineWidth = 3 * zoom;
+      ctx.beginPath();
+      ctx.arc(fx.from.x, fx.from.y - 12 * zoom, 22 * zoom, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeRect(fx.from.x - 14 * zoom, fx.from.y - 26 * zoom, 28 * zoom, 28 * zoom);
     } else {
       ctx.strokeStyle = fx.color || '#2563EB';
       ctx.lineWidth = 2 * zoom;
@@ -1335,7 +1362,7 @@ function updateHeroPhysics() {
 }
 
 function triggerAutonomousHeroMovement() {
-  if (state.missionActive) return; // NEVER wander during active missions!
+  if (state.missionActive) return;
   const heroes = Object.values(state.roamingAgents).filter(h => !h.isWorking);
   if (heroes.length === 0) return;
   const lucky = heroes[Math.floor(Math.random() * heroes.length)];
@@ -1726,7 +1753,7 @@ function drawWeatherAndParticles(w, h, time) {
 
 // ── Multiverse Clash ────────────────────────────────────────────────
 window.triggerMultiverseClash = function () {
-  appendVerboseStream(`⚔️ [VOXEL BATTLE CLASH] All Minecraft Avengers drawing Diamond Swords & launching combat grid!`, 'code');
+  appendVerboseStream(`⚔️ [VOXEL BATTLE CLASH] All active Avengers drawing Diamond Swords & launching combat grid!`, 'code');
   showCosmicSpeechBubble('tony-stark', 'Avengers Assemble! Defend the Taj Mahal & Valyrian Grid!');
 
   for (const hero of Object.values(state.roamingAgents)) {
@@ -1738,10 +1765,16 @@ window.triggerMultiverseClash = function () {
   }
 };
 
-// ── Spawn & Despawn Roster System (With Task Protection) ─────────────
+// ── Spawn & Despawn Roster System (5 Core Default + On-Demand Specialists) ──
 window.openSpawnModal = function () {
   const grid = document.getElementById('spawnRosterGrid');
   grid.innerHTML = '';
+
+  const activeCount = Object.keys(state.roamingAgents).length;
+  const modalTitle = document.getElementById('modalRosterTitle');
+  if (modalTitle) {
+    modalTitle.innerHTML = `👥 MULTIVERSE TEAM // ACTIVE HEROES: ${activeCount}/10`;
+  }
 
   for (const [id, hero] of Object.entries(MINECRAFT_HEROES)) {
     const isSpawned = Boolean(state.roamingAgents[id]);
@@ -1751,23 +1784,30 @@ window.openSpawnModal = function () {
 
     const card = document.createElement('div');
     card.className = 'roster-spawn-card';
+    card.style.borderColor = isSpawned ? (hero.themeColor || '#2563EB') : '#E2E8F0';
 
     let actionBtnHtml = '';
     if (!isSpawned) {
-      actionBtnHtml = `<button class="roster-action-btn spawn" onclick="spawnHeroDirect('${id}')">➕ SPAWN</button>`;
+      actionBtnHtml = `<button class="roster-action-btn spawn" onclick="spawnHeroDirect('${id}')">➕ SPAWN TO WORLD</button>`;
     } else if (isProtected || isBusy) {
       actionBtnHtml = `<button class="roster-action-btn locked" title="Agent is working on an active task or is Player 1" disabled>🔒 ${isProtected ? 'PLAYER 1' : 'ACTIVE ON TASK'}</button>`;
     } else {
-      actionBtnHtml = `<button class="roster-action-btn despawn" onclick="despawnHeroDirect('${id}')">❌ DESPAWN</button>`;
+      actionBtnHtml = `<button class="roster-action-btn despawn" onclick="despawnHeroDirect('${id}')">❌ DESPAWN TO BASE</button>`;
     }
 
+    const badgeCategory = hero.category === 'core' ? '<span style="font-size:8.5px; font-weight:700; color:#2563EB; background:#EFF6FF; padding:1px 5px; border-radius:4px;">CORE SQUAD</span>' : '<span style="font-size:8.5px; font-weight:700; color:#D97706; background:#FEF3C7; padding:1px 5px; border-radius:4px;">SPECIALIST</span>';
+
     card.innerHTML = `
+      <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+        ${badgeCategory}
+        <span style="font-size:9px; font-family:var(--font-mono); font-weight:600; color:${isSpawned ? '#059669' : '#94A3B8'};">${isSpawned ? '● ONLINE' : '○ RESERVE'}</span>
+      </div>
       <div class="roster-avatar-frame">
         <img src="${hero.image}" alt="${hero.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 100 100\\'><text y=\\'.9em\\' font-size=\\'90\\'>🦸</text></svg>'" />
       </div>
       <div class="roster-name">${hero.name}</div>
       <div class="roster-callsign">[${hero.callsign}]</div>
-      <div style="font-size:10px; font-family:var(--font-body); color:var(--ink-muted);">${hero.station}</div>
+      <div style="font-size:10px; font-family:var(--font-body); color:var(--ink-muted);">${hero.role}</div>
       ${actionBtnHtml}
     `;
 
@@ -1781,23 +1821,27 @@ window.spawnHeroDirect = function (heroId) {
   const hero = MINECRAFT_HEROES[heroId];
   if (!hero) return;
 
+  const targetGx = hero.homeStation ? hero.homeStation.gx : (10 + Math.random() * 8);
+  const targetGy = hero.homeStation ? hero.homeStation.gy : (10 + Math.random() * 8);
+
   state.roamingAgents[heroId] = {
     ...hero,
-    gx: 10 + Math.random() * 10,
-    gy: 10 + Math.random() * 10,
-    targetGx: 10 + Math.random() * 10,
-    targetGy: 10 + Math.random() * 10,
+    gx: targetGx,
+    gy: targetGy,
+    targetGx: targetGx,
+    targetGy: targetGy,
     spawned: true,
   };
 
   state.selectedAgentId = heroId;
-  const pos = gridToScreen(state.roamingAgents[heroId].gx, state.roamingAgents[heroId].gy, getElevation(state.roamingAgents[heroId].gx, state.roamingAgents[heroId].gy));
+  const pos = gridToScreen(targetGx, targetGy, getElevation(targetGx, targetGy));
   spawnPortalParticles(pos.x, pos.y, hero.themeColor);
   spawnXpOrbs(pos.x, pos.y, 6);
   renderStrongholdDock();
+  updateRosterBadge();
   openSpawnModal();
   showCosmicSpeechBubble(heroId, hero.quote);
-  appendVerboseStream(`⚡ [VOXEL HERO MATERIALIZED] ${hero.name} spawned into the Minecraft world!`, 'code');
+  appendVerboseStream(`⚡ [HERO SPAWNED] ${hero.name} (${hero.callsign}) entered the world to assist with ${hero.role}!`, 'code');
 };
 
 window.despawnHeroDirect = function (heroId) {
@@ -1818,8 +1862,9 @@ window.despawnHeroDirect = function (heroId) {
   }
 
   renderStrongholdDock();
+  updateRosterBadge();
   openSpawnModal();
-  appendVerboseStream(`🚪 [HERO DESPAWNED] ${liveHero.name} stepped through Nether portal to home base.`, 'code');
+  appendVerboseStream(`🚪 [HERO DESPAWNED] ${liveHero.name} stepped through Nether portal to reserve base.`, 'code');
 };
 
 // ── Custom Character Creator ────────────────────────────────────────
@@ -1854,6 +1899,7 @@ window.submitCustomHero = async function () {
     id: heroId,
     name,
     callsign,
+    category: 'specialist',
     role,
     station: `${name} Taj Mahal Pod`,
     homeStation: { gx: customGx, gy: customGy },
@@ -1873,7 +1919,7 @@ window.submitCustomHero = async function () {
     isWorking: false,
     activeTask: '',
     speed: 0.075,
-    quote: directive || `Agent ${name} operational. Ready for directives.`,
+    quote: directive || `Agent ${name} operational. Ready to assist.`,
     spawned: true,
   };
 
@@ -1892,6 +1938,7 @@ window.submitCustomHero = async function () {
   const pos = gridToScreen(customGx, customGy, getElevation(customGx, customGy));
   spawnPortalParticles(pos.x, pos.y, '#2563EB');
   renderStrongholdDock();
+  updateRosterBadge();
   closeModals();
   showCosmicSpeechBubble(heroId, newHero.quote);
   appendVerboseStream(`🚀 [CUSTOM VOXEL HERO SPAWNED] ${newHero.station} active for ${name}!`, 'code');
@@ -1926,7 +1973,7 @@ function showCosmicSpeechBubble(entityId, text, durationMs = 6000) {
   }, durationMs);
 }
 
-// ── Stronghold Dock Cards ───────────────────────────────────────────
+// ── Stronghold Dock Cards (With "➕ Spawn Specialist" Action) ─────────
 function renderStrongholdDock() {
   multiverseStrongholdDock.innerHTML = '';
 
@@ -1958,6 +2005,18 @@ function renderStrongholdDock() {
 
     multiverseStrongholdDock.appendChild(card);
   }
+
+  // Append "+ Spawn Specialist" Card
+  const addCard = document.createElement('div');
+  addCard.className = 'stronghold-card add-specialist-card';
+  addCard.title = 'Spawn additional multiverse heroes to assist';
+  addCard.innerHTML = `
+    <div style="font-family:var(--font-display); font-size:11px; font-weight:700; color:#2563EB; display:flex; align-items:center; gap:6px;">
+      <span style="font-size:14px;">➕</span> Spawn Specialist
+    </div>
+  `;
+  addCard.addEventListener('click', () => openSpawnModal());
+  multiverseStrongholdDock.appendChild(addCard);
 }
 
 // ── Console Mode Toggle (CHAT vs CODE vs RESULT) ────────────────────
@@ -2043,6 +2102,8 @@ function classifyStreamKind(text) {
     /BUILD MODE/i,
     /BLOCK PLACED/i,
     /MINED BLOCK/i,
+    /HERO SPAWNED/i,
+    /HERO DESPAWNED/i,
     /DIRECTIVE.*COMPLETED/i,
   ];
 
@@ -2201,7 +2262,6 @@ async function dispatchMasterMission() {
   showCosmicSpeechBubble('tony-stark', `Analyzing directive: "${prompt.slice(0, 35)}..."`);
   triggerDAGSimulationPulse();
 
-  // Move assigned heroes to their stations
   for (const [id, hero] of Object.entries(state.roamingAgents)) {
     if (hero.homeStation) {
       hero.targetGx = hero.homeStation.gx;
