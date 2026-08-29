@@ -2381,3 +2381,229 @@ function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
+// ── Workspace Explorer Modal Controller ──────────────────────────────
+let cachedWorkspaces = [];
+let activeModalWorkspace = null;
+let activeModalFile = null;
+
+window.openWorkspaceExplorer = async function () {
+  const modal = document.getElementById('workspaceExplorerModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+
+  try {
+    const res = await fetch('/api/workspace');
+    if (!res.ok) throw new Error('Failed to fetch workspaces');
+    const data = await res.json();
+    cachedWorkspaces = data.workspaces || [];
+
+    const dropdown = document.getElementById('workspaceSelectorDropdown');
+    dropdown.innerHTML = '';
+
+    if (cachedWorkspaces.length === 0) {
+      dropdown.innerHTML = '<option value="">(No workspaces generated yet - run a mission directive first)</option>';
+      document.getElementById('modalWorkspacePathText').innerText = './workspace';
+      document.getElementById('modalWorkspaceFileList').innerHTML = '<div style="padding:14px; color:var(--ink-muted); font-size:11px;">No files generated yet. Dispatch a mission in the console to create a codebase.</div>';
+      document.getElementById('modalCodePreviewContent').innerText = '// No project files found';
+      return;
+    }
+
+    cachedWorkspaces.forEach(ws => {
+      const opt = document.createElement('option');
+      opt.value = ws.slug;
+      opt.innerText = `${ws.slug} (${ws.files.length} files)`;
+      dropdown.appendChild(opt);
+    });
+
+    const activeSlug = data.active?.slug || cachedWorkspaces[cachedWorkspaces.length - 1]?.slug;
+    dropdown.value = activeSlug;
+    loadSelectedWorkspace(activeSlug);
+  } catch (err) {
+    appendVerboseStream(`● [WORKSPACE ERROR] Could not load workspaces: ${err.message}`, 'code');
+  }
+};
+
+window.loadSelectedWorkspace = function (slug) {
+  activeModalWorkspace = cachedWorkspaces.find(w => w.slug === slug) || cachedWorkspaces[0];
+  if (!activeModalWorkspace) return;
+
+  document.getElementById('modalWorkspacePathText').innerText = activeModalWorkspace.path;
+  
+  // Detect framework / run script
+  let runScript = 'npm install && npm start';
+  const fileNames = activeModalWorkspace.files.map(f => f.relativePath.toLowerCase());
+  if (fileNames.some(f => f.includes('package.swift'))) runScript = 'swift build && swift run';
+  else if (fileNames.some(f => f.includes('requirements.txt') || f.includes('main.py'))) runScript = 'pip install -r requirements.txt && python main.py';
+  
+  document.getElementById('modalRunScriptText').innerText = runScript;
+
+  // Render File List
+  const listContainer = document.getElementById('modalWorkspaceFileList');
+  listContainer.innerHTML = '<div class="workspace-sidebar-header">REPOSITORY FILES</div>';
+
+  activeModalWorkspace.files.forEach((file, index) => {
+    const item = document.createElement('div');
+    item.className = `workspace-file-item ${index === 0 ? 'active' : ''}`;
+    item.innerHTML = `<span>📄</span> <span style="overflow:hidden; text-overflow:ellipsis;">${escapeHtml(file.relativePath)}</span>`;
+    item.onclick = () => {
+      document.querySelectorAll('.workspace-file-item').forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+      displayModalFileContent(file);
+    };
+    listContainer.appendChild(item);
+  });
+
+  if (activeModalWorkspace.files.length > 0) {
+    displayModalFileContent(activeModalWorkspace.files[0]);
+  } else {
+    document.getElementById('modalActiveFileName').innerText = 'No files';
+    document.getElementById('modalCodePreviewContent').innerText = '// Empty repository';
+  }
+};
+
+function displayModalFileContent(file) {
+  activeModalFile = file;
+  document.getElementById('modalActiveFileName').innerText = `${file.relativePath} (${file.language})`;
+  document.getElementById('modalCodePreviewContent').innerText = file.content;
+}
+
+window.copyActiveWorkspacePath = function () {
+  if (activeModalWorkspace?.path) {
+    navigator.clipboard.writeText(activeModalWorkspace.path);
+    showCompletionToast('Workspace disk path copied to clipboard!');
+  }
+};
+
+window.copyCurrentFileContent = function () {
+  if (activeModalFile?.content) {
+    navigator.clipboard.writeText(activeModalFile.content);
+    showCompletionToast(`Copied ${activeModalFile.relativePath} to clipboard!`);
+  }
+};
+
+window.copyModalRunScript = function () {
+  const script = document.getElementById('modalRunScriptText').innerText;
+  if (script) {
+    navigator.clipboard.writeText(script);
+    showCompletionToast('Terminal run script copied to clipboard!');
+  }
+};
+
+// ── Voice Comms Speech Recognition & Translator ─────────────────────
+let recognition = null;
+let isRecordingVoice = false;
+
+window.toggleVoiceComms = function () {
+  const modal = document.getElementById('voiceCommsModal');
+  modal.style.display = 'flex';
+  startVoiceRecognition();
+};
+
+window.startVoiceRecognition = function () {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const transcriptBox = document.getElementById('voiceTranscriptBox');
+  const statusPill = document.getElementById('voiceStatusPill');
+  const statusText = document.getElementById('voiceStatusText');
+
+  if (!SpeechRecognition) {
+    statusText.innerText = 'MIC NOT SUPPORTED IN THIS BROWSER';
+    statusPill.style.background = '#FEF2F2';
+    statusPill.style.color = '#DC2626';
+    transcriptBox.placeholder = 'Speech recognition not available. Please type your directive manually.';
+    return;
+  }
+
+  try {
+    if (recognition) {
+      recognition.abort();
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US'; // Supports multilingual speech
+
+    recognition.onstart = () => {
+      isRecordingVoice = true;
+      statusText.innerText = 'RECORDING COMMS... SPEAK NOW';
+      statusPill.style.background = '#FEF2F2';
+      statusPill.style.color = '#DC2626';
+      transcriptBox.value = '';
+    };
+
+    recognition.onresult = (event) => {
+      let currentTranscript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        currentTranscript += event.results[i][0].transcript + ' ';
+      }
+      transcriptBox.value = currentTranscript.trim();
+    };
+
+    recognition.onerror = (event) => {
+      console.warn('Voice Comms recognition error:', event.error);
+      statusText.innerText = `MIC ERROR: ${event.error.toUpperCase()}`;
+    };
+
+    recognition.onend = () => {
+      isRecordingVoice = false;
+      statusText.innerText = 'VOICE RECORDING CAPTURED';
+      statusPill.style.background = '#EFF6FF';
+      statusPill.style.color = '#2563EB';
+    };
+
+    recognition.start();
+  } catch (err) {
+    statusText.innerText = 'MIC INITIALIZATION ERROR';
+  }
+};
+
+window.stopVoiceComms = function () {
+  if (recognition) {
+    try { recognition.stop(); } catch {}
+  }
+  isRecordingVoice = false;
+  document.getElementById('voiceCommsModal').style.display = 'none';
+};
+
+window.insertVoiceTranscriptIntoInput = async function () {
+  let text = document.getElementById('voiceTranscriptBox').value.trim();
+  if (!text) return;
+
+  // Translate/clean via server
+  try {
+    const res = await fetch('/api/comms/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    if (data.translated) text = data.translated;
+  } catch {}
+
+  quantumPromptInput.value = text;
+  quantumPromptInput.focus();
+  stopVoiceComms();
+  showCompletionToast('Voice directive inserted into Quantum Console!');
+};
+
+window.dispatchVoiceDirective = async function () {
+  let text = document.getElementById('voiceTranscriptBox').value.trim();
+  if (!text) return;
+
+  stopVoiceComms();
+
+  // Translate & clean up
+  try {
+    const res = await fetch('/api/comms/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    if (data.translated) text = data.translated;
+  } catch {}
+
+  quantumPromptInput.value = text;
+  dispatchMasterMission();
+};
