@@ -4,3 +4,4 @@ dist
 .stark/
 *.log
 .DS_Store
+workspace/

@@ -102,7 +102,42 @@ export class StarkOrchestrator extends EventEmitter {
     const missionId = `mission-${Date.now()}`;
     const tony = this.heroes.get('tony-stark') as TonyStarkHero;
 
-    this.comms.send('orchestrator', 'all', 'war-room', `🚀 AVENGERS ASSEMBLE! New Mission Directive: "${userPrompt}"`);
+    this.comms.send('orchestrator', 'all', 'war-room', `🤖 Tactical intelligence scan: "${userPrompt}"`);
+
+    // 1. Classify Intent (Chat/Q&A/Command vs Project Build)
+    const classification = await tony.classifyIntent(userPrompt);
+
+    if (classification.type === 'chat') {
+      const directReply = classification.directResponse || `Tony Stark here. Understood: "${userPrompt}".`;
+
+      this.comms.send('tony-stark', 'all', 'war-room', `[TONY STARK] ${directReply}`);
+
+      const chatMission: Mission = {
+        id: missionId,
+        name: `Inquiry: ${userPrompt.substring(0, 24)}...`,
+        userPrompt,
+        status: 'success',
+        directives: [],
+        activeHeroCount: 1,
+        arcReactorPowerUsed: 40,
+        finalSummary: directReply,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+
+      (chatMission as any).isChatOnly = true;
+      (chatMission as any).result = directReply;
+      (chatMission as any).summary = directReply;
+
+      this.activeMission = chatMission;
+      this.emit('mission-started', chatMission);
+      this.emit('mission-completed', chatMission);
+
+      return chatMission;
+    }
+
+    // 2. Full Multi-Agent Project Generation Workflow
+    this.comms.send('orchestrator', 'all', 'war-room', `🚀 AVENGERS ASSEMBLE! Initiating multi-file project build for: "${userPrompt}"`);
 
     const mission: Mission = {
       id: missionId,
@@ -233,13 +268,13 @@ export class StarkOrchestrator extends EventEmitter {
 
       if (workspaceProject.files.length > 0) {
         const fileList = workspaceProject.files
-          .map((f) => `- 📄 **\`${f.relativePath}\`** (${Math.round((f.sizeBytes / 1024) * 10) / 10} KB) — *Crafted by ${f.hero}*`)
+          .map((f) => `- 📄 **\`${f.relativePath}\`** (${Math.round((f.sizeBytes / 1024) * 10) / 10} KB) — *Crafted by ${f.hero.toUpperCase()}*`)
           .join('\n');
 
         fullResult += `\n\n---\n\n### 📁 Generated Project Files Written to Disk\n` +
           `**Workspace Location**: \`${workspaceProject.workspacePath}\`\n\n` +
           `${fileList}\n\n` +
-          `### 🚀 How to Run Your App\n\`\`\`bash\n${workspaceProject.runInstructions.join('\n')}\n\`\`\``;
+          `### 🚀 How to Run Your Project\n\`\`\`bash\n${workspaceProject.runInstructions.join('\n')}\n\`\`\``;
 
         (mission as any).workspace = workspaceProject;
         this.comms.send('orchestrator', 'all', 'war-room', `[WORKSPACE SAVED] Project written to disk at: ${workspaceProject.workspacePath} (${workspaceProject.files.length} files)`);
